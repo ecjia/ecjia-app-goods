@@ -1,0 +1,32 @@
+<?php
+defined('IN_ECJIA') or exit('No permission resources.');
+/**
+ * ECJI后台商品菜单API
+ */
+class goods_admin_menu_api extends Component_Event_Api
+{
+	public function call(&$options)
+	{
+		$menus = ecjia_admin::make_admin_menu('02_cat_and_goods', __('商品管理'), '', 1);
+		$submenus = array(
+			ecjia_admin::make_admin_menu('01_goods_list', __('商品列表'), RC_Uri::url('goods/admin/init'), 1)->add_purview(array('goods_manage', 'remove_back')),
+			ecjia_admin::make_admin_menu('02_goods_add', __('添加新商品'), RC_Uri::url('goods/admin/add'), 2)->add_purview('goods_manage'),
+			ecjia_admin::make_admin_menu('03_category_list', __('平台商品分类'), RC_Uri::url('goods/admin_category/init'), 3)->add_purview(array('cat_manage', 'cat_drop')),
+			ecjia_admin::make_admin_menu('06_goods_brand_list', __('自营品牌'), RC_Uri::url('goods/admin_brand/init'), 5)->add_purview('brand_manage'),
+			ecjia_admin::make_admin_menu('08_goods_type', __('商品类型'), RC_Uri::url('goods/admin_goods_type/init'), 7)->add_purview('attr_manage'),
+			ecjia_admin::make_admin_menu('11_goods_trash', __('商品回收站'), RC_Uri::url('goods/admin/trash'), 8)->add_purview(array('goods_manage', 'remove_back')),
+			ecjia_admin::make_admin_menu('06_undispose_booking', __('缺货登记'), RC_Uri::url('goods/admin_goods_booking/init'), 9)->add_purview('booking'),
+		    ecjia_admin::make_admin_menu('divider', '', '', 11)->add_purview('virualcard'),
+		    ecjia_admin::make_admin_menu('04_category_store_list', __('店铺商品分类'), RC_Uri::url('goods/admin_category_store/init'), 12)->add_purview(array('category_store')),
+		    ecjia_admin::make_admin_menu('06_merchants_brand_list', __('商家品牌'), RC_Uri::url('goods/merchants_brand/init'), 13)->add_purview('merchants_brand'),
+			ecjia_admin::make_admin_menu('divider', '', '', 21)->add_purview('virualcard'),
+			ecjia_admin::make_admin_menu('50_virtual_card_list', __('虚拟商品列表'), RC_Uri::url('goods/admin/init', 'extension_code=virtual_card'), 22)->add_purview('virualcard'),
+			ecjia_admin::make_admin_menu('51_virtual_card_add', __('添加虚拟商品'), RC_Uri::url('goods/admin/add', 'extension_code=virtual_card'), 23)->add_purview('virualcard'),
+			ecjia_admin::make_admin_menu('52_virtual_card_change', __('更改加密串'), RC_Uri::url('goods/admin_virtual_card/init'), 24)->add_purview('virualcard'),
+		);
+        $menus->add_submenu($submenus);
+        return $menus;
+    }
+}
+
+// end
