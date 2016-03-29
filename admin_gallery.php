@@ -101,8 +101,11 @@ class admin_gallery extends ecjia_admin
         }
         
 		//先使用sort排序，再使用id排序。
-		array_multisort($img_list_sort, $img_list_id, $img_list);
-        
+		if (!empty($img_list)) {
+			array_multisort($img_list_sort, $img_list_id, $img_list);
+		}
+		
+       
 		ecjia_screen::get_current_screen()->add_help_tab( array(
 		'id'		=> 'overview',
 		'title'		=> __('概述'),
