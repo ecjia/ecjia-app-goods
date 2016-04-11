@@ -9,9 +9,8 @@ class suggestlist_module implements ecjia_interface {
 
     public function run(ecjia_api & $api) {
     	//如果用户登录获取其session
-    	if (EM_Api::$session['sid']) {
-    		EM_Api::authSession();
-    	}
+    	EM_Api::authSession(false);
+    	
     	RC_Loader::load_app_func('common', 'goods');
     	$action_type = _POST('action_type', '');
     	$sort_type = _POST('sort_by', '');
@@ -88,16 +87,21 @@ class suggestlist_module implements ecjia_interface {
     	
     	$field = "g.goods_id, g.goods_name, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price,".
     			"IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, ".
-    			"g.promote_price, g.promote_start_date, g.promote_end_date, g.goods_thumb, g.goods_img, g.goods_brief, g.goods_type ";
-    	$dbview->view = array(
+    			"g.promote_price, g.promote_start_date, g.promote_end_date, g.goods_thumb, g.goods_img, g.goods_brief, g.goods_type, msi.shoprz_brandName, msi.shopNameSuffix, msi.user_id";
+    	$dbveiw->view = array(
     			'member_price' => array(
     					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
     					'alias' => 'mp',
     					'field' => $field,
     					'on'   	=> "mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]'"
-    			)
+    			),
+    			'merchants_shop_information' => array(
+    					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+    					'alias' => 'msi',
+    					'on'	=> 'g.user_id = msi.user_id'
+    			),
     	);
-    	
+    	$order_by = array('sort_order'=> 'desc');
     	$data = $dbveiw->field($field)->where($where)->order($order_by)->limit($page_row->limit())->select();
     	
     	$pager = array(
@@ -142,13 +146,6 @@ class suggestlist_module implements ecjia_interface {
    					$price = $mobilebuy_price > $price ? $price : $mobilebuy_price;
    					$activity_type = $mobilebuy_price > $price ? $activity_type : 'MOBILEBUY_GOODS';
    				}
-//     				if (!empty($groupbuy)) {
-//     					$ext_info = unserialize($groupbuy['ext_info']);
-//     					$price_ladder = $ext_info['price_ladder'];
-//     					$groupbuy_price  = $price_ladder[0]['price'];
-//     					$price = $groupbuy_price > $price ? $price : $groupbuy_price;
-//     					$activity_type = $groupbuy_price > $price ? $activity_type : 'GROUPBUY_GOODS';
-//     				}
     			
 				/* 计算节约价格*/
     			$saving_price = ($val['shop_price'] - $price) > 0 ? $val['shop_price'] - $price : 0;
@@ -171,7 +168,9 @@ class suggestlist_module implements ecjia_interface {
 					'activity_type' => $activity_type,
     				'object_id'		=> $object_id,
 					'saving_price'	=> $saving_price,
-					'formatted_saving_price' => '已省'.$saving_price.'元'
+					'formatted_saving_price' => '已省'.$saving_price.'元',
+    				'seller_id'		=> $val['user_id'],
+    				'seller_name'	=> (!empty($val['shoprz_brandName']) && !empty($val['shopNameSuffix'])) ? $val['shoprz_brandName'].$val['shopNameSuffix'] : ''
     			);
     		}
     		

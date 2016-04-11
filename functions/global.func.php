@@ -44,6 +44,19 @@ function get_cat_info($cat_id) {
 function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $sort, $order) {
 	/* 获得商品列表 */
 	$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
+	
+	$dbview->view = array(
+			'member_price' => array(
+					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+					'alias' => 'mp',
+					'on'   	=> "mp.goods_id = g.goods_id AND mp.user_rank = ".$_SESSION['user_rank']
+			),
+			'merchants_shop_information' => array(
+					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+					'alias' => 'msi',
+					'on'	=> 'g.user_id = msi.user_id'
+			),
+	);
 // 	$display = $GLOBALS['display'];//TODO:列表布局，暂且注释
 	$display = '';
 	$where = array(
@@ -69,8 +82,10 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
 	}
 	$limit = ($page - 1) * $size;
 	/* 获得商品列表 */
-	$data = $dbview->join('member_price')->where($where)->order(array($sort => $order))->limit(($page - 1) * $size, $size)->select();
-
+	/* 获得商品列表 */
+	$field = "g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price, g.goods_type,g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb ,g.original_img ,g.goods_img".
+			", msi.shoprz_brandName, msi.shopNameSuffix, msi.user_id";
+	$data = $dbview->field($field)->join(array('member_price', 'merchants_shop_information'))->where($where)->order(array($sort => $order))->limit(($page - 1) * $size, $size)->select();
 	$arr = array();
 	if (! empty($data)) {
 		foreach ($data as $row) {
@@ -116,6 +131,9 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
 			/* 增加返回原始未格式价格  will.chen*/
 			$arr[$row['goods_id']]['unformatted_shop_price'] = $row['shop_price'];
 			$arr[$row['goods_id']]['unformatted_promote_price'] = $promote_price;
+			
+			$arr[$row['goods_id']]['seller_id']		= $row['user_id'];
+			$arr[$row['goods_id']]['seller_name']	= (!empty($row['shoprz_brandName']) && !empty($row['shopNameSuffix'])) ? $row['shoprz_brandName'].$row['shopNameSuffix'] : '';
 		}
 	}
 	return $arr;

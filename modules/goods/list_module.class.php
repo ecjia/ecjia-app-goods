@@ -8,6 +8,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class list_module implements ecjia_interface {
 
     public function run(ecjia_api & $api) {
+    	EM_Api::authSession(false);
     	RC_Loader::load_app_func('main', 'api');
     	RC_Loader::load_app_func('category', 'goods');
 		$filter = _POST('filter', array());
@@ -301,7 +302,9 @@ class list_module implements ecjia_interface {
         				'activity_type' => $activity_type,
         				'object_id'		=> $object_id,
         				'saving_price'	=> $saving_price,
-        				'formatted_saving_price' => '已省'.$saving_price.'元'
+        				'formatted_saving_price' => '已省'.$saving_price.'元',
+        				'seller_id'		=> $val['seller_id'],
+        				'seller_name'	=> $val['seller_name'],
         		);
         	}
         }
