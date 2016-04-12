@@ -85,6 +85,14 @@ class goods_list {
 	public static function get_goods_list($filter) {
 		RC_Loader::load_app_class('goods_category', 'goods', false);
 		$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
+		$dbview->view = array(
+			'member_price' => array(
+					'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+					'alias' => 'mp',
+					'field' => "g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price, g.goods_type,g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb ,g.original_img ,g.goods_img",
+					'on' 	=> "mp.goods_id = g.goods_id and mp.user_rank =". $_SESSION['user_rank']
+			),
+		);
 		$children = '';
 		isset($filter['cat_id']) and $children = goods_category::get_children($filter['cat_id']);
 		$where = array(
@@ -112,6 +120,17 @@ class goods_list {
 		if (!empty(self::$keywords_where['tag_where'])) {
 			$where[] = 'or';
 			$where['g.goods_id'] = self::$keywords_where['tag_where'];
+		}
+		
+		/* 根据经纬度查询附近店铺*/
+		if (is_array($filter['location']) && isset($filter['location']['latitude']) && isset($filter['location']['longitude'])) {
+			$geohash = RC_Loader::load_app_class('geohash', 'shipping');
+			$where_geohash = $geohash->encode($filter['location']['latitude'] , $filter['location']['longitude']);
+			$where_geohash = substr($where_geohash, 0, 5);
+			
+			$seller_shopinfo_db = RC_Loader::load_app_model('seller_shopinfo_model', 'seller');
+			$ru_id = $seller_shopinfo_db->where(array('geohash' => array('like' => "%$where_geohash%")))->get_field('ru_id', true);
+			$where['g.user_id'] = $ru_id;
 		}
 		
 		if (!empty($filter['intro'])) {
@@ -169,15 +188,15 @@ class goods_list {
 			}
 	
 		}
-	
+		
 		/* 返回商品总数 */
 		$count = $dbview->join(null)->where($where)->count();
 	
 		//实例化分页
 		$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
-	
-		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($page_row->limit())->select();
-	
+
+		$data = $dbview->join(array('member_price'))->where($where)->order($filter['sort'])->limit($page_row->limit())->select();
+		
 		$arr = array();
 		if (!empty($data)) {
 			RC_Loader::load_app_func('goods', 'goods');
