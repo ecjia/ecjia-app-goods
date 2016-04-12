@@ -19,6 +19,19 @@ class mobilebuygoods_module implements ecjia_interface {
     		$mobilebuywhere['g.review_status'] = array('gt' => 2);
     	}
     	
+    	$location = _POST('location');
+    	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
+    		$request = array('location' => $location);
+    		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
+    		$where_geohash = $geohash->encode($location['latitude'] , $location['longitude']);
+    		$where_geohash = substr($where_geohash, 0, 5);
+    		 
+    		$seller_shopinfo_db = RC_Loader::load_app_model('seller_shopinfo_model', 'seller');
+    		$ru_id = $seller_shopinfo_db->where(array('geohash' => array('like' => "%$where_geohash%")))->get_field('ru_id', true);
+    		 
+    		$mobilebuywhere['g.user_id'] = $ru_id;
+    	}
+    	
     	$db_goods_activity = RC_Loader::load_app_model('goods_activity_viewmodel', 'groupbuy');
     	
     	$count = $db_goods_activity->join(array('goods'))->where($mobilebuywhere)->count();

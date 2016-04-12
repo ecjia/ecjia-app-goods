@@ -10,6 +10,17 @@ class search_module implements ecjia_interface {
     public function run(ecjia_api & $api) {
     	$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
     	$keywords = _POST('keywords');
+    	$location = _POST('location');
+    	
+    	/* 根据经纬度查询附近店铺*/
+    	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
+    		$request = array('location' => $location);
+    		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
+    		$where_geohash = $geohash->encode($location['latitude'] , $location['longitude']);
+    		$where_geohash = substr($where_geohash, 0, 5);
+    		
+    		$where['geohash'] = array('like' => "%$where_geohash%");
+    	}
     	
     	$where = array();
     	$where[] = "(CONCAT(shoprz_brandName,shopNameSuffix) like '%".$keywords."%' OR shop_class_keyWords like '%".$keywords."%')";

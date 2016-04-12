@@ -89,7 +89,7 @@ class goods_list {
 			'member_price' => array(
 					'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 					'alias' => 'mp',
-					'field' => "g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price, g.goods_type,g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb ,g.original_img ,g.goods_img",
+					'field' => "g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price, g.goods_type,g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb ,g.original_img ,g.goods_img, g.user_id",
 					'on' 	=> "mp.goods_id = g.goods_id and mp.user_rank =". $_SESSION['user_rank']
 			),
 		);
@@ -122,15 +122,41 @@ class goods_list {
 			$where['g.goods_id'] = self::$keywords_where['tag_where'];
 		}
 		
+		if (ecjia::config('review_goods')) {
+			$where['g.review_status'] = array('gt' => 2);
+		}
+		
 		/* 根据经纬度查询附近店铺*/
 		if (is_array($filter['location']) && isset($filter['location']['latitude']) && isset($filter['location']['longitude'])) {
 			$geohash = RC_Loader::load_app_class('geohash', 'shipping');
 			$where_geohash = $geohash->encode($filter['location']['latitude'] , $filter['location']['longitude']);
 			$where_geohash = substr($where_geohash, 0, 5);
+			(!empty($row['shoprz_brandName']) && !empty($row['shopNameSuffix'])) ? $row['shoprz_brandName'].$row['shopNameSuffix'] : '';
+			$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+			$ru_id_info = $msi_dbview->join(array('merchants_shop_information', 'seller_shopinfo'))->field(array('msi.user_id', 'msi.shopNameSuffix', 'msi.shoprz_brandName'))->where(array(
+					'geohash'		=> array('like' => "%$where_geohash%"),
+					'ssi.status'	=> 1,
+					'msi.merchants_audit' => 1,
+			))->select();
+// 			$ru_id = $seller_shopinfo_db->where(array('geohash' => array('like' => "%$where_geohash%")))->get_field('ru_id', true);
 			
-			$seller_shopinfo_db = RC_Loader::load_app_model('seller_shopinfo_model', 'seller');
-			$ru_id = $seller_shopinfo_db->where(array('geohash' => array('like' => "%$where_geohash%")))->get_field('ru_id', true);
-			$where['g.user_id'] = $ru_id;
+			if (!empty($ru_id_info)) {
+// 				$ru_id = array(0);
+				$ru_id = array();
+				foreach ($ru_id_info as $val) {
+					$ru_id[] = $val['user_id'];
+					$seller_info[$val['user_id']]['seller_id'] = $val['user_id'];
+					$seller_info[$val['user_id']]['seller_name'] = (!empty($val['shoprz_brandName']) && !empty($val['shopNameSuffix'])) ? $val['shoprz_brandName'].$val['shopNameSuffix'] : '';
+					
+				}
+				$merchants_shop_information_db = RC_Loader::load_app_model('merchants_shop_information_model', 'seller');
+				$merchants_shop_information_db->where(array('user_id' => $ru_id))->select();
+				$where['g.user_id'] = $ru_id;
+			} else {
+				$where['g.user_id'] = 0;
+			}
+			
+			
 		}
 		
 		if (!empty($filter['intro'])) {
@@ -191,7 +217,7 @@ class goods_list {
 		
 		/* 返回商品总数 */
 		$count = $dbview->join(null)->where($where)->count();
-	
+		
 		//实例化分页
 		$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
 
@@ -248,6 +274,9 @@ class goods_list {
 				$arr[$key]['unformatted_shop_price']	= $row['shop_price'];
 				$arr[$key]['unformatted_promote_price'] = $promote_price;
 				$arr[$key]['unformatted_market_price'] = $row['market_price'];
+				
+				$arr[$key]['seller_id'] = $row['user_id'];
+				$arr[$key]['seller_name'] = isset($seller_info[$row['user_id']]['seller_name']) ? $seller_info[$row['user_id']]['seller_name'] : '';
 			}
 		}
 		return array('list' => $arr, 'page' => $page_row);

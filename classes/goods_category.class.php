@@ -268,16 +268,17 @@ class goods_category {
     		$res = $db_category->field('cat_id, cat_name, parent_id, is_show, style')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
     
     		foreach ( $res as $row ) {
-    			if ($row ['is_show'])
+    			if ($row ['is_show']) {
     				$three_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
-    			$three_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-//     			$three_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array (
-//     					'cid' => $row ['cat_id']
-//     			), $row ['cat_name'] );
-    			if (isset ( $row ['cat_id'] ) != NULL) {
-    				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
+    				$three_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
+	//     			$three_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array (
+	//     					'cid' => $row ['cat_id']
+	//     			), $row ['cat_name'] );
+	    			if (isset ( $row ['cat_id'] ) != NULL) {
+	    				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
+	    			}
+	    			$three_arr [$row['cat_id']]['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
     			}
-    			$three_arr [$row['cat_id']]['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
     		}
     	}
     	return $three_arr;
