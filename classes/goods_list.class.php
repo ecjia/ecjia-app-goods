@@ -131,14 +131,13 @@ class goods_list {
 			$geohash = RC_Loader::load_app_class('geohash', 'shipping');
 			$where_geohash = $geohash->encode($filter['location']['latitude'] , $filter['location']['longitude']);
 			$where_geohash = substr($where_geohash, 0, 5);
-			(!empty($row['shoprz_brandName']) && !empty($row['shopNameSuffix'])) ? $row['shoprz_brandName'].$row['shopNameSuffix'] : '';
+			
 			$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
 			$ru_id_info = $msi_dbview->join(array('merchants_shop_information', 'seller_shopinfo'))->field(array('msi.user_id', 'msi.shopNameSuffix', 'msi.shoprz_brandName'))->where(array(
 					'geohash'		=> array('like' => "%$where_geohash%"),
 					'ssi.status'	=> 1,
 					'msi.merchants_audit' => 1,
 			))->select();
-// 			$ru_id = $seller_shopinfo_db->where(array('geohash' => array('like' => "%$where_geohash%")))->get_field('ru_id', true);
 			
 			if (!empty($ru_id_info)) {
 // 				$ru_id = array(0);

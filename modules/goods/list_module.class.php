@@ -14,10 +14,7 @@ class list_module implements ecjia_interface {
     	RC_Loader::load_app_func('main', 'api');
     	
     	$location = _POST('location');
-    			$location = array(
-    					'latitude'	=> '31.235450744628906',
-    					'longitude' => '121.41641998291016',
-    			);
+    	
     	/* 筛选条件*/
 		$filter = _POST('filter', array());
         $keyword = isset($filter['keywords']) ? RC_String::unicode2string($filter['keywords']): '';

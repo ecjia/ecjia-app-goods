@@ -58,6 +58,7 @@ class suggestlist_module implements ecjia_interface {
 	    			'location'	=> $location,
 	    	);
 	    	$result = RC_Api::api('goods', 'goods_list', $options);
+	    	
 	    	$data['pager'] = array(
 						"total" => $result['page']->total_records,
 						"count" => $result['page']->total_records,
@@ -112,6 +113,8 @@ class suggestlist_module implements ecjia_interface {
 	    					'object_id'		=> $object_id,
 	    					'saving_price'	=>	$saving_price,
 	    					'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
+	    					'seller_id'		=> $val['seller_id'],
+	    					'seller_name'	=> $val['seller_name'],
 	    			);
 	    		}
 	    	}
