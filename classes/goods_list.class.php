@@ -122,6 +122,10 @@ class goods_list {
 			$where['g.goods_id'] = self::$keywords_where['tag_where'];
 		}
 		
+		if (isset($filter['user_id'])) {
+			$where['g.user_id'] = $filter['user_id'];
+		}
+		
 		if (ecjia::config('review_goods')) {
 			$where['g.review_status'] = array('gt' => 2);
 		}
