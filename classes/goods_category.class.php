@@ -41,7 +41,7 @@ class goods_category {
      *        	分类查询字符串
      * @return string
      */
-    public static function get_extension_goods($cats) {
+    public static function get_extension_goods($cats, $field = 'g.goods_id') {
     	$db_goods_cat = RC_Loader::load_app_model('cat_viewmodel', 'goods');
     	$extension_goods_array = array();
     	$data = $db_goods_cat->field('goods_id')->where($cats)->select();
@@ -51,7 +51,7 @@ class goods_category {
 	    	}
     	}
     	
-    	return self::db_create_in ( $extension_goods_array, 'g.goods_id' );
+    	return self::db_create_in ( $extension_goods_array,  $field);
     }
     
 	/**
