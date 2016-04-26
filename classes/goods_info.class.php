@@ -103,7 +103,7 @@ class goods_info {
 		$goods = $dbview->field($field)->join('member_price')->find(array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
 		/* 计算商品的促销价格 */
 		if ($goods ['promote_price'] > 0) {
-			$promote_price = $this->bargain_price ($goods ['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
+			$promote_price = self::bargain_price ($goods ['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
 		} else {
 			$promote_price = 0;
 		}
