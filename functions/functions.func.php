@@ -458,7 +458,7 @@ function get_bookinglist() {
 	/* 查询条件 */
 	$filter['keywords']		= empty($args['keywords'])		? '' : trim($args['keywords']);
 	$filter['dispose']		= empty($args['dispose'])		? 0 : intval($args['dispose']);
-	$filter['sort_by']		= empty($args['sort_by'])		? 'sort_order' : trim($args['sort_by']);
+	$filter['sort_by']		= empty($args['sort_by'])		? 'g.sort_order' : trim($args['sort_by']);
 	$filter['sort_order']	= empty($args['sort_order'])	? 'DESC' : trim($args['sort_order']);
 	
 	$where = array();
@@ -489,7 +489,7 @@ function get_bookinglist() {
 		)
 	);
 
-	$row = $dbview->join('goods,merchants_shop_information')->where($where)->order(array($filter[sort_by] => $filter[sort_order]))->limit($page->limit())->select();
+	$row = $dbview->join('goods,merchants_shop_information')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
 
 	if (!empty($row)) {
 		foreach ($row AS $key => $val) {
