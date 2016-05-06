@@ -110,7 +110,7 @@ class detail_module implements ecjia_interface
         $data['collected']       = 0;
         
         $db_favourable = RC_Loader::load_app_model('favourable_activity_model', 'favourable');
-        $favourable_result = $db_favourable->where(array('start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
+        $favourable_result = $db_favourable->where(array('user_id' => array(0, $goods['user_id']), 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
         $favourable_list = array();
         if (empty($rec_type)) {
         	if (!empty($favourable_result)) {
