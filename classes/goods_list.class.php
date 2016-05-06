@@ -156,7 +156,7 @@ class goods_list {
 				$merchants_shop_information_db->where(array('user_id' => $ru_id))->select();
 				$where['g.user_id'] = $ru_id;
 			} else {
-				$where['g.user_id'] = 0;
+				$where['g.user_id'] = '';
 			}
 			
 			
