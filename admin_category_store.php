@@ -55,11 +55,11 @@ class admin_category_store extends ecjia_admin
 	{
 	    $this->admin_priv('cat_manage');
 
-        $cat_list = RC_Cache::userdata_getcache('cat_list', '00false0truetrue', true);
-        if (empty($cat_list)) {
+//         $cat_list = RC_Cache::userdata_getcache('cat_list', '00false0truetrue', true);
+//         if (empty($cat_list)) {
         	$cat_list = cat_list(0, 0, false, 0, true, true);
-            RC_Cache::userdata_setcache('cat_list', $cat_list, '00false0truetrue', true);
-        }
+//             RC_Cache::userdata_setcache('cat_list', $cat_list, '00false0truetrue', true);
+//         }
 
 		ecjia_screen::get_current_screen()->remove_last_nav_here();
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('店铺商品分类')));
