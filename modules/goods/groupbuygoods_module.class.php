@@ -13,6 +13,7 @@ class groupbuygoods_module implements ecjia_interface {
     	$groupwhere['act_type']		= GAT_GROUP_BUY;
     	$groupwhere['start_time']	= array('elt' => RC_Time::gmtime());
     	$groupwhere['end_time']		= array('egt' => RC_Time::gmtime());
+    	$groupwhere['is_finished'] 	= 0;
     	$groupwhere[] = 'g.goods_id is not null';
     	$groupwhere['g.is_on_sale'] = 1;
     	$groupwhere['g.is_alone_sale'] = 1;
