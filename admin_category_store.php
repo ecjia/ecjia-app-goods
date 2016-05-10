@@ -52,11 +52,11 @@ class admin_category_store extends ecjia_admin {
 	    $this->assign('ur_here', __('店铺商品分类'));
 	    ecjia_screen::get_current_screen()->remove_last_nav_here();
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('店铺商品分类')));
-	    
-//      $cat_list = RC_Cache::userdata_getcache('cat_list', '00false0truetrue', true);
+	 
+	    $cat_list = RC_Cache::app_cache_get('admin_category_store_list', 'goods');
         if (empty($cat_list)) {
         	$cat_list = cat_list(0, 0, false, 0, true, true);
-//          	RC_Cache::userdata_setcache('cat_list', $cat_list, '00false0truetrue', true);
+        	RC_Cache::app_cache_set('admin_category_store_list', $cat_list, 'goods');
         }
        
 		$this->assign('action_link1', array('href' => RC_Uri::url('goods/admin_category/move'), 'text' => RC_Lang::lang('move_goods')));
@@ -162,6 +162,7 @@ class admin_category_store extends ecjia_admin {
 
 			ecjia_admin::admin_log($_POST['cat_name'], 'add', 'category');   // 记录管理员操作
 
+			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			/*添加链接*/
 			$link[0]['text'] = RC_Lang::lang('back_list');
 			$link[0]['href'] = RC_Uri::url('goods/admin_category/init');
@@ -364,7 +365,8 @@ class admin_category_store extends ecjia_admin {
 			}
 			/* 更新首页推荐 */
 			insert_cat_recommend($cat['cat_recommend'], $cat_id);
-
+			
+			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			ecjia_admin::admin_log($_POST['cat_name'], 'edit', 'category');
 			$this->showmessage(RC_Lang::lang('catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('max_id' => $cat_id));
 		}
@@ -414,6 +416,7 @@ class admin_category_store extends ecjia_admin {
 		/*管理员记录日志*/
 		ecjia_admin::admin_log($old_cat_name.'下商品'.$goods_ids.'转移到'.$new_cat_name, 'edit', 'category');
 		if ($query) {
+			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			$this->showmessage(RC_Lang::lang('move_cat_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 		}
 	}
@@ -429,6 +432,7 @@ class admin_category_store extends ecjia_admin {
 		$id = intval($_POST['pk']);
 		$val = intval($_POST['value']);
 		if (cat_update($id, array('sort_order' => $val))) {
+			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			$this->showmessage('排序序号编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/init')));
 		} else {
 			$this->showmessage($this->db_category->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -447,6 +451,7 @@ class admin_category_store extends ecjia_admin {
 		$id = intval($_POST['pk']);
 		$val = $_POST['value'];
 		if (cat_update($id, array('measure_unit' => $val))) {
+			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			$this->showmessage('数量单位编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		} else {
 			$this->showmessage($this->db_category->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -470,6 +475,7 @@ class admin_category_store extends ecjia_admin {
 			$this->showmessage(RC_Lang::lang('grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		if (cat_update($id, array('grade' => $val))) {
+			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			$this->showmessage('价格分级编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('content' => $val));
 		} else {
 			$this->showmessage($this->db_category->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -490,6 +496,7 @@ class admin_category_store extends ecjia_admin {
 		$name = $this->db_category->where(array('cat_id' => $id))->get_field('cat_name');
 		
 		if (cat_update($id, array('is_show' => $val))) {
+			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			ecjia_admin::admin_log($name."切换显示状态", 'edit', 'category');
 			$this->showmessage('是否显示编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('content' => $val));
 		} else {
@@ -516,6 +523,7 @@ class admin_category_store extends ecjia_admin {
 			if ($query) {
 				$this->db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->delete();
 				ecjia_admin::admin_log($cat_name, 'remove', 'category');
+				RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 				$this->showmessage(__('删除商品分类成功'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 			}
 		} else {
