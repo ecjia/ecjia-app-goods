@@ -80,7 +80,7 @@
 							</select>&nbsp;&nbsp;
 							<select class="w150 show_goods_type" name="filter_attr[]" autocomplete="off">
 								<option value="0">{$lang.sel_filter_attr}</option>
-								{html_options options=$filter_attr.option selected=$filter_attr.filter_attr}
+								<!-- {html_options options=$filter_attr.option selected=$filter_attr.filter_attr} -->
 							</select>
 							<!-- {if $smarty.foreach.filter_attr_tab.index eq 0} -->
 							<a class="no-underline" data-toggle="clone-obj" data-parent=".goods_type" href="javascript:;"><i class="fontello-icon-plus"></i></a>
@@ -204,17 +204,20 @@
 									<!-- {if $smarty.foreach.foreach_credentials.first} -->
 									<div class="goods-span m_b5">
 										<input class="w260" type="text" name="document_title[]" size="8" value="{$credentials.dt_title}">
+										<input type="hidden" name="dt_id[]" value="{$credentials.dt_id}">
 										<a class="m_l5 l_h30 t_l no-underline" href="javascript:;" data-toggle="clone-category"><i class="fontello-icon-plus hide"></i></a>
 									</div>
 									<!-- {else} -->
 									<div class="goods-span m_b5">
 										<input class="w260" type="text" name="document_title[]" size="8" value="{$credentials.dt_title}">
+										<input type="hidden" name="dt_id[]" value="{$credentials.dt_id}">
 										<a class='m_l5 l_h30 t_l' href='javascript:;' data-trigger='toggleSpec'><i class='fontello-icon-cancel ecjiafc-red'></i></a>
 									</div>
 									<!-- {/if} -->
 									<!--  {foreachelse} -->
 									<div class="goods-span m_b5">
 										<input class="w260" type="text" name="document_title[]" size="8" value="">
+										<input type="hidden" name="dt_id[]">
 										<a class="m_l5 l_h30 t_l no-underline" href="javascript:;" data-toggle="clone-category" data-parent=".goods-span"><i class="fontello-icon-plus hide"></i></a>
 									</div>
 									<!-- {/foreach} -->
@@ -224,8 +227,6 @@
 						</div>
 					</div>
 				</div>
-
-
 			</div>
 		</div>
 	</fieldset>

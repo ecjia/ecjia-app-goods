@@ -56,31 +56,27 @@
 		edit_type_attr : function() {
 			var $this = $('form[name="theForm"]');
 			var option = {
-					rules:{
-						attr_name : {required : true},
-						cat_id : {min : 1},
-						},
-					messages:{
-						attr_name : {required : "请输入属性名称"},
-						cat_id : {min : "请选择所属商品类型"}
-						},
-					submitHandler:function() {
-						$this.ajaxSubmit({
-							dataType:"json",
-							success:function(data) {
-								ecjia.admin.showmessage(data);
-							}
-						});
-					}
+				rules:{
+					attr_name : {required : true},
+					cat_id : {min : 1},
+					},
+				messages:{
+					attr_name : {required : "请输入属性名称"},
+					cat_id : {min : "请选择所属商品类型"}
+					},
+				submitHandler:function() {
+					$this.ajaxSubmit({
+						dataType:"json",
+						success:function(data) {
+							ecjia.admin.showmessage(data);
+						}
+					});
+				}
 			}
-			
 			var options = $.extend(ecjia.admin.defaultOptions.validate, option);
 			$this.validate(options);
-
 		},
-
 	};
-	
 })(ecjia.admin, jQuery);
 
 // end

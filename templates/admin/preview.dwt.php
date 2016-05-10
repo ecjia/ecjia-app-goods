@@ -12,10 +12,10 @@
 	<h3 class="heading">
 		<!-- {if $ur_here}{$ur_here}{/if} -->
 		{if $action_link}
-		<a class="btn plus_or_reply data-pjax" href="{$action_link.href}" id="sticky_a" ><i class="fontello-icon-reply"></i>{$action_link.text}</a>
+		<a class="btn plus_or_reply data-pjax" href="{$action_link.href}{if $code}&extension_code={$code}{/if}" id="sticky_a" ><i class="fontello-icon-reply"></i>{$action_link.text}</a>
 		{/if}
 		{if $action_linkedit}
-		<a class="btn plus_or_reply data-pjax" href="{$action_linkedit.href}" id="sticky_a" ><i class="fontello-icon-edit"></i>{$action_linkedit.text}</a>
+		<a class="btn plus_or_reply data-pjax" href="{$action_linkedit.href}{if $code}&extension_code={$code}{/if}" id="sticky_a" ><i class="fontello-icon-edit"></i>{$action_linkedit.text}</a>
 		{/if}
 	</h3>	
 </div>
@@ -50,10 +50,8 @@
 				<!-- <p>{t}商品分类：{/t}{$cat_name}</p>
 				<p>{t}商品品牌：{/t}{$brand_name}</p> -->
 				<!-- <p>{t}简单描述：{/t}{$goods.goods_brief}</p> -->
-				
 			</div>
 		</div>
-		
 
 		<div class="foldable-list move-mod-group" id="goods_info_sort_submit">
 			<div class="accordion-group">

@@ -3,7 +3,7 @@
 
 <!-- {block name="footer"} -->
 <script type="text/javascript">
-ecjia.admin.goods_booking.init();
+	ecjia.admin.goods_booking.init();
 </script>
 <!-- {/block} -->
 
@@ -65,7 +65,7 @@ ecjia.admin.goods_booking.init();
 				<!-- {/foreach} -->
 			</tbody>
 		</table>
-		<!--   {$booking_list.page} -->
+		<!-- {$booking_list.page} -->
 	</div>
 </div>
 <!-- {/block} -->

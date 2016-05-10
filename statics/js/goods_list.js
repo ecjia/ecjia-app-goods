@@ -293,12 +293,6 @@
 					//cat_id : {required :"请选择商品分类！"}
 				},
 				submitHandler:function() {
-//					var textinfo = tinyMCE.get('goods_desc').getContent();
-//					$('#goods_desc').css({'display' : 'block', 'height' : '0px', 'padding' : '0px', 'opacity' : 0}).val(textinfo);
-//					$this.bind('form-pre-serialize', function(event, form, options, veto) {
-//						(typeof(tinyMCE) != "undefined") && tinyMCE.triggerSave();
-//					});
-					
 					$this.ajaxSubmit({
 						dataType:"json",
 						success:function(data) {
@@ -467,10 +461,10 @@
 			// $("select").not(".noselect").chosen();
 			$('[data-trigger="toggleSpec"]').on('click', function(){
 				var $this = $(this);
-				var $parent = $this.parents('.controls');
-				if($this.find('i').hasClass('fontello-icon-minus')){
+				var $parent = $this.parents('.control-group');
+				if ($this.find('i').hasClass('fontello-icon-minus')){
 					$parent.remove();
-				}else{
+				} else {
 					var info = $parent.clone(true);
 					info.find('.fontello-icon-plus').attr('class','fontello-icon-minus');
 					$parent.after(info);
@@ -1018,15 +1012,7 @@
 				height 			: 150,
 				postKey			: "img_url",
 				successaa_upload: function(data) {
-					// $('.goods-photo-list').removeClass('hide');
-					// var remove = $(".fileupload").attr('data-remove');
-					// if(data.state == 'success') {
-					// 	var $li = $('<li class="thumbnail move-mod-group"><a class="bd" href="' + data.upload_url + '/' + data.img_url + '" title="' + data.img_desc + '"><img data-original="' + data.upload_url + '/' + data.img_original + '" src="' + data.upload_url + '/' + data.img_url + '" alt="" /></a><p><a class="ajaxremove" data-imgid="' + data.img_id + '" data-toggle="ajaxremove" data-msg="您确定要删除这张相册图片吗？" href="' + remove + '&img_id=' + data.img_id + '" title="删除图片"><i class="icon-trash"></i></a><a class="move-mod-head" href="javascript:void(0)" title="Move"><i class="icon-move"></i></a><a href="javascript:;" title="Edit" data-toggle="edit"><i class="icon-pencil"></i></a><span class="edit_title">' + data.img_desc + '</span></p></li>');
-					// 	$('.wookmark-goods-photo').append($li);
-					// 	app.goods_photo.loaded_img();
-					// } else {
-						ecjia.admin.showmessage(data);
-					// }
+					ecjia.admin.showmessage(data);
 				}
 			});
 			
@@ -1218,9 +1204,7 @@
 				$form.attr('action', $form.attr('data-inserturl'));
 			});
 		}
-
 	};
-
 })(ecjia.admin, jQuery);
 
 // end

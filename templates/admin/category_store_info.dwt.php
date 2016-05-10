@@ -80,7 +80,7 @@
 							</select>&nbsp;&nbsp;
 							<select class="w150 show_goods_type" name="filter_attr[]" autocomplete="off">
 								<option value="0">{$lang.sel_filter_attr}</option>
-								{html_options options=$filter_attr.option selected=$filter_attr.filter_attr}
+								<!-- {html_options options=$filter_attr.option selected=$filter_attr.filter_attr} -->
 							</select>
 							<!-- {if $smarty.foreach.filter_attr_tab.index eq 0} -->
 							<a class="no-underline" data-toggle="clone-obj" data-parent=".goods_type" href="javascript:;"><i class="fontello-icon-plus"></i></a>
@@ -188,8 +188,6 @@
 						</div>
 					</div>
 				</div>
-
-
 			</div>
 		</div>
 	</fieldset>

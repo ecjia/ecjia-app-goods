@@ -12,7 +12,7 @@
     <h3 class="heading">
         <!-- {if $ur_here}{$ur_here}{/if} -->
         <!-- {if $action_link} -->
-        <a class="btn plus_or_reply data-pjax" href="{$action_link.href}" id="sticky_a"><i class="fontello-icon-reply"></i>{$action_link.text}</a>
+        <a class="btn plus_or_reply data-pjax" href="{$action_link.href}{if $code}&extension_code={$code}{/if}" id="sticky_a"><i class="fontello-icon-reply"></i>{$action_link.text}</a>
         <!-- {/if} -->
     </h3>
 </div>
@@ -23,11 +23,11 @@
         <div class="tabbable">
             <ul class="nav nav-tabs">
                 <!-- {foreach from=$tags item=tag} -->
-                <li{if $tag.active} class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
+                <li {if $tag.active}class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
                 <!-- {/foreach} -->
             </ul>
 
-            <form class="form-horizontal" action="{$form_action}" method="post" enctype="multipart/form-data" name="theForm">
+            <form class="form-horizontal" action="{$form_action}{if $code}&extension_code={$code}{/if}" method="post" enctype="multipart/form-data" name="theForm">
                 <div class="row-fluid">
                     <div class="control-group formSep">
                         <table>
@@ -45,14 +45,11 @@
                                 <!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
                                 <td>
                                     <select name="attr[{$attribute_value.attr_id}][]">
-                                        <option value="" selected>{$lang.select_please}</option>
-
+                                    	<option value="" selected>{$lang.select_please}</option>
                                         <!-- {foreach from=$attribute_value.attr_values item=value} -->
-                                            <option value="{$value}"
-                                            <!-- {foreach $product.goods_attr item=goods_attr} -->
-                                                <!-- {if $goods_attr eq $value} --> selected="selected"<!-- {/if} -->
-                                            <!-- {/foreach} -->
-                                            >{$value}</option>
+                                          	<!-- {foreach $product.goods_attr item=goods_attr} -->
+                                            <option value="{$value}"{if $goods_attr eq $value}selected="selected"{/if}>{$value}</option>
+                                        	<!-- {/foreach} -->
                                         <!-- {/foreach} -->
                                     </select>
                                 </td>
@@ -93,14 +90,7 @@
                     </div>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
-
-
-
-
 <!-- {/block} -->
-
-

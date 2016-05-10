@@ -6,8 +6,6 @@
  *
  */
 class goods_category {
-    
-	
 	/**
 	 * 获得商品分类的所有信息
 	 *
@@ -41,7 +39,7 @@ class goods_category {
      *        	分类查询字符串
      * @return string
      */
-    public static function get_extension_goods($cats, $field = 'g.goods_id') {
+    public static function get_extension_goods($cats) {
     	$db_goods_cat = RC_Loader::load_app_model('cat_viewmodel', 'goods');
     	$extension_goods_array = array();
     	$data = $db_goods_cat->field('goods_id')->where($cats)->select();
@@ -51,7 +49,7 @@ class goods_category {
 	    	}
     	}
     	
-    	return self::db_create_in ( $extension_goods_array,  $field);
+    	return self::db_create_in ( $extension_goods_array, 'g.goods_id' );
     }
     
 	/**
@@ -210,78 +208,6 @@ class goods_category {
     		}
     		return $options;
     	}
-    }
-    
-    /**
-     * 获得指定分类同级的所有分类以及该分类下的子分类
-     *
-     * @access public
-     * @param integer $cat_id
-     *        	分类编号
-     * @return array
-     */
-   public static function get_categories_tree($cat_id = 0) {
-    	$db_category = RC_Loader::load_app_model ('category_model', 'goods');
-    
-    	if ($cat_id > 0) {
-    		$parent = $db_category->where(array('cat_id' => $cat_id))->get_field('parent_id');
-    		$parent_id = $parent ['parent_id'];
-    	} else {
-    		$parent_id = 0;
-    	}
-    
-    	/**
-    	 * 判断当前分类中全是是否是底级分类，
-    	 * 如果是取出底级分类上级分类，
-    	 * 如果不是取当前分类及其下的子分类
-    	 */
-    
-    	$count = $db_category->where(array('parent_id' => $parent_id, 'is_show' => 1))->count();
-    	if ($count || $parent_id == 0) {
-    		/* 获取当前分类及其子分类 */
-    		$res = $db_category->field('cat_id, cat_name, parent_id, style, is_show')->where(array('parent_id' => $parent_id, 'is_show' => 1))->order( array ('sort_order'=> 'asc', 'cat_id'=> 'asc'))->select();
-    		foreach ( $res as $row ) {
-    			if ($row ['is_show']) {
-    				$cat_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
-    				$cat_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-    				$cat_arr [$row ['cat_id']] ['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
-//     				$cat_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array ('cid' => $row ['cat_id']), $row ['cat_name'] );
-    
-    				if (isset ( $row ['cat_id'] ) != NULL) {
-    					$cat_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
-    				}
-    			}
-    		}
-    	}
-    	if (isset ( $cat_arr )) {
-    		return $cat_arr;
-    	}
-    }
-    
-    private static function get_child_tree($tree_id = 0) {
-    	$db_category = RC_Loader::load_app_model('category_model', 'goods');
-    	$three_arr = array ();
-    
-    	$count = $db_category->where(array('parent_id' => $tree_id, 'is_show' => 1))->count();
-    	if ($count > 0 || $tree_id == 0) {
-    
-    		$res = $db_category->field('cat_id, cat_name, parent_id, is_show, style')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
-    
-    		foreach ( $res as $row ) {
-    			if ($row ['is_show']) {
-    				$three_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
-    				$three_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-	//     			$three_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array (
-	//     					'cid' => $row ['cat_id']
-	//     			), $row ['cat_name'] );
-	    			if (isset ( $row ['cat_id'] ) != NULL) {
-	    				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
-	    			}
-	    			$three_arr [$row['cat_id']]['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
-    			}
-    		}
-    	}
-    	return $three_arr;
     }
     
     /**
@@ -444,7 +370,6 @@ class goods_category {
     		return $spec_cat_id_array;
     	}
     }
-    	
 }
 
 // end

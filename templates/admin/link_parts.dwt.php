@@ -11,7 +11,7 @@
 <div>
 	<h3 class="heading"> 
 		<!-- {if $ur_here}{$ur_here}{/if} --> 
-		{if $action_link} <a href="{$action_link.href}" class="btn plus_or_reply data-pjax" id="sticky_a">
+		{if $action_link} <a href="{$action_link.href}{if $code}&extension_code={$code}{/if}" class="btn plus_or_reply data-pjax" id="sticky_a">
 		<i class="fontello-icon-reply"></i>{$action_link.text}</a> {/if}
 	</h3>
 </div>
@@ -20,11 +20,11 @@
 		<div class="tabbable">
 			<ul class="nav nav-tabs">
 				<!-- {foreach from=$tags item=tag} -->
-				<li{if $tag.active} class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
+				<li {if $tag.active}class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
 				<!-- {/foreach} -->
 			</ul>
 			
-			<form class="form-horizontal" action='{url path="goods/admin/add_link_parts" args="goods_id={$smarty.get.goods_id}"}' method="post" name="theForm" >
+			<form class="form-horizontal" action='{url path="goods/admin/add_link_parts" args="goods_id={$smarty.get.goods_id}{if $code}&extension_code={$code}{/if}"}' method="post" name="theForm" >
 				<div class="tab-content">
 					<fieldset>
 						<div class="control-group choose_list span12" data-url="{url path='goods/admin/get_goods_list'}">

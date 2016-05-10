@@ -12,9 +12,8 @@
 		<!-- {/if} -->
 	</h3>
 </div>
-<!-- start ad position list -->
 <div class="row-fluid">
-	<table class="table table-striped"  id="list-table">
+	<table class="table table-striped" id="list-table">
 		<thead>
 			<tr>
 				<th>{$lang.cat_name}</th>
@@ -27,7 +26,7 @@
 				<th class="w80">{$lang.handler}</th>
 			</tr>
 		</thead>
-		{$cat_info}
+		<!-- {$cat_info} -->
 	</table>
 </div>
 <!-- {/block} -->

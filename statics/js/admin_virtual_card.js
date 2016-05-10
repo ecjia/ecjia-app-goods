@@ -32,10 +32,7 @@
 			var options = $.extend(ecjia.admin.defaultOptions.validate, option);
 			$this.validate(options);
 		},
-		
 	};
-
 })(ecjia.admin, jQuery);
-
 
 // end

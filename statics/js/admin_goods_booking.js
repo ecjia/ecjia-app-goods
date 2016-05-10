@@ -53,8 +53,6 @@
 			});
 		}
 	};
-
-		
 })(ecjia.admin, jQuery);
 
 

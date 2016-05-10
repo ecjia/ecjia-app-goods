@@ -21,7 +21,7 @@
 		<div class="tabbable">
 			<ul class="nav nav-tabs">
 				<li class="tab active"><a href="#tab1">{t}批量补货{/t}</a></li>
-				<li class="tab"><a class="data-pjax" href="{RC_Uri::url('goods/admin_virtual_card/batch_card_add',"goods_id={$goods_id}")}">{t}批量上传{/t}</a></li>
+				<li class="tab"><a class="data-pjax" href='{RC_Uri::url("goods/admin_virtual_card/batch_card_add", "goods_id={$goods_id}")}'>{t}批量上传{/t}</a></li>
 			</ul>
 		</div>
 		<div class="tab-content">
@@ -73,9 +73,11 @@
 							{/if}
 							<div class="m_t10">
 								<button class="btn btn-gebo" type="submit">{$lang.button_submit}</button>
-								<input type="hidden" name="goods_id" value="{$smarty.get.goods_id}" />
-								<input type="hidden" name="old_card_sn" value="{$smarty.get.card_sn}" />
-								<input type="hidden" name="card_id" value="{$smarty.get.card_id}" />
+								<input type="hidden" name="goods_id" value="{$goods_id}" />
+								<input type="hidden" name="old_card_sn" value="{$card.card_sn}" />
+								<!-- {if $card.card_id} -->
+								<input type="hidden" name="card_id" value="{$card.card_id}" />
+								<!-- {/if} -->
 								<input type="hidden" name="batch" value="{$smarty.get.batch}" />
 							</div>
 						</form>

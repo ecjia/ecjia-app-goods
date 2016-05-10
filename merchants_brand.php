@@ -3,15 +3,12 @@
  *  ECJIA 管理中心品牌管理
  */
 defined('IN_ECJIA') or exit('No permission resources.');
-RC_Loader::load_sys_class('ecjia_admin', false);
 
-class merchants_brand extends ecjia_admin 
-{
+class merchants_brand extends ecjia_admin {
 	private $db_brand;
 	private $db_goods;
 	private $db_merchants_brand;
-	public function __construct() 
-	{
+	public function __construct() {
 		parent::__construct();
 		RC_Lang::load('brand');
 
@@ -27,6 +24,7 @@ class merchants_brand extends ecjia_admin
 		RC_Loader::load_app_func('common');
 		RC_Loader::load_app_func('functions');
 		assign_adminlog_content();
+		
 		$this->db_brand = RC_Loader::load_app_model('brand_model','goods');
 		$this->db_merchants_brand = RC_Loader::load_app_model('merchants_shop_brand_model','seller');
 		$this->db_goods = RC_Loader::load_app_model('goods_model','goods');
@@ -35,16 +33,15 @@ class merchants_brand extends ecjia_admin
 	/**
 	 * 品牌列表
 	 */
-	public function init() 
-	{
+	public function init() {
 	    $this->admin_priv('merchants_brand');
 		RC_Script::enqueue_script('bootstrap-editable-script', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/js/bootstrap-editable.min.js', array(), false, true);
 		RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css');
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商家品牌')));
 		
-		$this->assign('ur_here',      '商家品牌');
+		$this->assign('ur_here', '商家品牌');
 		$brand_list = get_merchants_brandlist();
-		$this->assign('brand_list',   $brand_list);
+		$this->assign('brand_list', $brand_list);
 		
 		$this->assign_lang();
 		$this->display('merchants_brand_list.dwt');
@@ -53,9 +50,11 @@ class merchants_brand extends ecjia_admin
 	/**
 	 * 编辑品牌
 	 */
-	public function edit() 
-	{
+	public function edit() {
 	    $this->admin_priv('merchants_brand');
+	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商家品牌') , RC_Uri::url('goods/merchants_brand/init')));
+	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑商家品牌')));
+	    
 		$brand_id =  intval($_GET['id']);
 		/* 取得品牌数据 */
 		$brand_arr = $this->db_merchants_brand->field('bid, brandName, site_url, brandLogo, brand_desc, is_show, sort_order')->find(array('bid' => $_REQUEST['id']));
@@ -71,29 +70,25 @@ class merchants_brand extends ecjia_admin
 		} else {
 			$brand_arr['type']	= 0;
 		}
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商家品牌') , RC_Uri::url('goods/merchants_brand/init')));
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑商家品牌')));
-		$this->assign('ur_here',     RC_Lang::lang('brand_edit'));
-		$this->assign('action_link', array('text' => '返回商家品牌', 'href' => RC_Uri::url('goods/merchants_brand/init')));
-		$this->assign('brand',       $brand_arr);
-		$this->assign('form_action', RC_Uri::url('goods/merchants_brand/update&id='.$brand_arr['bid']));
 		
+		$this->assign('ur_here', RC_Lang::lang('brand_edit'));
+		$this->assign('action_link', array('text' => '返回商家品牌', 'href' => RC_Uri::url('goods/merchants_brand/init')));
+		$this->assign('brand', $brand_arr);
+		$this->assign('form_action', RC_Uri::url('goods/merchants_brand/update&id='.$brand_arr['bid']));
 		$this->assign_lang();
+		
 		$this->display('merchants_brand_info.dwt');
 	}
 	
 	/**
 	 * 编辑品牌处理
 	 */
-	public function update() 
-	{
+	public function update() {
 	    $this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 	    
-	    /* 对编辑品牌处理进行权限检查  BY：MaLiuWei  START */
 	    if (!empty($_SESSION['ru_id'])) {
 	    	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	    }
-	    /* 对编辑品牌处理进行权限检查  BY：MaLiuWei  END */
 		$id= !empty($_GET['id']) ? intval($_GET['id']) : 0;
 		$is_show = isset($_REQUEST['is_show']) ? intval($_REQUEST['is_show']) : 0;
 		/*处理URL*/
@@ -110,8 +105,7 @@ class merchants_brand extends ecjia_admin
 			/* 如果要修改链接图片, 删除原来的图片 */
 			if (!empty($info)) {
 				if ((strpos($old_logo, 'http://') === false) && (strpos($old_logo, 'https://') === false)) {
-					$img_name = $old_logo;
-					@unlink(RC_Upload::upload_path() . $img_name);		
+					$upload->remove($old_logo);
 				}
 				/* 获取新上传的LOGO的链接地址 */
 				$brand_logo = $info['savepath'] . '/' . $info['savename'];
@@ -140,37 +134,32 @@ class merchants_brand extends ecjia_admin
 			'is_show' 		=> intval($is_show),
 			'brandLogo' 	=> $brand_logo,
 			'sort_order' 	=> intval($_POST[sort_order]),
-			);
-		if ($this->db_merchants_brand->where(array('bid' => $id))->update($data))
-		{
+		);
+		if ($this->db_merchants_brand->where(array('bid' => $id))->update($data)) {
 			ecjia_admin::admin_log($_POST['brandName'], 'edit', 'brand');
 			
 			$link[0]['text'] = RC_Lang::lang('back_list');
-
 			$link[0]['href'] = RC_Uri::url('goods/merchants_brand/init');
 			$note = vsprintf(RC_Lang::lang('brandedit_succed'), $_POST['brand_name']);
 
-			$this->showmessage($note,ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('links' => $link,'max_id' => $id));
-		}else {
-			$this->showmessage($this->db_brand->error(),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			$this->showmessage($note, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'max_id' => $id));
+		} else {
+			$this->showmessage($this->db_brand->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
     }
 
 	/**
 	 * 编辑品牌名称
 	 */
-	public function edit_brand_name() 
-	{
+	public function edit_brand_name() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 
-		/* 对编辑品牌名称进行权限检查  BY：MaLiuWei  START */
 		if (!empty($_SESSION['ru_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		/* 对编辑品牌名称进行权限检查  BY：MaLiuWei  END */
 		$id     = intval($_POST['pk']);
 		$name   = trim($_POST['value']);
-		if(empty($name)){
+		if (empty($name)) {
 		    $this->showmessage('品牌名称不能为空', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		if ($this->db_merchants_brand->where(array('bid' => $id))->update(array('brandName' => $name))) {
@@ -184,18 +173,15 @@ class merchants_brand extends ecjia_admin
 	/**
 	 * 编辑排序序号
 	 */
-	public function edit_sort_order() 
-	{
+	public function edit_sort_order() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 
-		/* 对编辑排序序号进行权限检查  BY：MaLiuWei  START */
 		if (!empty($_SESSION['ru_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		/* 对编辑排序序号进行权限检查  BY：MaLiuWei  END */
 		$id     = intval($_POST['pk']);
 		$order  = intval($_POST['value']);
-		if(empty($order)){
+		if (empty($order)){
 		    $this->showmessage(__('排序不能为空'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$name   = $this->db_merchants_brand->where(array('bid' => $id))->get_field('brandName');
@@ -210,44 +196,40 @@ class merchants_brand extends ecjia_admin
 	/**
 	 * 切换是否显示
 	 */
-	public function toggle_show() 
-	{
+	public function toggle_show() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 		
-		/* 对切换是否显示进行权限检查  BY：MaLiuWei  START */
 		if (!empty($_SESSION['ru_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		/* 对切换是否显示进行权限检查  BY：MaLiuWei  END */
-		if(empty($_SESSION['ru_id'])){
+		if (empty($_SESSION['ru_id'])) {
 			$id     = intval($_POST['id']);
 			$val    = intval($_POST['val']);
 			$data = array('is_show' => $val);
+			
 			$this->db_merchants_brand->where(array('bid' => $id))->update($data);
 			$name = $this->db_merchants_brand->where(array('bid' => $id))->get_field('brandName');
-			/* 记录日志 */
+		
 			ecjia_admin::admin_log($name.'切换显示状态', 'edit', 'merchant_brand');
 		}
-		$this->showmessage('成功切换显示状态',ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('content' => $val));
+		$this->showmessage('成功切换显示状态', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 	}
 	
 	/**
 	 * 删除品牌
 	 */
-	public function remove() 
-	{
+	public function remove() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 		
-		/* 对删除品牌进行权限检查  BY：MaLiuWei  START */
 		if (!empty($_SESSION['ru_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		/* 对删除品牌进行权限检查  BY：MaLiuWei  END */
 		$id = intval($_GET['id']);
 		/* 删除该品牌的图标 */
 		$logo_name = $this->db_merchants_brand->where(array('bid' => $id))->get_field('brandLogo');
 		if (!empty($logo_name)) {
-			@unlink(DATA_DIR . '/../uploads/data/brandlogo/' .$logo_name);
+			$disk = RC_Filesystem::disk();
+			$disk->delete(RC_Upload::upload_path() . $logo_name);
 		}
 		$this->db_merchants_brand->where(array('bid' => $id))->delete();
 		$name = $this->db_merchants_brand->where(array('bid' => $id))->get_field('brandName');
@@ -257,30 +239,29 @@ class merchants_brand extends ecjia_admin
 		/* 更新商品的品牌编号 */
 		$data = array('brand_id' => '0');
 		$this->db_goods->where(array('brand_id' => $id))->update($data);
-		$this->showmessage(RC_Lang::lang('drop_success') , ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		$this->showmessage(RC_Lang::lang('drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 	
 	/**
 	 * 删除品牌图片
 	 */
-	public function drop_logo()	
-	{
+	public function drop_logo()	{
 	    $this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 	    
-	    /* 对删除品牌图片进行权限检查  BY：MaLiuWei  START */
 	    if (!empty($_SESSION['ru_id'])) {
 	    	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	    }
-	    /* 对删除品牌图片进行权限检查  BY：MaLiuWei  END */
 		$brand_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 		$logo_name = $this->db_brand->where(array('brand_id' => $brand_id))->get_field('brand_logo');
 		if (!empty($logo_name)) {
-			@unlink(DATA_DIR . '/../uploads/data/brandlogo/' .$logo_name);
+			$disk = RC_Filesystem::disk();
+			$disk->delete(RC_Upload::upload_path() . $logo_name);
+			
 			$data = array('brand_logo' => '');
 			$this->db_brand->where(array('brand_id' => $brand_id))->update($data);
 		}
 		$link= array(array('text' => RC_Lang::lang('brand_edit_lnk'), 'href' => RC_Uri::url('goods/merchants_brand/edit', 'id='.$brand_id)), array('text' => RC_Lang::lang('brand_list_lnk'), 'href' => RC_Uri::url('goods/merchants_brand/init')));
-		$this->showmessage(RC_Lang::lang('drop_brand_logo_success'),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('links' => $link));
+		$this->showmessage(RC_Lang::lang('drop_brand_logo_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link));
 	}
 }
 

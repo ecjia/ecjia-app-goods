@@ -8,11 +8,14 @@
 		search : function() {
 			$('form[name="searchForm"]').on('submit', function(e) {
 				e.preventDefault();
-				var $this 		= $(this),
-					url 		= $this.attr('action') + $this.find('[name="brand_name"]').val();
+				var $this 		= $(this);
+				var	url 		= $this.attr('action');
+				var keywords 	= $this.find('[name="keywords"]').val();
+				if (keywords) {
+					url += '&keywords=' + keywords;
+				}
 				ecjia.pjax(url);
 			});
-
 		}
 	};
 	

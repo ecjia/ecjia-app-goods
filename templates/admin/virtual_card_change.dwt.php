@@ -25,27 +25,27 @@
 <div class="row-fluid">
 	<div class="span12">
 		<form id="form-privilege" class="form-horizontal" name="card_Form" action="{$form_action}" method="post">
-		<fieldset>
-			<div class="control-group">
-				<label class="control-label">{$lang.label_old_string}</label>
-				<div class="controls">
-					<input name="old_key" type="text" class="w355" />
-					<span class="input-must">{$lang.require_field}</span>
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">{$lang.label_old_string}</label>
+					<div class="controls">
+						<input name="old_key" type="text" class="w355" />
+						<span class="input-must">{$lang.require_field}</span>
+					</div>
 				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{$lang.label_new_string}</label>
-				<div class="controls">
-					<input name="new_key" type="text" class="w355" />
-					<span class="input-must">{$lang.require_field}</span>
+				<div class="control-group">
+					<label class="control-label">{$lang.label_new_string}</label>
+					<div class="controls">
+						<input name="new_key" type="text" class="w355" />
+						<span class="input-must">{$lang.require_field}</span>
+					</div>
 				</div>
-			</div>
-			<div class="control-group">
-				<div class="controls">
-					<button class="btn btn-gebo" type="submit">{$lang.button_submit}</button>
+				<div class="control-group">
+					<div class="controls">
+						<button class="btn btn-gebo" type="submit">{$lang.button_submit}</button>
+					</div>
 				</div>
-			</div>
-		</fieldset>
+			</fieldset>
 		</form>
 	</div>
 </div>

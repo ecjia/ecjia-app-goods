@@ -74,9 +74,8 @@
 							<td valign="top"><span>{$attr.attr_values}</span></td>
 							<td align="right" nowrap="true" valign="top"><span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin_attribute/edit_sort_order')}" data-name="edit_sort_order" data-pjax-url='{url path="goods/admin_attribute/init" args="cat_id={$smarty.get.cat_id}"}' data-pk="{$attr.attr_id}" data-title="请输入排序号">{$attr.sort_order}</span></td>
 							<td align="center" nowrap="true" valign="top">
-								{assign var=edit_url value=RC_Uri::url('goods/admin_attribute/edit',"attr_id={$attr.attr_id}")}
-								<a class="data-pjax" href="{$edit_url}" title="{$lang.edit}"><i class="fontello-icon-edit"></i></a>
-								<a class="ajaxremove" data-toggle="ajaxremove" data-msg="{t}您确定要删除属性[{$attr.attr_name}]至回收站吗？{/t}" href="{RC_Uri::url('goods/admin_attribute/remove',"id={$attr.attr_id}")}" title="{t}移除{/t}"><i class="fontello-icon-trash"></i></a>
+								<a class="data-pjax" href='{RC_Uri::url("goods/admin_attribute/edit", "attr_id={$attr.attr_id}")}' title="{$lang.edit}"><i class="fontello-icon-edit"></i></a>
+								<a class="ajaxremove" data-toggle="ajaxremove" data-msg="{t}您确定要删除属性[{$attr.attr_name}]至回收站吗？{/t}" href='{RC_Uri::url("goods/admin_attribute/remove", "id={$attr.attr_id}")}' title="{t}移除{/t}"><i class="fontello-icon-trash"></i></a>
 							</td>
 						</tr>
 						<!-- {foreachelse} -->
@@ -84,9 +83,9 @@
 						<!-- {/foreach} -->
 					</tbody>
 				</table>
+				<!-- {$attr_list.page} -->
 			</div>
 		</form>
 	</div>
 </div>
-<!-- {$attr_list.page} -->
 <!-- {/block} -->

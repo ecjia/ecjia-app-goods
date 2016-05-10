@@ -77,12 +77,12 @@ function get_brand_list() {
 	
  	$children[] = ($cat > 0) ? get_children ( $cat ) : '';
 	$db->view = array (
-			'goods' => array(
-				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias' => 'g',
-				'field' => "b.brand_id, b.brand_name, b.brand_logo, b.brand_desc, COUNT(*) AS goods_num, IF(b.brand_logo > '', '1', '0') AS tag ",
-				'on'   	=> 'g.brand_id = b.brand_id'
-			),	
+		'goods' => array(
+			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias' => 'g',
+			'field' => "b.brand_id, b.brand_name, b.brand_logo, b.brand_desc, COUNT(*) AS goods_num, IF(b.brand_logo > '', '1', '0') AS tag ",
+			'on'   	=> 'g.brand_id = b.brand_id'
+		),	
 	);
 	$where['is_show'] = 1;
 	$where['g.is_on_sale'] = 1;
@@ -106,10 +106,6 @@ function get_brand_list() {
  		}
  	}
  	return $row;
- 	
- 	// 	global $page_libs;
- 	//  	$sql = "SELECT b.brand_id, b.brand_name, b.brand_logo, b.brand_desc, COUNT(*) AS goods_num, IF(b.brand_logo > '', '1', '0') AS tag " . "FROM ecs_brand AS b, " . "ecs_goods AS g " . "WHERE g.brand_id = b.brand_id $children AND is_show = 1 " . " AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 " . "GROUP BY b.brand_id HAVING goods_num > 0 ORDER BY tag DESC, b.sort_order ASC";
- 	// 	include_once (ROOT_PATH . ADMIN_PATH . '/includes/lib_template.php'); 	
  }
 
 
@@ -142,14 +138,14 @@ function log_account_change($user_id, $user_money = 0, $frozen_money = 0, $rank_
 	$db_users = RC_Loader::load_app_model ( "users_model", "user" );
 	/* 插入帐户变动记录 */
 	$account_log = array (
-			'user_id'		=> $user_id,
-			'user_money'	=> $user_money,
-			'frozen_money'	=> $frozen_money,
-			'rank_points'	=> $rank_points,
-			'pay_points'	=> $pay_points,
-			'change_time'	=> RC_Time::gmtime(),
-			'change_desc'	=> $change_desc,
-			'change_type'	=> $change_type 
+		'user_id'		=> $user_id,
+		'user_money'	=> $user_money,
+		'frozen_money'	=> $frozen_money,
+		'rank_points'	=> $rank_points,
+		'pay_points'	=> $pay_points,
+		'change_time'	=> RC_Time::gmtime(),
+		'change_desc'	=> $change_desc,
+		'change_type'	=> $change_type 
 	);
 	$db_account_log->insert ( $account_log );
 	
@@ -192,7 +188,6 @@ function get_image_path($goods_id, $image = '', $thumb = false, $call = 'goods',
 	} else {
 		$url = RC_Upload::upload_url() . '/' . $image;
 	}
-//     $url = empty($image) ?  RC_Config::system('CUSTOM_UPLOAD_SITE_URL').ecjia::config('no_picture') : RC_Config::system('CUSTOM_UPLOAD_SITE_URL') . '/' . $image;
     return $url;   
 }
 // TODO TODO TODO TODO
@@ -260,9 +255,6 @@ function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
     }
     return $return_arr;
 }
-
-
-
 
 /**
  * 虚拟卡发货
@@ -661,21 +653,21 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
     		"IFNULL(mp.user_price, IF(g.model_price < 1, g.shop_price, IF(g.model_price < 2, wg.warehouse_price, wag.region_price)) * '$_SESSION[discount]') AS shop_price ";
     /* 取得商品信息 */
     $dbview->view = array(
-    		'warehouse_goods' => array(
-    				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-    				'alias' => 'wg',
-    				'on'   	=> "g.goods_id = wg.goods_id and wg.region_id = '$warehouse_id'"
-    		),
-    		'warehouse_area_goods' => array(
-    				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-    				'alias' => 'wag',
-    				'on'   	=> "g.goods_id = wag.goods_id and wag.region_id = '$area_id'"
-    		),
-    		'member_price' => array(
-    				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-    				'alias' => 'mp',
-    				'on'   	=> "mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]'"
-    		)
+    	'warehouse_goods' => array(
+    		'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+    		'alias' => 'wg',
+    		'on'   	=> "g.goods_id = wg.goods_id and wg.region_id = '$warehouse_id'"
+    	),
+    	'warehouse_area_goods' => array(
+    		'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+    		'alias' => 'wag',
+    		'on'   	=> "g.goods_id = wag.goods_id and wag.region_id = '$area_id'"
+    	),
+    	'member_price' => array(
+    		'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+    		'alias' => 'mp',
+    		'on'   	=> "mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]'"
+    	)
     );
     // 取得商品促销价格列表
     $goods = $dbview->field($field)->join (array('warehouse_goods', 'warehouse_area_goods', 'member_price'))->find (array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
@@ -709,10 +701,10 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
     $mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
     $mobilebuy_ext_info = array();
     $mobilebuy = $mobilebuy_db->find(array(
-    		'goods_id'	 => $goods_id,
-    		'start_time' => array('elt' => RC_Time::gmtime()),
-    		'end_time'	 => array('egt' => RC_Time::gmtime()),
-    		'act_type'	 => GAT_MOBILE_BUY,
+    	'goods_id'	 => $goods_id,
+    	'start_time' => array('elt' => RC_Time::gmtime()),
+    	'end_time'	 => array('egt' => RC_Time::gmtime()),
+    	'act_type'	 => GAT_MOBILE_BUY,
     ));
     if (!empty($mobilebuy)) {
     	$mobilebuy_ext_info = unserialize($mobilebuy['ext_info']);
@@ -728,7 +720,6 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
             $final_price += $spec_price;
         }
     }
-
     // 返回商品最终购买价格
     return $final_price;
 }
@@ -1216,17 +1207,17 @@ function get_specifications_list($goods_id, $conditions = '') {
 
 
 /*返回商品详情页面的导航条数组*/
-function get_goods_info_nav($goods_id=0) {
+function get_goods_info_nav($goods_id=0, $extension_code='') {
     return array(
-        'edit'                  => array('name' => _('通用信息'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit', "goods_id=$goods_id")),
-        'edit_goods_desc'       => array('name' => _('商品描述'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_goods_desc', "goods_id=$goods_id")),
-        'edit_goods_attr'       => array('name' => _('商品属性'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_goods_attr', "goods_id=$goods_id")),
-        'edit_goods_photo'      => array('name' => _('商品相册'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin_gallery/init', "goods_id=$goods_id")),
-        'edit_link_goods'       => array('name' => _('关联商品'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_goods', "goods_id=$goods_id")),
-        'edit_link_parts'       => array('name' => _('关联配件'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_parts', "goods_id=$goods_id")),
-        'edit_link_article'     => array('name' => _('关联文章'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_article', "goods_id=$goods_id")),
-        'edit_link_area'        => array('name' => _('关联地区'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_area', "goods_id=$goods_id")),
-        'product_list'          => array('name' => _('货品管理'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/product_list', "goods_id=$goods_id")),
+        'edit'                  => array('name' => _('通用信息'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit', "goods_id=$goods_id".$extension_code)),
+        'edit_goods_desc'       => array('name' => _('商品描述'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_goods_desc', "goods_id=$goods_id".$extension_code)),
+        'edit_goods_attr'       => array('name' => _('商品属性'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_goods_attr', "goods_id=$goods_id".$extension_code)),
+        'edit_goods_photo'      => array('name' => _('商品相册'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin_gallery/init', "goods_id=$goods_id".$extension_code)),
+        'edit_link_goods'       => array('name' => _('关联商品'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_goods', "goods_id=$goods_id".$extension_code)),
+        'edit_link_parts'       => array('name' => _('关联配件'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_parts', "goods_id=$goods_id".$extension_code)),
+        'edit_link_article'     => array('name' => _('关联文章'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_article', "goods_id=$goods_id".$extension_code)),
+        'edit_link_area'        => array('name' => _('关联地区'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_area', "goods_id=$goods_id".$extension_code)),
+        'product_list'          => array('name' => _('货品管理'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/product_list', "goods_id=$goods_id".$extension_code)),
     );
 }
 

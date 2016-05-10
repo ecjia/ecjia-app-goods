@@ -12,7 +12,7 @@
 	<h3 class="heading">
 		<!-- {if $ur_here}{$ur_here}{/if} -->
 		<!-- {if $action_link} -->
-		<a class="btn plus_or_reply data-pjax" id="sticky_a" href="{$action_link.href}{if $smarty.get.extension_code eq 'virtual_card'}&extension_code=virtual_card{/if}"><i class="fontello-icon-reply"></i>{$action_link.text}</a>
+		<a class="btn plus_or_reply data-pjax" id="sticky_a" href="{$action_link.href}"><i class="fontello-icon-reply"></i>{$action_link.text}</a>
 		<!-- {/if} -->
 	</h3>
 </div>
@@ -22,7 +22,7 @@
 			{if $action eq 'edit'}
 			<ul class="nav nav-tabs">
 				<!-- {foreach from=$tags item=tag} -->
-				<li{if $tag.active} class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
+				<li {if $tag.active}class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
 				<!-- {/foreach} -->
 			</ul>
 			{/if}
@@ -180,9 +180,7 @@
 											</div>
 											<div class="accordion-body in" id="goods_info_term_meta">
 												<div class="accordion-inner">
-
 	 												<!-- 自定义栏目模板区域 START -->
-
 	 												<!-- {if $data_term_meta} -->
  													<label><b>编辑自定义栏目：</b></label>
 													<table class="table smpl_tbl ">
@@ -212,7 +210,6 @@
 
  													<!-- 编辑区域 -->
  													<label><b>添加自定义栏目：</b></label>
-
  													<div class="term_meta_add" data-id="{$goods.goods_id}" data-extension-code="{$code}" data-active="{url path='goods/admin/insert_term_meta'}">
 														<table class="table smpl_tbl ">
 															<thead>
@@ -242,16 +239,12 @@
 															</tbody>
 														</table>
 													</div>
-
-
 	 												<!-- 自定义栏目模板区域 END -->
-
 												</div>
 											</div>
 										</div>
 									</div>
 									<!-- {/if} -->
-
 								</div>
 								<!-- 选填信息 -->
 								<div class="right-bar move-mod">

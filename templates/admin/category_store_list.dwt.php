@@ -59,7 +59,6 @@
 				<i class="{if $cat.is_show eq '1'}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{url path='goods/admin_category/toggle_is_show'}" data-id="{$cat.cat_id}"></i>
 			</td>
 			<td>
-				
 				<a class="data-pjax no-underline" href='{url path="goods/admin_category/edit" args="cat_id={$cat.cat_id}"}' title="{$lang.edit}"><i class="fontello-icon-edit"></i></a>
 				<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg="{t}您确定要删除分类[{$cat.cat_name}]吗？{/t}" href='{url path="goods/admin_category/remove" args="id={$cat.cat_id}"}' title="{t}移除{/t}"><i class="fontello-icon-trash"></i></a>
 			</td>

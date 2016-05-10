@@ -26,7 +26,7 @@
 	<div class="span12">
 		<div class="tabbable">
 			<ul class="nav nav-tabs">
-				<li class="tab"><a class="data-pjax" href="{RC_Uri::url('goods/admin_virtual_card/replenish',"goods_id={$goods_id}")}" >{t}批量补货{/t}</a></li>
+				<li class="tab"><a class="data-pjax" href='{RC_Uri::url("goods/admin_virtual_card/replenish", "goods_id={$goods_id}")}'>{t}批量补货{/t}</a></li>
 				<li class="tab active"><a href="#tab2">{t}批量上传{/t}</a></li>					
 			</ul>
 		</div>

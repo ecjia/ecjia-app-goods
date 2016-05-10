@@ -26,12 +26,6 @@ function assign_adminlog_content() {
 function get_cat_info($cat_id) {
 	$db = RC_Loader::load_app_model('category_model', 'goods');
 	return $db->field('cat_name, keywords, cat_desc, style, grade, filter_attr, parent_id')->find(array('cat_id' => $cat_id));
-
-
-// return $GLOBALS['db']->getRow('SELECT cat_name, keywords, cat_desc, style, grade, filter_attr, parent_id FROM ' . $GLOBALS['ecs']->table('category') .
-// " WHERE cat_id = '$cat_id'");
-
-// return $db->field('cat_name, keywords, cat_desc, style, grade, filter_attr, parent_id')->find('cat_id = '.$cat_id.'');
 }
 
 /**
@@ -44,19 +38,6 @@ function get_cat_info($cat_id) {
 function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $sort, $order) {
 	/* 获得商品列表 */
 	$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
-	
-	$dbview->view = array(
-			'member_price' => array(
-					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias' => 'mp',
-					'on'   	=> "mp.goods_id = g.goods_id AND mp.user_rank = ".$_SESSION['user_rank']
-			),
-			'merchants_shop_information' => array(
-					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias' => 'msi',
-					'on'	=> 'g.user_id = msi.user_id'
-			),
-	);
 // 	$display = $GLOBALS['display'];//TODO:列表布局，暂且注释
 	$display = '';
 	$where = array(
@@ -82,10 +63,8 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
 	}
 	$limit = ($page - 1) * $size;
 	/* 获得商品列表 */
-	/* 获得商品列表 */
-	$field = "g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price, g.goods_type,g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb ,g.original_img ,g.goods_img".
-			", msi.shoprz_brandName, msi.shopNameSuffix, msi.user_id";
-	$data = $dbview->field($field)->join(array('member_price', 'merchants_shop_information'))->where($where)->order(array($sort => $order))->limit(($page - 1) * $size, $size)->select();
+	$data = $dbview->join('member_price')->where($where)->order(array($sort => $order))->limit(($page - 1) * $size, $size)->select();
+
 	$arr = array();
 	if (! empty($data)) {
 		foreach ($data as $row) {
@@ -131,36 +110,9 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
 			/* 增加返回原始未格式价格  will.chen*/
 			$arr[$row['goods_id']]['unformatted_shop_price'] = $row['shop_price'];
 			$arr[$row['goods_id']]['unformatted_promote_price'] = $promote_price;
-			
-			$arr[$row['goods_id']]['seller_id']		= $row['user_id'];
-			$arr[$row['goods_id']]['seller_name']	= (!empty($row['shoprz_brandName']) && !empty($row['shopNameSuffix'])) ? $row['shoprz_brandName'].$row['shopNameSuffix'] : '';
 		}
 	}
 	return $arr;
-	// 	$where = "g.is_on_sale = 1 AND g.is_alone_sale = 1 AND " . "g.is_delete = 0 AND ($children OR " . get_extension_goods($children) . ')';
-	// 	if ($brand > 0) {
-	// 		$where .= "AND g.brand_id = $brand ";
-	// 	}
-	
-	// 	if ($min > 0) {
-	// 		$where .= " AND g.shop_price >= $min ";
-	// 	}
-	
-	// 	if ($max > 0) {
-	// 		$where .= " AND g.shop_price <= $max ";
-	// 	}
-	// $sql = 'SELECT g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price, ' .
-	// "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price, g.goods_type, " .
-	// 'g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb , g.goods_img ' .
-	// 'FROM ecs_goods AS g ' .
-	// 'LEFT JOIN ecs_member_price AS mp ' .
-	// "ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' " .
-	// "WHERE $where $ext ORDER BY $sort $order limit $limit,$size";
-	// $data = $dbview->query($sql);
-	// _dump($sql);
-	// while ($row = $GLOBALS['db']->fetchRow($res))
-	
-	
 }
 /*------------------------------------------------------ */
 /*-- TODO API使用到的方法------------------------------------*/
@@ -200,15 +152,6 @@ function get_cagtegory_goods_count($children, $brand = 0, $min = 0, $max = 0, $e
 	/* 返回商品总数 */
 	$count = $dbview->join(null)->where($where)->count();
 	return  $count;
-	
-// 	$where  = "is_on_sale = 1 AND is_alone_sale = 1 AND is_delete = 0 AND ($children OR " . get_extension_goods($children) . ')';
-// 	$where .=  " AND brand_id = $brand ";
-// 	$where .= " AND shop_price >= $min ";
-// 	$where .= " AND shop_price <= $max ";	
-	//     return $GLOBALS['db']->getOne('SELECT COUNT(*) FROM ' . $GLOBALS['ecs']->table('goods') . " AS g WHERE $where $ext");
-	// 	$sql = "SELECT COUNT(*) as count  FROM ecs_goods AS g WHERE $where $ext";
-	// 	$count =  $db->query($sql);
-	// 	$count = $count[0]['count'];
 }
 
 /**
@@ -248,13 +191,6 @@ function get_parent_grade($cat_id) {
 	}
 
 	return $grade_arr[$cat_id];
-	
-	
-	
-// 	$sql = "SELECT parent_id, cat_id, grade ".
-// 	" FROM " . $GLOBALS['ecs']->table('category');
-// 	$res = $GLOBALS['db']->getAll($sql);
-
 }
 
 /**
@@ -265,17 +201,6 @@ function get_parent_grade($cat_id) {
  * @return  void
  */
 function get_linked_articles($goods_id) {
-
-    // 	$sql = 'SELECT a.article_id, a.title, a.file_url, a.open_type, a.add_time ' .
-    // 			'FROM ' . $GLOBALS['ecs']->table('goods_article') . ' AS ga, ' .
-    // 			$GLOBALS['ecs']->table('article') . ' AS a ' .
-    // 			"WHERE ga.article_id = a.article_id AND ga.goods_id = '$goods_id' AND a.is_open = 1 " .
-    // 			'ORDER BY a.add_time DESC';
-    // 	$res = $GLOBALS['db']->query($sql);
-    // 	while ($row = $GLOBALS['db']->fetchRow($res))
-
-
-
     $dbview = RC_Loader::load_app_model('goods_article_viewmodel','article');
     $data = $dbview->join('article')->where(array('ga.goods_id' => "$goods_id" ,'a.is_open' => '1'))->order(array('a.add_time' =>'DESC'))->select();
 
@@ -320,21 +245,6 @@ function is_not_null($value) {
 * @return  array
 */
 function get_linked_goods($goods_id) {
-
-// 	$sql = 'SELECT g.goods_id, g.goods_name, g.goods_thumb, g.goods_img, g.shop_price AS org_price, ' .
-// 			"IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, ".
-// 			'g.market_price, g.promote_price, g.promote_start_date, g.promote_end_date ' .
-// 			'FROM ' . $GLOBALS['ecs']->table('link_goods') . ' lg ' .
-// 			'LEFT JOIN ' . $GLOBALS['ecs']->table('goods') . ' AS g ON g.goods_id = lg.link_goods_id ' .
-// 			"LEFT JOIN " . $GLOBALS['ecs']->table('member_price') . " AS mp ".
-// 			"ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' ".
-// 			"WHERE lg.goods_id = '$goods_id' AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 ".
-// 			"LIMIT " . $GLOBALS['_CFG']['related_goods_number'];
-// 	$res = $GLOBALS['db']->query($sql);
-	// 	while ($row = $GLOBALS['db']->fetchRow($res))
-		
-	
-	
 	$db = RC_Loader::load_app_model('link_goods_viewmodel', 'goods');
 	$data = $db->join(array('goods','member_price'))->where(array('lg.goods_id' => $goods_id, 'g.is_on_sale' => 1, 'g.is_alone_sale' => 1,'g.is_delete' => 0))->limit(ecjia::config('related_goods_number'))->select();
 	$arr = array();
@@ -697,33 +607,14 @@ function get_linked_goods($goods_id) {
 * @params  integer $cat_id
 * @return  void
 */
-function get_seachable_attributes($cat_id = 0)
-{
-	/* 获得可用的商品类型 */
-// 		$sql = "SELECT gt.cat_id, cat_name FROM " .$GLOBALS['ecs']->table('goods_type'). " AS gt, ".
-// 				$GLOBALS['ecs']->table('attribute') ." AS a".
-// 				" WHERE gt.cat_id = a.cat_id AND gt.enabled = 1 AND a.attr_index > 0 ";
-// 		$cat = $GLOBALS['db']->getAll($sql);
-// 	$where = $cat_id > 0 ? ' AND a.cat_id = ' . $cat_id : " AND a.cat_id = " . $cat[0]['cat_id'];
-
-// 	$sql = 'SELECT attr_id, attr_name, attr_input_type, attr_type, attr_values, attr_index, sort_order ' .
-// 			' FROM ' . $GLOBALS['ecs']->table('attribute') . ' AS a ' .
-//			' WHERE a.attr_index > 0 ' .$where.
-//			' ORDER BY cat_id, sort_order ASC';
-// 	$res = $GLOBALS['db']->query($sql);
-
-// 	while ($row = $GLOBALS['db']->FetchRow($res))
-
-	
-	
-	
+function get_seachable_attributes($cat_id = 0) {
 	$db_good = RC_Loader::load_app_model('goods_type_viewmodel', 'goods');
 	$db_attribute = RC_Loader::load_app_model('attribute_model', 'goods');
 
 	$attributes = array(
 		'cate' => array(),
 		'attr' => array()
-		);
+	);
 
 	/* 获得可用的商品类型 */
 	$db_good->view =array(
@@ -732,8 +623,8 @@ function get_seachable_attributes($cat_id = 0)
 			'alias' => 'a',
 			'field' => 'gt.cat_id, cat_name',
 			'on'    => 'a.cat_id = gt.cat_id'
-			)
-		);
+		)
+	);
 	$cat = $db_good->where(array('gt.enabled' => 1, 'a.attr_index' => array('gt' => 0)))->select();
 
 	/* 获取可以检索的属性 */
@@ -757,17 +648,16 @@ function get_seachable_attributes($cat_id = 0)
 					'attr'    => $row['attr_name'],
 					'options' => $attr_value,
 					'type'    => 3
-					);
+				);
 			} else {
 				$attributes['attr'][] = array(
 					'id'   => $row['attr_id'],
 					'attr' => $row['attr_name'],
 					'type' => $row['attr_index']
-					);
+				);
 			}
 		}
 	}
-
 	return $attributes;
 }
 
@@ -784,18 +674,9 @@ function get_seachable_attributes($cat_id = 0)
 * @param   integer $id
 * @return  void
 */
-function get_brand_info($id)
-{
-
-// 	$sql = 'SELECT * FROM ' . $GLOBALS['ecs']->table('brand') . " WHERE brand_id = '$id'";
-
-// 	return $GLOBALS['db']->getRow($sql);
-
-	
-	
+function get_brand_info($id) {
 	$db = RC_Loader::load_app_model('brand_model', 'goods');
 	return $db->find(array('brand_id' => $id));
-
 }
 
 /**
@@ -806,24 +687,7 @@ function get_brand_info($id)
 * @param   integer $brand
 * @return  array
 */
-function brand_recommend_goods($type, $brand, $cat = 0) 
-{
-// 		$sql = 'SELECT g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price, g.promote_price, ' .
-// 				"IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, ".
-// 				'promote_start_date, promote_end_date, g.goods_brief, g.goods_thumb, goods_img, ' .
-// 				'b.brand_name, g.is_best, g.is_new, g.is_hot, g.is_promote ' .
-// 				'FROM ' . $GLOBALS['ecs']->table('goods') . ' AS g ' .
-// 				'LEFT JOIN ' . $GLOBALS['ecs']->table('brand') . ' AS b ON b.brand_id = g.brand_id ' .
-// 				'LEFT JOIN ' . $GLOBALS['ecs']->table('member_price') . ' AS mp '.
-// 				"ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' ".
-// 				"WHERE g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = '$brand' AND " .
-// 				"(g.is_best = 1 OR (g.is_promote = 1 AND promote_start_date <= '$time' AND ".
-// 				"promote_end_date >= '$time')) $cat_where" .
-// 				'ORDER BY g.sort_order, g.last_update DESC';
-// 		$result = $GLOBALS['db']->getAll($sql);
-
-	
-	
+function brand_recommend_goods($type, $brand, $cat = 0) {
 	$db = RC_Loader::load_app_model('goods_auto_viewmodel', 'goods');
 
 	static $result = NULL;
@@ -842,14 +706,13 @@ function brand_recommend_goods($type, $brand, $cat = 0)
 				'alias' => 'b',
 				'field' => "g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price, g.promote_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price,promote_start_date, promote_end_date, g.goods_brief, g.goods_thumb, goods_img,b.brand_name, g.is_best, g.is_new, g.is_hot, g.is_promote",
 				'on' 	=> 'b.brand_id = g.brand_id '
-				),
+			),
 			'member_price'	=> array(
 				'type'	=>	Component_Model_View::TYPE_LEFT_JOIN,
 				'alias' => 'mp',
 				'on' 	=> 'mp.goods_id = g.goods_id and mp.user_rank = '.$_SESSION['user_rank'].''
-				)	
-			);
-
+			)	
+		);
 		$result = $db->where('g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = "'.$brand.'" and (g.is_best = 1 OR (g.is_promote = 1 AND promote_start_date <= "'.$time.'" and promote_end_date >= "'.$time.'"))'.$cat_where)->order(array('g.sort_order'=>'asc','g.last_update'=>'desc'))->select();
 	}
 
@@ -900,18 +763,8 @@ function brand_recommend_goods($type, $brand, $cat = 0)
 * @param   integer     $cate
 * @return  integer
 */
-function goods_count_by_brand($brand_id, $cate = 0) 
-{
-// 	$sql = 'SELECT COUNT(*) FROM ' .$GLOBALS['ecs']->table('goods'). ' AS g '.
-// 			"WHERE brand_id = '$brand_id' AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0";
-// 	$sql .= " AND " . get_children($cate);
-
-	//return $GLOBALS['db']->getOne($sql);
-	
-	
-	
+function goods_count_by_brand($brand_id, $cate = 0) {
 	$db = RC_Loader::load_app_model('goods_member_viewmodel','goods');
-
 	if ($cate > 0) {
 		$query = $db->join(null)->where('brand_id = '.$brand_id.' AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND '. get_children($cate).'')->count();
 	}
@@ -926,25 +779,8 @@ function goods_count_by_brand($brand_id, $cate = 0)
 * @param   integer  $brand_id
 * @return  array
 */
-function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order)
-{
-	// 	$sql = 'SELECT g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price, ' .
-// 			"IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price, " .
-// 			'g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb , g.goods_img ' .
-// 			'FROM ' . $GLOBALS['ecs']->table('goods') . ' AS g ' .
-// 			'LEFT JOIN ' . $GLOBALS['ecs']->table('member_price') . ' AS mp ' .
-// 			"ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' " .
-// 			"WHERE g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = '$brand_id' $cate_where".
-// 			"ORDER BY $sort $order";
-
-// 	$res = $GLOBALS['db']->selectLimit($sql, $size, ($page - 1) * $size);
-// 	while ($row = $GLOBALS['db']->fetchRow($res))
-	
-	
-	
-	
+function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order) {
 	$dbview = RC_Loader::load_app_model('goods_member_viewmodel','goods');
-
 	$cate_where = ($cate > 0) ? 'AND ' . get_children($cate) : '';
 
 	/* 获得商品列表 */
@@ -954,9 +790,8 @@ function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order)
 			'alias' => 'mp',
 			'field' => "g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price,g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb , g.goods_img",
 			'on' 	=> 'mp.goods_id = g.goods_id and mp.user_rank = '.$_SESSION['user_rank'].''
-			)
-		);
-
+		)
+	);
 	$data = $dbview->where('g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = '.$brand_id.$cate_where.'')->order(array($sort => $order))->limit(($page - 1) * $size,$size)->select();
 
 	$arr = array();
@@ -993,24 +828,13 @@ function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order)
 * @param   integer $brand
 * @return  array
 */
-function brand_related_cat($brand)
-{
-
-	// 	$sql = "SELECT c.cat_id, c.cat_name, COUNT(g.goods_id) AS goods_count FROM ".
-// 			$GLOBALS['ecs']->table('category'). " AS c, ".
-// 			$GLOBALS['ecs']->table('goods') . " AS g " .
-// 			"WHERE g.brand_id = '$brand' AND c.cat_id = g.cat_id ".
-// 			"GROUP BY g.cat_id";
-// 	$res = $GLOBALS['db']->query($sql);
-// 	while ($row = $GLOBALS['db']->fetchRow($res))
-
-	
-	
+function brand_related_cat($brand) {
 	$db = RC_Loader::load_app_model('category_viewmodel','goods');
 	$arr[] = array(
 		'cat_id' 	=> 0,
 		'cat_name'	=> RC_Lang::lang('all_category'),
-		'url'		=> build_uri('brand', array('bid' => $brand), RC_Lang::lang('all_category')));
+		'url'		=> build_uri('brand', array('bid' => $brand), RC_Lang::lang('all_category'))
+	);
 	$data = $db->join('goods')->where(array('g.brand_id' => $brand))->group('g.cat_id')->select();
 	if(!empty($data)) {
 		foreach ($data as $row) {
@@ -1023,8 +847,6 @@ function brand_related_cat($brand)
 /*------------------------------------------------------ */
 //-- END PRIVATE FUNCTION品牌表的方法结束
 /*------------------------------------------------------ */
-
-
 
 /*------------------------------------------------------ */
 //-- 所有分类及品牌的方法
@@ -1045,7 +867,6 @@ function calculate_goods_num($cat_list, $cat_id) {
 			$goods_num += $cat['goods_num'];
 		}
 	}
-
 	return $goods_num;
 }
 /*------------------------------------------------------ */

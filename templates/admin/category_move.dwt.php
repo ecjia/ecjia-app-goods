@@ -25,32 +25,32 @@
 		<form class="form-horizontal" action="{$form_action}" method="post" name="theForm">
 			<fieldset>
 				<div class="cat_move">
-
-				<div class="control-group">
-					<label class="control-label">
-						{$lang.source_cat}：
-					</label>
-					<div class="controls">
-						<select name="cat_id">
-							<option value="0">{$lang.select_please}</option>
-							<!-- {$cat_select} -->
-						</select>
+					<div class="control-group">
+						<label class="control-label">
+							{$lang.source_cat}：
+						</label>
+						<div class="controls">
+							<select name="cat_id">
+								<option value="0">{$lang.select_please}</option>
+								<!-- {$cat_select} -->
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">
-						{$lang.target_cat}：
-					</label>
-					<div class="controls">
-						<select name="target_cat_id">
-							<option value="0">{$lang.select_please}</option>
-							<!-- {$cat_select} -->
-						</select>
+					<div class="control-group">
+						<label class="control-label">
+							{$lang.target_cat}：
+						</label>
+						<div class="controls">
+							<select name="target_cat_id">
+								<option value="0">{$lang.select_please}</option>
+								<!-- {$cat_select} -->
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<button class="btn btn-gebo" type="submit">{$lang.start_move_cat}</button>
+					<div class="control-group">
+						<div class="controls">
+							<button class="btn btn-gebo" type="submit">{$lang.start_move_cat}</button>
+						</div>
 					</div>
 				</div>
 			</fieldset>

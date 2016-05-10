@@ -11,7 +11,7 @@
 <div>
 	<h3 class="heading"> 
 		<!-- {if $ur_here}{$ur_here}{/if} --> 
-		{if $action_link} <a class="btn plus_or_reply data-pjax" id="sticky_a" href="{$action_link.href}"> <i class="fontello-icon-reply"></i>{$action_link.text}</a> {/if}
+		{if $action_link} <a class="btn plus_or_reply data-pjax" id="sticky_a" href="{$action_link.href}{if $code}&extension_code={$code}{/if}"> <i class="fontello-icon-reply"></i>{$action_link.text}</a> {/if}
 	</h3>
 </div>
 <div class="row-fluid edit-page">
@@ -19,11 +19,11 @@
 		<div class="tabbable">
 			<ul class="nav nav-tabs">
 				<!-- {foreach from=$tags item=tag} -->
-				<li{if $tag.active} class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
+				<li {if $tag.active}class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
 				<!-- {/foreach} -->
 			</ul>
 			
-			<form class="form-horizontal" action='{url path="goods/admin/add_link_article" args="goods_id={$smarty.get.goods_id}"}' method="post" name="theForm" >
+			<form class="form-horizontal" action='{url path="goods/admin/add_link_article" args="goods_id={$smarty.get.goods_id}{if $code}&extension_code={$code}{/if}"}' method="post" name="theForm" >
 				<div class="tab-content">
 					<fieldset>
 						<div class="control-group choose_list span12" data-url="{url path='goods/admin/get_article_list'}" >
@@ -37,7 +37,7 @@
 							<div class="ms-container " id="ms-custom-navigation">
 								<div class="ms-selectable">
 									<div class="search-header">
-										<input class="span12" id="ms-search" type="text" placeholder="{t}筛选搜索到的商品信息{/t}" autocomplete="off">
+										<input class="span12" id="ms-search" type="text" placeholder="{t}筛选搜索到的文章信息{/t}" autocomplete="off">
 									</div>
 									<ul class="ms-list nav-list-ready">
 										<li class="ms-elem-selectable disabled"><span>暂无内容</span></li>

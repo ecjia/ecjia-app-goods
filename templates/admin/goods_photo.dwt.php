@@ -59,7 +59,6 @@
 			</ul>
 		</div>
 	</div>
-	
 	<a class="btn btn-info save-sort" data-sorturl="{url path='goods/admin_gallery/sort_image'}">{t}保存排序{/t}</a>
 </div>
 

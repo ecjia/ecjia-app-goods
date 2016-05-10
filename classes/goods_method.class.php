@@ -8,12 +8,9 @@ class goods_method {
     
     private $goods_id;
     
-    
     public function __construct($goods_id = '') {
         $this->goods_id = $goods_id;
     }
-    
-    
     
     /**
      * 插入或更新商品属性

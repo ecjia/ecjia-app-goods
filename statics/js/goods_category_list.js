@@ -2,9 +2,7 @@
 ;(function(app, $) {
 	app.goods_category_list = {
 		init : function() {
-
 		},
-
 	};
 	
 	app.goods_category_info = {
@@ -111,10 +109,7 @@
 			});
 		}
 	};
-
 })(ecjia.admin, jQuery);
-
-
 
 
 //TODO 当前使用迁移JS

@@ -14,7 +14,6 @@
 					separator : {required : "分隔符不能为空！"},
 					},
 			}
-			
 			var options = $.extend(ecjia.admin.defaultOptions.validate, option);
 			$this.validate(options);
 		},
@@ -33,8 +32,6 @@
 			});
 		}
 	};
-		
 })(ecjia.admin, jQuery);
-
 
 // end

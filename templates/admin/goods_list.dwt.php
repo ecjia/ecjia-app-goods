@@ -37,7 +37,6 @@
 	</h3>
 </div>
 
-
 <!-- <div class="row-fluid"> -->
 <!-- <div class="choose_list span12">  -->
 <ul class="nav nav-pills">
@@ -47,7 +46,7 @@
 	<!-- 上架 -->
 	<!-- <select class="w100" name="is_on_sale"><option value=''>{$lang.intro_type}</option><option value="1">{$lang.on_sale}</option><option value="0">{$lang.not_on_sale}</option></select> -->
 
-	<form class="f_r form-inline" action="{if $smarty.get.extension_code}{RC_Uri::url('goods/admin/init','extension_code=virtual_card')}{else}{RC_Uri::url('goods/admin/init')}{/if}"  method="post" name="searchForm">
+	<form class="f_r form-inline" action='{if $smarty.get.extension_code}{RC_Uri::url("goods/admin/init", "extension_code=virtual_card")}{else}{RC_Uri::url("goods/admin/init")}{/if}' method="post" name="searchForm">
 		<!-- 关键字 -->
 		<input type="text" name="keyword" value="{$smarty.get.keyword}" placeholder="请输入商品关键字" size="15" />
 		<button class="btn" type="submit">{$lang.button_search}</button>
@@ -144,17 +143,17 @@
 								</span>
 								<br/>
 								<div class="edit-list">
-									<a class="data-pjax" href='{if $code}{url path="goods/admin/edit" args="goods_id={$goods.goods_id}&extension_code={$code}"}{else}{url path="goods/admin/edit" args="goods_id={$goods.goods_id}"}{/if}'> {$lang.edit} </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{url path="goods/admin_goods_mode/init" args="goods_id={$goods.goods_id}"}'> 商品模式 </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{url path="goods/admin/edit_goods_attr" args="goods_id={$goods.goods_id}"}'> 商品属性 </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{url path="goods/admin_gallery/init" args="goods_id={$goods.goods_id}"}'> 商品相册 </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{url path="goods/admin/edit_link_goods" args="goods_id={$goods.goods_id}"}'> 关联商品 </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{url path="goods/admin/edit_link_article" args="goods_id={$goods.goods_id}"}'> 关联文章 </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{url path="goods/admin/edit_link_parts" args="goods_id={$goods.goods_id}"}'> 关联配件 </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{url path="goods/admin/edit_link_area" args="goods_id={$goods.goods_id}"}'> 关联地区 </a>&nbsp;|&nbsp;
-									<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'> {t}预览{/t} </a>&nbsp;|&nbsp;
-									<a class="data-pjax" href='{if $code} {url path="goods/admin/copy" args="goods_id={$goods.goods_id}&extension_code={$code}"}{else} {url path="goods/admin/copy" args="goods_id={$goods.goods_id}"}{/if} '> {$lang.copy} </a>&nbsp;|&nbsp;
-									{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goods/admin/product_list" args="goods_id={$goods.goods_id}"}'> {t}货品列表{/t} </a>&nbsp;|&nbsp;{/if}
+									<a class="data-pjax" href='{if $code}{url path="goods/admin/edit" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}{else}{url path="goods/admin/edit" args="goods_id={$goods.goods_id}"}{/if}'> {$lang.edit} </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{url path="goods/admin_goods_mode/init" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> 商品模式 </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{url path="goods/admin/edit_goods_attr" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> 商品属性 </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{url path="goods/admin_gallery/init" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> 商品相册 </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{url path="goods/admin/edit_link_goods" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> 关联商品 </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{url path="goods/admin/edit_link_article" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> 关联文章 </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{url path="goods/admin/edit_link_parts" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> 关联配件 </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{url path="goods/admin/edit_link_area" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> 关联地区 </a>&nbsp;|&nbsp;
+									<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> {t}预览{/t} </a>&nbsp;|&nbsp;
+									<a class="data-pjax" href='{if $code} {url path="goods/admin/copy" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}{else} {url path="goods/admin/copy" args="goods_id={$goods.goods_id}"}{/if} '> {$lang.copy} </a>&nbsp;|&nbsp;
+									{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goods/admin/product_list" args="goods_id={$goods.goods_id}{if $code}&extension_code={$code}{/if}"}'> {t}货品列表{/t} </a>&nbsp;|&nbsp;{/if}
 									<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t}您确定要删除商品[{$goods.goods_name}]至回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'> {t}删除{/t} </a>
 									{if $smarty.get.extension_code} &nbsp;|&nbsp;  
 									<a class="data-pjax" href='{url path="goods/admin_virtual_card/card" args="goods_id={$goods.goods_id}"}' > 虚拟卡信息 </a>&nbsp;|&nbsp;
@@ -219,9 +218,9 @@
 						<!-- {/foreach} -->
 					</tbody>
 				</table>
+				<!-- {$goods_list.page} --> 
 			</div>
 		</form>
 	</div>
 </div>
-<!-- {$goods_list.page} --> 
 <!-- {/block} -->

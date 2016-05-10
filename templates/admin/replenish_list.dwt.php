@@ -28,7 +28,7 @@
 		</ul>
 	</div>
 	<div class="choose_list f_r" >
-		<form class="f_r" action="{RC_Uri::url('goods/admin_virtual_card/card',"goods_id={$goods_id}")}"  method="post" name="searchForm">
+		<form class="f_r" action='{RC_Uri::url("goods/admin_virtual_card/card", "goods_id={$goods_id}")}' method="post" name="searchForm">
 			<input type="text" name="keyword" placeholder="请输入卡片序号或订单号 " value="{$smarty.get.keyword}" />
 			<button class="btn" type="submit">{$lang.button_search}</button>
 		</form>
@@ -84,5 +84,4 @@
 		</form>
 	</div>
 </div>
-
 <!-- {/block} -->

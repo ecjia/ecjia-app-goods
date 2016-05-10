@@ -76,10 +76,10 @@
 							<!-- {/foreach} -->
 						</tbody>
 					</table>
+					<!-- {$goods_list.page} -->
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
-<!-- {$goods_list.page} -->
 <!-- {/block} -->

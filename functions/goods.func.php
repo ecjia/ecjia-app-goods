@@ -63,23 +63,22 @@ function get_categories_tree($cat_id = 0) {
 function get_child_tree($tree_id = 0) {
 	$db_category = RC_Loader::load_app_model('category_model', 'goods');
 	$three_arr = array ();
-	
 	$count = $db_category->where(array('parent_id' => $tree_id, 'is_show' => 1))->count();
 	if ($count > 0 || $tree_id == 0) {
 		
 		$res = $db_category->field('cat_id, cat_name ,parent_id, style, is_show')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
 		
-		foreach ( $res as $row ) {
-			if ($row ['is_show'])
-				$three_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
-			$three_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-			$three_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array (
-				'cid' => $row ['cat_id'] 
-				), $row ['cat_name'] );
-			if (isset ( $row ['cat_id'] ) != NULL) {
-				$three_arr [$row ['cat_id']] ['cat_id'] = get_child_tree ( $row ['cat_id'] );
+		if (!empty($res)) {
+			foreach ( $res as $row ) {
+				if ($row ['is_show'])
+					$three_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
+				$three_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
+				$three_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array ('cid' => $row ['cat_id'] ), $row ['cat_name'] );
+				if (isset ( $row ['cat_id'] ) != NULL) {
+					$three_arr [$row ['cat_id']] ['cat_id'] = get_child_tree ( $row ['cat_id'] );
+				}
+				$three_arr [$row['cat_id']]['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
 			}
-			$three_arr [$row['cat_id']]['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
 		}
 	}
 	return $three_arr;
@@ -127,9 +126,7 @@ function get_top10($cats = '') {
 	
 	for($i = 0, $count = count ( $arr ); $i < $count; $i ++) {
 		$arr [$i] ['short_name'] = ecjia::config ( 'goods_name_length' ) > 0 ? RC_String::sub_str ( $arr [$i] ['goods_name'], ecjia::config ( 'goods_name_length' ) ) : $arr [$i] ['goods_name'];
-		$arr [$i] ['url'] = build_uri ( 'goods', array (
-				'gid' => $arr [$i] ['goods_id']
-		), $arr [$i] ['goods_name'] );
+		$arr [$i] ['url'] = build_uri ( 'goods', array('gid' => $arr[$i] ['goods_id']), $arr [$i] ['goods_name'] );
 		$arr [$i] ['thumb'] = get_image_path ( $arr [$i] ['goods_id'], $arr [$i] ['goods_thumb'], true );
 		$arr [$i] ['price'] = price_format ( $arr [$i] ['shop_price'] );
 	}
@@ -151,7 +148,6 @@ function get_recommend_goods($type = '', $cats = '') {
 	if (! in_array($type, array('best','new','hot'))) {
 		return array ();
 	}
-	
 	// 取不同推荐对应的商品
 	static $type_goods = array ();
 	if (empty ( $type_goods [$type] )) {
@@ -168,14 +164,14 @@ function get_recommend_goods($type = '', $cats = '') {
 					'alias'  => 'b',
 					'field'  => 'g.goods_id, g.is_best, g.is_new, g.is_hot, g.is_promote, b.brand_name,g.sort_order',
 					'on'     => 'b.brand_id = g.brand_id' 
-					) 
-				);
+				) 
+			);
 			
 			$where = array(
-					'g.is_on_sale' => 1,
-					'g.is_alone_sale' => 1,
-					'g.is_delete' => 0,
-					'(g.is_best = 1 OR g.is_new =1 OR g.is_hot = 1)'
+				'g.is_on_sale' => 1,
+				'g.is_alone_sale' => 1,
+				'g.is_delete' => 0,
+				'(g.is_best = 1 OR g.is_new =1 OR g.is_hot = 1)'
 			);
 			if (ecjia::config('review_goods')) {
 				$where['g.review_status'] = array('gt' => 2);
@@ -193,19 +189,19 @@ function get_recommend_goods($type = '', $cats = '') {
 						$goods_data['best'][] = array (
 							'goods_id' => $data ['goods_id'],
 							'sort_order' => $data ['sort_order'] 
-							);
+						);
 					}
 					if ($data['is_new'] == 1) {
 						$goods_data ['new'] [] = array (
 							'goods_id' => $data ['goods_id'],
 							'sort_order' => $data ['sort_order'] 
-							);
+						);
 					}
 					if ($data ['is_hot'] == 1) {
 						$goods_data ['hot'] [] = array (
 							'goods_id' => $data ['goods_id'],
 							'sort_order' => $data ['sort_order'] 
-							);
+						);
 					}
 					if ($data ['brand_name'] != '') {
 						$goods_data ['brand'] [$data ['goods_id']] = $data ['brand_name'];
@@ -225,7 +221,7 @@ function get_recommend_goods($type = '', $cats = '') {
 			'best' => 'recommend_best',
 			'new' => 'recommend_new',
 			'hot' => 'recommend_hot' 
-			);
+		);
 		if (empty ( $type_array )) {
 			foreach ( $type2lib as $key => $data ) {
 				if (! empty ( $goods_data [$key] )) {
@@ -254,19 +250,17 @@ function get_recommend_goods($type = '', $cats = '') {
 		}
 		
 		// 取出所有符合条件的商品数据，并将结果存入对应的推荐类型数组中
-		
-		
 		$type_merge = array_merge ( $type_array ['new'], $type_array ['best'], $type_array ['hot'] );
 		$type_merge = array_unique ( $type_merge );
 		
 		$dbview->view = array (
 			'member_price' => array (
-				'type' => Component_Model_View::TYPE_LEFT_JOIN,
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 				'alias' => 'mp',
 				'field' => "g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.shop_price AS org_price, g.promote_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price,promote_start_date, promote_end_date, g.goods_brief, g.goods_thumb, g.goods_img, g.original_img, RAND() AS rnd",
-				'on' => 'mp.goods_id = g.goods_id AND mp.user_rank = "' . $_SESSION ['user_rank'] . '"' 
-				) 
-			);
+				'on' 	=> 'mp.goods_id = g.goods_id AND mp.user_rank = "' . $_SESSION ['user_rank'] . '"' 
+			) 
+		);
 		
 		$result = $dbview->where("g.goods_id ".db_create_in($type_merge))->order(array('g.sort_order' => 'asc','g.last_update' => 'desc'))->select();
 		
@@ -293,9 +287,7 @@ function get_recommend_goods($type = '', $cats = '') {
 				$goods [$idx] ['thumb'] = get_image_path ($row ['goods_id'], $row ['goods_thumb'], true);
 				$goods [$idx] ['goods_img'] = get_image_path ( $row ['goods_id'], $row ['goods_img'] );
 				$goods [$idx] ['original_img'] = get_image_path ( $row ['goods_id'], $row ['original_img'] );
-				$goods [$idx] ['url'] = build_uri ( 'goods', array (
-					'gid' => $row ['goods_id'] 
-					), $row ['goods_name'] );
+				$goods [$idx] ['url'] = build_uri('goods', array ('gid' => $row['goods_id']), $row['goods_name']);
 				if (in_array($row['goods_id'], $type_array ['best'])) {
 					$type_goods ['best'] [] = $goods [$idx];
 				}
@@ -324,8 +316,7 @@ function get_promote_goods($cats = '') {
 	
 	/* 取得促销lbi的数量限制 */
 	$num = get_library_number ( "recommend_promotion" );
-	
-	
+
 	$order = $order_type == 0 ? array ('g.sort_order' => 'asc','g.last_update' => 'DESC') : 'rnd';
 	$dbview->view = array (
 		'brand' => array (
@@ -333,26 +324,16 @@ function get_promote_goods($cats = '') {
 			'alias' => 'b',
 			'field' => "g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.shop_price AS org_price, g.promote_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price,promote_start_date, promote_end_date, g.goods_brief, g.goods_thumb, goods_img, b.brand_name,g.is_best, g.is_new, g.is_hot, g.is_promote, RAND() AS rnd",
 			'on' => 'b.brand_id = g.brand_id' 
-			),
+		),
 		'member_price' => array (
 			'type' => Component_Model_View::TYPE_LEFT_JOIN,
 			'alias' => 'mp',
 			'on' => 'mp.goods_id = g.goods_id AND mp.user_rank = "' . $_SESSION ['user_rank'] . '"' 
-			) 
-		);
+		) 
+	);
 	
-	$result = $dbview->where ( array (
-		'g.is_on_sale' => 1,
-		'g.is_alone_sale' => 0,
-		'g.is_promote' => 1,
-		'promote_start_date' => array (
-			'elt' => $time 
-			),
-		'promote_end_date' => array (
-			'egt' => $time 
-			) 
-		) )->order ( $order )->limit ( $num )->select ();
-	$goods = array ();
+	$result = $dbview->where(array('g.is_on_sale' => 1, 'g.is_alone_sale' => 0, 'g.is_promote' => 1, 'promote_start_date' => array('elt' => $time), 'promote_end_date' => array('egt' => $time)))->order($order)->limit($num)->select();
+	$goods = array();
 	if (! empty ( $result )) {
 		foreach ( $result as $idx => $row ) {
 			if ($row ['promote_price'] > 0) {
@@ -406,11 +387,11 @@ function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min =
 	$sql = 'SELECT g.goods_id, g.goods_name, g.goods_name_style, g.market_price, g.shop_price AS org_price, g.promote_price, ' . "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, " . 'promote_start_date, promote_end_date, g.goods_brief, g.goods_thumb, goods_img, b.brand_name ' . 'FROM ecs_goods AS g ' . 'LEFT JOIN ecs_brand AS b ON b.brand_id = g.brand_id ' . "LEFT JOIN ecs_member_price AS mp " . "ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' " . 'WHERE g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 ' . $brand_where . $price_where . $ext;
 	$num = 0;
 	$type2lib = array (
-		'best' => 'recommend_best',
-		'new' => 'recommend_new',
-		'hot' => 'recommend_hot',
+		'best' 	=> 'recommend_best',
+		'new' 	=> 'recommend_new',
+		'hot' 	=> 'recommend_hot',
 		'promote' => 'recommend_promotion' 
-		);
+	);
 	$num = get_library_number($type2lib [$type]);
 	$order_type = ecjia::config ( 'recommend_order' );
 	
@@ -438,10 +419,10 @@ function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min =
 	$sql .= ($order_type == 0) ? ' ORDER BY g.sort_order, g.last_update DESC' : ' ORDER BY RAND()';
 	
 	$sql .= " limit " . $num;
-	$result = $db_goods->query ( $sql );
+	$result = $db_goods->query ($sql);
 
 	$idx = 0;
-	$goods = array ();
+	$goods = array();
 	
 	if (! empty ( $result )) {
 		foreach ( $result as $row ) {
@@ -492,43 +473,43 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 
 	$db_goods->view = array (
 		'warehouse_goods' => array(
-					'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias'    => 'wg',
-					'on'       => "g.goods_id = wg.goods_id and wg.region_id = '$warehouse_id'"
+			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias'    => 'wg',
+			'on'       => "g.goods_id = wg.goods_id and wg.region_id = '$warehouse_id'"
 		),
 		'warehouse_area_goods' => array(
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'wag',
-				'on'       => "g.goods_id = wag.goods_id and wag.region_id = '$area_id'"
+			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias'    => 'wag',
+			'on'       => "g.goods_id = wag.goods_id and wag.region_id = '$area_id'"
 		),
 		'category' => array(
 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
 			'alias'    => 'c',
 			'on'       => 'g.cat_id = c.cat_id' 
-			),
+		),
 		'brand' => array(
 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
 			'alias'    => 'b',
 			'on'       => 'g.brand_id = b.brand_id ' 
-			),
+		),
 		'comment' => array(
 			'type' => Component_Model_View::TYPE_LEFT_JOIN,
 			'alias' => 'r',
 			'on' => 'r.id_value = g.goods_id AND comment_type = 0 AND r.parent_id = 0 AND r.status = 1' 
-			),
+		),
 		'bonus_type' => array(
 			'type' => Component_Model_View::TYPE_LEFT_JOIN,
 			'alias' => 'm',
 			'on' => 'g.bonus_type_id = m.type_id AND m.send_start_date <= "' . $time . '" AND m.send_end_date >= "' . $time . '"' 
-			),
+		),
 		'member_price'   => array(
 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
 			'alias'    => 'mp',
 			'on'       => 'mp.goods_id = g.goods_id AND mp.user_rank = "' . $_SESSION ['user_rank'] . '"' 
-			) 
-		);
+		) 
+	);
 
-	$where = array('g.goods_id' => $goods_id,'g.is_delete' => 0);
+	$where = array('g.goods_id' => $goods_id, 'g.is_delete' => 0);
 	if (ecjia::config('review_goods')) {
 		$where['g.review_status'] = array('gt' => 2);
 	}
@@ -627,13 +608,11 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 			'alias' => 'g',
 			'field' => 'attr_group',
 			'on' 	=> 'gt.cat_id = g.goods_type' 
-			) 
-		);
+		) 
+	);
 	
-	$grp = $db_good_type->find ( array (
-		'g.goods_id' => $goods_id 
-		) );
-	$grp = $grp ['attr_group'];
+	$grp = $db_good_type->find (array ('g.goods_id' => $goods_id));
+	$grp = $grp['attr_group'];
 	if (! empty ( $grp )) {
 		$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
 	}
@@ -644,43 +623,39 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 	$field = 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price';
 	/* 获得商品的规格 */
 	$db_good_attr->view = array (
-			'attribute' => array (
-					'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias'    => 'a',
-					'on'       => 'a.attr_id = ga.attr_id'
-			)
+		'attribute' => array (
+			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias'    => 'a',
+			'on'       => 'a.attr_id = ga.attr_id'
+		)
 	);
 	if ($model_attr == 1) {
 		$db_good_attr->view = array (
-				'attribute' => array (
-						'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-						'alias'    => 'a',
-						'on'       => 'a.attr_id = ga.attr_id'
-				),
-				'warehouse_attr' => array (
-						'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-						'alias'    => 'wap',
-						'on'       => "ga.goods_attr_id = wap.goods_attr_id AND wap.warehouse_id = '$warehouse_id'"
-				)
+			'attribute' => array (
+				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'    => 'a',
+				'on'       => 'a.attr_id = ga.attr_id'
+			),
+			'warehouse_attr' => array (
+				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'    => 'wap',
+				'on'       => "ga.goods_attr_id = wap.goods_attr_id AND wap.warehouse_id = '$warehouse_id'"
+			)
 		);
 		$field .= ", wap.attr_price as warehouse_attr_price";
-// 		$select = " wap.attr_price as warehouse_attr_price, ";
-// 		$leftJoin = 'LEFT JOIN ' . $GLOBALS['ecs']->table('warehouse_attr') . " AS wap ON g.goods_attr_id = wap.goods_attr_id AND wap.warehouse_id = '$warehouse_id' ";
-	} elseif($model_attr == 2) {
+	} elseif ($model_attr == 2) {
 		$db_good_attr->view = array (
-				'attribute' => array (
-						'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-						'alias'    => 'a',
-						'on'       => 'a.attr_id = ga.attr_id'
-				),
-				'warehouse_area_attr' => array (
-						'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-						'alias'    => 'waa',
-						'on'       => "ga.goods_attr_id = waa.goods_attr_id AND area_id = '$area_id'"
-				)
+			'attribute' => array (
+				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'    => 'a',
+				'on'       => 'a.attr_id = ga.attr_id'
+			),
+			'warehouse_area_attr' => array (
+				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'    => 'waa',
+				'on'       => "ga.goods_attr_id = waa.goods_attr_id AND area_id = '$area_id'"
+			)
 		);
-// 		$select = " waa.attr_price as area_attr_price, ";
-// 		$leftJoin = 'LEFT JOIN ' . $GLOBALS['ecs']->table('warehouse_area_attr') . " AS waa ON g.goods_attr_id = waa.goods_attr_id AND area_id = '$area_id' ";
 	} 
 	
 	$res = $db_good_attr->field($field)->where(array('ga.goods_id' => $goods_id))->order(array('a.sort_order' => 'asc','ga.attr_price' => 'asc','ga.goods_attr_id' => 'asc'))->select();
@@ -704,7 +679,7 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 			} else {
 				if ($model_attr == 1) {
 					$attr_price = $row['warehouse_attr_price'];
-				} elseif($model_attr == 2) {
+				} elseif ($model_attr == 2) {
 					$attr_price = $row['area_attr_price'];
 				} else {
 					$attr_price = $row['attr_price'];
@@ -777,7 +752,6 @@ function get_same_attribute_goods($attr) {
 			}
 		}
 	}
-
 	return $lnk;
 }
 
@@ -826,8 +800,8 @@ function assign_cat_goods($cat_id, $num = 0, $from = 'web', $order_rule = '') {
 			'alias'    => 'mp',
 			'field'    => "g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price,g.promote_price, promote_start_date, promote_end_date, g.goods_brief, g.goods_thumb, g.goods_img",
 			'on'       => 'mp.goods_id = g.goods_id and mp.user_rank = ' . $_SESSION ['user_rank'] . '' 
-			) 
-		);
+		) 
+	);
 	
 	if ($num > 0) {
 		$res = $dbview->where ( 'g.is_on_sale = 1 AND g.is_alone_sale = 1  AND (' . $children . 'OR ' . get_extension_goods ( $children ) . ')' )->order ( $order_rule )->limit ( $num )->select ();
@@ -902,8 +876,8 @@ function assign_brand_goods($brand_id, $num = 0, $cat_id = 0, $order_rule = '') 
 			'alias' => 'mp',
 			'field' => "g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price,g.promote_price, g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb, g.goods_img",
 			'on' => 'mp.goods_id = g.goods_id and mp.user_rank = ' . $_SESSION ['user_rank'] . '' 
-			) 
-		);
+		) 
+	);
 	
 	if ($num > 0) {
 		$res = $dbview->where( "g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = '$brand_id'" . $cat_where )->order ( $order_rule )->limit ( $num )->select ();
@@ -930,27 +904,20 @@ function assign_brand_goods($brand_id, $num = 0, $cat_id = 0, $order_rule = '') 
 		$goods [$idx] ['brief'] = $row ['goods_brief'];
 		$goods [$idx] ['thumb'] = get_image_path ( $row ['goods_id'], $row ['goods_thumb'], true );
 		$goods [$idx] ['goods_img'] = get_image_path ( $row ['goods_id'], $row ['goods_img'] );
-		$goods [$idx] ['url'] = build_uri ( 'goods', array (
-			'gid' => $row ['goods_id'] 
-			), $row ['goods_name'] );
-		
+		$goods [$idx] ['url'] = build_uri ('goods', array('gid' => $row['goods_id']), $row['goods_name']);
 		$idx ++;
 	}
 	
 	/* 分类信息 */
-	$name = $db_brand->field ( 'brand_name' )->find ( array (
-		'brand_id' => $brand_id 
-		) );
+	$name = $db_brand->field ('brand_name')->find(array('brand_id' => $brand_id));
 	$brand ['name'] = $name;
-	$brand ['id'] = $brand_id;
-	$brand ['url'] = build_uri ( 'brand', array (
-		'bid' => $brand_id 
-		), $brand ['name'] );
+	$brand ['id'] 	= $brand_id;
+	$brand ['url'] 	= build_uri ('brand', array('bid' => $brand_id), $brand['name'] );
 	
 	$brand_goods = array (
 		'brand' => $brand,
 		'goods' => $goods 
-		);
+	);
 	
 	return $brand_goods;
 }
@@ -972,9 +939,6 @@ function get_extension_goods($cats) {
 		$extension_goods_array [] = $row ['goods_id'];
 	}
 	return db_create_in ( $extension_goods_array, 'g.goods_id' );
-	
-// 	$sql = "SELECT goods_id FROM ecs_goods_cat AS g WHERE $cats";
-// 	$data = $db_goods_cat->query( $sql );
 }
 
 /**
@@ -1026,20 +990,15 @@ function spec_price($spec, $goods_id = 0, $warehouse_area= array()) {
 		if ($model_attr == 1) { //仓库属性
 			$db_warehouse_attr = RC_Loader::load_app_model('warehouse_attr_model', 'warehouse');
 			$warehouse_id = $warehouse_area['warehouse_id'];
-// 			$sql = "select SUM(attr_price) from " .$GLOBALS['ecs']->table('warehouse_attr'). " where goods_id = '$goods_id' and warehouse_id = '$warehouse_id' and " . $where;
 			$price = $db_warehouse_attr->in(array('goods_attr_id' => $spec))->where(array('goods_id' => $goods_id, 'warehouse_id' => $warehouse_id))->sum('`attr_price`|attr_price');
 			
-		} elseif($model_attr == 2) { //地区属性
+		} elseif ($model_attr == 2) { //地区属性
 			$db_warehouse_area_attr = RC_Loader::load_app_model('warehouse_area_attr_model', 'warehouse');
 			$area_id = $warehouse_area['area_id'];
 			$price = $db_warehouse_area_attr->in(array('goods_attr_id' => $spec))->where(array('goods_id' => $goods_id, 'area_id' => $area_id))->sum('`attr_price`|attr_price');
-// 			$sql = "select SUM(attr_price)from " .$GLOBALS['ecs']->table('warehouse_area_attr'). " where goods_id = '$goods_id' and area_id = '$area_id' and " . $where;
-		}elseif($model_attr == 0){
-// 			$sql = 'SELECT SUM(attr_price) AS attr_price FROM ' . $GLOBALS['ecs']->table('goods_attr') . " WHERE $where";
+		} elseif ($model_attr == 0){
 			$price = $db->in(array('goods_attr_id' => $spec))->sum('`attr_price`|attr_price');
 		}
-		
-// 		$price = $db->in(array('goods_attr_id' => $spec))->sum('`attr_price`|attr_price');
 	} else {
 		$price = 0;
 	}
@@ -1080,11 +1039,8 @@ function group_buy_info($group_buy_id, $current_num = 0) {
 	$price_ladder = $group_buy ['price_ladder'];
 	if (! is_array ( $price_ladder ) || empty ( $price_ladder )) {
 		$price_ladder = array (
-			array (
-				'amount' => 0,
-				'price' => 0 
-				) 
-			);
+			array ('amount' => 0, 'price' => 0) 
+		);
 	} else {
 		foreach ( $price_ladder as $key => $amount_price ) {
 			$price_ladder [$key] ['formated_price'] = price_format ( $amount_price ['price'], false );
@@ -1149,8 +1105,8 @@ function group_buy_stat($group_buy_id, $deposit) {
 			'alias' => 'g',
 			'field' => 'COUNT(*) AS total_order, SUM(g.goods_number) AS total_goods',
 			'on' 	=> 'o.order_id = g.order_id ' 
-			) 
-		);
+		) 
+	);
 	
 	$stat = $dbview->find ( "o.extension_code = 'group_buy' AND o.extension_id = '$group_buy_id' AND g.goods_id = '$group_buy_goods_id' AND (order_status = '" . OS_CONFIRMED . "' OR order_status = '" . OS_UNCONFIRMED . "')" );
 	if ($stat ['total_order'] == 0) {
@@ -1241,38 +1197,25 @@ function auction_info($act_id, $config = false) {
 	
 	if ($auction ['bid_user_count'] > 0) {
 		
-		$row = $dbview->join ( 'users' )->order ( array (
-			'a.log_id' => 'DESC' 
-			) )->find ( array (
-			'act_id' => $act_id 
-			) );
-			
-			$row ['formated_bid_price'] = price_format ( $row ['bid_price'], false );
-			$row ['bid_time'] = RC_Time::local_date ( ecjia::config ( 'time_format' ), $row ['bid_time'] );
-			$auction ['last_bid'] = $row;
-		}
+	$row = $dbview->join ( 'users' )->order ( array ('a.log_id' => 'DESC' ) )->find ( array ('act_id' => $act_id ) );
+		$row ['formated_bid_price'] = price_format ( $row ['bid_price'], false );
+		$row ['bid_time'] = RC_Time::local_date ( ecjia::config ( 'time_format' ), $row ['bid_time'] );
+		$auction ['last_bid'] = $row;
+	}
 		
-		/* 查询已确认订单数 */
-		if ($auction ['status_no'] > 1) {
+	/* 查询已确认订单数 */
+	if ($auction ['status_no'] > 1) {
+		$auction ['order_count'] = $db_order_info->in ( array ('order_status' => array (OS_CONFIRMED, OS_UNCONFIRMED ) ) )->where ( array ('extension_code' => auction ) )->count ();
+	} else {
+		$auction ['order_count'] = 0;
+	}
 		
-			$auction ['order_count'] = $db_order_info->in ( array (
-				'order_status' => array (
-					OS_CONFIRMED,
-					OS_UNCONFIRMED 
-					) 
-				) )->where ( array (
-				'extension_code' => auction 
-				) )->count ();
-			} else {
-				$auction ['order_count'] = 0;
-			}
-			
-			/* 当前价 */
-			$auction ['current_price'] = isset ( $auction ['last_bid'] ) ? $auction ['last_bid'] ['bid_price'] : $auction ['start_price'];
-			$auction ['formated_current_price'] = price_format ( $auction ['current_price'], false );
-			
-			return $auction;
-		}
+	/* 当前价 */
+	$auction ['current_price'] = isset ( $auction ['last_bid'] ) ? $auction ['last_bid'] ['bid_price'] : $auction ['start_price'];
+	$auction ['formated_current_price'] = price_format ( $auction ['current_price'], false );
+		
+	return $auction;
+}
 
 /**
  * 取得拍卖活动出价记录
@@ -1335,8 +1278,8 @@ function goods_info($goods_id) {
 			'alias' => 'b',
 			'field' => 'g.*, b.brand_name',
 			'on' => 'g.brand_id = b.brand_id' 
-			) 
-		);
+		) 
+	);
 	
 	$row = $dbview->find(array('g.goods_id' =>$goods_id));
 	
@@ -1354,32 +1297,6 @@ function goods_info($goods_id) {
 }
 
 /**
- * 取得优惠活动信息
- * 
- * @param int $act_id
- *        	活动id
- * @return array
- */
-// function favourable_info($act_id) {
-// 	$db = RC_Loader::load_app_model ( 'favourable_activity_model', 'favourable' );
-// 	$row = $db->find ( array (
-// 		'act_id' => $act_id 
-// 		) );
-// 	if (! empty ( $row )) {
-// 		$row ['start_time'] = RC_Time::local_date ( ecjia::config ( 'time_format' ), $row ['start_time'] );
-// 		$row ['end_time'] = RC_Time::local_date ( ecjia::config ( 'time_format' ), $row ['end_time'] );
-// 		$row ['formated_min_amount'] = price_format ( $row ['min_amount'] );
-// 		$row ['formated_max_amount'] = price_format ( $row ['max_amount'] );
-// 		$row ['gift'] = unserialize ( $row ['gift'] );
-// 		if ($row ['act_type'] == FAT_GOODS) {
-// 			$row ['act_type_ext'] = round ( $row ['act_type_ext'] );
-// 		}
-// 	}
-	
-// 	return $row;
-// }
-
-/**
  * 批发信息
  * 
  * @param int $act_id
@@ -1387,14 +1304,13 @@ function goods_info($goods_id) {
  * @return array
  */
 function wholesale_info($act_id) {
-	$db = RC_Loader::load_app_model ( 'wholesale_model', 'wholesale' );
-	$row = $db->find ( array (
+	$db = RC_Loader::load_app_model('wholesale_model', 'wholesale');
+	$row = $db->find(array (
 		'act_id' => $act_id 
-		) );
-	if (! empty ( $row )) {
-		$row ['price_list'] = unserialize ( $row ['prices'] );
+	));
+	if (!empty($row)) {
+		$row['price_list'] = unserialize($row['prices']);
 	}
-	
 	return $row;
 }
 
@@ -1411,7 +1327,6 @@ function add_style($goods_name, $style) {
 	$goods_style_name = $goods_name;
 	
 	$arr = explode ( '+', $style );
-	
 	$font_color = ! empty ( $arr [0] ) ? $arr [0] : '';
 	$font_style = ! empty ( $arr [1] ) ? $arr [1] : '';
 	
@@ -1442,9 +1357,8 @@ function get_goods_attr($goods_id) {
 			'alias' => 'a',
 			'field' => 'a.attr_id, a.attr_name',
 			'on' => 'g.goods_type = a.cat_id' 
-			) 
-		);
-
+		) 
+	);
 	
 	$attr_id_list = $dbview->where( array ('g.goods_id' => $goods_id,'a.attr_type' => 1 ) )->get_field('attr_id',1);
 	$data = $dbview->where ( array ('g.goods_id' => $goods_id,'a.attr_type' => 1 ) )->select ();
@@ -1452,9 +1366,7 @@ function get_goods_attr($goods_id) {
 	if (! empty ( $data )) {
 		foreach ( $data as $attr ) {
 			if (defined ( 'IN_ADMIN' )) {
-				$attr ['goods_attr_list'] = array (
-					0 => RC_Lang::lang ( 'select_please' ) 
-					);
+				$attr ['goods_attr_list'] = array (0 => RC_Lang::lang ( 'select_please' ) );
 			} else {
 				$attr ['goods_attr_list'] = array ();
 			}
@@ -1485,45 +1397,38 @@ function get_goods_fittings($goods_list = array()) {
 	$arr = array ();
 	$dbview->view = array (
 		'goods ' => array (
-			'type' => Component_Model_View::TYPE_LEFT_JOIN,
+			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 			'alias' => 'g',
 			'field' => "gg.parent_id, ggg.goods_name AS parent_name, gg.goods_id, gg.goods_price, g.goods_name, g.goods_thumb, g.goods_img, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price",
-			'on' => 'g.goods_id = gg.goods_id' 
-			),
+			'on' 	=> 'g.goods_id = gg.goods_id' 
+		),
 		'member_price' => array (
-			'type' => Component_Model_View::TYPE_LEFT_JOIN,
+			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 			'alias' => 'mp',
-			'on' => "mp.goods_id = gg.goods_id AND mp.user_rank = '$_SESSION[user_rank]'" 
-			),
+			'on' 	=> "mp.goods_id = gg.goods_id AND mp.user_rank = '$_SESSION[user_rank]'" 
+		),
 		'goods' => array (
-			'type' => Component_Model_View::TYPE_LEFT_JOIN,
+			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 			'alias' => 'ggg',
-			'on' => 'ggg.goods_id = gg.parent_id' 
-			) 
-		);
+			'on' 	=> 'ggg.goods_id = gg.parent_id' 
+		) 
+	);
 	
-	$res = $dbview->where ( 'g.is_delete = 0 AND g.is_on_sale = 1' )->in ( array (
-		'gg.parent_id' => $goods_list 
-		) )->order ( array (
-		'gg.parent_id' => 'asc',
-		'gg.goods_id' => 'asc' 
-		) )->select ();
+	$res = $dbview->where('g.is_delete = 0 AND g.is_on_sale = 1')->in(array('gg.parent_id' => $goods_list))->order(array('gg.parent_id' => 'asc', 'gg.goods_id' => 'asc'))->select();
 	
-		if (! empty ( $res )) {
-			foreach ( $res as $row ) {
-			$arr [$temp_index] ['parent_id'] = $row ['parent_id']; // 配件的基本件ID
-			$arr [$temp_index] ['parent_name'] = $row ['parent_name']; // 配件的基本件的名称
+	if (!empty($res)) {
+		foreach ($res as $row) {
+			$arr [$temp_index] ['parent_id'] = $row ['parent_id'];		 	// 配件的基本件ID
+			$arr [$temp_index] ['parent_name'] = $row ['parent_name']; 		// 配件的基本件的名称
 			$arr [$temp_index] ['parent_short_name'] = ecjia::config ( 'goods_name_length' ) > 0 ? RC_String::sub_str ( $row ['parent_name'], ecjia::config ( 'goods_name_length' ) ) : $row ['parent_name']; // 配件的基本件显示的名称
-			$arr [$temp_index] ['goods_id'] = $row ['goods_id']; // 配件的商品ID
-			$arr [$temp_index] ['goods_name'] = $row ['goods_name']; // 配件的名称
+			$arr [$temp_index] ['goods_id'] = $row ['goods_id']; 			// 配件的商品ID
+			$arr [$temp_index] ['goods_name'] = $row ['goods_name']; 		// 配件的名称
 			$arr [$temp_index] ['short_name'] = ecjia::config ( 'goods_name_length' ) > 0 ? RC_String::sub_str ( $row ['goods_name'], ecjia::config ( 'goods_name_length' ) ) : $row ['goods_name']; // 配件显示的名称
-			$arr [$temp_index] ['fittings_price'] = price_format ( $row ['goods_price'] ); // 配件价格
-			$arr [$temp_index] ['shop_price'] = price_format ( $row ['shop_price'] ); // 配件原价格
+			$arr [$temp_index] ['fittings_price'] = price_format ( $row ['goods_price'] ); 	// 配件价格
+			$arr [$temp_index] ['shop_price'] = price_format ( $row ['shop_price'] ); 		// 配件原价格
 			$arr [$temp_index] ['goods_thumb'] = get_image_path ( $row ['goods_id'], $row ['goods_thumb'], true );
 			$arr [$temp_index] ['goods_img'] = get_image_path ( $row ['goods_id'], $row ['goods_img'] );
-			$arr [$temp_index] ['url'] = build_uri ( 'goods', array (
-				'gid' => $row ['goods_id'] 
-				), $row ['goods_name'] );
+			$arr [$temp_index] ['url'] = build_uri ('goods', array ('gid' => $row['goods_id']), $row ['goods_name']);
 			$temp_index ++;
 		}
 	}
@@ -1539,9 +1444,7 @@ function get_goods_fittings($goods_list = array()) {
  * @return array
  */
 function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $area_id=0) {
-	
 	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-// 	$model_attr = get_table_date("goods", "goods_id = '$goods_id'", array('model_attr'), 2);
 	$model_attr = $db_goods->where(array('goods_id' => $goods_id))->get_field('model_attr');
 	
 	$db = RC_Loader::load_app_model ( 'products_model', 'goods' );
@@ -1550,7 +1453,6 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
 	if (empty ( $spec_goods_attr_id ) || ! is_array ( $spec_goods_attr_id ) || empty ( $goods_id )) {
 		return $return_array;
 	}
-	
 	$goods_attr_array = sort_goods_attr_id_array ( $spec_goods_attr_id );
 	
 	if (isset ( $goods_attr_array ['sort'] )) {
@@ -1558,35 +1460,21 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
 		
 		if ($model_attr == 1) {
 			$db_products_warehouse = RC_Loader::load_app_model('products_warehouse_model', 'warehouse');
-			$return_array = $db->find ( array (
-					'goods_id' => $goods_id,
-					'goods_attr' => $goods_attr,
-					'warehouse_id' => $warehouse_id
-			) );
-// 			$table_products = "products_warehouse";
-// 			$type_files = " AND warehouse_id = '$warehouse_id'";
-		} elseif($model_attr == 2) {
+			$return_array = $db->find(array (
+				'goods_id' => $goods_id,
+				'goods_attr' => $goods_attr,
+				'warehouse_id' => $warehouse_id
+			));
+		} elseif ($model_attr == 2) {
 			$db_products_area = RC_Loader::load_app_model('products_area_model', 'warehouse');
-			$return_array = $db->find ( array (
-					'goods_id' => $goods_id,
-					'goods_attr' => $goods_attr,
-					'area_id'	=> $area_id
-			) );
-// 			$table_products = "products_area";
-// 			$type_files = " AND area_id = '$area_id'";
+			$return_array = $db->find(array (
+				'goods_id' => $goods_id,
+				'goods_attr' => $goods_attr,
+				'area_id'	=> $area_id
+			));
 		} else {
-// 			$table_products = "products";
-// 			$type_files = "";
-			$return_array = $db->find ( array (
-					'goods_id' => $goods_id,
-					'goods_attr' => $goods_attr
-			) );
+			$return_array = $db->find(array('goods_id' => $goods_id, 'goods_attr' => $goods_attr));
 		}
-		
-// 		$return_array = $db->find ( array (
-// 			'goods_id' => $goods_id,
-// 			'goods_attr' => $goods_attr 
-// 			) );
 	}
 	return $return_array;
 }
@@ -1603,43 +1491,37 @@ function get_replenish_list($args = array()) {
 	$auth_key = ecjia_config::instance()->read_config('auth_key');
 	
 	/* 查询条件 */
-	$filter['goods_id']    = empty($args['goods_id'])    ? 0 : intval($args['goods_id']);
-	$filter['keyword']     = empty($args['keyword'])     ? 0 : trim($args['keyword']);
-	$filter['sort_by']     = empty($_REQUEST['sort_by'])     ? 'card_id' : trim($_REQUEST['sort_by']);
-	$filter['sort_order']  = empty($_REQUEST['sort_order'])  ? 'DESC' : trim($_REQUEST['sort_order']);
+	$filter['goods_id']    = empty($args['goods_id'])    	? 0 : intval($args['goods_id']);
+	$filter['keyword']     = empty($args['keyword'])     	? 0 : trim($args['keyword']);
+	$filter['sort_by']     = empty($_REQUEST['sort_by'])    ? 'card_id' : trim($_REQUEST['sort_by']);
+	$filter['sort_order']  = empty($_REQUEST['sort_order']) ? 'DESC' : trim($_REQUEST['sort_order']);
 
-	$where  = (!empty($filter['goods_id'])) ? " AND goods_id = '" . $filter['goods_id'] . "' " : '';
+	$where = (!empty($filter['goods_id'])) ? " AND goods_id = '" . $filter['goods_id'] . "' " : '';
 
 	if (!empty($args['keyword'])) {
 		$where .= " AND card_sn LIKE '%" . RC_Crypt::encrypt($filter['keyword'],$auth_key ). "%' or order_sn LIKE '%" . mysql_like_quote($filter['keyword']). "%' ";
 	}
 
-	RC_Loader::load_sys_class('ecjia_page', false);
 	$count = $db->where('1'.$where)->count();
 	$page = new ecjia_page ($count, 20, 5);
-
-	$all = $db->field('card_id, goods_id, card_sn, card_password, end_date, is_saled, order_sn, crc32')->where('1' .$where)->order(array($filter[sort_by] => $filter[sort_order]))->limit($page->limit())->select();
-
+	$all = $db->field('card_id, goods_id, card_sn, card_password, end_date, is_saled, order_sn, crc32')->where('1' .$where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
 	$arr = array();
 	
-	foreach ($all AS $key => $row) {
-
-		if ($row['crc32'] == crc32($auth_key)) {
-			$row['card_sn']       = RC_Crypt::decrypt($row['card_sn'],$auth_key);
-			$row['card_password'] = RC_Crypt::decrypt($row['card_password'],$auth_key);
-		} else {
-			$row['card_sn']       = '***';
-			$row['card_password'] = '***';
+	if (!empty($all)) {
+		foreach ($all AS $key => $row) {
+			if ($row['crc32'] == crc32($auth_key)) {
+				$row['card_sn']       = RC_Crypt::decrypt($row['card_sn'],$auth_key);
+				$row['card_password'] = RC_Crypt::decrypt($row['card_password'],$auth_key);
+			} else {
+				$row['card_sn']       = '***';
+				$row['card_password'] = '***';
+			}
+			$row['end_date'] = $row['end_date'] == 0 ? '' : date(ecjia::config('date_format'), $row['end_date']);
+			$arr[] = $row;
 		}
-
-		$row['end_date'] = $row['end_date'] == 0 ? '' : date(ecjia::config('date_format'), $row['end_date']);
-
-		$arr[] = $row;
 	}
-
-	return array('item' => $arr, 'page' => $page->show(5),'desc' => $page->page_desc());
+	return array('item' => $arr, 'page' => $page->show(5), 'desc' => $page->page_desc());
 }
-
 
 /**
  * 更新虚拟商品的商品数量
@@ -1654,11 +1536,9 @@ function update_goods_number($goods_id) {
 	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
 
 	$goods_number = $db->where(array('goods_id' => $goods_id, 'is_saled' => 0))->count();
-
-	$data = array(
-		'goods_number' => $goods_number
-		);
-	$query = $db_goods->where(array('goods_id' => $goods_id, 'extension_code' => virtual_card))->update($data);
+	$data = array('goods_number' => $goods_number);
+	
+	$query = $db_goods->where(array('goods_id' => $goods_id, 'extension_code' => 'virtual_card'))->update($data);
 	return  $query;
 }
 
@@ -1673,29 +1553,30 @@ function get_goods_type() {
 	$db_goods_type = RC_Loader::load_app_model('goods_type_model', 'goods');
 	$dbview->view = array(
 		'attribute' => array(
-				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias' => 'a',
-				'field' => 'gt.*,count(a.cat_id)|attr_count',
-				'on'    => 'a.cat_id = gt.cat_id'
+			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias' => 'a',
+			'field' => 'gt.*,count(a.cat_id)|attr_count',
+			'on'    => 'a.cat_id = gt.cat_id'
 		),
 		'merchants_shop_information' => array(
-				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias' => 'ms',
-				'on'    => 'ms.user_id = gt.user_id'
+			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias' => 'ms',
+			'on'    => 'ms.user_id = gt.user_id'
 		)
 	);
-	RC_Loader::load_sys_class('ecjia_page', false);
 	$count = $db_goods_type->count();
 	$page = new ecjia_page($count, 15, 5);
 	$field = 'gt.*, count(a.cat_id) | attr_count, ms.shoprz_brandName, ms.shopNameSuffix';
-	$all = $dbview->field($field)->join('attribute,merchants_shop_information')->group('gt.cat_id')->order(array('gt.cat_id' => 'desc'))->limit($page->limit())->select();
-	foreach ($all AS $key=>$val) {
-		$all[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
-		$all[$key]['shop_name'] = $val['user_id'] == 0 ? '' : $val['shoprz_brandName'].$val['shopNameSuffix'];
+	$all = $dbview->field($field)->group('gt.cat_id')->order(array('gt.cat_id' => 'desc'))->limit($page->limit())->select();
+	
+	if (!empty($all)) {
+		foreach ($all AS $key=>$val) {
+			$all[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
+			$all[$key]['shop_name'] = $val['user_id'] == 0 ? '' : $val['shoprz_brandName'].$val['shopNameSuffix'];
+		}
 	}
 	return array('type' => $all, 'page' => $page->show(5), 'desc' => $page->page_desc());
 }
-
 
 /**
  * 获取属性列表
@@ -1703,18 +1584,17 @@ function get_goods_type() {
  * @return  array
  */
 function get_attr_list() {
-	$dbview  = RC_Loader::load_app_model('attribute_goods_viewmodel','goods');
+	$dbview  = RC_Loader::load_app_model('attribute_goods_viewmodel', 'goods');
 	/* 查询条件 */
 	$filter = array();
 	$filter['cat_id'] = empty($_REQUEST['cat_id']) ? 0 : intval($_REQUEST['cat_id']);
-	$filter['sort_by']    = empty($_REQUEST['sort_by']) ? 'sort_order' : trim($_REQUEST['sort_by']);
+	$filter['sort_by'] = empty($_REQUEST['sort_by']) ? 'sort_order' : trim($_REQUEST['sort_by']);
 	$filter['sort_order'] = empty($_REQUEST['sort_order']) ? 'asc' : trim($_REQUEST['sort_order']);
 	
 	$where = (!empty($filter['cat_id'])) ? " a.cat_id = '$filter[cat_id]' " : '';
 	$count = $dbview->join(null)->where($where)->count();
 
 	/* 加载分页类 */
-	RC_Loader::load_sys_class('ecjia_page', false);
 	$page = new ecjia_page($count, 15, 5);
 
 	/* 查询 */
@@ -1724,17 +1604,16 @@ function get_attr_list() {
 			'alias' => 't',
 			'field' => 'a.*, t.cat_name',
 			'on'    => 'a.cat_id = t.cat_id'
-			)
-		);
-	$row = $dbview->join('goods_type')->where($where)->order(array($filter[sort_by]=>$filter[sort_order]))->limit($page->limit())->select();
+		)
+	);
+	$row = $dbview->join('goods_type')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
 
-	if(!empty($row)) {
+	if (!empty($row)) {
 		foreach ($row AS $key => $val) {
 			$row[$key]['attr_input_type_desc'] = RC_Lang::lang("value_attr_input_type/$val[attr_input_type]");
-			$row[$key]['attr_values']      = str_replace("\n", ", ", $val['attr_values']);
+			$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
 		}
 	}
-
 	return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
 }
 
@@ -1751,7 +1630,6 @@ function get_goods_type_info($cat_id) {
 	return $db_goods_type->find(array('cat_id' => $cat_id));
 }
 
-
 /**
  * 更新属性的分组
  *
@@ -1765,7 +1643,7 @@ function update_attribute_group($cat_id, $old_group, $new_group) {
 	$db_goods_type = RC_Loader::load_app_model('goods_type_model', 'goods');
 	$data = array(
 		'attr_group' => $new_group,
-		);
+	);
 	$db_goods_type->where(array('cat_id' => $cat_id, 'attr_group' => $old_group))->update($data);
 }
 

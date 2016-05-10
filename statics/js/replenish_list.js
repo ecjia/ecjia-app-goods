@@ -57,7 +57,6 @@
 				}
 			});
 		},
-		
 	};
 })(ecjia.admin, jQuery);
 // end

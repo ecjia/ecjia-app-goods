@@ -6,12 +6,12 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *
  */
 function assign_adminlog_content() {
-	ecjia_admin_log::instance()->add_object('virtual_card',		'虚拟卡');
-	ecjia_admin_log::instance()->add_object('encryption',		'加密串');
-	ecjia_admin_log::instance()->add_object('merchant_brand',	'商家品牌');
-	ecjia_admin_log::instance()->add_object('goods_booking',	'缺货登记');
-    ecjia_admin_log::instance()->add_object('brands',	        '品牌');
-    ecjia_admin_log::instance()->add_object('link_goods',	    '关联商品');
+	ecjia_admin_log::instance()->add_object('virtual_card', '虚拟卡');
+	ecjia_admin_log::instance()->add_object('encryption', '加密串');
+	ecjia_admin_log::instance()->add_object('merchant_brand', '商家品牌');
+	ecjia_admin_log::instance()->add_object('goods_booking', '缺货登记');
+    ecjia_admin_log::instance()->add_object('brands', '品牌');
+    ecjia_admin_log::instance()->add_object('link_goods', '关联商品');
 }
 
 /*------------------------------------------------------ */
@@ -22,8 +22,7 @@ function assign_adminlog_content() {
 * @param   string $extension_code 虚拟商品扩展代码，实体商品为空
 * @return  array('href' => $href, 'text' => $text)
 */
-function add_link($extension_code = '')
-{
+function add_link($extension_code = '') {
 	$pathinfo = 'goods/admin/add';
 	$args = array();
 	if (!empty($extension_code)) {
@@ -34,11 +33,10 @@ function add_link($extension_code = '')
 	} else {
 		$text = RC_Lang::lang('02_goods_add');
 	}
-
 	return array(
 		'href' => RC_Uri::url($pathinfo, $args),
 		'text' => $text
-		);
+	);
 }
 
 /**
@@ -47,8 +45,7 @@ function add_link($extension_code = '')
 *
 * @return boolean
 */
-function goods_parse_url($url)
-{
+function goods_parse_url($url) {
 	$parse_url = @parse_url($url);
 	return (!empty($parse_url['scheme']) && !empty($parse_url['host']));
 }
@@ -60,8 +57,7 @@ function goods_parse_url($url)
 * @param   array $price_list 价格列表
 * @return  void
 */
-function handle_volume_price($goods_id, $number_list, $price_list)
-{
+function handle_volume_price($goods_id, $number_list, $price_list) {
 	$db = RC_Loader::load_app_model('volume_price_model', 'goods');
 	$db->where(array('price_type' => 1, 'goods_id' => $goods_id))->delete();
 	/* 循环处理每个优惠价格 */
@@ -74,11 +70,10 @@ function handle_volume_price($goods_id, $number_list, $price_list)
 				'goods_id'		=> $goods_id,
 				'volume_number' => $volume_number,
 				'volume_price'  => $price,
-				);
+			);
 			$db->insert($data);
 		}
 	}
-
 }
 
 /**
@@ -87,15 +82,14 @@ function handle_volume_price($goods_id, $number_list, $price_list)
 * @param   string $value 字段值
 * @return  bool
 */
-function update_goods_stock($goods_id, $value)
-{
+function update_goods_stock($goods_id, $value) {
 	$db = RC_Loader::load_app_model('goods_model', 'goods');
 	RC_Loader::load_app_func('common', 'goods');
 	if ($goods_id) {
 		$data = array(
 			'goods_number'  => goods_number + $value,
 			'last_update'   => RC_Time::gmtime(),
-		  );
+		);
 		$result = $db->where(array('goods_id' => $goods_id))->update($data);
 		return $result;
 	} else {
@@ -109,15 +103,12 @@ function update_goods_stock($goods_id, $value)
 * @param   string $extension_code 虚拟商品扩展代码，实体商品为空
 * @return  array('href' => $href, 'text' => $text)
 */
-function list_link($extension_code = '')
-{
+function list_link($extension_code = '') {
 	$pathinfo = 'goods/admin/init';
 	$args = array();
 	if (!empty($extension_code)) {
-
 		$args['extension_code'] = $extension_code;
 	}
-
 	if ($extension_code == 'virtual_card') {
 		$text = RC_Lang::lang('50_virtual_card_list');
 	} else {
@@ -127,10 +118,8 @@ function list_link($extension_code = '')
 	return array(
 		'href' => RC_Uri::url($pathinfo, $args),
 		'text' => $text
-		);
+	);
 }
-
-
 
 /*------------------------------------------------------ */
 /*-- admin_brand.php品牌管理控制器调用方法 ----------------------*/
@@ -143,56 +132,39 @@ function list_link($extension_code = '')
  * @return  array
  */
 function get_brandlist() {
-	$db =RC_Loader::load_app_model('brand_model','goods');
+	$db = RC_Loader::load_app_model('brand_model', 'goods');
 	/* 分页大小 */
 	$filter = array();
-
-	/* 记录总数以及页数 */
-	if (!empty($_GET['brand_name'])) {
-		$count = $db->where(array('brand_name' => $_GET['brand_name']))->count();
-	} else {
-		$count = $db->count();
+	$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
+	$where = array();
+	if ($keywords) {
+		$where[] = "brand_name LIKE '%" . mysql_like_quote($keywords) . "%'";
 	}
-	/* 加载分页类 */
-	RC_Loader::load_sys_class('ecjia_page', false);
-	$page = new ecjia_page ( $count, 5, 5 );
-	$filter ['record_count'] = $count;
-	/* 查询记录 */
-	if (isset($_GET['brand_name'])) {
-		if(strtoupper(EC_CHARSET) == 'GBK') {
-			$keyword = iconv("UTF-8", "gb2312", $_GET['brand_name']);
-		} else {
-			$keyword = $_GET['brand_name'];
-		}         
-		$sql = $db->where("brand_name like '%".$keyword."%'")->order('sort_order asc')->limit($page->limit())->select();
-	} else {
-		$sql = $db->order('sort_order asc')->limit($page->limit())->select();
-	}
+	$count = $db->where($where)->count();
+	$page = new ecjia_page($count, 10, 5);
+	
+	$data = $db->where($where)->order('sort_order asc')->limit($page->limit())->select();
 	
 	$arr = array();
-	if(!empty($sql)) {
-		foreach ($sql as $key => $rows) {
-		    $logo_url = RC_Upload::upload_url($rows['brand_logo']);
+	if (!empty($data)) {
+		foreach ($data as $key => $rows) {
 			if (empty($rows['brand_logo'])) {
-				$rows['brand_logo'] = RC_Uri::admin_url('statics/images/nopic.png');
-				$rows['brand_logo_html'] = "<img src='" . $rows['brand_logo'] . "' style='width:100px;height:100px;' />";
-				
+				$rows['brand_logo_html'] = "<img src='" . RC_Uri::admin_url('statics/images/nopic.png') . "' style='width:100px;height:100px;' />";
 			} else {
 				if ((strpos($rows['brand_logo'], 'http://') === false) && (strpos($rows['brand_logo'], 'https://') === false)) {
+				    $logo_url = RC_Upload::upload_url($rows['brand_logo']);
 				    $logo_url = file_exists(RC_Upload::upload_path($rows['brand_logo'])) ? $logo_url : RC_Uri::admin_url('statics/images/nopic.png');
 					$rows['brand_logo_html'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
 				} else {
-					$rows['brand_logo_html'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
+					$rows['brand_logo_html'] = "<img src='" . RC_Uri::admin_url('statics/images/nopic.png') . "' style='width:100px;height:100px;' />";
 				}
 			}
-
-			$site_url   = empty($rows['site_url']) ? 'N/A' : '<a href="'.$rows['site_url'].'" target="_brank">'.$rows['site_url'].'</a>';
-			$rows['site_url']   = $site_url;
+			$site_url = empty($rows['site_url']) ? 'N/A' : '<a href="'.$rows['site_url'].'" target="_brank">'.$rows['site_url'].'</a>';
+			$rows['site_url'] = $site_url;
 			$arr[] = $rows;
 		}
 	}
-	
-	return array('brand' => $arr, 'page' => $page->show(5),'desc' => $page->page_desc());
+	return array('brand' => $arr, 'page' => $page->show(5), 'desc' => $page->page_desc());
 }
 
 /**
@@ -203,42 +175,34 @@ function get_brandlist() {
  */
 function get_merchants_brandlist() {
 	$dbview = RC_Loader::load_app_model('merchants_shop_brand_viewmodel', 'goods');
-	$db =RC_Loader::load_app_model('brand_model', 'goods');
+	$db = RC_Loader::load_app_model('brand_model', 'goods');
 	
-	/* 记录总数以及页数 */
-	if (isset($_GET['brand_name'])) {
-	
-		$count = $db->where(array('brand_name' => $_GET['brand_name']))->count();
-	} else {
-		$count = $db->count();
+	$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
+	$where = array();
+	if ($keywords) {
+		$where[] = "ms.shoprz_brandName LIKE '%" . mysql_like_quote($keywords) . "%'";
 	}
-	RC_Loader::load_sys_class('ecjia_page', false);
-	$page = new ecjia_page ( $count, 5, 5 );
+	$count = $dbview->where($where)->count();
+	
+	$page = new ecjia_page ($count, 10, 5);
 	$field = 'mb.*, ms.shoprz_brandName, ms.shopNameSuffix';
-	/* 查询记录 */
-	if (isset($_GET['brand_name'])) {
-		if(strtoupper(EC_CHARSET) == 'GBK') {
-			$keyword = iconv("UTF-8", "gb2312", $_GET['brand_name']);
-		} else {
-			$keyword = $_GET['brand_name'];
-		}
-		$sql = $dbview->field($field)->where("mb.brandName like '%".$keyword."%'")->order('sort_order asc')->limit($page->limit())->select();
-	} else {
-		$sql = $dbview->field($field)->order('sort_order asc')->limit($page->limit())->select();
-	}
+
+	$data = $dbview->field($field)->where($where)->order('sort_order asc')->limit($page->limit())->select();
 	
-	foreach($sql as $key => $val) {
-		$sql[$key]['shop_name'] = $val['shoprz_brandName']. $val['shopNameSuffix'];
-		$logo_url = RC_Upload::upload_url($val['brandLogo']);
-		if(empty($val['brandLogo'])){
-		    $logo_url = RC_Uri::admin_url('statics/images/nopic.png');
-		    $sql[$key]['brandLogo'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
-		}else{
-		    $logo_url = file_exists(RC_Upload::upload_path($val['brandLogo'])) ? $logo_url : RC_Uri::admin_url('statics/images/nopic.png');
-		    $sql[$key]['brandLogo'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
+	if (!empty($data)) {
+		foreach ($data as $key => $val) {
+			$data[$key]['shop_name'] = $val['shoprz_brandName']. $val['shopNameSuffix'];
+			$logo_url = RC_Upload::upload_url($val['brandLogo']);
+			if (empty($val['brandLogo'])) {
+				$logo_url = RC_Uri::admin_url('statics/images/nopic.png');
+				$data[$key]['brandLogo'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
+			} else {
+				$logo_url = file_exists(RC_Upload::upload_path($val['brandLogo'])) ? $logo_url : RC_Uri::admin_url('statics/images/nopic.png');
+				$data[$key]['brandLogo'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
+			}
 		}
 	}
-	return $sql;
+	return $data;
 }
 
 /*------------------------------------------------------------- */
@@ -253,7 +217,7 @@ function get_merchants_brandlist() {
  * @return  mix
  */
 function get_cat_info($cat_id) {
-	$db = RC_Loader::load_app_model('category_model','goods');
+	$db = RC_Loader::load_app_model('category_model', 'goods');
 	return $db->find(array('cat_id' => $cat_id));
 }
 
@@ -270,7 +234,6 @@ function cat_update($cat_id, $args) {
 	if (empty($args) || empty($cat_id)) {
 		return false;
 	}
-
 	return $db->where(array('cat_id' => $cat_id))->update($args);
 }
 
@@ -284,15 +247,16 @@ function cat_update($cat_id, $args) {
  * @return void
  */
 function get_category_attr_list() {
-	$db = RC_Loader::load_app_model('attribute_goods_viewmodel','goods');
+	$db = RC_Loader::load_app_model('attribute_goods_viewmodel', 'goods');
 	$arr = $db->join('goods_type')->where("gt.enabled = 1")->order(array('a.cat_id' => 'asc','a.sort_order' => 'asc'))->select();
-
 	$list = array();
-
-	foreach ($arr as $val) {
-		$list[$val['cat_id']][] = array($val['attr_id']=>$val['attr_name']);
+	if (!empty($arr)) {
+		foreach ($arr as $val) {
+			if (isset($val['cat_id'])) {
+				$list[$val['cat_id']][] = array($val['attr_id'] => $val['attr_name']);
+			}
+		}
 	}
-
 	return $list;
 }
 
@@ -336,7 +300,7 @@ function insert_cat_recommend($recommend_type, $cat_id) {
 					$query = array(
 						'cat_id'          => $cat_id,
 						'recommend_type'  => $data
-						);
+					);
 					$db->insert($query);
 				}
 			}
@@ -360,7 +324,6 @@ function get_goods_list($filter) {
 	$row = $db->join(null)->field('goods_id, goods_name, shop_price')->where($where)->limit(50)->select();
 	return $row;
 }
-
 
 /**
  * 获得商品类型的列表
@@ -391,8 +354,7 @@ function goods_type_list($selected) {
  *
  * @return  array
  */
-function get_attr_groups($cat_id)
-{
+function get_attr_groups($cat_id) {
 	$db = RC_Loader::load_app_model('goods_type_model', 'goods');
 
 	$data = $db->where(array('cat_id' => $cat_id))->get_field('attr_group');
@@ -404,8 +366,7 @@ function get_attr_groups($cat_id)
 	}
 }
 
-function brand_exists($brand_name)
-{
+function brand_exists($brand_name) {
 	$db = RC_Loader::load_app_model('brand_model', 'goods');
 	return ($db->where('brand_name = "'. $brand_name .'" ')->count() > 0 ) ? true : false;
 }
@@ -416,12 +377,10 @@ function brand_exists($brand_name)
  * @param   object  $filter
  * @return  string
  */
-function get_where_sql($filter)
-{
+function get_where_sql($filter) {
 	$time = date('Y-m-d');
 
 	$where  = isset($filter->is_delete) && $filter->is_delete == '1' ?
-	//' WHERE is_delete = 1 ' : ' WHERE is_delete = 0 ';
 	' is_delete = 1 ' : ' is_delete = 0 ';
 	$where .= (isset($filter->real_goods) && ($filter->real_goods > -1)) ? ' AND is_real = ' . intval($filter->real_goods) : '';
 	$where .= isset($filter->cat_id) && $filter->cat_id > 0 ? ' AND ' . get_children($filter->cat_id) : '';
@@ -437,7 +396,6 @@ function get_where_sql($filter)
 	$where .= isset($filter->in_ids) ? ' AND goods_id ' . db_create_in($filter->in_ids) : '';
 	$where .= isset($filter->exclude) ? ' AND goods_id NOT ' . db_create_in($filter->exclude) : '';
 	$where .= isset($filter->stock_warning) ? ' AND goods_number <= warn_number' : '';
-
 	return $where;
 }
 
@@ -453,7 +411,6 @@ function get_where_sql($filter)
  * @return array
  */
 function get_bookinglist() {
-
 	$args = $_GET;
 	/* 查询条件 */
 	$filter['keywords']		= empty($args['keywords'])		? '' : trim($args['keywords']);
@@ -469,8 +426,6 @@ function get_bookinglist() {
 	$count = $dbview->join('goods')->where($where)->count();
 	$filter['record_count'] = $count;
 
-	//加载分页类
-	RC_Loader::load_sys_class('ecjia_page', false);
 	//实例化分页
 	$page = new ecjia_page($count, 15, 6);
 
@@ -510,8 +465,7 @@ function get_bookinglist() {
  *
  * @return  array
  */
-function get_booking_info($id)
-{
+function get_booking_info($id) {
 	$db = RC_Loader::load_app_model('goods_booking_viewmodel', 'goods');
 	$res = $db->join(array('goods','users'))->find(array('bg.rec_id' => $id));
 
@@ -527,8 +481,7 @@ function get_booking_info($id)
 /**
  * 根据商品ID获取关联地区
  */
-function get_linked_area($goods_id)
-{
+function get_linked_area($goods_id) {
 	$db_region = RC_Loader::load_app_model('link_area_goods_viewmodel', 'goods');
 	$area = $db_region->field('rw.region_id as regionId, rw.region_name')->where(array('goods_id' => $goods_id))->select();
 

@@ -55,7 +55,7 @@
 								<span  class="fileupload-exists">修改</span>
 								<input type='file' name='brand_img' size="35"/>
 							</span>
-							<a class="btn fileupload-exists" data-dismiss="fileupload" href="javascrpt:;">删除</a>
+							<a class="btn fileupload-exists" data-toggle="removefile" data-msg="{t}您确定要删除此品牌LOGO吗？{/t}" data-href='{url path="goods/admin_brand/drop_logo" args="id={$brand.brand_id}"}' {if $brand.url}data-removefile="true"{/if}>{t}删除{/t}</a>
 						</div>
 					</div>
 				</div>

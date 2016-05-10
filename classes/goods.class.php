@@ -7,8 +7,7 @@ class goods {
      *
      * @return array 推荐类型列表
      */
-    public static function intro_list()
-    {
+    public static function intro_list() {
         $arr = array(
             'is_best'		=> RC_Lang::lang('is_best'),
             'is_new'		=> RC_Lang::lang('is_new'),
@@ -25,8 +24,7 @@ class goods {
      *
      * @return array 重量单位列表
      */
-    public static function unit_list()
-    {
+    public static function unit_list() {
         $arr = array(
             '1' =>		RC_Lang::lang('unit_kg'),
             '0.001' =>	RC_Lang::lang('unit_g')
@@ -48,8 +46,7 @@ class goods {
      *            s integer $conditions
      * @return array
      */
-    public static function goods_list($is_delete, $real_goods = 1, $conditions = '')
-    {
+    public static function goods_list($is_delete, $real_goods = 1, $conditions = '') {
         $db = RC_Loader::load_app_model('goods_auto_viewmodel', 'goods');
         /* 过滤条件 */
         $param_str = '-' . $is_delete . '-' . $real_goods;
@@ -134,12 +131,6 @@ class goods {
         $count = $db->join(null)->where('is_delete = ' . $is_delete . '' . $where)->count();
 
         $count_where = "is_delete='$is_delete'" . $where . " AND is_on_sale='1'";
-
-//         $count_where = array_merge($where, array(
-//             'is_delete' => $is_delete,
-//             'is_real' => 1,
-//             'is_on_sale' => 1
-//         ));
         if ($filter ['extension_code']) {
             $count_where .= " AND is_real='0'";
             $count_where .= " AND extension_code='$filter[extension_code]'";
@@ -162,14 +153,17 @@ class goods {
         $filter ['count_goods_num']	= $count_not_sale + $count_on_sale;
         $filter ['count']			= $count;
     
-        foreach ($sql as $k => $v) {
-            if (!file_exists(RC_Upload::upload_path() . $v['goods_thumb']) || empty($v['goods_thumb'])) {
-                $sql[$k]['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
-            } else {
-                $sql[$k]['goods_thumb'] = RC_Upload::upload_url() . '/' . $v['goods_thumb'];
-            }
-            $sql[$k]['shop_name'] = $v['user_id'] == 0 ? '' : $v['shoprz_brandName'].$v['shopNameSuffix'];
+        if (!empty($sql)) {
+        	foreach ($sql as $k => $v) {
+        		if (!file_exists(RC_Upload::upload_path() . $v['goods_thumb']) || empty($v['goods_thumb'])) {
+        			$sql[$k]['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
+        		} else {
+        			$sql[$k]['goods_thumb'] = RC_Upload::upload_url() . '/' . $v['goods_thumb'];
+        		}
+        		$sql[$k]['shop_name'] = $v['user_id'] == 0 ? '' : $v['shoprz_brandName'].$v['shopNameSuffix'];
+        	}
         }
+        
         $row = $sql;
         return array(
             'goods'		=> $row,

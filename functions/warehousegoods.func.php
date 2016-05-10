@@ -14,32 +14,30 @@ function warehouse_get_goods_properties($goods_id) {
 	/* 对属性进行重新排序和分组 */
 
 	$db_good_type->view = array (
-			'goods' => array (
-					'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-					'alias' => 'g',
-					'field' => 'attr_group',
-					'on' 	=> 'gt.cat_id = g.goods_type'
-			)
+		'goods' => array (
+			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+			'alias' => 'g',
+			'field' => 'attr_group',
+			'on' 	=> 'gt.cat_id = g.goods_type'
+		)
 	);
 
 	$grp = $db_good_type->find ( array (
-			'g.goods_id' => $goods_id
+		'g.goods_id' => $goods_id
 	) );
 	$grp = $grp ['attr_group'];
 	if (! empty ( $grp )) {
 		$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
 	}
-
-	
 	
 	/* 获得商品的规格 */
 	$db_good_attr->view = array (
-			'attribute' => array (
-					'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias'    => 'a',
-					'field'    => 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price',
-					'on'       => 'a.attr_id = ga.attr_id'
-			)
+		'attribute' => array (
+			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias'    => 'a',
+			'field'    => 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price',
+			'on'       => 'a.attr_id = ga.attr_id'
+		)
 	);
 
 	$res = $db_good_attr->where(array('ga.goods_id' => $goods_id))->order(array('a.sort_order' => 'asc','ga.attr_price' => 'asc','ga.goods_attr_id' => 'asc'))->select();
@@ -74,8 +72,6 @@ function warehouse_get_goods_properties($goods_id) {
 			}
 		}
 	}
-
 	return $arr;
 }
-
 // end
