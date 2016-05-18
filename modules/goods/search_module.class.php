@@ -33,7 +33,7 @@ class search_module implements ecjia_interface {
     		$is_active = ecjia_app::is_active('ecjia.mobilebuy');
     		$seller_list = array();
     		foreach ($result['seller_list'] as $row) {
-    			$field = 'count(*) as count, SUM(IF(comment_rank>3,1,0)) as comment_rank';
+    			$field = 'count(*) as count, SUM(comment_rank) as comment_rank';
     			$comment = $db_goods_view->join(null)->field($field)->where(array('ru_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
     		
     			$favourable_result = $db_favourable->where(array('user_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
@@ -149,7 +149,7 @@ class search_module implements ecjia_interface {
     				'follower'			=> $row['follower'],
     				'is_follower'		=> $row['is_follower'],
     				'goods_count'		=> $goods_result['page']->total_records,
-    				'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
+    				'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
     				'favourable_list'	=> $favourable_list,
     				));
     			} else {
@@ -162,7 +162,7 @@ class search_module implements ecjia_interface {
     						'follower'			=> $row['follower'],
     						'is_follower'		=> $row['is_follower'],
     						'goods_count'		=> $goods_result['page']->total_records,
-    						'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
+    						'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
     						'favourable_list'	=> $favourable_list,
     				);
     			}
