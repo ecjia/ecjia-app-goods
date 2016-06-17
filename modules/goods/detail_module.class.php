@@ -11,10 +11,8 @@ class detail_module implements ecjia_interface
     public function run(ecjia_api & $api)
     {
         //如果用户登录获取其session
-        if (EM_Api::$session['sid']) {
-        	EM_Api::authSession();
-        }
-        RC_Lang::load(array('system/system'));//加载语言包
+    	EM_Api::authSession(false);
+        
         $goods_id = _POST('goods_id', 0);
         $area_id = _POST('area_id', 0);
         
