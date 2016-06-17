@@ -12,7 +12,17 @@ class suggestlist_module implements ecjia_interface {
     	EM_Api::authSession(false);
     	
     	$location = _POST('location');
-    		
+    	/*经纬度为空判断*/
+    	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
+    		$data = array();
+    		$data['list'] = array();
+    		$data['pager'] = array(
+    				"total" => '0',
+    				"count" => '0',
+    				"more"	=> '0'
+    		);
+    		EM_Api::outPut($data['list'], $data['pager']);
+    	}
     	RC_Loader::load_app_func('common', 'goods');
     	$action_type = _POST('action_type', '');
     	$sort_type = _POST('sort_by', '');

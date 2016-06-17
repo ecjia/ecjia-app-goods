@@ -59,14 +59,25 @@ class list_module implements ecjia_interface {
        			'filter_attr' => $filter_attr,
        			'location'	=> $location,
        	);
+       	/*经纬度为空判断*/
+       	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
+       		$data = array();
+       		$data['list'] = array();
+       		$data['pager'] = array(
+       				"total" => '0',
+       				"count" => '0',
+       				"more"	=> '0'
+       		);
+       		EM_Api::outPut($data['list'], $data['pager']);
+       	}
        	
 		$filter = empty($filter['filter_attr']) ? '' : $filter['filter_attr'];
        	$cache_id = sprintf('%X', crc32($category . '-' . $sort_by  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank']. '-' .
        			ecjia::config('lang') .'-'. $brand. '-'. $keyword. '-' . $max_price . '-' .$min_price . '-' . $filter ));
        	
        	$cache_key = 'api_goods_list_'.$category.'_'.$cache_id;
-//        	$data = RC_Cache::app_cache_get($cache_key, 'goods');
-		$data = null;
+       	$data = RC_Cache::app_cache_get($cache_key, 'goods');
+       	
        	if (empty($data)) {
 			$result = RC_Api::api('goods', 'goods_list', $options);
 			$data = array();
@@ -128,7 +139,7 @@ class list_module implements ecjia_interface {
 					);
 				}
 			}
-// 			RC_Cache::app_cache_set($cache_key, $data, 'goods', 60);
+			RC_Cache::app_cache_set($cache_key, $data, 'goods');
        	} else {
        		if (!empty($options['keywords'])) {
        			RC_Loader::load_app_class('goods_list', 'goods', false);

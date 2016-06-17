@@ -11,7 +11,18 @@ class search_module implements ecjia_interface {
     	$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
     	$keywords = _POST('keywords');
     	$location = _POST('location');
-    	
+    	/*经纬度为空判断*/
+    	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
+    		$data = array();
+    		$data['type'] = 'goods';
+    		$data['result'] = array();
+    		$data['pager'] = array(
+    				"total" => '0',
+    				"count" => '0',
+    				"more"	=> '0',
+    		);
+    		EM_Api::outPut($data);
+    	}    	
     	$size = EM_Api::$pagination['count'];
     	$page = EM_Api::$pagination['page'];
     	$options = array(
