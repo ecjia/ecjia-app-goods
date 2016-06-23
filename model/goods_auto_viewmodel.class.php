@@ -17,11 +17,17 @@ class goods_auto_viewmodel extends Component_Model_View {
 						'field'	=> 'g.*,a.starttime,a.endtime',
 						'on'	=> "g.goods_id = a.item_id AND a.type='goods'"
 				),
-				'merchants_shop_information' => array(
+// 				'merchants_shop_information' => array(
+// 						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+// 						'alias'	=> 'ms',
+// 						'on'	=> "ms.user_id = g.user_id"
+// 				),
+				'seller_shopinfo' => array(
 						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-						'alias'	=> 'ms',
-						'on'	=> "ms.user_id = g.user_id"
-				)
+						'alias'	=> 'ssi',
+						'on'	=> "ssi.id = g.seller_id"
+				),
+				
 		);		
 		parent::__construct();
 	}

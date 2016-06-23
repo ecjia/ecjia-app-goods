@@ -326,7 +326,7 @@
 										</div>
 									</div>
 
-									{if $goods.user_id}
+									{if $goods.seller_id}
 									<div class="foldable-list move-mod-group" id="goods_info_sort_cat">
 										<div class="accordion-group">
 											<div class="accordion-heading">
