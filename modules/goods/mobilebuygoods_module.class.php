@@ -21,23 +21,19 @@ class mobilebuygoods_module implements ecjia_interface {
     	
     	$location = _POST('location');
     	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
-    		$request = array('location' => $location);
     		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
-    		$where_geohash = $geohash->encode($location['latitude'] , $location['longitude']);
-    		$where_geohash = substr($where_geohash, 0, 5);
-    		 
-    		$seller_shopinfo_db = RC_Loader::load_app_model('seller_shopinfo_model', 'seller');
-    		$ru_id = $seller_shopinfo_db->where(array('geohash' => array('like' => "%$where_geohash%")))->get_field('ru_id', true);
-    		 
-    		$mobilebuywhere['g.user_id'] = $ru_id;
+    		$geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
+    		$geohash_code = substr($where_geohash, 0, 5);
+    		
+    		$mobilebuywhere['geohash'] = array('like' => "%".$geohash_code."%");
     	}
     	
-    	$db_goods_activity = RC_Loader::load_app_model('goods_activity_viewmodel', 'groupbuy');
+    	$db_goods_activity = RC_Loader::load_app_model('goods_activity_viewmodel', 'goods');
     	
-    	$count = $db_goods_activity->join(array('goods'))->where($mobilebuywhere)->count();
+    	$count = $db_goods_activity->join(array('goods', 'seller_shopinfo'))->where($groupwhere)->count();
     	
 		/* 查询总数为0时直接返回  */
-		if ($count == 0) {
+    	if ($count == 0 || !is_array($location) || empty($location['latitude']) || empty($location['longitude'])) {
 			$pager = array(
 					'total' => 0,
 					'count' => 0,
@@ -55,7 +51,12 @@ class mobilebuygoods_module implements ecjia_interface {
     	//实例化分页
     	$page_row = new ecjia_page($count, $size, 6, '', $page);
     	
-    	$res = $db_goods_activity->field('ga.act_id, ga.goods_id, ga.goods_name, ga.start_time, ga.end_time, ext_info, shop_price, market_price, goods_brief, goods_thumb, goods_img, original_img')->join(array('goods'))->where($mobilebuywhere)->order(array('act_id' => 'DESC'))->limit($page_row->limit())->select();
+    	$res = $db_goods_activity->field('ga.act_id, ga.goods_id, ga.goods_name, ga.start_time, ga.end_time, ext_info, shop_price, market_price, goods_brief, goods_thumb, goods_img, original_img')
+    							 ->join(array('goods', 'seller_shopinfo'))
+    							 ->where($mobilebuywhere)
+    							 ->order(array('act_id' => 'DESC'))
+    							 ->limit($page_row->limit())
+    							 ->select();
     	
     	$list = array();
     	if (!empty($res)) {

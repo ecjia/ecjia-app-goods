@@ -9,7 +9,6 @@ class groupbuygoods_module implements ecjia_interface {
 
     public function run(ecjia_api & $api) {
     	
-    	
     	$groupwhere['act_type']		= GAT_GROUP_BUY;
     	$groupwhere['start_time']	= array('elt' => RC_Time::gmtime());
     	$groupwhere['end_time']		= array('egt' => RC_Time::gmtime());
@@ -24,40 +23,42 @@ class groupbuygoods_module implements ecjia_interface {
     	
     	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
     		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
-    		$where_geohash = $geohash->encode($location['latitude'] , $location['longitude']);
-    		$where_geohash = substr($where_geohash, 0, 5);
-    			
-    		$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
-    		$ru_id_info = $msi_dbview->join(array('merchants_shop_information', 'seller_shopinfo'))->field(array('msi.user_id', 'msi.shopNameSuffix', 'msi.shoprz_brandName'))->where(array(
-    				'geohash'		=> array('like' => "%$where_geohash%"),
-    				'ssi.status'	=> 1,
-    				'msi.merchants_audit' => 1,
-    		))->select();
-    			
-    		if (!empty($ru_id_info)) {
-    			// 				$ru_id = array(0);
-    			$ru_id = array();
-    			foreach ($ru_id_info as $val) {
-    				$ru_id[] = $val['user_id'];
-    				$seller_info[$val['user_id']]['seller_id'] = $val['user_id'];
-    				$seller_info[$val['user_id']]['seller_name'] = (!empty($val['shoprz_brandName']) && !empty($val['shopNameSuffix'])) ? $val['shoprz_brandName'].$val['shopNameSuffix'] : '';
-    					
-    			}
-    			$merchants_shop_information_db = RC_Loader::load_app_model('merchants_shop_information_model', 'seller');
-    			$merchants_shop_information_db->where(array('user_id' => $ru_id))->select();
-    			$groupwhere['g.user_id'] = $ru_id;
-    		} else {
-    			$groupwhere['g.user_id'] = 0;
-    		}
+    		$geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
+    		$geohash_code = substr($where_geohash, 0, 5);
     		
+    		$groupwhere['geohash'] = array('like' => "%".$geohash_code."%");
+    		
+//     		$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+//     		$ru_id_info = $msi_dbview->join(array('merchants_shop_information', 'seller_shopinfo'))->field(array('msi.user_id', 'msi.shopNameSuffix', 'msi.shoprz_brandName'))->where(array(
+//     				'geohash'		=> array('like' => "%$where_geohash%"),
+//     				'ssi.status'	=> 1,
+//     				'msi.merchants_audit' => 1,
+//     		))->select();
+    			
+//     		if (!empty($ru_id_info)) {
+
+//     			$ru_id = array();
+//     			foreach ($ru_id_info as $val) {
+//     				$ru_id[] = $val['user_id'];
+//     				$seller_info[$val['user_id']]['seller_id'] = $val['user_id'];
+//     				$seller_info[$val['user_id']]['seller_name'] = (!empty($val['shoprz_brandName']) && !empty($val['shopNameSuffix'])) ? $val['shoprz_brandName'].$val['shopNameSuffix'] : '';
+    					
+//     			}
+//     			$merchants_shop_information_db = RC_Loader::load_app_model('merchants_shop_information_model', 'seller');
+//     			$merchants_shop_information_db->where(array('user_id' => $ru_id))->select();
+//     			$groupwhere['g.user_id'] = $ru_id;
+//     		} else {
+//     			$groupwhere['g.user_id'] = 0;
+//     		}
     	}
     	
-    	$db_goods_activity = RC_Loader::load_app_model('goods_activity_viewmodel', 'groupbuy');
+    	$db_goods_activity = RC_Loader::load_app_model('goods_activity_viewmodel', 'goods');
     	
-    	$count = $db_goods_activity->join(array('goods'))->where($groupwhere)->count();
+    	
+    	$count = $db_goods_activity->join(array('goods', 'seller_shopinfo'))->where($groupwhere)->count();
     	
 		/* 查询总数为0时直接返回  */
-		if ($count == 0) {
+		if ($count == 0 || !is_array($location) || empty($location['latitude']) || empty($location['longitude'])) {
 			$pager = array(
 					'total' => 0,
 					'count' => 0,
@@ -75,7 +76,12 @@ class groupbuygoods_module implements ecjia_interface {
     	//实例化分页
     	$page_row = new ecjia_page($count, $size, 6, '', $page);
     	
-    	$res = $db_goods_activity->field('ga.act_id, ga.goods_id, ga.goods_name, ga.start_time, ga.end_time, ext_info, shop_price, market_price, goods_brief, goods_thumb, goods_img, original_img, g.user_id')->join(array('goods'))->where($groupwhere)->order(array('act_id' => 'DESC'))->limit($page_row->limit())->select();
+    	$res = $db_goods_activity->field('ssi.id as seller_id, shop_name as seller_name, ga.act_id, ga.goods_id, ga.goods_name, ga.start_time, ga.end_time, ext_info, shop_price, market_price, goods_brief, goods_thumb, goods_img, original_img')
+    							 ->join(array('goods', 'seller_shopinfo'))
+    							 ->where($groupwhere)
+    							 ->order(array('act_id' => 'DESC'))
+    							 ->limit($page_row->limit())
+    							 ->select();
     	
     	$list = array();
     	if (!empty($res)) {
@@ -90,7 +96,7 @@ class groupbuygoods_module implements ecjia_interface {
     				}
     			}
     				
-    			$cur_price  = $price_ladder[0]['price'];    // 初始化
+    			$cur_price  = $price_ladder[0]['price'];
     			$list[] = array(
     					'id'	=> $val['goods_id'],
     					'name'	=> $val['goods_name'],
@@ -107,8 +113,8 @@ class groupbuygoods_module implements ecjia_interface {
     					),
     					'object_id'	=> $val['act_id'],
     					'rec_type'	=> 'GROUPBUY_GOODS',
-    					'seller_id'		=> $val['user_id'],
-    					'seller_name'	=> isset($seller_info[$val['user_id']]['seller_name']) ? $seller_info[$val['user_id']]['seller_name'] : '',
+    					'seller_id'		=> $val['seller_id'],
+    					'seller_name'	=> isset($val['seller_name']) ? $val['seller_name'] : '',
     			);
     		}
     	}

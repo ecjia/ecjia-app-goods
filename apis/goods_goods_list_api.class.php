@@ -15,7 +15,8 @@ class goods_goods_list_api extends Component_Event_Api {
      *
      * @return array
      */
-	public function call(&$options) {	
+	public function call(&$options) {
+		
 	    $default_display_type = ecjia::config('show_order_type') == '0' ? 'list' : (ecjia::config('show_order_type') == '1' ? 'grid' : 'text');
 		$options['display']  = (isset($options['display']) && in_array(trim(strtolower($options['display'])), array('list', 'grid', 'text'))) ? trim($options['display'])  : (isset($_COOKIE['ECS']['display']) ? $_COOKIE['ECS']['display'] : $default_display_type);
 		$options['display']  = in_array($options['display'], array('list', 'grid', 'text')) ? $options['display'] : 'text';
