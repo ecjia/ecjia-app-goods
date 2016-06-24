@@ -8,7 +8,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class search_module implements ecjia_interface {
 
     public function run(ecjia_api & $api) {
-    	$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
     	$keywords = _POST('keywords');
     	$location = _POST('location');
     	/*经纬度为空判断*/
@@ -47,7 +46,7 @@ class search_module implements ecjia_interface {
     			$field = 'count(*) as count, SUM(comment_rank) as comment_rank';
     			$comment = $db_goods_view->join(null)->field($field)->where(array('ru_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
     		
-    			$favourable_result = $db_favourable->where(array('user_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
+    			$favourable_result = $db_favourable->where(array('seller_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
     			$favourable_list = array();
     			if (empty($rec_type)) {
     				if (!empty($favourable_result)) {
@@ -182,13 +181,13 @@ class search_module implements ecjia_interface {
     		$data = array();
     		$data['type'] = 'seller';
     		$data['result'] = $seller_list;
-    		$page = array(
+    		$data['pager'] = array(
 				'total'	=> $result['page']->total_records,
 				'count'	=> $result['page']->total_records,
 				'more'	=> $result['page']->total_pages <= $page ? 0 : 1,
 			);
     		
-    		EM_Api::outPut($data, $pager);
+    		EM_Api::outPut($data, $data['pager']);
     	} else {
     		$options = array(
     				'keywords'	=> $keywords,
@@ -261,7 +260,7 @@ class search_module implements ecjia_interface {
     				"more"	=> $result['page']->total_pages <= $page ? 0 : 1,
     		);
     		
-    		EM_Api::outPut($data, $pager);
+    		EM_Api::outPut($data, $data['pager']);
     	}
     	
     	
