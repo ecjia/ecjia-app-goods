@@ -97,7 +97,7 @@ class search_module implements ecjia_interface {
     			}
     		
     		
-    			$goods_options = array('page' => 1, 'size' => 3, 'user_id' => $row['id']);
+    			$goods_options = array('page' => 1, 'size' => 3, 'seller_id' => $row['id']);
     			if (!empty($goods_category)) {
     				$goods_options['cat_id'] = $goods_category;
     			}
