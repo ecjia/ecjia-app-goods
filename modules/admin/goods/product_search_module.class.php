@@ -11,8 +11,8 @@ class product_search_module implements ecjia_interface
     { 
     	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
     	$ecjia->authadminSession();
-    	$goods_sn = _POST('goods_sn');
-		$device = _POST('device', array());
+    	$goods_sn	= isset($_POST['goods_sn']) ? trim($_POST['goods_sn']) : '';
+		$device		= $_POST['device'];
     	$device_code = $device['code'];
     	if (empty($goods_sn)) {
     		EM_Api::outPut(101);

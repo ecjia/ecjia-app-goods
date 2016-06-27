@@ -16,21 +16,29 @@ class detail_module implements ecjia_interface {
 		if (is_ecjia_error($result)) {
 			EM_Api::outPut($result);
 		}
+		
 		$id = _POST('goods_id');
 		if (empty($id)) {
 			EM_Api::outPut(101);
 		}
-		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+		
+// 		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+		$db_goods = RC_Model::model('goods/goods_model');
 		$where = array('goods_id' => $id, 'is_delete' => 0);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+// 		if ($_SESSION['ru_id'] > 0) {
+// 			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+// 		}
+		if ($_SESSION['seller_id'] > 0) {
+			$where = array_merge($where, array('seller_id' => $_SESSION['seller_id']));
 		}
 		$row = $db_goods->find($where);
 		if (empty($row)) {
 			EM_Api::outPut(13);
 		} else {
-			$brand_db = RC_Loader::load_app_model('brand_model', 'goods');
-			$category_db = RC_Loader::load_app_model('category_model', 'goods');
+			$brand_db		= RC_Model::model('goods/brand_model');
+			$category_db	= RC_Model::model('goods/category_model');
+// 			$brand_db = RC_Loader::load_app_model('brand_model', 'goods');
+// 			$category_db = RC_Loader::load_app_model('category_model', 'goods');
 			
 			$brand_name = $row['brand_id'] > 0 ? $brand_db->where(array('brand_id' => $row['brand_id']))->get_field('brand_name') : '';
 			$category_name = $category_db->where(array('cat_id' => $row['cat_id']))->get_field('cat_name');
@@ -70,11 +78,10 @@ class detail_module implements ecjia_interface {
 					'is_alone_sale' => $row['is_alone_sale'] == 1 ? true : false,
 					'last_updatetime' => RC_Time::local_date(ecjia::config('time_format'), $row['last_update']),
 					'goods_desc' 	=> $goods_desc_url,
-					
 					'img' => array(
-							'thumb'	=> API_DATA('PHOTO', $row['goods_img']),
-							'url'	=> API_DATA('PHOTO', $row['original_img']),
-							'small'	=> API_DATA('PHOTO', $row['goods_thumb'])
+							'thumb'	=> !empty($row['goods_img']) ? RC_Upload::upload_url($row['goods_img']) : '',
+							'url'	=> !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : '',
+							'small'	=> !empty($row['goods_thumb']) ? RC_Upload::upload_url($row['goods_thumb']) : '',
 					),
 					'unformatted_shop_price'	=> $row['shop_price'],
 					'unformatted_market_price'	=> $row['market_price'],
@@ -83,18 +90,7 @@ class detail_module implements ecjia_interface {
 					'rank_integral'				=> $row['rank_integral'],
 					'integral'					=> $row['integral'],
 			);
-			//RC_Loader::load_app_func('goods', 'goods');
-// 			$goods_detail['pictures'] = array();
-// 			$pictures = get_goods_gallery($id);
-// 			if(!empty($pictures)) {
-// 				foreach ($pictures as $key => $value) {
-// 					$goods_detail['pictures'][] = array(
-// 						'thumb'	=> API_DATA('PHOTO', $value['thumb_url']),
-// 						'url'	=> API_DATA('PHOTO', $value['img_url']),
-// 						'small'	=> API_DATA('PHOTO', $value['thumb_url']),
-// 					);
-// 				}
-// 			}
+
 			RC_Loader::load_app_func('system_goods', 'goods');
 			RC_Loader::load_app_func('common', 'goods');
 			
@@ -105,10 +101,10 @@ class detail_module implements ecjia_interface {
 		    if(!empty($user_rank)){
 		    	foreach ($user_rank as $key=>$value){
 				    		$goods_detail['user_rank'][]=array(
-				    				'rank_id'	 =>$value['rank_id'],
-				    				'rank_name'	 =>$value['rank_name'],
-				    				'discount'	 =>$value['discount'],
-				    			    'price'		 =>!empty($discount_price[$value['rank_id']])?$discount_price[$value['rank_id']]:'-1',
+				    				'rank_id'	 => $value['rank_id'],
+				    				'rank_name'	 => $value['rank_name'],
+				    				'discount'	 => $value['discount'],
+				    			    'price'		 => !empty($discount_price[$value['rank_id']])?$discount_price[$value['rank_id']]:'-1',
 				    		);
 		    	}
 		    }
@@ -119,54 +115,11 @@ class detail_module implements ecjia_interface {
 		    if(!empty($volume_number)) {
 		    	foreach ($volume_number as $key=>$value) {
 		    		$goods_detail['volume_number'][] =array(
-		    			   'number'	=>$value['number'],
-		    			   'price'	=>$value['price']	
+		    			   'number'	=> $value['number'],
+		    			   'price'	=> $value['price']	
 		    		);
 		    	}
 		    }
-// 			"user_rank" : [
-// 				{
-// 					rank_id :  3,				会员等级id
-// 					rank_name : '代销用户',		会员等级
-// 					discount : '60',			折扣
-// 					price	: 100.00或-1			-1代表按会员折扣率计算
-// 				}
-// 			],
-// 			"volume_number" : [
-// 				{
-// 					number  :  1,
-// 					price	:  100.00,
-// 				},
-// 				{
-// 					number  :  2,
-// 					price	:  200.00,
-// 				},
-// 			],
-// 			"unformatted_shop_price" : 100.00,
-
-// 			$properties = get_goods_properties($id); // 获得商品的规格和属性
-			
-// 			$goods_detail['properties']      = array();
-// 			$goods_detail['specification']   = array();
-			
-// 			if (!empty($properties['pro'])) {
-// 				foreach ($properties['pro'] as $key => $value) {
-// 					// 处理分组
-// 					foreach ($value as $k => $v) {
-// 						$v['value'] = strip_tags($v['value']);
-// 						$goods_detail['properties'][] = $v;
-// 					}
-// 				}
-// 			}
-// 			if (!empty($properties['spe'])) {
-// 				foreach ($properties['spe'] as $key => $value) {
-// 					if (!empty($value['values'])) {
-// 						$value['value'] = $value['values'];
-// 						unset($value['values']);
-// 					}
-// 					$goods_detail['specification'][] = $value;
-// 				}
-// 			}
 			
 			EM_Api::outPut($goods_detail);
 		}
