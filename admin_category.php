@@ -219,7 +219,7 @@ class admin_category extends ecjia_admin {
 
 		$this->admin_priv('cat_manage');
 
-		$cat_id = intval($_REQUEST['cat_id']);
+		$cat_id = intval($_GET['cat_id']);
 		$cat_info = get_cat_info($cat_id);  // 查询分类信息数据
 		$filter_attr_list = array();
 		$attr_list = array();
@@ -229,7 +229,7 @@ class admin_category extends ecjia_admin {
 			foreach ($filter_attr AS $k => $v) {
 				$attr_cat_id = $this->db_attribute->where(array('attr_id' => intval($v)))->get_field('cat_id');
 
-				$filter_attr_list[$k]['goods_type_list'] = goods_type_list($attr_cat_id['cat_id']);  //取得每个属性的商品类型
+				$filter_attr_list[$k]['goods_type_list'] = goods_type_list($attr_cat_id);  //取得每个属性的商品类型
 				$filter_attr_list[$k]['filter_attr'] = $v;
 				$attr_option = array();
 				$_REQUEST['cat_id'] = $attr_cat_id;
