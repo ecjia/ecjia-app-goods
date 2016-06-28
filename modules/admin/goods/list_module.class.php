@@ -15,11 +15,11 @@ class list_module implements ecjia_interface {
 		if (is_ecjia_error($result)) {
 			EM_Api::outPut($result);
 		}
-		$on_sale = _POST('on_sale', 'true');//true.在售, false.下架
-		$stock = _POST('stock', 'true');//是否售罄 。true.有货 , false.售罄
-		$sort = _POST('sort_by', 'sort_order');//默认: sort_order  其他: price_desc, price_asc, stock, click_asc, clcik_desc
-		$keywords = _POST('keywords');
-		$category_id = _POST('category_id');
+		$on_sale	= isset($_POST['on_sale'])	? strval($_POST['on_sale']) : 'true';//true.在售, false.下架
+		$stock		= isset($_POST['stock'])	? strval($_POST['stock']) : 'true';//是否售罄 。true.有货 , false.售罄
+		$sort		= isset($_POST['sort_by'])	? trim($_POST['sort_by']) : 'sort_order';//默认: sort_order  其他: price_desc, price_asc, stock, click_asc, clcik_desc
+		$keywords	= isset($_POST['keywords']) ? trim($_POST['keywords']) : '';
+		$category_id = isset($_POST['category_id']) ? intval($_POST['category_id']) : 0;
 		$size = EM_Api::$pagination['count'];
 		$page = EM_Api::$pagination['page'];
 		
@@ -49,8 +49,11 @@ class list_module implements ecjia_interface {
 		$where = array(
 			'is_delete' => 0,
 		);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+// 		if ($_SESSION['ru_id'] > 0) {
+// 			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+// 		}
+		if ($_SESSION['seller_id'] > 0) {
+			$where = array_merge($where, array('seller_id' => $_SESSION['seller_id']));
 		}
 		$where['is_on_sale'] = $on_sale == 'true' ? 1 : 0 ;
 		if ($stock == 'false') {
@@ -106,19 +109,18 @@ class list_module implements ecjia_interface {
 						'is_shipping'	=> $val['is_shipping'] == 1 ? true : false,
 						'last_updatetime' => RC_Time::local_date(ecjia::config('time_format'), $val['last_update']),
 						'img' => array(
-								'thumb'	=> API_DATA('PHOTO', $val['goods_img']),
-								'url'	=> API_DATA('PHOTO', $val['original_img']),
-								'small'	=> API_DATA('PHOTO', $val['goods_thumb'])
+								'thumb'	=> !empty($val['goods_img']) ? RC_Upload::upload_url($val['goods_img']) : '',
+								'url'	=> !empty($val['original_img']) ? RC_Upload::upload_url($val['original_img']) : '',
+								'small'	=> !empty($val['goods_thumb']) ? RC_Upload::upload_url($val['goods_thumb']) : '',
 						)
-					
 				);
 			}
 		}
 		
 		$pager = array(
-				"total" => $page_row->total_records,
-				"count" => $page_row->total_records,
-				"more" => $page_row->total_pages <= $page ? 0 : 1,
+				'total' => $page_row->total_records,
+				'count' => $page_row->total_records,
+				'more'	=> $page_row->total_pages <= $page ? 0 : 1,
 		);
 		
 		EM_Api::outPut($goods_list , $pager);
