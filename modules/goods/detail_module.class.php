@@ -316,16 +316,18 @@ class detail_module implements ecjia_interface
 //         	$data['related_goods'] = array();
 //         }
         //多店铺的内容
-        $data['seller_id'] = $goods['user_id'];
-        if ($goods['user_id'] > 0) {
+        $data['seller_id'] = $goods['seller_id'];
+        if ($goods['seller_id'] > 0) {
         	$seller_where = array();
         	$seller_where['ssi.status'] = 1;
-        	$seller_where['msi.merchants_audit'] = 1;
-        	$seller_where['msi.user_id'] = $data['seller_id'];
-        	$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+//         	$seller_where['msi.merchants_audit'] = 1;
+//         	$seller_where['msi.user_id'] = $data['seller_id'];
+        	$seller_where['ssi.id'] = $goods['seller_id'];
+//         	$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+        	$ssi_dbview = RC_Model::model('seller/seller_shopinfo_viewmodel');
         	
-        	$field ='msi.user_id,ssi.*, CONCAT(shoprz_brandName,shopNameSuffix) as seller_name, c.cat_name, ssi.shop_logo, count(cs.ru_id) as follower';
-        	$info = $msi_dbview->join(array('category', 'seller_shopinfo', 'collect_store'))
+        	$field ='ssi.*, ssi.id as seller_id, ssi.shop_name as seller_name, sc.cat_name, count(cs.seller_id) as follower, SUM(IF(cs.user_id = '.$_SESSION['user_id'].',1,0)) as is_follower';
+			$info = $ssi_dbview->join(array('seller_category', 'collect_store'))
 					        	->field($field)
 					        	->where($seller_where)
 					        	->find();
@@ -337,24 +339,24 @@ class detail_module implements ecjia_interface
         	$goods_count = $goods_db->where(array('user_id' => $data['seller_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
         	
         	$cs_db = RC_Loader::load_app_model('collect_store_model', 'seller');
-        	$follower_count = $cs_db->where(array('ru_id' => $data['seller_id']))->count();
+        	$follower_count = $cs_db->where(array('seller_id' => $data['seller_id']))->count();
         	
         	$db_goods_view = RC_Loader::load_app_model('comment_viewmodel', 'comment');
         	
         	$field = 'count(*) as count, SUM(IF(comment_rank>3,1,0)) as comment_rank, SUM(IF(comment_server>3,1,0)) as comment_server, SUM(IF(comment_delivery>3,1,0)) as comment_delivery';
-        	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.user_id' => $goods['user_id'], 'parent_id' => 0, 'status' => 1))->find();
+        	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.seller_id' => $goods['seller_id'], 'parent_id' => 0, 'status' => 1))->find();
         	
 
         	$data['merchant_info'] = array(
-        			'id'				=> $info['user_id'],
+        			'id'				=> $info['seller_id'],
         			'seller_name'		=> $info['seller_name'],
         			'seller_logo'		=> !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
         			'goods_count'		=> $goods_count,
         			'follower'			=> $follower_count,
         			'comment' 			=> array(
-        					'comment_goods'		=> $comment['count']>0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
-        					'comment_server'	=> $comment['count']>0 ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
-        					'comment_delivery'	=> $comment['count']>0 ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
+        					'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
+        					'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
+        					'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
         			)
         			
         	);

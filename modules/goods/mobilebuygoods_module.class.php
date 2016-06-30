@@ -23,7 +23,7 @@ class mobilebuygoods_module implements ecjia_interface {
     	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
     		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
     		$geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
-    		$geohash_code = substr($where_geohash, 0, 5);
+    		$geohash_code = substr($geohash_code, 0, 5);
     		
     		$mobilebuywhere['geohash'] = array('like' => "%".$geohash_code."%");
     	}
