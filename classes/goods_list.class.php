@@ -140,7 +140,7 @@ class goods_list {
 		if (is_array($filter['location']) && isset($filter['location']['latitude']) && isset($filter['location']['longitude'])) {
 			$geohash = RC_Loader::load_app_class('geohash', 'shipping');
 			$geohash_code = $geohash->encode($filter['location']['latitude'] , $filter['location']['longitude']);
-			$geohash_code = substr($where_geohash, 0, 5);
+			$geohash_code = substr($geohash_code, 0, 5);
 
 			$where['geohash'] = array('like' => "%$geohash_code%");
 			
