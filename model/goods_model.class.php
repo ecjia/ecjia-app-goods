@@ -74,11 +74,11 @@ class goods_model extends Component_Model_Model {
 		$where = array();
 		$where['goods_id'] = $goods_id;
 		/*多商户处理*/
-		if (isset($_SESSION['ru_id']) && $_SESSION['ru_id'] > 0 ) {
-			$where['user_id'] = $_SESSION['ru_id'];
+		if (isset($_SESSION['seller_id']) && $_SESSION['seller_id'] > 0 ) {
+			$where['seller_id'] = $_SESSION['seller_id'];
 		}
-		$field = 'goods_id, goods_name, shop_price, market_price, promote_price, promote_start_date, promote_end_date, goods_thumb, original_img, goods_img';
-		$row = $this->field($field)->where($where)->find();
+		
+		$row = $this->where($where)->find();
 	
 		if (! empty ( $row )) {
 			$row['formatted_shop_price']		= price_format($row['shop_price']);
