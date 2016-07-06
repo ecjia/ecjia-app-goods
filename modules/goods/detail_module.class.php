@@ -379,12 +379,17 @@ function EM_get_goods_gallery($goods_id) {
     $row = $db_goods_gallery->field('img_id, img_url, thumb_url, img_desc, img_original')->where(array('goods_id' => $goods_id))->limit(ecjia::config('goods_gallery_number'))->select();
     /* 格式化相册图片路径 */
     RC_Loader::load_app_class('goods_image', 'goods');
+    $img_list_sort = $img_list_id = array();
     foreach ($row as $key => $gallery_img) {
-//         $row[$key]['img_url'] = get_image_path($goods_id, $gallery_img['img_original'], false, 'gallery');
-//         $row[$key]['thumb_url'] = get_image_path($goods_id, $gallery_img['img_url'], true, 'gallery');
+    	$desc_index = intval(strrpos($gallery_img['img_original'], '?')) + 1;
+    	!empty($desc_index) && $row[$key]['desc'] = substr($gallery_img['img_original'], $desc_index);
     	$row[$key]['img_url'] = empty($gallery_img ['img_original']) ? RC_Uri::admin_url('statics/images/nopic.png') : goods_image::get_absolute_url($gallery_img ['img_original']);
     	$row[$key]['thumb_url'] = empty($gallery_img ['img_url']) ? RC_Uri::admin_url('statics/images/nopic.png') : goods_image::get_absolute_url($gallery_img ['img_url']);
+    	$img_list_sort[$key] = $img_list[$key]['desc'];
+    	$img_list_id[$key] = $gallery_img['img_id'];
     }
+    //先使用sort排序，再使用id排序。
+    array_multisort($img_list_sort, $img_list_id, $row);
     return $row;
 }
 
