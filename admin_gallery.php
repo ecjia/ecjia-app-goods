@@ -198,14 +198,13 @@ class admin_gallery extends ecjia_admin {
 	public function sort_image() {
 		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
 		$sort = $_GET['info'];
 		$i = 1;
 		foreach ($sort as $k => $v) {
-			$v['img_original'] = substr($v['img_original'], 0, strrpos($v['img_original'], '?')) . '?' . $i;
-			$v['img_original'] = str_replace(SITE_UPLOAD_URL . '/', '', $v['img_original']);
+			//$v['img_original'] = substr($v['img_original'], 0, strrpos($v['img_original'], '?')) . '?' . $i;
+			//$v['img_original'] = str_replace(SITE_UPLOAD_URL . '/', '', $v['img_original']);
+			$v['img_original'] = strrpos($v['img_original'], '?') > 0 ? substr($v['img_original'], 0, strrpos($v['img_original'], '?')) . '?' . $i : $v['img_original']. '?' . $i;
+			$v['img_original'] = str_replace(RC_Upload::upload_url() . '/', '', $v['img_original']);
 			$i++;
 			$where = array('img_id' => $v['img_id']);
 			$data = array('img_original' => $v['img_original']);
