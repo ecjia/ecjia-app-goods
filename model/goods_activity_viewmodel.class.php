@@ -19,7 +19,7 @@ class goods_activity_viewmodel extends Component_Model_View {
 				'seller_shopinfo' => array(
 						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 						'alias'	=> 'ssi',
-						'on'	=> "ssi.id = g.seller_id"
+						'on'	=> "ssi.id = ga.seller_id"
 				),
 		);
 		
