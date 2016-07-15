@@ -180,18 +180,18 @@ function get_merchants_brandlist() {
 	$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
 	$where = array();
 	if ($keywords) {
-		$where[] = "ms.shoprz_brandName LIKE '%" . mysql_like_quote($keywords) . "%'";
+		$where[] = "ssi.shop_name LIKE '%" . mysql_like_quote($keywords) . "%'";
 	}
 	$count = $dbview->where($where)->count();
 	
 	$page = new ecjia_page ($count, 10, 5);
-	$field = 'mb.*, ms.shoprz_brandName, ms.shopNameSuffix';
+	$field = 'mb.*, ssi.shop_name';
 
 	$data = $dbview->field($field)->where($where)->order('sort_order asc')->limit($page->limit())->select();
 	
 	if (!empty($data)) {
 		foreach ($data as $key => $val) {
-			$data[$key]['shop_name'] = $val['shoprz_brandName']. $val['shopNameSuffix'];
+			$data[$key]['shop_name'] = $val['shop_name'];
 			$logo_url = RC_Upload::upload_url($val['brandLogo']);
 			if (empty($val['brandLogo'])) {
 				$logo_url = RC_Uri::admin_url('statics/images/nopic.png');

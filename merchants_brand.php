@@ -57,7 +57,7 @@ class merchants_brand extends ecjia_admin {
 	    
 		$brand_id =  intval($_GET['id']);
 		/* 取得品牌数据 */
-		$brand_arr = $this->db_merchants_brand->field('bid, brandName, site_url, brandLogo, brand_desc, is_show, sort_order')->find(array('bid' => $_REQUEST['id']));
+		$brand_arr = $this->db_merchants_brand->field('bid, brandName, site_url, brandLogo, brand_desc, is_show, sort_order')->find(array('bid' => $_GET['id']));
 		/* 标记为图片链接还是文字链接 */
 		if (!empty($brand_arr['brandLogo'])) {
 			if (strpos($brand_arr['brandLogo'], 'http://') === false) {
@@ -85,12 +85,9 @@ class merchants_brand extends ecjia_admin {
 	 */
 	public function update() {
 	    $this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
-	    
-	    if (!empty($_SESSION['ru_id'])) {
-	    	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-	    }
+
 		$id= !empty($_GET['id']) ? intval($_GET['id']) : 0;
-		$is_show = isset($_REQUEST['is_show']) ? intval($_REQUEST['is_show']) : 0;
+		$is_show = isset($_GET['is_show']) ? intval($_GET['is_show']) : 0;
 		/*处理URL*/
 		$site_url = RC_Format::sanitize_url( $_POST['site_url'] );
 		/* 获取旧的LOGO地址,并删除 */
@@ -154,9 +151,6 @@ class merchants_brand extends ecjia_admin {
 	public function edit_brand_name() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
 		$id     = intval($_POST['pk']);
 		$name   = trim($_POST['value']);
 		if (empty($name)) {
@@ -176,9 +170,6 @@ class merchants_brand extends ecjia_admin {
 	public function edit_sort_order() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
 		$id     = intval($_POST['pk']);
 		$order  = intval($_POST['value']);
 		if (empty($order)){
@@ -199,9 +190,6 @@ class merchants_brand extends ecjia_admin {
 	public function toggle_show() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
 		if (empty($_SESSION['ru_id'])) {
 			$id     = intval($_POST['id']);
 			$val    = intval($_POST['val']);
@@ -221,9 +209,6 @@ class merchants_brand extends ecjia_admin {
 	public function remove() {
 		$this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
 		$id = intval($_GET['id']);
 		/* 删除该品牌的图标 */
 		$logo_name = $this->db_merchants_brand->where(array('bid' => $id))->get_field('brandLogo');
@@ -247,10 +232,7 @@ class merchants_brand extends ecjia_admin {
 	 */
 	public function drop_logo()	{
 	    $this->admin_priv('merchants_brand', ecjia::MSGTYPE_JSON);
-	    
-	    if (!empty($_SESSION['ru_id'])) {
-	    	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-	    }
+	  
 		$brand_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 		$logo_name = $this->db_brand->where(array('brand_id' => $brand_id))->get_field('brand_logo');
 		if (!empty($logo_name)) {

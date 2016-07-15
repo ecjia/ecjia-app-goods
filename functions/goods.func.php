@@ -1558,21 +1558,26 @@ function get_goods_type() {
 			'field' => 'gt.*,count(a.cat_id)|attr_count',
 			'on'    => 'a.cat_id = gt.cat_id'
 		),
-		'merchants_shop_information' => array(
-			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-			'alias' => 'ms',
-			'on'    => 'ms.user_id = gt.user_id'
-		)
+// 		'merchants_shop_information' => array(
+// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+// 			'alias' => 'ms',
+// 			'on'    => 'ms.user_id = gt.user_id'
+// 		),
+		'seller_shopinfo' => array(
+				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+				'alias' => 'ssi',
+				'on'    => 'ssi.id = gt.seller_id'
+		),
 	);
 	$count = $db_goods_type->count();
 	$page = new ecjia_page($count, 15, 5);
-	$field = 'gt.*, count(a.cat_id) | attr_count, ms.shoprz_brandName, ms.shopNameSuffix';
+	$field = 'gt.*, count(a.cat_id) | attr_count, ssi.shop_name';
 	$all = $dbview->field($field)->group('gt.cat_id')->order(array('gt.cat_id' => 'desc'))->limit($page->limit())->select();
 	
 	if (!empty($all)) {
 		foreach ($all AS $key=>$val) {
 			$all[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
-			$all[$key]['shop_name'] = $val['user_id'] == 0 ? '' : $val['shoprz_brandName'].$val['shopNameSuffix'];
+			$all[$key]['shop_name'] = $val['seller_id'] == 0 ? '' : $val['shop_name'];
 		}
 	}
 	return array('type' => $all, 'page' => $page->show(5), 'desc' => $page->page_desc());
