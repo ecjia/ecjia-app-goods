@@ -18,198 +18,115 @@ function cat_exists($cat_name, $parent_cat, $exclude = 0) {
 /**
  * 获得指定分类下的子分类的数组
  *
- * @access  public
- * @param   int     $cat_id     分类的ID
- * @param   int     $selected   当前选中分类的ID
- * @param   boolean $re_type    返回的类型: 值为真时返回下拉列表,否则返回数组
- * @param   int     $level      限定返回的级数。为0时返回所有级数
- * @param   int     $is_show_all 如果为true显示所有分类，如果为false隐藏不可见分类。
- * @return  mix
+ * @access public
+ * @param int $cat_id
+ *        	分类的ID
+ * @param int $selected
+ *        	当前选中分类的ID
+ * @param boolean $re_type
+ *        	返回的类型: 值为真时返回下拉列表,否则返回数组
+ * @param int $level
+ *        	限定返回的级数。为0时返回所有级数
+ * @param int $is_show_all
+ *        	如果为true显示所有分类，如果为false隐藏不可见分类。
+ * @return mix
  */
-function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true, $web_type = '', $cat_type = 0, $goods_user = 0, $admin_user = 0, $array_type = 0) {
+function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
+	// 加载方法
+	RC_Loader::load_app_func('common', 'goods');
 	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
 	$db_category = RC_Loader::load_app_model('sys_category_viewmodel', 'goods');
 	$db_goods_cat = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');
-	static $res = NULL;
-	$db_category->view = array(
-		'category' => array(
-			'type'  =>	Component_Model_View::TYPE_LEFT_JOIN,
-			'alias' =>	's',
-			'field' =>	'c.cat_id, c.cat_name, c.measure_unit, c.parent_id, c.is_show, c.show_in_nav, c.grade, c.sort_order, COUNT(s.cat_id) AS has_children',
-			'on'   	=>	's.parent_id = c.cat_id'
-		),
-		'merchants_category' => array(
-			'type'  =>	Component_Model_View::TYPE_LEFT_JOIN,
-			'alias' =>	'mc',
-			'on'   	=>	'mc.cat_id = c.cat_id'
-		)
-	);
-
-	static $res = NULL;
-	$ruCat = '';
-
-	$admin_type = 0;
-	if ($goods_user > 0) {
-		$ru_id = $goods_user;
-	} else {
-		if ($admin_user > 0) {
-			$admin_type = 1;
-			$ru_id = $admin_user;
-		} else {
-			$ru_id = !empty($_SESSION['ru_id']) ? $_SESSION['ru_id'] : 0;
-		}
-	}
-
-	if ($ru_id > 0) {
-		$db_merchants_shop_information = RC_Loader::load_app_model('merchants_shop_information_model', 'seller');
-		$shopMain_category = $db_merchants_shop_information->where(array('user_id'=>$ru_id))->get_field('user_shopMain_category');
-	} else {
-		$shopMain_category = '';
-	}
+	static $res = NULL;	
 	if ($res === NULL) {
 		$data = false;
 		if ($data === false) {
-			$res = $db_category->join('category,merchants_category')->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
-			$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0,'is_on_sale' => 1))->group ('cat_id asc')->select();
-			$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0,'g.is_on_sale' => 1))->group ('gc.cat_id')->select();
-
-			$newres = array();
+			$res = $db_category->join('category')->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+			$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0, 'is_on_sale' => 1))->group ('cat_id asc')->select();
+			$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0, 'g.is_on_sale' => 1))->group ('gc.cat_id')->select();
+			$newres = array ();
 			if (!empty($res2)) {
 				foreach($res2 as $k => $v) {
-					$newres[$v['cat_id']] = $v['goods_num'];
+					$newres [$v ['cat_id']] = $v ['goods_num'];
 					if (!empty($res3)) {
-						foreach($res3 as $ks => $vs) {
-							if ($v['cat_id'] == $vs['cat_id']) {
-								$newres[$v['cat_id']] = $v['goods_num'] + $vs['goods_num'];
+						foreach ( $res3 as $ks => $vs ) {
+							if ($v ['cat_id'] == $vs ['cat_id']) {
+								$newres [$v ['cat_id']] = $v ['goods_num'] + $vs ['goods_num'];
 							}
-						}
-					}
-				}	
-			}
-
-			if (!empty($res)) {
-				foreach($res as $k => $v) {
-					if ($web_type == 'admin') {
-						$cat_id_str = get_class_nav($res[$k]['cat_id']);
-						$res[$k]['cat_child'] = substr($cat_id_str['catId'], 0 ,-1);
-						if (empty($cat_id_str['catId'])) {
-							$res[$k]['cat_child'] = substr($res[$k]['cat_id'], 0 ,-1);
-						}
-				
-						$where = array(
-							'is_delete'	=> 0,
-							'cat_id'	=> $res[$k]['cat_child']
-						);
-				
-						$ruCat = array();
-						if (isset($_SESSION['ru_id']) && $_SESSION['ru_id'] > 0) {
-							$ruCat = array('g.user_id' => $_SESSION['ru_id']);
-							$where['user_id'] = $_SESSION['ru_id'];
-						}
-				
-						$goodsNums = $db_goods->where($where)->select();
-						$goods_ids = array();
-						if (!empty($goodsNums)) {
-							foreach($goodsNums as $num_key => $num_val) {
-								$goods_ids[] = $num_val['goods_id'];
-							}
-						}
-				
-						$goodsCat = get_goodsCat_num($res[$k]['cat_child'], $goods_ids, $ruCat);
-				
-						$res[$k]['goods_num'] = count($goodsNums) + $goodsCat;
-						$res[$k]['goodsCat'] = $goodsCat; //扩展商品数量
-						$res[$k]['goodsNum'] = $goodsNums; //本身以及子分类的商品数量
-							
-						$db_merchants_category = RC_Loader::load_app_model('merchants_category_model', 'seller');
-						$goodsUser_id = $db_merchants_category->where(array('cat_id'=>$v['cat_id']))->get_field('user_id');
-				
-						if ($goodsUser_id > 0){
-							$db_merchants_shop_information = RC_Loader::load_app_model('merchants_shop_information_model', 'seller');
-							$shop_info = $db_merchants_shop_information->field(array('shoprz_brandName', 'shop_class_keyWords', 'shopNameSuffix'))->where(array('user_id' => $goodsUser_id))->find();
-				
-							$res[$k]['user_name'] = $shop_info['shoprz_brandName'].$shop_info['shopNameSuffix'];
 						}
 					}
 				}
 			}
-			//如果数组过大，不采用静态缓存方式
-			if (count($res) <= 1000) {
-				RC_Cache::app_cache_set('cat_pid_releate', $res, 'goods');
+			if (! empty ( $res )) {
+				foreach ( $res as $k => $v ) {
+					$res [$k] ['goods_num'] = ! empty($newres [$v ['cat_id']]) ? $newres [$v['cat_id']] : 0;
+				}
 			}
+			
 		} else {
 			$res = $data;
 		}
 	}
-
-	if (empty($res) == true) {
-		return $re_type ? '' : array();
+	if (empty ( $res ) == true) {
+		return $re_type ? '' : array ();
 	}
-	$options = cat_options($cat_id, $res); // 获得指定分类下的子分类的数
-	$options = get_user_category($options, $shopMain_category, $ru_id, $admin_type); //获取入驻商家的可用分类权限 ecmoban模板堂 --zhuo
 	
-	//查找商家的分类ID
-	$options = get_fine_store_category($options, $web_type, $array_type, $ru_id);
-
-	$children_level = 99999; //大于这个分类的将被删除
+	$options = cat_options ( $cat_id, $res ); // 获得指定分类下的子分类的数组
+	
+	$children_level = 99999; // 大于这个分类的将被删除
 	if ($is_show_all == false) {
-		foreach ($options as $key => $val) {
-			if ($val['level'] > $children_level) {
-				unset($options[$key]);
+		foreach ( $options as $key => $val ) {
+			if ($val ['level'] > $children_level) {
+				unset ( $options [$key] );
 			} else {
-				if ($val['is_show'] == 0) {
-					unset($options[$key]);
-					if ($children_level > $val['level']) {
-						$children_level = $val['level']; //标记一下，这样子分类也能删除
+				if ($val ['is_show'] == 0) {
+					unset ( $options [$key] );
+					if ($children_level > $val ['level']) {
+						$children_level = $val ['level']; // 标记一下，这样子分类也能删除
 					}
 				} else {
-					$children_level = 99999; //恢复初始值
+					$children_level = 99999; // 恢复初始值
 				}
 			}
 		}
 	}
-
+	
 	/* 截取到指定的缩减级别 */
 	if ($level > 0) {
 		if ($cat_id == 0) {
 			$end_level = $level;
 		} else {
-			$first_item = reset($options); // 获取第一个元素
-			$end_level  = $first_item['level'] + $level;
+			$first_item = reset ( $options ); // 获取第一个元素
+			$end_level = $first_item ['level'] + $level;
 		}
-
+		
 		/* 保留level小于end_level的部分 */
-		foreach ($options AS $key => $val) {
-			if ($val['level'] >= $end_level) {
-				unset($options[$key]);
+		foreach ( $options as $key => $val ) {
+			if ($val ['level'] >= $end_level) {
+				unset ( $options [$key] );
 			}
 		}
 	}
-
+	
 	if ($re_type == true) {
 		$select = '';
-		foreach ($options AS $var) {
-			if ($cat_type == 1) {
-				$select .= '<option value="' . $var['cat_id'] ."_" .$var['level'] . '" ';
-			} else {
-				$select .= '<option value="' . $var['cat_id'] . '" ';
+		if (! empty ( $options )) {
+			foreach ( $options as $var ) {
+				$select .= '<option value="' . $var ['cat_id'] . '" ';
+				$select .= ($selected == $var ['cat_id']) ? "selected='ture'" : '';
+				$select .= '>';
+				if ($var ['level'] > 0) {
+					$select .= str_repeat ( '&nbsp;', $var ['level'] * 4 );
+				}
+				$select .= htmlspecialchars ( addslashes($var ['cat_name'] ), ENT_QUOTES ) . '</option>';
 			}
-			$select .= ($selected == $var['cat_id']) ? "selected='ture'" : '';
-			$select .= '>';
-			if ($var['level'] > 0) {
-				$select .= str_repeat('&nbsp;', $var['level'] * 4);
-			}
-			$select .= htmlspecialchars(addslashes($var['cat_name']), ENT_QUOTES) . '</option>';
 		}
 		return $select;
 	} else {
-		foreach ($options AS $key => $value) {
-			if ($goods_user > 0) {
-				$options[$key]['url'] = build_uri('merchants_store', array('cid' => $value['cat_id'], 'urid' => $ru_id), $value['cat_name']);
-			} else {
-				$options[$key]['url'] = build_uri('category', array('cid' => $value['cat_id']), $value['cat_name']);
+		if (! empty($options )) {
+			foreach ($options as $key => $value ) {
+				$options [$key] ['url'] = build_uri ('category', array('cid' => $value ['cat_id']), $value ['cat_name']);
 			}
-
 		}
 		return $options;
 	}
@@ -520,9 +437,9 @@ function merchant_cat_list() {
 			'on'   	=>	'mc.cat_id = c.cat_id'
 		)
 	);
-	$res = $db_category->join('merchants_category')->where(array('mc.user_id'=>array('neq'=> 0)))->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
-	$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0,'is_on_sale' => 1,'user_id' => (isset($_SESSION['ru_id']) ? $_SESSION['ru_id'] : 0)))->group ('cat_id asc')->select();
-	$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0,'g.is_on_sale' => 1, 'user_id' => (isset($_SESSION['ru_id']) ? $_SESSION['ru_id'] : 0)))->group ('gc.cat_id')->select();
+	$res = $db_category->join('merchants_category')->where(array('mc.seller_id'=>array('neq'=> 0)))->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+	$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0,'is_on_sale' => 1,'seller_id' => (isset($_SESSION['seller_id']) ? $_SESSION['seller_id'] : 0)))->group ('cat_id asc')->select();
+	$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0,'g.is_on_sale' => 1, 'seller_id' => (isset($_SESSION['seller_id']) ? $_SESSION['seller_id'] : 0)))->group ('gc.cat_id')->select();
 		
 	$newres = array ();
 	if (!empty($res2)) {

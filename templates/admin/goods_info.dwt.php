@@ -325,47 +325,6 @@
 											</div>
 										</div>
 									</div>
-
-									{if $goods.seller_id}
-									<div class="foldable-list move-mod-group" id="goods_info_sort_cat">
-										<div class="accordion-group">
-											<div class="accordion-heading">
-												<a class="accordion-toggle collapsed move-mod-head" data-toggle="collapse" data-target="#goods_info_area_cat">
-													<strong>{t}商户商品分类{/t}</strong>
-												</a>
-											</div>
-											<div class="accordion-body in in_visable collapse" id="goods_info_area_cat">
-												<div class="accordion-inner">
-													<div class="control-group">
-
-														<label><b>{t}选择商户商品分类{/t}</b></label>
-														<div>
-															<select class="w300" name="store_category" >
-																<option value="0">{$lang.select_please}</option>
-																<!-- {foreach from=$merchant_cat_list item=cat} -->
-																<option {if $goods.cat_id eq $cat.cat_id}selected="selected"{/if} value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}><!-- {$cat.cat_name} --></option>
-																<!-- {/foreach} -->
-															</select>
-														</div>
-
-														<label><b>{t}选择扩展商户分类{/t}</b></label>
-														<div class="goods-cat">
-															<div class="goods-span">
-																<!-- {foreach from=$merchant_cat_list item=cat} -->
-																	<label style="padding-left:{$cat.level * 20}px">
-																		<input type="checkbox" name="other_cat[]" value="{$cat.cat_id}" {if $cat.is_other_cat}checked="checked"{/if} />
-																		<!-- {$cat.cat_name} -->
-																	</label>
-																<!-- {/foreach} -->
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									{/if}
-
 									<div class="foldable-list move-mod-group" id="goods_info_sort_brand">
 										<div class="accordion-group">
 											<div class="accordion-heading">

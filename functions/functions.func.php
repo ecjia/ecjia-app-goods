@@ -436,11 +436,17 @@ function get_bookinglist() {
 			'alias'	=> 'g',
 			'on'	=> 'bg.goods_id = g.goods_id',
 		),
-		'merchants_shop_information' => array(
-			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-			'alias'	=> 'ms',
-			'field'	=> 'bg.rec_id, bg.link_man, g.goods_id, g.goods_name, bg.goods_number, bg.booking_time, bg.is_dispose, g.user_id, ms.shoprz_brandName, ms.shopNameSuffix',
-			'on'    => 'ms.user_id = g.user_id',
+// 		'merchants_shop_information' => array(
+// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+// 			'alias'	=> 'ms',
+// 			'field'	=> 'bg.rec_id, bg.link_man, g.goods_id, g.goods_name, bg.goods_number, bg.booking_time, bg.is_dispose, g.user_id, ms.shoprz_brandName, ms.shopNameSuffix',
+// 			'on'    => 'ms.user_id = g.user_id',
+// 		),
+		'seller_shopinfo' => array(
+				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'	=> 'ssi',
+				'field'	=> 'bg.rec_id, bg.link_man, g.goods_id, g.goods_name, bg.goods_number, bg.booking_time, bg.is_dispose, g.user_id, ssi.shop_name',
+				'on'    => 'ssi.id = g.seller_id',
 		)
 	);
 
@@ -449,7 +455,7 @@ function get_bookinglist() {
 	if (!empty($row)) {
 		foreach ($row AS $key => $val) {
 			$row[$key]['booking_time'] = RC_Time::local_date(ecjia::config('time_format'), $val['booking_time']);
-			$row[$key]['shop_name'] = $val['user_id'] == 0 ? '' : $val['shoprz_brandName'].$val['shopNameSuffix'];
+			$row[$key]['shop_name'] = $val['seller_id'] == 0 ? '' : $val['shop_name'];
 		}
 	}
 	$filter['keywords'] = stripslashes($filter['keywords']);

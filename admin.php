@@ -436,7 +436,7 @@ class admin extends ecjia_admin {
 		$this->assign('goods', 				$goods);
 		$this->assign('goods_name_color', 	$goods_name_style[0]);
 		$this->assign('cat_list', 			$cat_list);
-		$this->assign('merchant_cat_list', 	merchant_cat_list(0, $goods['cat_id'], false));
+		//$this->assign('merchant_cat_list', 	merchant_cat_list(0, $goods['cat_id'], false));
 		$this->assign('brand_list', 		get_brand_list());
 		$this->assign('unit_list', 			goods::unit_list());
 		$this->assign('user_rank_list', 	get_user_rank_list());
@@ -510,7 +510,7 @@ class admin extends ecjia_admin {
 			$this->assign('warning', $warning);
 		}
 		/* 商品信息 */
-		$goods = $this->db_goods->find(array('goods_id' => $_REQUEST[goods_id]));
+		$goods = $this->db_goods->find(array('goods_id' => $_GET['goods_id']));
 		/* 虚拟卡商品复制时, 将其库存置为0*/
 		if ($code != '') {
 			$goods['goods_number'] = 0;
@@ -569,20 +569,21 @@ class admin extends ecjia_admin {
 		/* 扩展分类 */
 		$other_cat_list = array();
 
-		$getCol = $this->db_goods_cat->field('cat_id')->where(array('goods_id' => $_REQUEST['goods_id']))->select();
-
-		foreach ($getCol as $value) {
-		    $goods['other_cat'][] = $value['cat_id'];
+		$getCol = $this->db_goods_cat->field('cat_id')->where(array('goods_id' => $_GET['goods_id']))->select();
+		if (!empty($getCol)) {
+			foreach ($getCol as $value) {
+				$goods['other_cat'][] = $value['cat_id'];
+			}
 		}
-
+		
 		/* 商品图片路径 */
 		if (isset($GLOBALS['shop_id']) && ($GLOBALS['shop_id'] > 10) && !empty($goods['original_img'])) {
-			$goods['goods_img'] = get_image_path($_REQUEST['goods_id'], $goods['goods_img']);
-			$goods['goods_thumb'] = get_image_path($_REQUEST['goods_id'], $goods['goods_thumb'], true);
+			$goods['goods_img'] = get_image_path($_GET['goods_id'], $goods['goods_img']);
+			$goods['goods_thumb'] = get_image_path($_GET['goods_id'], $goods['goods_thumb'], true);
 		}
 
 		/* 图片列表 */
-		$img_list = $this->db_goods_gallery->where(array('goods_id' => $_REQUEST[goods_id]))->select();
+		$img_list = $this->db_goods_gallery->where(array('goods_id' => $_GET['goods_id']))->select();
 		/* 格式化相册图片路径 */
 		if (isset($GLOBALS['shop_id']) && ($GLOBALS['shop_id'] > 0)) {
 			foreach ($img_list as $key => $gallery_img) {
@@ -610,8 +611,10 @@ class admin extends ecjia_admin {
 		$cat_list = cat_list(0, $goods['cat_id'], false);
 
 		foreach ($cat_list as $k => $v) {
-			if (in_array($v['cat_id'], $goods['other_cat'])) {
-				$cat_list[$k]['is_other_cat'] = 1;
+			if (!empty($goods['other_cat'])) {
+				if (in_array($v['cat_id'], $goods['other_cat'])) {
+					$cat_list[$k]['is_other_cat'] = 1;
+				}
 			}
 		}
 
@@ -662,10 +665,6 @@ class admin extends ecjia_admin {
 			$this->admin_priv('goods_manage'); // 检查权限
 		}
 
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
-
 		/* 检查货号是否重复 */
 		if ($_POST['goods_sn']) {
 			$count = $this->db_goods->join(null)->where(array('goods_sn' => $_POST['goods_sn'], 'is_delete' => 0, 'goods_id' => array('neq' => $_POST['goods_id'])))->count();
@@ -688,7 +687,8 @@ class admin extends ecjia_admin {
 		    $proc_goods_img = false;
 		}
 		/* 是否处理缩略图 */
-		$proc_thumb_img = true;
+		//$proc_thumb_img = true;
+		$proc_thumb_img = isset($_FILES['thumb_img']) ? true : false;
 		if (isset($_FILES['thumb_img']) && !$upload->check_upload_file($_FILES['thumb_img'])) {
 		    $proc_thumb_img = false;
 		}
@@ -1033,11 +1033,13 @@ class admin extends ecjia_admin {
 			$proc_goods_img = false;
 		}
 		/* 是否处理缩略图 */
-		$proc_thumb_img = true;
-		if (!$upload->check_upload_file($_FILES['thumb_img'])) {
-			$proc_thumb_img = false;
+		//$proc_thumb_img = true;
+		$proc_thumb_img = isset($_FILES['thumb_img']) ? true : false;
+		if (isset($_FILES['thumb_img'])) {
+			if (!$upload->check_upload_file($_FILES['thumb_img'])) {
+				$proc_thumb_img = false;
+			}
 		}
-
 
 		if ($proc_goods_img) {
 			$image_info = $upload->upload($_FILES['goods_img']);
@@ -1046,12 +1048,13 @@ class admin extends ecjia_admin {
 			}
 		}
 		if ($proc_thumb_img) {
-			$thumb_info = $upload->upload($_FILES['thumb_img']);
-			if (empty($thumb_info)) {
-				$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			if (isset($_FILES['thumb_img'])) {
+				$thumb_info = $upload->upload($_FILES['thumb_img']);
+				if (empty($thumb_info)) {
+					$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				}
 			}
 		}
-
 
 		/* 如果没有输入商品货号则自动生成一个商品货号 */
 		if (empty($_POST['goods_sn'])) {
@@ -1126,7 +1129,7 @@ class admin extends ecjia_admin {
 				'is_on_sale'            => $is_on_sale,
 				'is_alone_sale'         => $is_alone_sale,
 				'is_shipping'           => $is_shipping,
-				'goods_desc'            => $_POST['goods_desc'],
+				'goods_desc'            => empty($_POST['goods_desc']) ? '' : $_POST['goods_desc'],
 				'add_time'              => RC_Time::gmtime(),
 				'last_update'           => RC_Time::gmtime(),
 				'goods_type'            => $goods_type,
@@ -1177,7 +1180,7 @@ class admin extends ecjia_admin {
 		$insert_id = $this->db_goods->join(null)->insert($data);
 		/* 商品编号 */
 		$goods_id = $insert_id;
-		if ($goods_sn_bool){
+		if (isset($goods_sn_bool)){
 			$goods_sn = generate_goods_sn($goods_id);
 			$data = array('goods_sn' => $goods_sn);
 			$this->db_goods->where('goods_id='.$goods_id)->update($data);
@@ -1224,11 +1227,12 @@ class admin extends ecjia_admin {
 
 		/* 更新上传后的缩略图片 */
 		if ($proc_thumb_img) {
-
-			$thumb_image = new goods_image($thumb_info);
-			$result = $thumb_image->update_thumb($goods_id);
-			if (is_ecjia_error($result)) {
-				$this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			if (!empty($thumb_info)) {
+				$thumb_image = new goods_image($thumb_info);
+				$result = $thumb_image->update_thumb($goods_id);
+				if (is_ecjia_error($result)) {
+					$this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				}
 			}
 		}
 
@@ -1411,10 +1415,7 @@ class admin extends ecjia_admin {
 	    } else {
 	        $this->admin_priv('goods_manage'); // 检查权限
 	    }
-
-	    if (!empty($_SESSION['ru_id'])) {
-	    	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-	    }
+	    
 		$goods_id = $_POST['goods_id'];
 
 		/* 检查货号是否重复 */
@@ -1433,7 +1434,8 @@ class admin extends ecjia_admin {
 		    $proc_goods_img = false;
 		}
 		/* 是否处理缩略图 */
-		$proc_thumb_img = true;
+		//$proc_thumb_img = true;
+		$proc_thumb_img = isset($_FILES['thumb_img']) ? true : false;
 		if (isset($_FILES['thumb_img']) && !$upload->check_upload_file($_FILES['thumb_img'])) {
 		    $proc_thumb_img = false;
 		}
@@ -2766,14 +2768,14 @@ class admin extends ecjia_admin {
 
 		$region_id = !empty($_POST['linked_array']) ? $_POST['linked_array'] : '';
 		$goods_id = $_GET['goods_id'];
-		$ru_id = $this->db_goods->where(array('goods_id' => $goods_id))->get_field('user_id');
+		$seller_id = $this->db_goods->where(array('goods_id' => $goods_id))->get_field('seller_id');
 		$this->db_link_area->where(array('goods_id' => $goods_id))->delete();
 		if (!empty($region_id)) {
 			foreach ($region_id as $key => $val){
 				$data = array(
 					'goods_id' 	=>$goods_id,
 					'region_id' => $val['id'],
-					'ru_id' 	=> $ru_id,
+					'seller_id' 	=> $seller_id,
 				);
 				$this->db_link_area->insert($data);
 			}
