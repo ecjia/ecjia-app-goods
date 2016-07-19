@@ -14,7 +14,7 @@ class goods_booking_viewmodel extends Component_Model_View {
     		'goods' => array(
     				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
     				'alias'	=> 'g',
-    				'field' => 'bg.rec_id, bg.user_id, IFNULL(u.user_name, "'.RC_Lang::lang(guest_user).'") AS user_name,bg.link_man, g.goods_name, bg.goods_id, bg.goods_number,bg.booking_time, bg.goods_desc,bg.dispose_user, bg.dispose_time, bg.email,bg.tel, bg.dispose_note ,bg.dispose_user, bg.dispose_time,bg.is_dispose',     
+    				'field' => 'bg.rec_id, bg.user_id, IFNULL(u.user_name, "'.RC_Lang::lang('guest_user').'") AS user_name,bg.link_man, g.goods_name, bg.goods_id, bg.goods_number,bg.booking_time, bg.goods_desc,bg.dispose_user, bg.dispose_time, bg.email,bg.tel, bg.dispose_note ,bg.dispose_user, bg.dispose_time,bg.is_dispose',     
     				'on'    => 'g.goods_id  = bg.goods_id',
     		),
     		'users' => array(

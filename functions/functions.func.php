@@ -445,12 +445,12 @@ function get_bookinglist() {
 		'seller_shopinfo' => array(
 				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
 				'alias'	=> 'ssi',
-				'field'	=> 'bg.rec_id, bg.link_man, g.goods_id, g.goods_name, bg.goods_number, bg.booking_time, bg.is_dispose, g.user_id, ssi.shop_name',
+				'field'	=> 'bg.rec_id, bg.link_man, g.goods_id, g.goods_name, bg.goods_number, bg.booking_time, bg.is_dispose, g.seller_id, ssi.shop_name',
 				'on'    => 'ssi.id = g.seller_id',
 		)
 	);
-
-	$row = $dbview->join('goods,merchants_shop_information')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
+	
+	$row = $dbview->join('goods,seller_shopinfo')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
 
 	if (!empty($row)) {
 		foreach ($row AS $key => $val) {

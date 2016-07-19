@@ -66,13 +66,13 @@ class admin_goods_booking extends ecjia_admin {
 	public function remove() {
 		$this->admin_priv('booking', ecjia::MSGTYPE_JSON);
 
-		if (!empty($_SESSION['ru_id'])) {
+		if (!empty($_SESSION['seller_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$id = intval($_GET['id']);
         $goods_name = $this->dbview->where(array('rec_id' => $id))->get_field('goods_name');
 
-		if (empty($_SESSION['ru_id'])) {
+		if (empty($_SESSION['seller_id'])) {
 			$this->db_book->where(array('rec_id' => $id))->delete();
 		}
 		/* 记录日志 */
@@ -122,7 +122,7 @@ class admin_goods_booking extends ecjia_admin {
 		/* 权限判断 */
 		$this->admin_priv('booking', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
+		if (!empty($_SESSION['seller_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 

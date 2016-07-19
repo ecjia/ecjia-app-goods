@@ -119,7 +119,7 @@ class merchants_brand extends ecjia_admin {
 			/* 如果没有修改图片字段，则图片为之前的图片*/
 			$brand_logo = $old_logo;
 		}
-		$brandname = htmlspecialchars($_POST[brandName]);
+		$brandname = htmlspecialchars($_POST['brandName']);
 		if(empty($brandname)){
 			$this->showmessage(__('请填写商品品牌'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
@@ -127,17 +127,17 @@ class merchants_brand extends ecjia_admin {
 		$data = array(
 			'brandName'		=> $brandname,
 			'site_url' 		=> htmlspecialchars($site_url),
-			'brand_desc' 	=> htmlspecialchars($_POST[brand_desc]),
+			'brand_desc' 	=> htmlspecialchars($_POST['brand_desc']),
 			'is_show' 		=> intval($is_show),
 			'brandLogo' 	=> $brand_logo,
-			'sort_order' 	=> intval($_POST[sort_order]),
+			'sort_order' 	=> intval($_POST['sort_order']),
 		);
 		if ($this->db_merchants_brand->where(array('bid' => $id))->update($data)) {
 			ecjia_admin::admin_log($_POST['brandName'], 'edit', 'brand');
 			
 			$link[0]['text'] = RC_Lang::lang('back_list');
 			$link[0]['href'] = RC_Uri::url('goods/merchants_brand/init');
-			$note = vsprintf(RC_Lang::lang('brandedit_succed'), $_POST['brand_name']);
+			$note = vsprintf(RC_Lang::lang('brandedit_succed'), empty($_POST['brand_name']) ? '' : $_POST['brand_name']);
 
 			$this->showmessage($note, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'max_id' => $id));
 		} else {

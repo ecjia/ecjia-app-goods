@@ -106,7 +106,7 @@ class admin_virtual_card extends ecjia_admin {
 	public function edit_replenish() {
 		$this->admin_priv('virualcard');
 		
-		$goods_id = $_REQUEST['goods_id'];
+		$goods_id = $_GET['goods_id'];
 		$goods_name = $this->db_goods->where(array('goods_id' => $goods_id, 'is_real' => 0, 'extension_code' => 'virtual_card'))->get_field('goods_name');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('虚拟商品列表'), RC_Uri::url('goods/admin_virtual_card/init', 'extension_code=virtual_card')));
@@ -161,7 +161,7 @@ class admin_virtual_card extends ecjia_admin {
 	public function insert_replenish() {
 		$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON);
 		
-	    if (!empty($_SESSION['ru_id'])) {
+	    if (!empty($_SESSION['seller_id'])) {
 	    	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	    }
 		$goods_id 				= !empty($_POST['goods_id']) ? intval($_POST['goods_id']) : 0;
@@ -225,7 +225,7 @@ class admin_virtual_card extends ecjia_admin {
 	public function update_replenish() {
 		$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON);
 		
-	    if (!empty($_SESSION['ru_id'])) {
+	    if (!empty($_SESSION['seller_id'])) {
 	    	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	    }
 		$goods_id		= !empty($_POST['goods_id']) ? intval($_POST['goods_id']) : 0;
@@ -330,7 +330,7 @@ class admin_virtual_card extends ecjia_admin {
 	public function batch_drop_card() {
 		$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
+		if (!empty($_SESSION['seller_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$num = count($_POST['checkboxes']);
@@ -374,7 +374,7 @@ class admin_virtual_card extends ecjia_admin {
 		$this->admin_priv('virualcard');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('虚拟商品列表'), RC_Uri::url('goods/admin/init', 'extension_code=virtual_card')));
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__(RC_Lang::lang('batch_card_add')), RC_Uri::url('goods/admin_virtual_card/batch_card_add', 'goods_id='.$_REQUEST['goods_id'])));
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__(RC_Lang::lang('batch_card_add')), RC_Uri::url('goods/admin_virtual_card/batch_card_add', 'goods_id='.$_GET['goods_id'])));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('批量补货确认')));
 		RC_Script::enqueue_script('batch_card_add', RC_App::apps_url('statics/js/batch_card_add.js', __FILE__), array(), false, false);
 		/* 检查上传是否成功 */	
@@ -436,8 +436,8 @@ class admin_virtual_card extends ecjia_admin {
 			$i++;
 		}
 		/* 更新商品库存 */
-		update_goods_number(intval($_REQUEST['goods_id']));
-		$link = RC_Uri::url('goods/admin_virtual_card/card', 'goods_id='.$_REQUEST['goods_id']);
+		update_goods_number(intval($_GET['goods_id']));
+		$link = RC_Uri::url('goods/admin_virtual_card/card', 'goods_id='.$_GET['goods_id']);
 		$this->showmessage(sprintf(RC_Lang::lang('batch_card_add_ok'), $i), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $link));
 	}
 	
@@ -449,7 +449,7 @@ class admin_virtual_card extends ecjia_admin {
 	public function edit_virtual_card() {
 		$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
+		if (!empty($_SESSION['seller_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$old_key = $_POST['old_key'];
@@ -498,7 +498,7 @@ class admin_virtual_card extends ecjia_admin {
 	public function toggle_sold() {		
 		$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
+		if (!empty($_SESSION['seller_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$id = intval($_POST['id']);
@@ -521,7 +521,7 @@ class admin_virtual_card extends ecjia_admin {
 	public function remove_card() {
 		$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON);
 		
-		if (!empty($_SESSION['ru_id'])) {
+		if (!empty($_SESSION['seller_id'])) {
 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$id = intval($_GET['id']);
