@@ -196,6 +196,7 @@
 			<button class="btn btn-gebo" type="submit">{$lang.button_submit}</button>
 			<input type="hidden" name="old_cat_name" value="{$cat_info.cat_name}" />
 			<input type="hidden" name="cat_id" value="{$cat_info.cat_id}" />
+			<input type="hidden" name="seller_id" value="{$seller_id}"/>
 		</div>
 	</div>
 </form>

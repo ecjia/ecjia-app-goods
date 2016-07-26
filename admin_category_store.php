@@ -1,6 +1,6 @@
 <?php
 /**
- * ECJIA 商品分类管理程序
+ * ECJIA 店铺商品分类管理程序
  */
 defined('IN_ECJIA') or exit('No permission resources.');
 
@@ -29,12 +29,13 @@ class admin_category_store extends ecjia_admin {
 		RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css');
 		RC_Script::enqueue_script('ecjia-common');
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_list.js',__FILE__), array());
+		RC_Script::enqueue_script('seller', RC_App::apps_url('statics/js/seller.js',__FILE__), array());
 
-		RC_Loader::load_app_func('category');
-		RC_Loader::load_app_func('common');
+// 		RC_Loader::load_app_func('category');
+// 		RC_Loader::load_app_func('common');
 		RC_Loader::load_app_func('functions');
 
-		$this->db_category = RC_Loader::load_app_model('category_model', 'goods');
+		$this->db_category = RC_Loader::load_app_model('seller_goods_category_model', 'goods');
 		$this->db_nav = RC_Loader::load_model('nav_model');
 		$this->db_attribute = RC_Loader::load_app_model('attribute_model', 'goods');
 		$this->db_cat = RC_Loader::load_app_model('cat_recommend_model', 'goods');
@@ -42,11 +43,41 @@ class admin_category_store extends ecjia_admin {
 
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('店铺商品分类'), RC_Uri::url('goods/admin_category_store/init')));
 	}
-
+	
 	/**
-	 * 商品分类列表
+	 * 入驻商列表
 	 */
 	public function init() {
+		$this->admin_priv('users_merchants_manage',ecjia::MSGTYPE_JSON);
+	
+		ecjia_screen::get_current_screen()->remove_last_nav_here();
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('入驻商列表')));
+// 		ecjia_screen::get_current_screen()->add_help_tab(array(
+// 		'id'		=> 'overview',
+// 		'title'		=> __('概述'),
+// 		'content'	=>
+// 		'<p>' . __('欢迎访问ECJia智能后台入驻商列表页面，系统中所有的入驻商家都会显示在此列表中。') . '</p>'
+// 				));
+		 
+// 		ecjia_screen::get_current_screen()->set_help_sidebar(
+// 		'<p><strong>' . __('更多信息:') . '</strong></p>' .
+// 		'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:入驻商家" target="_blank">关于入驻商列表帮助文档</a>') . '</p>'
+// 				);
+		 
+		$this->assign('ur_here',__('入驻商家列表'));
+		$this->assign('search_action',RC_Uri::url('goods/admin_category_store/init'));
+		 
+		$sellers_list = $this->seller_list();
+		$this->assign('users_list', $sellers_list);
+	
+		$this->assign_lang();
+		$this->display('sellers_list.dwt');
+	}
+	
+	/**
+	 *店铺商品分类列表
+	 */
+	public function seller_goods_cat_list() {
 	    $this->admin_priv('cat_manage');
 
 	    $this->assign('ur_here', __('店铺商品分类'));
@@ -55,7 +86,8 @@ class admin_category_store extends ecjia_admin {
 	 
 	    $cat_list = RC_Cache::app_cache_get('admin_category_store_list', 'goods');
         if (empty($cat_list)) {
-        	$cat_list = cat_list(0, 0, false, 0, true, true);
+        	//$cat_list = cat_list(0, 0, false, 0, true, true);
+        	$cat_list = RC_Api::api('goods', 'seller_goods_category', array('type' => 'seller_goods_cat_list', 'seller_id' => $_GET['seller_id']));
         	RC_Cache::app_cache_set('admin_category_store_list', $cat_list, 'goods');
         }
        
@@ -72,6 +104,7 @@ class admin_category_store extends ecjia_admin {
             'remove'            => RC_Uri::url('goods/admin_category_store/remove')
         ));
 		$this->assign('shopname', '1');
+		$this->assign('seller_id', $_GET['seller_id']);
 		$this->assign_lang();
 		$this->display('category_store_list.dwt');
 	}
@@ -103,10 +136,10 @@ class admin_category_store extends ecjia_admin {
 	public function insert() {
 		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
 
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
-
+		//if (!empty($_SESSION['ru_id'])) {
+		//	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		//}
+		
 		$cat['cat_id']       = !empty($_POST['cat_id'])       ? intval($_POST['cat_id'])     : 0;
 		$cat['parent_id']    = !empty($_POST['parent_id'])    ? intval($_POST['parent_id'])  : 0;
 		$cat['sort_order']   = !empty($_POST['sort_order'])   ? intval($_POST['sort_order']) : 0;
@@ -182,9 +215,10 @@ class admin_category_store extends ecjia_admin {
 		$this->admin_priv('cat_manage');
 		$this->assign('ur_here', RC_Lang::lang('category_edit'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑商品分类')));
-		
-		$cat_id = intval($_REQUEST['cat_id']);
-		$cat_info = get_cat_info($cat_id);  // 查询分类信息数据
+		$seller_id = intval($_GET['seller_id']);
+		$cat_id = intval($_GET['cat_id']);
+		//$cat_info = get_cat_info($cat_id);  // 查询分类信息数据
+		$cat_info = RC_Model::Model('goods/seller_goods_category_model')->get_cat_info($cat_id);
 		$filter_attr_list = array();
 
 		if ($cat_info['filter_attr']) {
@@ -192,12 +226,12 @@ class admin_category_store extends ecjia_admin {
 			foreach ($filter_attr AS $k => $v) {
 				$attr_cat_id = $this->db_attribute->where(array('attr_id' => intval($v)))->get_field('cat_id');
 
-				$filter_attr_list[$k]['goods_type_list'] = goods_type_list($attr_cat_id[cat_id]);  //取得每个属性的商品类型
+				$filter_attr_list[$k]['goods_type_list'] = RC_Model::Model('goods/seller_goods_category_model')->goods_type_list($attr_cat_id);  //取得每个属性的商品类型
 				$filter_attr_list[$k]['filter_attr'] = $v;
 				$attr_option = array();
-				$_REQUEST['cat_id'] = $attr_cat_id;
-				$attr_list = get_attr_list();
-
+				$_GET['cat_id'] = $attr_cat_id;
+				//$attr_list = get_attr_list();
+				$attr_list = RC_Model::Model('goods/seller_goods_category_model')->get_attr_list();
 				foreach ($attr_list['item'] as $val) {
 					$attr_option[$val['attr_id']] = $val['attr_name'];
 				}
@@ -211,7 +245,9 @@ class admin_category_store extends ecjia_admin {
 		}
 
 		/* 模板赋值 */
-		$this->assign('attr_list', $attr_list); // 取得商品属性
+		if (!empty($attr_list)) {
+			$this->assign('attr_list', $attr_list); // 取得商品属性
+		}
 		$this->assign('attr_cat_id', $attr_cat_id);
 		$this->assign('action_link', array('text' => '店铺商品分类', 'href' => RC_Uri::url('goods/admin_category_store/init')));
 
@@ -226,9 +262,12 @@ class admin_category_store extends ecjia_admin {
 
 		$cat_info['style'] = !empty($cat_info['style']) ? RC_Upload::upload_url($cat_info['style']) : $cat_info['style'];
 		$this->assign('cat_info', $cat_info);
-		$this->assign('cat_select', cat_list(0, $cat_info['parent_id'], true));
-		$this->assign('goods_type_list', goods_type_list(0)); // 取得商品类型
+		//$this->assign('cat_select', cat_list(0, $cat_info['parent_id'], true));
+		$cat_select = RC_Api::api('goods', 'seller_goods_category', array('parent_id' => $cat_info['parent_id'], 'seller_id' => $seller_id, 'type' => 'edit'));
+		$this->assign('cat_select', $cat_select);
+		$this->assign('goods_type_list', RC_Model::Model('goods/seller_goods_category_model')->goods_type_list(0)); // 取得商品类型
 		$this->assign('form_action', RC_Uri::url('goods/admin_category_store/update'));
+		$this->assign('seller_id', $seller_id);
 		$this->assign_lang();
 		
 		$this->display('category_store_info.dwt');
@@ -240,8 +279,8 @@ class admin_category_store extends ecjia_admin {
 	}
 
 	public function add_category() {
-		$parent_id = empty($_REQUEST['parent_id']) ? 0 : intval($_REQUEST['parent_id']);
-		$category = empty($_REQUEST['cat']) ? '' : trim($_REQUEST['cat']);
+		$parent_id = empty($_GET['parent_id']) ? 0 : intval($_GET['parent_id']);
+		$category = empty($_GET['cat']) ? '' : trim($_GET['cat']);
 		if (cat_exists($category, $parent_id)) {
 			$this->showmessage(RC_Lang::lang('catname_exist'));
 		} else {
@@ -262,9 +301,11 @@ class admin_category_store extends ecjia_admin {
 	public function update() {
 		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
 
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+// 		if (!empty($_SESSION['ru_id'])) {
+// 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+// 		}
+		
+		$seller_id 				= !empty($_POST['seller_id'])    ? intval($_POST['seller_id']) : 0;
 		$cat_id              	= !empty($_POST['cat_id'])       ? intval($_POST['cat_id'])     : 0;
 		$old_cat_name        	= $_POST['old_cat_name'];
 		$cat['parent_id']    	= !empty($_POST['parent_id'])    ? intval($_POST['parent_id'])  : 0;
@@ -282,14 +323,17 @@ class admin_category_store extends ecjia_admin {
 
 		/* 判断分类名是否重复 */
 		if ($cat['cat_name'] != $old_cat_name) {
-			if (cat_exists($cat['cat_name'],$cat['parent_id'], $cat_id)) {
+			if (RC_Model::Model('goods/seller_goods_category_model')->cat_exists($cat['cat_name'],$cat['parent_id'], $cat_id，, $seller_id)) {
 				$link[] = array('text' => RC_Lang::lang('go_back'), 'href' => 'javascript:history.back(-1)');
 				$this->showmessage(RC_Lang::lang('catname_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR,array('links' => $link));
 			}
 		}
 
 		/* 判断上级目录是否合法 */
-		$children = array_keys(cat_list($cat_id, 0, false));     // 获得当前分类的所有下级分类
+		//$children = array_keys(cat_list($cat_id, 0, false));     // 获得当前分类的所有下级分类
+		// 获得当前分类的所有下级分类
+		$cat_list = RC_Api::api('goods', 'seller_goods_category', array('cat_id' => $cat_id, 'type' => 'update', 'seller_id' => $seller_id));
+		$children = array_keys($cat_list);
 		if (in_array($cat['parent_id'], $children)) {
 			/* 选定的父类是当前分类或当前分类的下级分类 */
 			$link[] = array('text' => RC_Lang::lang('go_back'), 'href' => 'javascript:history.back(-1)');
@@ -311,15 +355,15 @@ class admin_category_store extends ecjia_admin {
 
 		/* 更新分类图片 */
 		$upload = RC_Upload::uploader('image', array('save_path' => 'data/category', 'auto_sub_dirs' => true));
-
-		if ($upload->check_upload_file($_FILES['cat_img'])) {
-			$image_info = $upload->upload($_FILES['cat_img']);
-			if (empty($image_info)) {
-				$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		if (isset($_FILES['cat_img'])) {
+			if ($upload->check_upload_file($_FILES['cat_img'])) {
+				$image_info = $upload->upload($_FILES['cat_img']);
+				if (empty($image_info)) {
+					$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				}
+				$cat['style'] = $image_info['savepath'] . '/' . $image_info['savename'];
 			}
-			$cat['style'] = $image_info['savepath'] . '/' . $image_info['savename'];
 		}
-
 		$dat = $this->db_category->field('cat_name, show_in_nav')->find(array('cat_id' => $cat_id));
 		if ($this->db_category->where(array('cat_id' => $cat_id))->update($cat)) {
 			if ($cat['cat_name'] != $dat['cat_name']) {
@@ -368,7 +412,7 @@ class admin_category_store extends ecjia_admin {
 			
 			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			ecjia_admin::admin_log($_POST['cat_name'], 'edit', 'category');
-			$this->showmessage(RC_Lang::lang('catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('max_id' => $cat_id));
+			$this->showmessage(RC_Lang::lang('catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('max_id' => $cat_id, 'seller_id' => $seller_id));
 		}
 	}
 
@@ -530,6 +574,34 @@ class admin_category_store extends ecjia_admin {
 			$this->showmessage($cat_name .' '. RC_Lang::lang('cat_isleaf'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
+	
+	//获取入驻商列表信息
+	private function seller_list() {
+		$dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+	
+		$filter['keywords'] = empty($_GET['keywords']) ? '' : trim($_GET['keywords']);
+	
+		$filter['sort_by']    = empty($_GET['sort_by'])    ? 'msi.shop_id' : trim($_GET['sort_by']);
+		$filter['sort_order'] = empty($_GET['sort_order']) ? 'DESC' : trim($_GET['sort_order']);
+	
+		$where = array();
+	
+		if ($filter['keywords']) {
+			$where[] = "(ssi.shop_name LIKE '%" . mysql_like_quote($filter['keywords']) ."%' OR msi.hopeLoginName LIKE '%".$filter['keywords']."%')";
+		}
+		$filter['record_count'] = $dbview->join(array('seller_shopinfo'))->where($where)->count('msi.shop_id');
+	
+		$filter['keywords'] = stripslashes($filter['keywords']);
+	
+		RC_Loader::load_sys_class('ecjia_page', false);
+		$page = new ecjia_page ($filter['record_count'], 10, 5);
+	
+		$users_list = $dbview->join(array('seller_shopinfo'))->field('msi.shop_id, msi.shoprz_type, msi.hopeLoginName, msi.steps_audit, msi.shopNameSuffix, ssi.shop_name, ssi.id')->where($where)->order(array($filter["sort_by"] => $filter['sort_order']))->limit($page->limit())->select();
+		$count = count($users_list);
+		$arr = array('users_list' => $users_list, 'filter' => $filter,'page' => $page->show(5), 'desc' => $page->page_desc());
+		return $arr;
+	}
+	
 }
 
 // end

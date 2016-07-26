@@ -72,7 +72,7 @@
 						success : function(data) {
 							if (data.state == "success") {
 								var url = $("form[name='theForm']").attr('data-edit-url');
-								ecjia.pjax(url + '&cat_id=' + data.max_id , function () {
+								ecjia.pjax(url + '&cat_id=' + data.max_id + '&seller_id=' + data.seller_id, function () {
 									ecjia.admin.showmessage(data);
 								});	
 							} else {
