@@ -217,13 +217,13 @@ class seller_goods_category_model extends Component_Model_Model {
 	 *
 	 * @return  mix
 	 */
-	public function cat_update($cat_id, $args) {
+	public function cat_update($cat_id, $args, $seller_id) {
 		//$db = RC_Loader::load_app_model('seller_goods_category_model', 'goods');
 		if (empty($args) || empty($cat_id)) {
 			return false;
 		}
 	
-		return $this->where(array('cat_id' => $cat_id, 'seller_id' => $_SESSION['seller_id']))->update($args);
+		 $this->where(array('cat_id' => $cat_id, 'seller_id' => $seller_id))->update($args);
 	}
 	
 	/**

@@ -90,7 +90,6 @@ class admin_category_store extends ecjia_admin {
         	$cat_list = RC_Api::api('goods', 'seller_goods_category', array('type' => 'seller_goods_cat_list', 'seller_id' => $_GET['seller_id']));
         	RC_Cache::app_cache_set('admin_category_store_list', $cat_list, 'goods');
         }
-       
 		$this->assign('action_link1', array('href' => RC_Uri::url('goods/admin_category/move'), 'text' => RC_Lang::lang('move_goods')));
 		$this->assign('store', '1');
 		$this->assign('cat_info', $cat_list);
@@ -439,9 +438,9 @@ class admin_category_store extends ecjia_admin {
 	 */
 	public function move_cat() {
 		$this->admin_priv('cat_drop');
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+// 		if (!empty($_SESSION['ru_id'])) {
+// 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+// 		}
 		$cat_id        = !empty($_POST['cat_id'])        ? intval($_POST['cat_id'])        : 0;
 		$target_cat_id = !empty($_POST['target_cat_id']) ? intval($_POST['target_cat_id']) : 0;
 
@@ -461,7 +460,7 @@ class admin_category_store extends ecjia_admin {
 		ecjia_admin::admin_log($old_cat_name.'下商品'.$goods_ids.'转移到'.$new_cat_name, 'edit', 'category');
 		if ($query) {
 			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
-			$this->showmessage(RC_Lang::lang('move_cat_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+			$this->showmessage(RC_Lang::lang('move_cat_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('seller_id' => $seller_id));
 		}
 	}
 
@@ -470,14 +469,15 @@ class admin_category_store extends ecjia_admin {
 	 */
 	public function edit_sort_order() {
 		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+// 		if (!empty($_SESSION['ru_id'])) {
+// 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+// 		}
 		$id = intval($_POST['pk']);
 		$val = intval($_POST['value']);
-		if (cat_update($id, array('sort_order' => $val))) {
+		$seller_id = empty($_GET['seller_id']) ? 0 : $_GET['seller_id'];
+		if (RC_Model::Model('goods/seller_goods_category_model')->cat_update($id, array('sort_order' => $val), $seller_id)) {
 			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
-			$this->showmessage('排序序号编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/init')));
+			$this->showmessage('排序序号编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category_store/init', array('seller_id' => $seller_id))));
 		} else {
 			$this->showmessage($this->db_category->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
@@ -489,14 +489,15 @@ class admin_category_store extends ecjia_admin {
 	public function edit_measure_unit() {
 		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
 
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+// 		if (!empty($_SESSION['ru_id'])) {
+// 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+// 		}
 		$id = intval($_POST['pk']);
 		$val = $_POST['value'];
-		if (cat_update($id, array('measure_unit' => $val))) {
+		$seller_id = empty($_GET['seller_id']) ? 0 : $_GET['seller_id'];
+		if (RC_Model::Model('goods/seller_goods_category_model')->cat_update($id, array('measure_unit' => $val), $seller_id)) {
 			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
-			$this->showmessage('数量单位编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
+			$this->showmessage('数量单位编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val, 'seller_id' => $seller_id));
 		} else {
 			$this->showmessage($this->db_category->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
@@ -508,19 +509,19 @@ class admin_category_store extends ecjia_admin {
 	public function edit_grade() {
 		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
 
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+// 		if (!empty($_SESSION['ru_id'])) {
+// 			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+// 		}
 		$id = intval($_POST['pk']);
 		$val = intval($_POST['value']);
-
+		$seller_id = empty($_GET['seller_id']) ? 0 : $_GET['seller_id'];
 		if ($val > 10 || $val < 0) {
 			/* 价格区间数超过范围 */
 			$this->showmessage(RC_Lang::lang('grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		if (cat_update($id, array('grade' => $val))) {
+		if (RC_Model::Model('goods/seller_goods_category_model')->cat_update($id, array('grade' => $val), $seller_id)) {
 			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
-			$this->showmessage('价格分级编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('content' => $val));
+			$this->showmessage('价格分级编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('content' => $val, 'seller_id' => $seller_id));
 		} else {
 			$this->showmessage($this->db_category->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
@@ -531,18 +532,19 @@ class admin_category_store extends ecjia_admin {
 	 */
 	public function toggle_is_show() {
 		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
-
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+		
+		//if (!empty($_SESSION['ru_id'])) {
+		//	$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		//}
+		$seller_id = empty($_GET['seller_id']) ? 0 : $_GET['seller_id'];
 		$id = intval($_POST['id']);
 		$val = intval($_POST['val']);
 		$name = $this->db_category->where(array('cat_id' => $id))->get_field('cat_name');
 		
-		if (cat_update($id, array('is_show' => $val))) {
+		if (RC_Model::Model('goods/seller_goods_category_model')->cat_update($id, array('is_show' => $val), $seller_id)) {
 			RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
 			ecjia_admin::admin_log($name."切换显示状态", 'edit', 'category');
-			$this->showmessage('是否显示编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('content' => $val));
+			$this->showmessage('是否显示编辑成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS,array('content' => $val, 'seller_id' => $seller_id));
 		} else {
 			$this->showmessage($this->db_category->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
@@ -553,10 +555,10 @@ class admin_category_store extends ecjia_admin {
 	 */
 	public function remove() {
     	$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
-    	if (!empty($_SESSION['ru_id'])) {
-    		$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-    	}
-
+//     	if (!empty($_SESSION['ru_id'])) {
+//     		$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+//     	}
+		$seller_id = empty($_GET['seller_id']) ? 0 : $_GET['seller_id'];
 		$cat_id   = intval($_GET['id']);
 		$cat_name = $this->db_category->where(array('cat_id' => $cat_id))->get_field('cat_name');
 		$cat_count = $this->db_category->where(array('parent_id' => $cat_id))->count();
@@ -568,7 +570,7 @@ class admin_category_store extends ecjia_admin {
 				$this->db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->delete();
 				ecjia_admin::admin_log($cat_name, 'remove', 'category');
 				RC_Cache::app_cache_delete('admin_category_store_list', 'goods');
-				$this->showmessage(__('删除商品分类成功'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+				$this->showmessage(__('删除商品分类成功'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('seller_id' => $seller_id));
 			}
 		} else {
 			$this->showmessage($cat_name .' '. RC_Lang::lang('cat_isleaf'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);

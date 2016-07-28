@@ -46,7 +46,7 @@ class goods {
      *            s integer $conditions
      * @return array
      */
-    public static function goods_list($is_delete, $real_goods = 1, $conditions = '') {
+    public static function goods_list($is_delete, $real_goods = 1, $conditions = '', $seller_id) {
         $db = RC_Loader::load_app_model('goods_auto_viewmodel', 'goods');
         /* 过滤条件 */
         $param_str = '-' . $is_delete . '-' . $real_goods;
@@ -132,7 +132,10 @@ class goods {
         if (!empty($conditions)) {
         	$where[] = $conditions;
         }
-        
+        if ($seller_id > 0) {
+        	$where['seller_id'] = $seller_id;
+        }
+       
         /* 记录总数 */
         /* 加载分页类 */
         RC_Loader::load_sys_class('ecjia_page', false);

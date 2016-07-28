@@ -17,7 +17,7 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 	public function call(&$options) {
 		//接口商家我的宝贝商品分类
 		if (isset($options['seller_id']) && isset($options['type']) && $options['type'] == 'seller_goods_cat_list_api') {
-			$row = $this->cat_list(0, 0, false, 0, true, $options['seller_id']);
+			$row = $this->cat_list(0, 0, false, 0, true, $options['seller_id'], 'seller_goods_cat_list_api');
 		}
 		//总后台商品应用中店铺商品分类
 		if (isset($options['seller_id']) && isset($options['type']) && $options['type'] == 'seller_goods_cat_list') {
@@ -51,7 +51,7 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 	 *        	如果为true显示所有分类，如果为false隐藏不可见分类。
 	 * @return mix
 	 */
-	function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true, $seller_id) {
+	function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true, $seller_id, $type='') {
 		// 加载方法
 		RC_Loader::load_app_func('common', 'goods');
 		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
@@ -64,7 +64,13 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 			$data = false;
 			if ($data === false) {
 				//商户商品分类
-				$res = $db_category->join('seller_goods_category')->where(array('c.seller_id' => $seller_id, 'c.is_show' => '1'))->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+				$where_cat = array();
+				$where_cat['c.seller_id'] = $seller_id;
+				if (!empty($type)) {
+					$where_cat['c.is_show'] = 1;
+				}
+				
+				$res = $db_category->join('seller_goods_category')->where($where_cat)->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
 				$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0, 'is_on_sale' => 1, 'seller_id' => $seller_id))->group ('cat_id asc')->select();
 				$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0, 'g.is_on_sale' => 1, 'g.seller_id' => $seller_id))->group ('gc.cat_id')->select();
 				$newres = array ();
@@ -90,6 +96,7 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 				$res = $data;
 			}
 		}
+	
 		if (empty ( $res ) == true) {
 			return $re_type ? '' : array ();
 		}
