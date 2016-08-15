@@ -255,6 +255,26 @@ class seller_goods_category_model extends Component_Model_Model {
 		}
 
 	}	
+	
+	/**
+	 * 获取商家一级商品分类
+	 * @param   string      $options   where条件
+	 * @return  array()
+	 */
+	public function get_seller_goods_cat_ids($options) {
+		$cat_ids = $this->where($options['where'])->field('cat_id')->select();
+		return $cat_ids;
+	}
+	
+	/**
+	 * 获取商家一级商品分类名称
+	 * @param   string      $options   where条件
+	 * @return  array()
+	 */
+	public function get_seller_goods_cat_name($options) {
+		$cat_ids = $this->where(array('cat_id' => $options['cat_id']))->get_field('cat_name');
+		return $cat_ids;
+	}
 }
 
 // end

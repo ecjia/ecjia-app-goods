@@ -645,7 +645,7 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
             }
         }
     }
-    $field = "wg.w_id, g.goods_name, g.goods_sn, g.is_on_sale, g.is_real, g.user_id as ru_id, g.model_inventory, g.model_attr, ".
+    $field = "wg.w_id, g.goods_name, g.goods_sn, g.is_on_sale, g.is_real, g.seller_id as seller_id, g.model_inventory, g.model_attr, ".
     		"wg.warehouse_price, wg.warehouse_promote_price, wg.region_number as wg_number, wag.region_price, wag.region_promote_price, wag.region_number as wag_number, g.model_price, g.model_attr, ".
     		"g.market_price, IF(g.model_price < 1, g.shop_price, IF(g.model_price < 2, wg.warehouse_price, wag.region_price)) AS org_price, ".
     		"IF(g.model_price < 1, g.promote_price, IF(g.model_price < 2, wg.warehouse_promote_price, wag.region_promote_price)) as promote_price, ".

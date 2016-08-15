@@ -100,11 +100,20 @@ class goods_list {
 		);
 		$children = '';
 		isset($filter['cat_id']) and $children = goods_category::get_children($filter['cat_id']);
+		
+		if (isset($filter['seller_goods_cat_id'])) {
+			RC_Loader::load_app_class('seller_goods_cat', 'goods', false);
+			$option = array('cat_id' => $filter['seller_goods_cat_id'], 'seller_id' => $filter['seller_id'], 'type' => 'seller_goods_cat');
+			$seller_cat_children = seller_goods_cat::get_children($option);
+		}
 		$where = array(
 				'is_on_sale'	=> 1,
 				'is_alone_sale' => 1,
 				'is_delete'		=> 0,
 		);
+		if (!empty($seller_cat_children)) {
+			$where[] = "(".$seller_cat_children.")";
+		}
 		if (!empty($children)) {
 			$where[] = "(". $children ." OR ".goods_category::get_extension_goods($children).")";
 		}
@@ -131,6 +140,7 @@ class goods_list {
 // 			$where['g.user_id'] = $filter['user_id'];
 			$where['g.seller_id'] = $filter['seller_id'];
 		}
+		
 		
 		if (ecjia::config('review_goods')) {
 			$where['g.review_status'] = array('gt' => 2);
@@ -225,11 +235,14 @@ class goods_list {
 		
 		/* 返回商品总数 */
 		$count = $dbview->join(array('seller_shopinfo'))->where($where)->count();
-		
 		//实例化分页
 		$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
-
-		$data = $dbview->join(array('member_price', 'seller_shopinfo'))->where($where)->order($filter['sort'])->limit($page_row->limit())->select();
+		if (isset($filter['seller_goods_cat_id'])) {
+			$data = $dbview->join(array('member_price', 'seller_shopinfo'))->where($where)->order($filter['sort'])->select();
+		} else {
+			$data = $dbview->join(array('member_price', 'seller_shopinfo'))->where($where)->order($filter['sort'])->limit($page_row->limit())->select();
+		}
+		
 		
 		$arr = array();
 		if (!empty($data)) {
@@ -271,7 +284,14 @@ class goods_list {
 				$arr[$key]['seller_name']	= isset($row['shop_name']) ? $row['shop_name'] : '';
 			}
 		}
-		return array('list' => $arr, 'page' => $page_row);
+		if (isset($filter['seller_goods_cat_id'])){
+			$par = array('cat_id' => $filter['seller_goods_cat_id']);
+			$cat_name = RC_Model::model('goods/seller_goods_category_model')->get_seller_goods_cat_name($par);
+			return array('cat_id' => $filter['seller_goods_cat_id'], 'cat_name' => $cat_name,'goods_list' => $arr);
+		} else {
+			return array('list' => $arr, 'page' => $page_row);
+		}
+		
 	}
 	
 	

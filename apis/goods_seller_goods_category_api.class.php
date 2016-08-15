@@ -31,6 +31,10 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 		if (isset($options['cat_id']) && isset($options['seller_id']) && isset($options['type']) && $options['type'] == 'update') {
 			$row = $this->cat_list($options['cat_id'], 0, false, 0, true, $options['seller_id']);
 		}
+		//商家商品分类
+		if (isset($options['cat_id']) && isset($options['seller_id']) && isset($options['type']) && $options['type'] == 'seller_goods_cat') {
+			$row = $this->cat_list($options['cat_id'], 0, false, 0, true, $options['seller_id']);
+		}
 	    return $row;
 	}
 	
@@ -70,9 +74,10 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 					$where_cat['c.is_show'] = 1;
 				}
 				
-				$res = $db_category->join('seller_goods_category')->where($where_cat)->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+				$res = $db_category->join(array('seller_goods_category'))->where($where_cat)->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
 				$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0, 'is_on_sale' => 1, 'seller_id' => $seller_id))->group ('cat_id asc')->select();
 				$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0, 'g.is_on_sale' => 1, 'g.seller_id' => $seller_id))->group ('gc.cat_id')->select();
+			
 				$newres = array ();
 				if (!empty($res2)) {
 					foreach($res2 as $k => $v) {
