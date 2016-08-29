@@ -645,32 +645,9 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
             }
         }
     }
-    $field = "wg.w_id, g.goods_name, g.goods_sn, g.is_on_sale, g.is_real, g.seller_id as seller_id, g.model_inventory, g.model_attr, ".
-    		"wg.warehouse_price, wg.warehouse_promote_price, wg.region_number as wg_number, wag.region_price, wag.region_promote_price, wag.region_number as wag_number, g.model_price, g.model_attr, ".
-    		"g.market_price, IF(g.model_price < 1, g.shop_price, IF(g.model_price < 2, wg.warehouse_price, wag.region_price)) AS org_price, ".
-    		"IF(g.model_price < 1, g.promote_price, IF(g.model_price < 2, wg.warehouse_promote_price, wag.region_promote_price)) as promote_price, ".
-    		" g.promote_start_date, g.promote_end_date, g.goods_weight, g.integral, g.extension_code, g.goods_number, g.is_alone_sale, g.is_shipping, ".
-    		"IFNULL(mp.user_price, IF(g.model_price < 1, g.shop_price, IF(g.model_price < 2, wg.warehouse_price, wag.region_price)) * '$_SESSION[discount]') AS shop_price ";
-    /* 取得商品信息 */
-    $dbview->view = array(
-    	'warehouse_goods' => array(
-    		'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-    		'alias' => 'wg',
-    		'on'   	=> "g.goods_id = wg.goods_id and wg.region_id = '$warehouse_id'"
-    	),
-    	'warehouse_area_goods' => array(
-    		'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-    		'alias' => 'wag',
-    		'on'   	=> "g.goods_id = wag.goods_id and wag.region_id = '$area_id'"
-    	),
-    	'member_price' => array(
-    		'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-    		'alias' => 'mp',
-    		'on'   	=> "mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]'"
-    	)
-    );
+
     // 取得商品促销价格列表
-    $goods = $dbview->field($field)->join (array('warehouse_goods', 'warehouse_area_goods', 'member_price'))->find (array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
+    $goods = $dbview->join ( 'member_price' )->find (array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
     /* 计算商品的促销价格 */
     if ($goods ['promote_price'] > 0) {
         $promote_price = bargain_price ( $goods ['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
@@ -699,7 +676,7 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
     }
     /* 手机专享*/
     $mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
-    $mobilebuy_ext_info = array();
+    $mobilebuy_ext_info = array('price' => 0);
     $mobilebuy = $mobilebuy_db->find(array(
     	'goods_id'	 => $goods_id,
     	'start_time' => array('elt' => RC_Time::gmtime()),
@@ -711,15 +688,14 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
     }
     $final_price =  ($final_price > $mobilebuy_ext_info['price'] && !empty($mobilebuy_ext_info['price'])) ? $mobilebuy_ext_info['price'] : $final_price;
     
-    $warehouse_area['warehouse_id'] = $warehouse_id;
-    $warehouse_area['area_id'] = $area_id;
     // 如果需要加入规格价格
     if ($is_spec_price) {
         if (! empty ( $spec )) {
-            $spec_price = spec_price ( $spec , $goods_id, $warehouse_area);
+            $spec_price = spec_price ( $spec );
             $final_price += $spec_price;
         }
     }
+
     // 返回商品最终购买价格
     return $final_price;
 }

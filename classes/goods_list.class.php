@@ -227,7 +227,7 @@ class goods_list {
 							$goods_ids[] = $val['goods_id'];
 						}
 					}
-					$where[] = $this->db_create_in($goods_ids, 'g.goods_id');
+					$where[] = self::db_create_in($goods_ids, 'g.goods_id');
 				}
 			}
 	

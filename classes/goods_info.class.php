@@ -23,7 +23,7 @@ class goods_info {
 			return $return_array;
 		}
 	
-		$goods_attr_array = $this->sort_goods_attr_id_array ( $spec_goods_attr_id );
+		$goods_attr_array = self::sort_goods_attr_id_array ( $spec_goods_attr_id );
 	
 		if (isset ( $goods_attr_array ['sort'] )) {
 			$db = RC_Model::model('goods/products_model');
