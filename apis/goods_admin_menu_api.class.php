@@ -19,6 +19,8 @@ class goods_admin_menu_api extends Component_Event_Api
 		    ecjia_admin::make_admin_menu('divider', '', '', 11)->add_purview('virualcard'),
 		    ecjia_admin::make_admin_menu('04_category_store_list', __('店铺商品分类'), RC_Uri::url('goods/admin_category_store/init'), 12)->add_purview(array('category_store')),
 		    ecjia_admin::make_admin_menu('06_merchants_brand_list', __('商家品牌'), RC_Uri::url('goods/merchants_brand/init'), 13)->add_purview('merchants_brand'),
+		);
+		
         $menus->add_submenu($submenus);
         return $menus;
     }
