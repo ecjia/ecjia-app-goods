@@ -1479,69 +1479,6 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
 	return $return_array;
 }
 
-
-/**
- * 获取补货列表
- *
- * @return array
- */
-function get_replenish_list($args = array()) {
-	$db = RC_Loader::load_app_model('virtual_card_model', 'goods');
-	/* 读取商店配置的加密串密钥 */
-	$auth_key = ecjia_config::instance()->read_config('auth_key');
-	
-	/* 查询条件 */
-	$filter['goods_id']    = empty($args['goods_id'])    	? 0 : intval($args['goods_id']);
-	$filter['keyword']     = empty($args['keyword'])     	? 0 : trim($args['keyword']);
-	$filter['sort_by']     = empty($_REQUEST['sort_by'])    ? 'card_id' : trim($_REQUEST['sort_by']);
-	$filter['sort_order']  = empty($_REQUEST['sort_order']) ? 'DESC' : trim($_REQUEST['sort_order']);
-
-	$where = (!empty($filter['goods_id'])) ? " AND goods_id = '" . $filter['goods_id'] . "' " : '';
-
-	if (!empty($args['keyword'])) {
-		$where .= " AND card_sn LIKE '%" . RC_Crypt::encrypt($filter['keyword'],$auth_key ). "%' or order_sn LIKE '%" . mysql_like_quote($filter['keyword']). "%' ";
-	}
-
-	$count = $db->where('1'.$where)->count();
-	$page = new ecjia_page ($count, 20, 5);
-	$all = $db->field('card_id, goods_id, card_sn, card_password, end_date, is_saled, order_sn, crc32')->where('1' .$where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
-	$arr = array();
-	
-	if (!empty($all)) {
-		foreach ($all AS $key => $row) {
-			if ($row['crc32'] == crc32($auth_key)) {
-				$row['card_sn']       = RC_Crypt::decrypt($row['card_sn'],$auth_key);
-				$row['card_password'] = RC_Crypt::decrypt($row['card_password'],$auth_key);
-			} else {
-				$row['card_sn']       = '***';
-				$row['card_password'] = '***';
-			}
-			$row['end_date'] = $row['end_date'] == 0 ? '' : date(ecjia::config('date_format'), $row['end_date']);
-			$arr[] = $row;
-		}
-	}
-	return array('item' => $arr, 'page' => $page->show(5), 'desc' => $page->page_desc());
-}
-
-/**
- * 更新虚拟商品的商品数量
- *
- * @access  public
- * @param   int     $goods_id
- *
- * @return bool
- */
-function update_goods_number($goods_id) {
-	$db = RC_Loader::load_app_model('virtual_card_model', 'goods');
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-
-	$goods_number = $db->where(array('goods_id' => $goods_id, 'is_saled' => 0))->count();
-	$data = array('goods_number' => $goods_number);
-	
-	$query = $db_goods->where(array('goods_id' => $goods_id, 'extension_code' => 'virtual_card'))->update($data);
-	return  $query;
-}
-
 /**
  * 获得所有商品类型
  *
