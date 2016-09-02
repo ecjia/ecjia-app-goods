@@ -5,12 +5,12 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *
  */
-class list_module implements ecjia_interface {
+class list_module extends api_front implements api_interface {
 
-    public function run(ecjia_api & $api) {
+     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    	$this->authSession();
     	
     	//如果用户登录获取其session
-    	EM_Api::authSession(false);
     	RC_Loader::load_app_func('main', 'api');
     	
     	$location = _POST('location');

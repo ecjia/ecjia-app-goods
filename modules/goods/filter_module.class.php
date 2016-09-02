@@ -5,11 +5,13 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author will.chen
  *
  */
-class filter_module implements ecjia_interface {
+class filter_module extends api_front implements api_interface {
 	
-	public function run(ecjia_api & $api) {
+	 public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    	$this->authSession();
+    	
 		$data = array();
-		$cat_id = _POST('category_id', 0);
+		$cat_id = $this->requestData('category_id', 0);
 		
 		if ($cat_id <= 0 ) {
 			EM_Api::outPut(101);

@@ -5,13 +5,12 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *
  */
-class desc_module implements ecjia_interface
-{
+class desc_module extends api_front implements api_interface {
 
-    public function run(ecjia_api & $api)
-    {
+     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
         /* 获得商品的信息 */
-    	$goods_id = _POST('goods_id', 0);
+     	$this->authSession();
+    	$goods_id = $this->requestData('goods_id', 0);
     	
 		RC_Loader::load_app_func('goods','goods');
         $goods = get_goods_info($goods_id);

@@ -5,9 +5,10 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *
  */
-class groupbuygoods_module implements ecjia_interface {
+class groupbuygoods_module extends api_front implements api_interface {
 
-    public function run(ecjia_api & $api) {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    	$this->authSession();	
     	
     	$groupwhere['act_type']		= GAT_GROUP_BUY;
     	$groupwhere['start_time']	= array('elt' => RC_Time::gmtime());

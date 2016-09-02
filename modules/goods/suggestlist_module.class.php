@@ -5,11 +5,11 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *
  */
-class suggestlist_module implements ecjia_interface {
+class suggestlist_module extends api_front implements api_interface {
 
-    public function run(ecjia_api & $api) {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    	$this->authSession();	
     	//如果用户登录获取其session
-    	EM_Api::authSession(false);
     	
     	$location = _POST('location');
     	/*经纬度为空判断*/

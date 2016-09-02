@@ -5,9 +5,11 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *
  */
-class category_module implements ecjia_interface {
+class category_module extends api_front implements api_interface {
 	
-	public function run(ecjia_api & $api) {
+	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+		$this->authSession();
+		
 		$location = _POST('location');
 		if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
 			$request = array('location' => $location);

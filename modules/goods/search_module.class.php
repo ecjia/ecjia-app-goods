@@ -5,9 +5,11 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author will.chen
  *
  */
-class search_module implements ecjia_interface {
+class search_module extends api_front implements api_interface {
 
-    public function run(ecjia_api & $api) {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    	$this->authSession();
+    	
     	$keywords = _POST('keywords');
     	$location = _POST('location');
     	/*经纬度为空判断*/

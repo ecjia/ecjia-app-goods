@@ -5,9 +5,11 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *
  */
-class searchKeywords_module implements ecjia_interface {
+class searchKeywords_module extends api_front implements api_interface {
 	
-	public function run(ecjia_api & $api) {
+	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    	$this->authSession();	
+    	
 		$db = RC_Loader::load_app_model('tag_model','goods');
 		$tags = $db->field('tag_words, COUNT(tag_id) AS tag_count')
 					->group('tag_words')

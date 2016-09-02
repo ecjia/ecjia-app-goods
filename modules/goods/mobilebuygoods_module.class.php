@@ -5,9 +5,11 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author will.chen
  *
  */
-class mobilebuygoods_module implements ecjia_interface {
+class mobilebuygoods_module extends api_front implements api_interface {
 
-    public function run(ecjia_api & $api) {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    	$this->authSession();	
+    	
     	$mobilebuywhere['act_type']		= GAT_MOBILE_BUY;
     	$mobilebuywhere['start_time']	= array('elt' => RC_Time::gmtime());
     	$mobilebuywhere['end_time']		= array('egt' => RC_Time::gmtime());
