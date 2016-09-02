@@ -16,14 +16,14 @@ class price_range_module extends api_front implements api_interface {
 		RC_Loader::load_app_func('goods','goods');
 		
     	$data = array();
-        $cat_id = _POST('category_id', 0);
+        $cat_id = $this->requestData('category_id', 0);
         
-        $brand = _POST('brand',0);
-        $filter_attr_str = _POST('filter_attr',0);
+        $brand = $this->requestData('brand',0);
+        $filter_attr_str = $this->requestData('filter_attr',0);
         $filter_attr_str = trim(RC_String::unicode2string($filter_attr_str));
         $filter_attr_str = preg_match('/^[\d\.]+$/',$filter_attr_str) ? $filter_attr_str : '';
-        $price_min = _POST('price_min',0);
-        $price_max = _POST('price_max',0);
+        $price_min = $this->requestData('price_min',0);
+        $price_max = $this->requestData('price_max',0);
         $children = get_children($cat_id);
         
         

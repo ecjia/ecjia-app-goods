@@ -20,7 +20,7 @@ class groupbuygoods_module extends api_front implements api_interface {
     	if (ecjia::config('review_goods')) {
     		$groupwhere['g.review_status'] = array('gt' => 2);
     	}
-    	$location = _POST('location');
+    	$location = $this->requestdata('loaction', array()) ;
     	
     	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
     		$geohash = RC_Loader::load_app_class('geohash', 'shipping');

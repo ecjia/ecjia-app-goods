@@ -13,10 +13,10 @@ class list_module extends api_front implements api_interface {
     	//如果用户登录获取其session
     	RC_Loader::load_app_func('main', 'api');
     	
-    	$location = _POST('location');
+    	$location = $this->requestdata('loaction', array()) ;
     	
     	/* 筛选条件*/
-		$filter = _POST('filter', array());
+		$filter = $this->requestdata('filter', array());
         $keyword = isset($filter['keywords']) ? RC_String::unicode2string($filter['keywords']): '';
         $keyword = ! empty($keyword) ? htmlspecialchars(trim($keyword)) : '';
         

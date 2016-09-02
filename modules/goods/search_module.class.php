@@ -10,8 +10,8 @@ class search_module extends api_front implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
     	$this->authSession();
     	
-    	$keywords = _POST('keywords');
-    	$location = _POST('location');
+    	$keywords = $this->requestData('keywords');
+    	$location = $this->requestdata('loaction', array());
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();

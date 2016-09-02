@@ -11,11 +11,11 @@ class detail_module extends api_front implements api_interface {
     	$this->authSession();
         //如果用户登录获取其session
         
-        $goods_id = _POST('goods_id', 0);
-        $area_id = _POST('area_id', 0);
+        $goods_id = $this->requestData('goods_id', 0);
+        $area_id = $this->requestData('area_id', 0);
         
-        $rec_type = _POST('rec_type');
-        $object_id = _POST('object_id');
+        $rec_type = $this->requestData('rec_type');
+        $object_id = $this->requestData('object_id');
         
         /* 获得商品的信息 */
         RC_Loader::load_app_func('goods','goods');
@@ -247,7 +247,7 @@ class detail_module extends api_front implements api_interface {
         
         $data['favourable_list'] = $favourable_list;
         
-        $location = _POST('location');
+        $location = $this->requestdata('loaction', array());
         $options = array(
        			'cat_id'	=> $data['cat_id'],
         		'intro'		=> 'hot',

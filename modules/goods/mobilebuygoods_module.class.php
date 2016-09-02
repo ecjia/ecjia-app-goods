@@ -21,7 +21,7 @@ class mobilebuygoods_module extends api_front implements api_interface {
     		$mobilebuywhere['g.review_status'] = array('gt' => 2);
     	}
     	
-    	$location = _POST('location');
+    	$location = $this->requestdata('loaction', array());
     	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
     		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
     		$geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
