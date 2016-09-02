@@ -33,8 +33,6 @@ class desc_module extends api_front implements api_interface {
 	            'data' => $html
 	        ));
         }
-        //         $_REQUEST['id'] = _POST('goods_id', 0);
-        //         $goods_id = isset($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
     }
 }
 

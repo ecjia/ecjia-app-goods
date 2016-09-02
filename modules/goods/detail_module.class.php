@@ -366,10 +366,6 @@ class detail_module extends api_front implements api_interface {
         $data['server_desc'] = '由'.$shop_name.'从'.$warehouse_name.'发货并提供售后服务';
         
         EM_Api::outPut($data);
-        
-//      $db_goods->where(array('goods_id' => $goods_id))->update(array('click_count' => click_count + 1));
-//      $_REQUEST['id'] = _POST('goods_id', 0);
-//		$goods_id = isset($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
     }
 }
 
