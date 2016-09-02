@@ -5,12 +5,11 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *
  */
-class brand_module implements ecjia_interface {
-	
-	public function run(ecjia_api & $api) {
-		
+class brand_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+    		
+		$this->authadminSession();
 		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
     	
 		$size = EM_Api::$pagination['count'];
 		$page = EM_Api::$pagination['page'];
