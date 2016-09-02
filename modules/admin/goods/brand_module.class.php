@@ -14,7 +14,7 @@ class brand_module extends api_admin implements api_interface {
 		$size = EM_Api::$pagination['count'];
 		$page = EM_Api::$pagination['page'];
 		$options = array(
-			'keywords'	=> _POST('keywords'),
+			'keywords'	=> $this->requestData('keywords'),
 			'size'		=> $size,
 			'page'		=> $page
 		);

@@ -16,31 +16,26 @@ class updateprice_module extends api_admin implements api_interface {
     	}
     	
 		//请求参数：
-       	$goods_id				= _POST('goods_id', 0);
+       	$goods_id				= $this->requestData('goods_id', 0);
     	if (empty($goods_id)) {
     		EM_Api::outPut(11);
     	}
     	//市场价格
-    	$shop_price				= _POST('shop_price');
-    	$shop_price     		= !empty($shop_price)? $shop_price : '0';
-    	$market_price			= _POST('market_price');
-    	$market_price  	   		= !empty($market_price)? $market_price : '0';
+    	$shop_price				= $this->requestData('shop_price', 0);
+    	$market_price			= $this->requestData('market_price', 0);
 
     	//积分
-    	$give_integral			= _POST('give_integral');
-    	$give_integral      	= !empty($give_integral)?  $give_integral : '0';
-    	$rank_integral			= _POST('rank_integral');
-    	$rank_integral      	= !empty($rank_integral)?  $rank_integral : '0';
-    	$integral				= _POST('integral');
-    	$integral      			= !empty($integral)?  $integral : '0';
+    	$give_integral			= $this->requestData('give_integral', 0);
+    	$rank_integral			= $this->requestData('rank_integral', 0);
+    	$integral				= $this->requestData('integral', 0);
     	
     	//促销信息
-    	$promote_price			= _POST('promote_price');
+    	$promote_price			= $this->requestData('promote_price');
     	$is_promote 			= empty($promote_price) ? 0 : 1;
     	$promote_price      	= !empty($promote_price) ?  $promote_price : 0;
-    	$promote_start_date		= _POST('promote_start_date');
+    	$promote_start_date		= $this->requestData('promote_start_date');
     	
-    	$promote_end_date  		= _POST('promote_end_date');
+    	$promote_end_date  		= $this->requestData('promote_end_date');
     	if (($promote_start_date == $promote_end_date) && !empty($promote_start_date) && !empty($promote_end_date)) {
     		$promote_start_date .= ' 00:00:00';
     		$promote_end_date 	.= ' 23:59:59';
@@ -49,8 +44,8 @@ class updateprice_module extends api_admin implements api_interface {
     	$promote_end_date      	= ($is_promote && !empty($promote_end_date)) ? RC_Time::local_strtotime($promote_end_date) : '';
     	
 	 	//优惠价格、等级价格
-    	$volume_number_list 	= _POST('volume_number');
-    	$user_rank_list			= $_POST['user_rank'];
+    	$volume_number_list 	= $this->requestData('volume_number');
+    	$user_rank_list			= $this->requestData['user_rank'];
     	
     	$this->db_goods = RC_Loader::load_app_model('goods_model','goods');
     	

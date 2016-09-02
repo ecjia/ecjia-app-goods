@@ -16,7 +16,7 @@ class detail_module extends api_admin implements api_interface {
 			EM_Api::outPut($result);
 		}
 		
-		$id = _POST('goods_id');
+		$id = $this->requestData('goods_id');
 		if (empty($id)) {
 			EM_Api::outPut(101);
 		}

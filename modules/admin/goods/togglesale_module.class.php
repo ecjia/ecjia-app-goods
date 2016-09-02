@@ -16,8 +16,8 @@ class togglesale_module extends api_admin implements api_interface {
 		}
 		
 		RC_Loader::load_app_func('global', 'goods');
-		$id = _POST('id');
-		$type = _POST('type');//online 上架;offline下架
+		$id = $this->requestData('id');
+		$type = $this->requestData('type');//online 上架;offline下架
 		if (empty($id) || empty($type)) {
 			EM_Api::outPut(101);
 		}

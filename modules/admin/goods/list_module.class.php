@@ -14,11 +14,12 @@ class list_module extends api_admin implements api_interface {
 		if (is_ecjia_error($result)) {
 			EM_Api::outPut($result);
 		}
-		$on_sale	= isset($_POST['on_sale'])	? strval($_POST['on_sale']) : 'true';//true.在售, false.下架
-		$stock		= isset($_POST['stock'])	? strval($_POST['stock']) : 'true';//是否售罄 。true.有货 , false.售罄
-		$sort		= isset($_POST['sort_by'])	? trim($_POST['sort_by']) : 'sort_order';//默认: sort_order  其他: price_desc, price_asc, stock, click_asc, clcik_desc
-		$keywords	= isset($_POST['keywords']) ? trim($_POST['keywords']) : '';
-		$category_id = isset($_POST['category_id']) ? intval($_POST['category_id']) : 0;
+		$on_sale	= $this->requestData('on_sale');//true.在售, false.下架
+		$stock		= $this->requestData('stock');//是否售罄 。true.有货 , false.售罄
+		$sort		= $this->requestData('sort_by', 'sort_order');//默认: sort_order  其他: price_desc, price_asc, stock, click_asc, clcik_desc
+		$keywords	= $this->requestData('keywords', '');
+		$category_id = $this->requestData('category_id', 0);
+		
 		$size = EM_Api::$pagination['count'];
 		$page = EM_Api::$pagination['page'];
 		

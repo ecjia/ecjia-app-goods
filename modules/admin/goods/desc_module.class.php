@@ -15,7 +15,7 @@ class desc_module extends api_admin implements api_interface {
     		EM_Api::outPut($result);
     	}
         /* 获得商品的信息 */
-    	$goods_id = _POST('goods_id', 0);
+    	$goods_id = $this->requestData('goods_id', 0);
     	
 		RC_Loader::load_app_func('goods','goods');
         $goods = get_goods_info($goods_id);

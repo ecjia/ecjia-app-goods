@@ -10,8 +10,8 @@ class product_search_module extends api_admin implements api_interface {
     		
 		$this->authadminSession();
     	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$goods_sn	= isset($_POST['goods_sn']) ? trim($_POST['goods_sn']) : '';
-		$device		= $_POST['device'];
+    	$goods_sn	= $this->requestData('goods_sn','');
+		$device		= $this->requestData['device'];
     	$device_code = $device['code'];
     	if (empty($goods_sn)) {
     		EM_Api::outPut(101);

@@ -14,8 +14,8 @@ class trash_module extends api_admin implements api_interface {
 		if (is_ecjia_error($result)) {
 			EM_Api::outPut($result);
 		}
-		$id = _POST('id');
-// 		$type = _POST('type');//remove删除;restore从回收站内返回;
+		$id = $this->requestData('id');
+// 		$type = $this->requestData('type');//remove删除;restore从回收站内返回;
 		if (empty($id)) {
 			EM_Api::outPut(101);
 		}
