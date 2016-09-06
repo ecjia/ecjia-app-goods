@@ -7,7 +7,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class mobilebuygoods_module extends api_front implements api_interface {
 
-    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     	$this->authSession();	
     	
     	$mobilebuywhere['act_type']		= GAT_MOBILE_BUY;
@@ -94,7 +94,6 @@ class mobilebuygoods_module extends api_front implements api_interface {
     			"more"	=> $page_row->total_pages <= $page ? 0 : 1,
     	);
     	
-    	EM_Api::outPut($list, $pager);
     	return array('data' => $list, 'pager' => $pager);
     	
     }
