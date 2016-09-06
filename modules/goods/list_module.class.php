@@ -44,8 +44,8 @@ class list_module extends api_front implements api_interface {
         	$order_sort = array('goods_id' => 'DESC');
         }
 
-		$size = EM_Api::$pagination['count'];
-		$page = EM_Api::$pagination['page'];
+		$size = $this->requestData('pagination.count', 15);
+		$page = $this->requestData('pagination.page', 1);
 		
        	$options = array(
        			'cat_id'	=> $category,
@@ -68,7 +68,7 @@ class list_module extends api_front implements api_interface {
        				"count" => '0',
        				"more"	=> '0'
        		);
-       		EM_Api::outPut($data['list'], $data['pager']);
+       		return array('data' => $data['list'], 'pager' => $data['pager']);
        	}
        	
 		$filter = empty($filter['filter_attr']) ? '' : $filter['filter_attr'];
@@ -146,10 +146,8 @@ class list_module extends api_front implements api_interface {
        			goods_list::get_keywords_where($options['keywords']);
        		}
        	}
-		EM_Api::outPut($data['list'], $data['pager']);
-        
+		return array('data' => $data['list'], 'pager' => $data['pager']);
     }
 }
-
 
 // end

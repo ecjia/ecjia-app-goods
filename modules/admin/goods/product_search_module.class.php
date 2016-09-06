@@ -9,13 +9,20 @@ class product_search_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     		
 		$this->authadminSession();
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
+		if ($_SESSION['admin_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+		
     	$goods_sn	= $this->requestData('goods_sn','');
+    	if (empty($goods_sn)) {
+    		return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
+    	}
+    	$size = $this->requestData('pagination.count', 15);
+    	$page = $this->requestData('pagination.page', 1);
+    	
 		$device		= $this->requestData['device'];
     	$device_code = $device['code'];
-    	if (empty($goods_sn)) {
-    		EM_Api::outPut(101);
-    	}
+
 		$db_goods = RC_Loader::load_app_model('goods_viewmodel','goods');
     	 	
 		$db_goods->view = array(

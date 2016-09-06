@@ -62,31 +62,6 @@ class category_module extends api_front implements api_interface {
 		}
 
 		return $categoryGoods;
-		
-// 		$categoryGoods = array();
-// 		RC_Loader::load_app_func('goods', 'goods');
-// 		$category = get_categories_tree();
-// 		$category = array_merge($category);
-// 		if (!empty($category)) {
-// 			foreach($category as $key=>$val) {
-// 				$categoryGoods[$key]['id'] = $val['id'];
-// 				$categoryGoods[$key]['name'] = $val['name'];
-// 				$categoryGoods[$key]['image'] = $val['img'];
-// 				if(!empty($val['cat_id'])){
-// 					foreach($val['cat_id'] as $k=>$v){
-// 						$categoryGoods[$key]['children'][] = array(
-// 							'id'     => $v['id'],
-// 						    'name'   => $v['name'],	
-// 							'image'	 => $v['img'],	
-// 						);
-// 					}
-// 				} else {
-// 					$categoryGoods[$key]['children'] = array();
-// 				}
-// 			}
-// 		}
-		
-
 	}
 }
 

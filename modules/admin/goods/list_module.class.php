@@ -9,19 +9,21 @@ class list_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     		
 		$this->authadminSession();
-		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-		$result = $ecjia->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-			EM_Api::outPut($result);
+		if ($_SESSION['admin_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
 		}
+		if (!$this->admin_priv('goods_manage')) {
+			return new ecjia_error('privilege_error', '对不起，您没有执行此项操作的权限！');
+		}
+		
 		$on_sale	= $this->requestData('on_sale');//true.在售, false.下架
 		$stock		= $this->requestData('stock');//是否售罄 。true.有货 , false.售罄
 		$sort		= $this->requestData('sort_by', 'sort_order');//默认: sort_order  其他: price_desc, price_asc, stock, click_asc, clcik_desc
 		$keywords	= $this->requestData('keywords', '');
 		$category_id = $this->requestData('category_id', 0);
 		
-		$size = EM_Api::$pagination['count'];
-		$page = EM_Api::$pagination['page'];
+		$size = $this->requestData('pagination.count', 15);
+		$page = $this->requestData('pagination.page', 1);
 		
 		$sort_by = '';
 		/* 推荐类型 */
@@ -49,13 +51,14 @@ class list_module extends api_admin implements api_interface {
 		$where = array(
 			'is_delete' => 0,
 		);
-// 		if ($_SESSION['ru_id'] > 0) {
-// 			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
-// 		}
+
 		if ($_SESSION['seller_id'] > 0) {
 			$where = array_merge($where, array('seller_id' => $_SESSION['seller_id']));
 		}
-		$where['is_on_sale'] = $on_sale == 'true' ? 1 : 0 ;
+		if (!empty($on_sale)) {
+			$where['is_on_sale'] = $on_sale == 'true' ? 1 : 0 ;
+		}
+		
 		if ($stock == 'false') {
 			$where['goods_number'] = 0;
 		}
@@ -73,8 +76,6 @@ class list_module extends api_admin implements api_interface {
 		/* 获取记录条数 */
 		$record_count = $db->join(null)->where($where)->count();
 			
-		//加载分页类
-		RC_Loader::load_sys_class('ecjia_page', false);
 		//实例化分页
 		$page_row = new ecjia_page($record_count, $size, 6, '', $page);
 		
@@ -122,11 +123,8 @@ class list_module extends api_admin implements api_interface {
 				'count' => $page_row->total_records,
 				'more'	=> $page_row->total_pages <= $page ? 0 : 1,
 		);
-		
-		EM_Api::outPut($goods_list , $pager);
+		return array('data' => $goods_list, 'pager' => $pager);
 	}
-	
-	
 }
 
 

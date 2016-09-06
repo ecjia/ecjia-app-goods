@@ -12,6 +12,9 @@ class detail_module extends api_front implements api_interface {
         //如果用户登录获取其session
         
         $goods_id = $this->requestData('goods_id', 0);
+        if ($goods_id <= 0) {
+        	return new ecjia_error('does not exist', '不存在的信息');
+        }
         $area_id = $this->requestData('area_id', 0);
         
         $rec_type = $this->requestData('rec_type');
@@ -43,10 +46,7 @@ class detail_module extends api_front implements api_interface {
         
         if ($goods === false) {
             /* 如果没有找到任何记录则跳回到首页 */
-            EM_Api::outPut(13);
-        } elseif (empty($goods['goods_id'])) {
-            /* 不存在该商品  */
-            EM_Api::outPut(13);
+           return new ecjia_error('does not exist', '不存在的信息');
         } else {
         	//多店铺开启库存管理以及地区后才会去判断
         	if ( $area_id > 0 ) {
@@ -365,7 +365,7 @@ class detail_module extends api_front implements api_interface {
         $shop_name = empty($info['seller_name']) ? ecjia::config('shop_name') : $info['seller_name'];
         $data['server_desc'] = '由'.$shop_name.'从'.$warehouse_name.'发货并提供售后服务';
         
-        EM_Api::outPut($data);
+        return $data;
     }
 }
 
@@ -494,124 +494,5 @@ function get_package_goods_list($goods_id) {
     
     return $res;
 }
-// /**
-//  * 获得购买过该商品的人还买过的商品
-//  *
-//  * @access public
-//  * @param integer $goods_id
-//  * @return array
-//  */
-// function get_also_bought($goods_id) {
 
-//     $dbview = RC_Loader::load_app_model('order_goods_two_goods_viewmodel');
-//     $res = $dbview->join(array('order_goods' , 'goods'))->where(array('a.goods_id' => $goods_id , 'b.goods_id' => array('neq' => $goods_id) , 'g.is_on_sale' => 0 , 'g.is_alone_sale' => 1 , 'g.is_delete' => 0))->group('b.goods_id')->order(array('num' => 'desc'))->limit(ecjia::config('bought_goods'))->select();
-
-//     $key = 0;
-//     $arr = array();
-//     foreach ($res as $row) {
-//         $arr[$key]['goods_id'] = $row['goods_id'];
-//         $arr[$key]['goods_name'] = $row['goods_name'];
-//         $arr[$key]['short_name'] = $GLOBALS['_CFG']['goods_name_length'] > 0 ? RC_String::sub_str($row['goods_name'], $GLOBALS['_CFG']['goods_name_length']) : $row['goods_name'];
-//         $arr[$key]['goods_thumb'] = get_image_path($row['goods_id'], $row['goods_thumb'], true);
-//         $arr[$key]['goods_img'] = get_image_path($row['goods_id'], $row['goods_img']);
-//         $arr[$key]['shop_price'] = price_format($row['shop_price']);
-//         $arr[$key]['url'] = build_uri('goods', array(
-//             'gid' => $row['goods_id']
-//         ), $row['goods_name']);
-
-//         if ($row['promote_price'] > 0) {
-//             $arr[$key]['promote_price'] = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
-//             $arr[$key]['formated_promote_price'] = price_format($arr[$key]['promote_price']);
-//         } else {
-//             $arr[$key]['promote_price'] = 0;
-//         }
-
-//         $key ++;
-//     }
-
-//     return $arr;
-// }
-
-// /**
-//  * 获得指定商品的销售排名
-//  *
-//  * @access public
-//  * @param integer $goods_id
-//  * @return integer
-//  */
-// function get_goods_rank($goods_id) {
-//     /* 统计时间段 */
-//     $period = intval(ecjia::config('top10_time'));
-//     if ($period == 1)     // 一年
-//     {
-//         $ext = " AND o.add_time > '" . RC_Time::local_strtotime('-1 years') . "'";
-//     } elseif ($period == 2)     // 半年
-//     {
-//         $ext = " AND o.add_time > '" . RC_Time::local_strtotime('-6 months') . "'";
-//     } elseif ($period == 3)     // 三个月
-//     {
-//         $ext = " AND o.add_time > '" . RC_Time::local_strtotime('-3 months') . "'";
-//     } elseif ($period == 4)     // 一个月
-//     {
-//         $ext = " AND o.add_time > '" . RC_Time::local_strtotime('-1 months') . "'";
-//     } else {
-//         $ext = '';
-//     }
-
-//     /* 查询该商品销量 */
-//     $dbview = RC_Loader::load_app_model('order_info_order_goods_viewmodel');
-//     $sales_count = $dbview->join('order_goods')->field('IFNULL(SUM(g.goods_number), 0) as num')->find("o.order_status = '" . OS_CONFIRMED . "' AND o.shipping_status in (".SS_SHIPPED.",".SS_RECEIVED.") AND o.pay_status in (".PS_PAYED.",".PS_PAYING.") AND g.goods_id = '$goods_id' " .$ext);
-
-//     if ($sales_count['num'] > 0) {
-//         /* 只有在商品销售量大于0时才去计算该商品的排行 */
-//         $res = $dbview->join('order_goods')->field('DISTINCT SUM(goods_number) AS num')->where("o.order_status = '" . OS_CONFIRMED . "' AND o.shipping_status in (".SS_SHIPPED.",".SS_RECEIVED.") AND o.pay_status in (".PS_PAYED.",".PS_PAYING.") AND g.goods_id = '$goods_id' " .$ext)->group('g.goods_id')->having('num >'. $sales_count['num'])->select();
-
-//         $rank = count($res);
-//         if ($rank > 10) {
-//             $rank = 0;
-//         }
-//     } else {
-//         $rank = 0;
-//     }
-
-//     return $rank;
-// }
-
-// /**
-//  * 获得商品选定的属性的附加总价格
-//  *
-//  * @param integer $goods_id
-//  * @param array $attr
-//  *
-//  * @return void
-//  */
-// function get_attr_amount($goods_id, $attr) {
-//     $db_goods_attr = RC_Loader::load_app_model('goods_attr_model','goods');
-//     return $db_goods_attr->where(array('goods_id' => $goods_id))->in(array('goods_attr_id' => $attr))->sum('attr_price');
-// }
-// /**
-//  * 获得指定商品的关联文章
-//  *
-//  * @access public
-//  * @param integer $goods_id
-//  * @return void
-//  */
-// function get_linked_articles($goods_id) {
-
-//     $dbview = RC_Loader::load_app_model('goods_article_article_viewmodel');
-//     $res = $dbview->join('article')->where(array('g.goods_id' => $goods_id , 'a.is_open' => 1))->order(array('a.add_time' => 'desc'))->select();
-
-//     $arr = array();
-//     foreach ($res as $row) {
-//         $row['url'] = $row['open_type'] != 1 ? build_uri('article', array(
-//             'aid' => $row['article_id']
-//         ), $row['title']) : trim($row['file_url']);
-//         $row['add_time'] = RC_Time::local_date(ecjia::config('date_format'), $row['add_time']);
-//         $row['short_title'] = ecjia::config('article_title_length') > 0 ? RC_String::sub_str($row['title'], ecjia::config('article_title_length')) : $row['title'];
-
-//         $arr[] = $row;
-//     }
-
-//     return $arr;
-// }
 // end

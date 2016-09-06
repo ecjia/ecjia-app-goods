@@ -65,12 +65,12 @@ class groupbuygoods_module extends api_front implements api_interface {
 					'count' => 0,
 					'more'	=> 0,
 			);
-			EM_Api::outPut(array(), $pager);
+			return array('data' => array(), 'pager' => $pager);
 		}
 		
 		/* 获取数量 */
-    	$size = EM_Api::$pagination['count'];
-    	$page = EM_Api::$pagination['page'];
+    	$size = $this->requestData('pagination.count', 15);
+    	$page = $this->requestData('pagination.page');
     	
     	//加载分页类
     	RC_Loader::load_sys_class('ecjia_page', false);
@@ -126,9 +126,7 @@ class groupbuygoods_module extends api_front implements api_interface {
     			"count" => $page_row->total_records,
     			"more"	=> $page_row->total_pages <= $page ? 0 : 1,
     	);
-    	
-    	EM_Api::outPut($list, $pager);
-    	
+    	return array('data' => $list, 'pager' => $pager);
     }
 }
 

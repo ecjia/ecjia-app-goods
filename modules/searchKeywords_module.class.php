@@ -20,8 +20,7 @@ class searchKeywords_module extends api_front implements api_interface {
 		foreach ($tags as $val) {
 			$data[] = $val['tag_words'];
 		}
-
-		EM_Api::outPut($data);
+		return array('data' => $data);
 	}
 }
 

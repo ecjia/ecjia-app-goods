@@ -8,17 +8,12 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class updateprice_module extends api_admin implements api_interface {
 	private $db_goods;
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
     	$this->authadminSession();
-    	$result = $ecjia->admin_priv('goods_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
     	
 		//请求参数：
        	$goods_id				= $this->requestData('goods_id', 0);
     	if (empty($goods_id)) {
-    		EM_Api::outPut(11);
+    		return new ecjia_error('has_exist_error', '用户名或email已使用');
     	}
     	//市场价格
     	$shop_price				= $this->requestData('shop_price', 0);
@@ -92,6 +87,5 @@ class updateprice_module extends api_admin implements api_interface {
     		ecjia_admin::admin_log($goods_name, 'edit', 'goods');
     		return array();
     	}
-    	
     }
 }

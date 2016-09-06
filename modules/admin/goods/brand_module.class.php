@@ -9,10 +9,12 @@ class brand_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     		
 		$this->authadminSession();
-		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
+		if ($_SESSION['admin_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
     	
-		$size = EM_Api::$pagination['count'];
-		$page = EM_Api::$pagination['page'];
+		$size = $this->requestData('pagination.count', 15);
+		$page = $this->requestData('pagination.page', 1);
 		$options = array(
 			'keywords'	=> $this->requestData('keywords'),
 			'size'		=> $size,
@@ -32,15 +34,12 @@ class brand_module extends api_admin implements api_interface {
 		}
 		
         $pager = array(
-				"total" => $result['page']->total_records,
-				"count" => $result['page']->total_records,
-				"more" 	=> $result['page']->total_pages <= $page ? 0 : 1,
+			"total" => $result['page']->total_records,
+			"count" => $result['page']->total_records,
+			"more" 	=> $result['page']->total_pages <= $page ? 0 : 1,
 		);
-		
-		EM_Api::outPut($brand, $pager);
-		
+		return array('data' => $brand, 'pager' => $pager);
 	}
 }
-
 
 // end

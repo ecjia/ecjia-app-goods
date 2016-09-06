@@ -9,15 +9,16 @@ class trash_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     		
 		$this->authadminSession();
-		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-		$result = $ecjia->admin_priv('remove_back');
-		if (is_ecjia_error($result)) {
-			EM_Api::outPut($result);
+		if ($_SESSION['admin_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
 		}
+		if (!$this->admin_priv('remove_back')) {
+			return new ecjia_error('privilege_error', '对不起，您没有执行此项操作的权限！');
+		}
+		
 		$id = $this->requestData('id');
-// 		$type = $this->requestData('type');//remove删除;restore从回收站内返回;
 		if (empty($id)) {
-			EM_Api::outPut(101);
+			return new ecjia_error('not_exists_info', '不存在的信息');
 		}
 		$data = array(
 				'is_delete' => 1,
@@ -35,8 +36,6 @@ class trash_module extends api_admin implements api_interface {
 		ecjia_admin::admin_log(addslashes($goods_name), 'trash', 'goods'); // 记录日志
 		return array();
 	}
-	
-	
 }
 
 

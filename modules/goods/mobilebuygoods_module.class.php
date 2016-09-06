@@ -37,19 +37,17 @@ class mobilebuygoods_module extends api_front implements api_interface {
 		/* 查询总数为0时直接返回  */
     	if ($count == 0 || !is_array($location) || empty($location['latitude']) || empty($location['longitude'])) {
 			$pager = array(
-					'total' => 0,
-					'count' => 0,
-					'more'	=> 0,
+				'total' => 0,
+				'count' => 0,
+				'more'	=> 0,
 			);
-			EM_Api::outPut(array(), $pager);
+			return array('data' => array(), 'pager' => $pager);
 		}
 		
 		/* 获取数量 */
-    	$size = EM_Api::$pagination['count'];
-    	$page = EM_Api::$pagination['page'];
-    	
-    	//加载分页类
-    	RC_Loader::load_sys_class('ecjia_page', false);
+   		$size = $this->requestData('pagination.count', 15);
+    	$page = $this->requestData('pagination.page', 1);
+    
     	//实例化分页
     	$page_row = new ecjia_page($count, $size, 6, '', $page);
     	
@@ -97,6 +95,7 @@ class mobilebuygoods_module extends api_front implements api_interface {
     	);
     	
     	EM_Api::outPut($list, $pager);
+    	return array('data' => $list, 'pager' => $pager);
     	
     }
 }

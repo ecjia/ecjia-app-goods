@@ -9,7 +9,6 @@ class suggestlist_module extends api_front implements api_interface {
 
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
     	$this->authSession();	
-    	//如果用户登录获取其session
     	
     	$location = $this->requestdata('loaction', array());
     	/*经纬度为空判断*/
@@ -21,7 +20,7 @@ class suggestlist_module extends api_front implements api_interface {
     				"count" => '0',
     				"more"	=> '0'
     		);
-    		EM_Api::outPut($data['list'], $data['pager']);
+    		return array('data' => $data['list'], 'pager' => $data['pager']);
     	}
     	RC_Loader::load_app_func('common', 'goods');
     	$action_type = $this->requestdata('action_type', '');
@@ -29,11 +28,11 @@ class suggestlist_module extends api_front implements api_interface {
     	$type = array('new', 'best', 'hot', 'promotion');//推荐类型
     	
     	if (!in_array($action_type, $type)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
     	}
     	
-    	$size = EM_Api::$pagination['count'];
-    	$page = EM_Api::$pagination['page'];
+    	$size = $this->requestData('pagination.count', 15);
+    	$page = $this->requestData('pagination.page', 1);
     	
     	$cache_id = sprintf('%X', crc32($action_type . '-' . $sort_type  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank'] . '-' .
     			ecjia::config('lang')));
@@ -130,7 +129,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    	}
 	    	RC_Cache::app_cache_set($cache_key, $data, 'goods', 60);
        	}
-    	EM_Api::outPut($data['list'], $data['pager']);
+    	return array('data' => $data['list'], 'pager' => $data['pager']);
     }
 }
 

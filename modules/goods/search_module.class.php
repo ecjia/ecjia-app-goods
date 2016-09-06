@@ -17,15 +17,16 @@ class search_module extends api_front implements api_interface {
     		$data = array();
     		$data['type'] = 'goods';
     		$data['result'] = array();
-    		$data['pager'] = array(
+    		$pager= array(
     				"total" => '0',
     				"count" => '0',
     				"more"	=> '0',
     		);
-    		EM_Api::outPut($data);
-    	}    	
-    	$size = EM_Api::$pagination['count'];
-    	$page = EM_Api::$pagination['page'];
+    		return array('data' => $data, 'pager' => $pager);
+    	}  
+    	
+   		$size = $this->requestData('pagination.count', 15);
+    	$page = $this->requestData('pagination.page', 1);
     	$options = array(
     			'location'		=> $location,
     			'keywords'		=> $keywords,
@@ -189,7 +190,7 @@ class search_module extends api_front implements api_interface {
 				'more'	=> $result['page']->total_pages <= $page ? 0 : 1,
 			);
     		
-    		EM_Api::outPut($data, $data['pager']);
+    		return array('data' => $data, 'pager' => $data['pager']);
     	} else {
     		$options = array(
     				'keywords'	=> $keywords,
@@ -262,13 +263,8 @@ class search_module extends api_front implements api_interface {
     				"more"	=> $result['page']->total_pages <= $page ? 0 : 1,
     		);
     		
-    		EM_Api::outPut($data, $data['pager']);
+    		return array('data' => $data, 'pager' => $data['pager']);
     	}
-    	
-    	
-    	
-    	
-    	
     }
 }
 

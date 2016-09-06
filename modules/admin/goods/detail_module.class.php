@@ -9,35 +9,31 @@ class detail_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     		
 		$this->authadminSession();
-		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
+		if ($_SESSION['admin_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+		if (!$this->admin_priv('goods_manage')) {
+			return new ecjia_error('privilege_error', '对不起，您没有执行此项操作的权限！');
+		}
 
-		$result = $ecjia->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-			EM_Api::outPut($result);
+		$id = $this->requestData('goods_id',0);
+    	if (empty($id)) {
+			return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
+		}else {
+			$where['goods_id'] = $id;
 		}
-		
-		$id = $this->requestData('goods_id');
-		if (empty($id)) {
-			EM_Api::outPut(101);
-		}
-		
-// 		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+		$where['is_delete'] = 0;
 		$db_goods = RC_Model::model('goods/goods_model');
-		$where = array('goods_id' => $id, 'is_delete' => 0);
-// 		if ($_SESSION['ru_id'] > 0) {
-// 			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
-// 		}
+
 		if ($_SESSION['seller_id'] > 0) {
 			$where = array_merge($where, array('seller_id' => $_SESSION['seller_id']));
 		}
 		$row = $db_goods->find($where);
 		if (empty($row)) {
-			EM_Api::outPut(13);
+			return new ecjia_error('not_exists_info', '不存在的信息');
 		} else {
 			$brand_db		= RC_Model::model('goods/brand_model');
 			$category_db	= RC_Model::model('goods/category_model');
-// 			$brand_db = RC_Loader::load_app_model('brand_model', 'goods');
-// 			$category_db = RC_Loader::load_app_model('category_model', 'goods');
 			
 			$brand_name = $row['brand_id'] > 0 ? $brand_db->where(array('brand_id' => $row['brand_id']))->get_field('brand_name') : '';
 			$category_name = $category_db->where(array('cat_id' => $row['cat_id']))->get_field('cat_name');
@@ -120,7 +116,7 @@ class detail_module extends api_admin implements api_interface {
 		    	}
 		    }
 			
-			EM_Api::outPut($goods_detail);
+			return $goods_detail;
 		}
 		
 	}

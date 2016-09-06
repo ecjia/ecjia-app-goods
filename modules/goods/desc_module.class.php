@@ -17,24 +17,16 @@ class desc_module extends api_front implements api_interface {
         
         if ($goods === false) {
             /* 如果没有找到任何记录则跳回到首页 */
-            EM_Api::outPut(13);
-            exit();
-        } elseif (empty($goods['goods_id'])) {
-            /* 不存在该商品  */
-            EM_Api::outPut(13);
-            exit();
+            return new ecjia_error('does not exist', '不存在的信息');
         } else {
         	$data = $goods;
 	        $base = sprintf('<base href="%s/" />', dirname(SITE_URL));
 	        $style = RC_App::apps_url('goods/statics/styles/goodsapi.css');
 	        $html = '<!DOCTYPE html><html><head><title>' . $data['goods_name'] . '</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="initial-scale=1.0"><meta name="viewport" content="initial-scale = 1.0 , minimum-scale = 1.0 , maximum-scale = 1.0" /><link href="'.$style.'" rel="stylesheet">' . $base . '</head><body>' . $data['goods_desc'] . '</body></html>';
 	        
-	        EM_Api::outPut(array(
-	            'data' => $html
-	        ));
+	        return array('data' => $html);
         }
     }
 }
-
 
 // end
