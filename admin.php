@@ -18,7 +18,6 @@ class admin extends ecjia_admin {
 	private $tags;
 	private $db_brand;
 	private $db_category;
-	private $db_link_area;
 	private $db_term_meta;
 	private $db_term_relationship;
 
@@ -76,10 +75,8 @@ class admin extends ecjia_admin {
 		$this->db_products = RC_Loader::load_app_model('products_model');
 		$this->db_brand = RC_Loader::load_app_model('brand_model','goods');
 		$this->db_category = RC_Loader::load_app_model('category_model');
-		$this->db_link_area = RC_Loader::load_app_model('link_area_goods_model');
 		$this->db_term_relationship = RC_Loader::load_app_model('term_relationship_model');
 		$this->db_term_meta = RC_Loader::load_sys_model('term_meta_model');
-
 		$goods_id = isset($_REQUEST['goods_id']) ? $_REQUEST['goods_id'] : 0;
 		$extension_code = isset($_GET['extension_code']) ? '&extension_code='.$_GET['extension_code'] : '';
 		$this->tags = get_goods_info_nav($goods_id, $extension_code);

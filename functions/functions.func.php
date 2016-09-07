@@ -483,14 +483,3 @@ function get_booking_info($id) {
 
 	return $res;
 }
-
-/**
- * 根据商品ID获取关联地区
- */
-function get_linked_area($goods_id) {
-	$db_region = RC_Loader::load_app_model('link_area_goods_viewmodel', 'goods');
-	$area = $db_region->field('rw.region_id as regionId, rw.region_name')->where(array('goods_id' => $goods_id))->select();
-
-	return $area;
-}
-// end
