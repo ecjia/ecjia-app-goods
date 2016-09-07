@@ -7,7 +7,7 @@ class goods_admin_menu_api extends Component_Event_Api
 {
 	public function call(&$options)
 	{
-		$menus = ecjia_admin::make_admin_menu('02_cat_and_goods', __('商品管理'), '', 1);
+		$menus = ecjia_admin::make_admin_menu('03_cat_and_goods', __('商品管理'), '', 4);
 		$submenus = array(
 			ecjia_admin::make_admin_menu('01_goods_list', __('商品列表'), RC_Uri::url('goods/admin/init'), 1)->add_purview(array('goods_manage', 'remove_back')),
 			ecjia_admin::make_admin_menu('02_goods_add', __('添加新商品'), RC_Uri::url('goods/admin/add'), 2)->add_purview('goods_manage'),
