@@ -16,9 +16,6 @@ class goods_admin_menu_api extends Component_Event_Api
 			ecjia_admin::make_admin_menu('08_goods_type', __('商品类型'), RC_Uri::url('goods/admin_goods_type/init'), 7)->add_purview('attr_manage'),
 			ecjia_admin::make_admin_menu('11_goods_trash', __('商品回收站'), RC_Uri::url('goods/admin/trash'), 8)->add_purview(array('goods_manage', 'remove_back')),
 			ecjia_admin::make_admin_menu('06_undispose_booking', __('缺货登记'), RC_Uri::url('goods/admin_goods_booking/init'), 9)->add_purview('booking'),
-		    ecjia_admin::make_admin_menu('divider', '', '', 11)->add_purview('virualcard'),
-		    ecjia_admin::make_admin_menu('04_category_store_list', __('店铺商品分类'), RC_Uri::url('goods/admin_category_store/init'), 12)->add_purview(array('category_store')),
-		    ecjia_admin::make_admin_menu('06_merchants_brand_list', __('商家品牌'), RC_Uri::url('goods/merchants_brand/init'), 13)->add_purview('merchants_brand'),
 		);
 		
         $menus->add_submenu($submenus);
