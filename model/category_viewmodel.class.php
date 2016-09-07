@@ -11,12 +11,17 @@ class category_viewmodel extends Component_Model_View {
 		$this->table_alias_name = 'c';
 		
 		$this->view =array(
-				'goods' => array(
-						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-						'alias' => 'g',
-						'field' => 'c.cat_id, c.cat_name, COUNT(g.goods_id) AS goods_count',
-						'on' 	=> 'c.cat_id = g.cat_id '
-				)
+			'goods' => array(
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias' => 'g',
+				'field' => 'c.cat_id, c.cat_name, COUNT(g.goods_id) AS goods_count',
+				'on' 	=> 'c.cat_id = g.cat_id '
+			),
+			'category' => array(
+				'type'  =>	Component_Model_View::TYPE_LEFT_JOIN,
+				'alias' =>	's',
+				'on'   	=>	's.parent_id = c.cat_id'
+			)
 		);
 		
 		parent::__construct();
