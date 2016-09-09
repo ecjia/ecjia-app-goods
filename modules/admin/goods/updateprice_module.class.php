@@ -6,7 +6,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *
  */
 class updateprice_module extends api_admin implements api_interface {
-	private $db_goods;
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     	$this->authadminSession();
     	
@@ -42,7 +41,7 @@ class updateprice_module extends api_admin implements api_interface {
     	$volume_number_list 	= $this->requestData('volume_number');
     	$user_rank_list			= $this->requestData['user_rank'];
     	
-    	$this->db_goods = RC_Loader::load_app_model('goods_model','goods');
+    	$db_goods = RC_Model::model('goods/goods_model');
     	
     	RC_Loader::load_app_func('system_goods', 'goods'); 
     	RC_Loader::load_app_func('functions', 'goods');
@@ -81,9 +80,9 @@ class updateprice_module extends api_admin implements api_interface {
     			'is_promote'			=> $is_promote,
     			'last_update'			=> RC_Time::gmtime()
     	);
-    	$count = $this->db_goods->where(array('goods_id' => $goods_id))->update($data);
+    	$count = $db_goods->where(array('goods_id' => $goods_id))->update($data);
     	if ($count>0) {
-    		$goods_name = $this->db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
+    		$goods_name = $db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
     		ecjia_admin::admin_log($goods_name, 'edit', 'goods');
     		return array();
     	}

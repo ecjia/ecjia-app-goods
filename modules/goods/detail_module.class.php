@@ -23,9 +23,10 @@ class detail_module extends api_front implements api_interface {
         /* 获得商品的信息 */
         RC_Loader::load_app_func('goods','goods');
         RC_Loader::load_app_func('category','goods');
+        $warehouse_db = RC_Model::model('warehouse/warehouse_model');
         
         if ( $area_id > 0 ) {
-        	$db_region = RC_Loader::load_app_model('region_model', 'shipping');
+        	$db_region = RC_Model::model('shipping/region_model');
         	$region_result = $db_region->where(array('region_id' => $area_id))->find();
         	
         	if ($region_result['region_type'] > 2) {//定位为区县
@@ -36,7 +37,6 @@ class detail_module extends api_front implements api_interface {
         	} else { //定位为省
         		$area_id = $region_result['region_id'];
         	}
-        	$warehouse_db = RC_Loader::load_app_model('warehouse_model', 'warehouse');
         	$warehouse = $warehouse_db->where(array('regionId' => $area_id))->find();
         	$area_id = $warehouse['region_id'];
         	$warehouse_id = $warehouse['parent_id'];
@@ -50,7 +50,6 @@ class detail_module extends api_front implements api_interface {
         } else {
         	//多店铺开启库存管理以及地区后才会去判断
         	if ( $area_id > 0 ) {
-        		$warehouse_db = RC_Loader::load_app_model('warehouse_model', 'warehouse');
         		$warehouse = $warehouse_db->where(array('regionId' => $area_id))->find();
         		$area = $warehouse['region_id'];
         		$warehouse_id = $warehouse['parent_id'];
@@ -78,7 +77,7 @@ class detail_module extends api_front implements api_interface {
             /* 购买该商品可以得到多少钱的红包 */
             if ($goods['bonus_type_id'] > 0) {
                 $time = RC_Time::gmtime();
-                $db_bonus_type = RC_Loader::load_app_model('bonus_type_model','bonus');
+                $db_bonus_type = RC_Model::model('bonus/bonus_type_model');
                 $goods['bonus_money'] = $db_bonus_type->where(array('type_id' => $goods['bonus_type_id'] , 'send_type' => SEND_BY_GOODS , 'send_start_date' => array('elt' => $time) , 'send_end_date' => array('egt' => $time)))-> get_field('type_money');
                 
                 if ($goods['bonus_money'] > 0) {
@@ -86,7 +85,7 @@ class detail_module extends api_front implements api_interface {
                 }
             }
 
-            $db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+            $db_goods = RC_Model::model('goods/goods_model');
             RC_Loader::load_app_func('warehousegoods', 'goods');
             $properties = get_goods_properties($goods_id, $warehouse_id, $area); // 获得商品的规格和属性
 // 			$properties = warehouse_get_goods_properties($goods_id);
@@ -106,7 +105,7 @@ class detail_module extends api_front implements api_interface {
         $data['specification']   = $properties['spe'];
         $data['collected']       = 0;
         
-        $db_favourable = RC_Loader::load_app_model('favourable_activity_model', 'favourable');
+        $db_favourable = RC_Model::model('favourable/favourable_activity_model');
         $favourable_result = $db_favourable->where(array('seller_id' => $goods['seller_id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
         $favourable_list = array();
         if (empty($rec_type)) {
@@ -159,7 +158,7 @@ class detail_module extends api_front implements api_interface {
         
         if ($_SESSION['user_id']) {
             // 查询收藏夹状态
-            $db_collect_goods = RC_Loader::load_app_model('collect_goods_model', 'goods');
+            $db_collect_goods = RC_Model::model('goods/collect_goods_model');
             $count = $db_collect_goods->where(array('user_id' => $_SESSION[user_id] , 'goods_id' => $goods_id))->count();
             
             if ($count > 0) {
@@ -180,7 +179,7 @@ class detail_module extends api_front implements api_interface {
         	$data['promote_end_date'] = $group_buy['formated_end_date'];
         	$activity_type = 'GROUPBUY_GOODS';
         } else {
-        	$mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
+        	$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
         	$groupbuy = $mobilebuy_db->find(array(
         			'goods_id'	 => $data['id'],
         			'start_time' => array('elt' => RC_Time::gmtime()),
@@ -260,7 +259,7 @@ class detail_module extends api_front implements api_interface {
         
         $data['related_goods'] = array();
 		if (!empty($result['list'])) {
-			$mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
+			$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
 			/* 手机专享*/
 	        $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
 			$is_active = ecjia_app::is_active('ecjia.mobilebuy');
@@ -334,13 +333,13 @@ class detail_module extends api_front implements api_interface {
         	if(substr($info['shop_logo'], 0, 1) == '.') {
         		$info['shop_logo'] = str_replace('../', '/', $info['shop_logo']);
         	}
-        	$goods_db = RC_Loader::load_app_model('goods_model', 'goods');
-        	$goods_count = $goods_db->where(array('user_id' => $data['seller_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
+        	$db_goods = RC_Model::model('goods/goods_model');
+        	$goods_count = $db_goods->where(array('user_id' => $data['seller_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
         	
-        	$cs_db = RC_Loader::load_app_model('collect_store_model', 'seller');
+        	$cs_db = RC_Model::model('seller/collect_store_model');
         	$follower_count = $cs_db->where(array('seller_id' => $data['seller_id']))->count();
         	
-        	$db_goods_view = RC_Loader::load_app_model('comment_viewmodel', 'comment');
+        	$db_goods_view = RC_Model::model('comment/comment_viewmodel');
         	
         	$field = 'count(*) as count, SUM(IF(comment_rank>3,1,0)) as comment_rank, SUM(IF(comment_server>3,1,0)) as comment_server, SUM(IF(comment_delivery>3,1,0)) as comment_delivery';
         	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.seller_id' => $goods['seller_id'], 'parent_id' => 0, 'status' => 1))->find();
@@ -370,7 +369,7 @@ class detail_module extends api_front implements api_interface {
 }
 
 function EM_get_goods_gallery($goods_id) {
-    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
+    $db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
     $row = $db_goods_gallery->field('img_id, img_url, thumb_url, img_desc, img_original')->where(array('goods_id' => $goods_id))->limit(ecjia::config('goods_gallery_number'))->select();
     /* 格式化相册图片路径 */
     RC_Loader::load_app_class('goods_image', 'goods');
@@ -396,7 +395,7 @@ function EM_get_goods_gallery($goods_id) {
  * @return array
  */
 function get_user_rank_prices($goods_id, $shop_price) {
-    $dbview = RC_Loader::load_app_model('user_rank_member_price_viewmodel', 'user');
+    $dbview = RC_Model::model('user/user_rank_member_price_viewmodel');
     $dbview->view =array(
     		'member_price' 	=> array(
     				'type' 		=> Component_Model_View::TYPE_LEFT_JOIN,
@@ -429,8 +428,8 @@ function get_user_rank_prices($goods_id, $shop_price) {
  * @return 礼包列表
  */
 function get_package_goods_list($goods_id) { 
-    $dbview = RC_Loader::load_app_model('goods_activity_package_goods_viewmodel', 'goods');
-    $db_view = RC_Loader::load_app_model('goods_attr_attribute_viewmodel', 'goods');
+    $dbview = RC_Model::model('goods/goods_activity_package_goods_viewmodel');
+    $db_view = RC_Model::model('goods/goods_attr_attribute_viewmodel');
     $now = RC_Time::gmtime();
     $where = array(
 		'ga.start_time' => array('elt' => $now) ,

@@ -88,7 +88,7 @@ class list_module extends api_front implements api_interface {
 			);
 	        $data['list'] = array();
 			if (!empty($result['list'])) {
-				$mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
+				$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
 				/* 手机专享*/
 		        $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
 				$is_active = ecjia_app::is_active('ecjia.mobilebuy');

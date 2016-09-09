@@ -24,7 +24,7 @@ class trash_module extends api_admin implements api_interface {
 				'is_delete' => 1,
 				'last_update' => RC_Time::gmtime()
 		);
-		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+		$db_goods = RC_Model::model('goods/goods_model');
 		
 		$where = array('goods_id' => $id);
 		if ($_SESSION['ru_id'] > 0) {

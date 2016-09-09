@@ -47,7 +47,7 @@ class category_module extends api_front implements api_interface {
                 	);
                 }
                 if (! empty($goods))
-               		$mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
+                    $mobilebuy_db = RC_Model::model('goods/goods_activity_model');
                     foreach ($goods as $k => $v) {
 	                	$groupbuy = $mobilebuy_db->find(array(
 	                			'goods_id'	 => $v['id'],
@@ -168,7 +168,7 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
     }
     
 	
-    $dbview = RC_Loader::load_app_model('goods_brand_member_viewmodel', 'goods');
+    $dbview = RC_Model::model('goods/goods_brand_member_viewmodel');
     $res = $dbview->join(array('brand', 'member_price'))
 					->where($where)
 					->order($order)

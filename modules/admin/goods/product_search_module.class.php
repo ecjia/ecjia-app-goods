@@ -23,7 +23,7 @@ class product_search_module extends api_admin implements api_interface {
 		$device		= $this->requestData['device'];
     	$device_code = $device['code'];
 
-		$db_goods = RC_Loader::load_app_model('goods_viewmodel','goods');
+		$db_goods = RC_Model::model('goods/goods_viewmodel');
     	 	
 		$db_goods->view = array(
 			'products' => array(

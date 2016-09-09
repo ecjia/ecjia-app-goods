@@ -36,9 +36,9 @@ class search_module extends api_front implements api_interface {
     	
     	$result = RC_Api::api('seller', 'seller_list', $options);
     	if (!empty($result['seller_list'])) {
-    		$db_goods_view = RC_Loader::load_app_model('comment_viewmodel', 'comment');
+    		$db_goods_view = RC_Model::model('comment/comment_viewmodel');
     		$max_goods = 0;
-    		$mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
+    		$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
     		$db_favourable = RC_Model::model('favourable/favourable_activity_model');
     			
     		/* 手机专享*/
@@ -202,7 +202,7 @@ class search_module extends api_front implements api_interface {
     		$result = RC_Api::api('goods', 'goods_list', $options);
     		$goods_list = array();
     		if (!empty($result['list'])) {
-    			$mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
+    			$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
     			/* 手机专享*/
     			$result_mobilebuy = ecjia_app::validate_application('mobilebuy');
     			$is_active = ecjia_app::is_active('ecjia.mobilebuy');

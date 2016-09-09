@@ -71,7 +71,7 @@ class list_module extends api_admin implements api_interface {
 		if ( !empty($keywords)) {
 			$where[] = "( goods_name like '%".$keywords."%' or goods_sn like '%".$keywords."%' )"; 
 		}
-		$db = RC_Loader::load_app_model('goods_viewmodel', 'goods');
+		$db = RC_Model::model('goods/goods_viewmodel');
 		
 		/* 获取记录条数 */
 		$record_count = $db->join(null)->where($where)->count();

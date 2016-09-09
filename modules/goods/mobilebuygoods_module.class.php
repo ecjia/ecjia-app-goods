@@ -30,7 +30,7 @@ class mobilebuygoods_module extends api_front implements api_interface {
     		$mobilebuywhere['geohash'] = array('like' => "%".$geohash_code."%");
     	}
     	
-    	$db_goods_activity = RC_Loader::load_app_model('goods_activity_viewmodel', 'goods');
+    	$db_goods_activity = RC_Model::model('goods/goods_activity_viewmodel');
     	
     	$count = $db_goods_activity->join(array('goods', 'seller_shopinfo'))->where($groupwhere)->count();
     	
