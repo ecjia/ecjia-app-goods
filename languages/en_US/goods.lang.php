@@ -506,6 +506,24 @@ return array(
 	
 	'edit_link_article_help'	=> 'Welcome to ECJia intelligent background backstage goods related story page, you can here the corresponding article related goods operations.',
 	'about_edit_link_article'	=> 'About related articles help document',
+	
+	
+	'goods_update' 	=>'Update goods',
+	'goods_delete' 	=>'Remove goods',
+	'remove_back'	=>'Goods trash/restore',
+	
+	'category_update'	=>'Update category',
+	'category_move'		=>'Category move',
+	'category_delete'	=>'Remove category',
+	
+	'goods_type_update'=>'Update goods type',
+	'goods_type_delete'=>'Remove goods type',
+	
+	'brand_update' 	=> 'Update brand',
+	'brand_delete' 	=> 'Remove brand',
+	
+	'attr_update'	=> 'Update goods attributes',
+	'attr_delete'	=> 'Remove goods attributes',
 );
 
 // end

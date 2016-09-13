@@ -506,6 +506,28 @@ return array(
 	
 	'edit_link_article_help'	=> '欢迎访问ECJia智能后台商品关联文章页面，可以在此对相应的商品进行关联文章操作。',
 	'about_edit_link_article'	=> '关于商品关联文章帮助文档',
+	
+	
+	//追加
+	'goods_update' 	=>'更新商品',
+	'goods_delete' 	=>'删除商品',
+	'remove_back'	=>'商品回收/恢复',
+	
+	'category_update'	=>'更新分类',
+	'category_move'		=>'分类转移',
+	'category_delete'	=>'分类删除',
+	
+	'goods_type_update'=>'更新商品类型',
+	'goods_type_delete'=>'删除商品类型',
+	
+	'brand_update' 	=> '更新品牌',
+	'brand_delete' 	=> '删除品牌',
+	
+	'attr_update'	=> '商品属性更新',
+	'attr_delete'	=> '商品属性删除',
+	
+	'business_name'=>'商家名称',
+	'check_goods'=>'审核',
 );
 
 // end

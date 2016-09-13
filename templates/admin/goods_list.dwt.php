@@ -111,9 +111,9 @@
 								<input type="checkbox" name="select_rows" data-toggle="selectall" data-children=".checkbox"/>
 							</th>
 							<th class="w80">{lang key='goods::goods.thumb'}</th>
-							<th>{lang key='goods::goods.goods_name'}</th>
-							<th class="w150"> {t}商家名称{/t} </th>
-							<th class="w70">{t}审核{/t} </th>
+							<th class="w100">{lang key='goods::goods.goods_name'}</th>
+							<th class="w150">{lang key='goods::goods.business_name'}</th>
+							<th class="w100">{lang key='goods::goods.check_goods'}</th>
 							<th class="w100" data-toggle="sortby" data-sortby="goods_sn">{lang key='goods::goods.goods_sn'}</th>
 							<th class="w70" data-toggle="sortby" data-sortby="shop_price">{lang key='goods::goods.shop_price'}</th>
 							<th class="w70" data-toggle="sortby" data-sortby="sort_order">{lang key='goods::goods.sort_order'}</th>

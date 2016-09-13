@@ -78,7 +78,7 @@ class admin_category extends ecjia_admin {
 	 * 添加商品分类
 	 */
 	public function add() {
-	    $this->admin_priv('cat_update');
+	    $this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
 
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.add_goods_cat')));
@@ -98,7 +98,7 @@ class admin_category extends ecjia_admin {
 	 * 商品分类添加时的处理
 	 */
 	public function insert() {
-		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
 
 		$cat['cat_id']       = !empty($_POST['cat_id'])       ? intval($_POST['cat_id'])     : 0;
 		$cat['parent_id']    = !empty($_POST['parent_id'])    ? intval($_POST['parent_id'])  : 0;
@@ -180,6 +180,7 @@ class admin_category extends ecjia_admin {
 	 * 编辑商品分类信息
 	 */
 	public function edit() {
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 
 		$this->admin_priv('cat_update');
@@ -271,7 +272,7 @@ class admin_category extends ecjia_admin {
 	 * 编辑商品分类信息
 	 */
 	public function update() {
-		$this->admin_priv('cat_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
 
 		$cat_id              	= !empty($_POST['cat_id'])       ? intval($_POST['cat_id'])     : 0;
 		$old_cat_name        	= $_POST['old_cat_name'];
@@ -394,7 +395,7 @@ class admin_category extends ecjia_admin {
 	 * 批量转移商品分类页面
 	 */
 	public function move() {
-		$this->admin_priv('cat_drop');
+		$this->admin_priv('category_move', ecjia::MSGTYPE_JSON);
 
 		$cat_id = !empty($_REQUEST['cat_id']) ? intval($_REQUEST['cat_id']) : 0;
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.move_goods')));
@@ -422,7 +423,7 @@ class admin_category extends ecjia_admin {
 	 * 处理批量转移商品分类的处理程序
 	 */
 	public function move_cat() {
-		$this->admin_priv('cat_drop');
+		$this->admin_priv('category_move', ecjia::MSGTYPE_JSON);
 
 		$cat_id        = !empty($_POST['cat_id'])        ? intval($_POST['cat_id'])        : 0;
 		$target_cat_id = !empty($_POST['target_cat_id']) ? intval($_POST['target_cat_id']) : 0;
@@ -448,7 +449,8 @@ class admin_category extends ecjia_admin {
 	 * 编辑排序序号
 	 */
 	public function edit_sort_order() {
-		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+		
 		$id = intval($_POST['pk']);
 		$val = intval($_POST['value']);
 
@@ -463,7 +465,8 @@ class admin_category extends ecjia_admin {
 	 * 编辑数量单位
 	 */
 	public function edit_measure_unit() {
-		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+		
 		$id = intval($_POST['pk']);
 		$val = $_POST['value'];
 		if (cat_update($id, array('measure_unit' => $val))) {
@@ -477,7 +480,8 @@ class admin_category extends ecjia_admin {
 	 * 编辑价格分级
 	 */
 	public function edit_grade() {
-		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+		
 		$id = intval($_POST['pk']);
 		$val = !empty($_POST['val']) ? intval($_POST['value']) : 0;
 
@@ -497,7 +501,8 @@ class admin_category extends ecjia_admin {
 	 * 切换是否显示
 	 */
 	public function toggle_is_show() {
-		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+		
 		$id = intval($_POST['id']);
 		$val = intval($_POST['val']);
 		$name = $this->db_category->where(array('cat_id' => $id))->get_field('cat_name');
@@ -513,8 +518,7 @@ class admin_category extends ecjia_admin {
 	 * 删除商品分类
 	 */
 	public function remove() {
-    	$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
-
+    	$this->admin_priv('category_delete', ecjia::MSGTYPE_JSON);
 
 		$cat_id   = intval($_GET['id']);
 		$cat_name = $this->db_category->where(array('cat_id' => $cat_id))->get_field('cat_name');
@@ -542,7 +546,7 @@ class admin_category extends ecjia_admin {
 	 * 删除商品分类图片
 	 */
 	public function remove_logo() {
-		$this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
 		
 		$cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
 		$term_meta_info = $this->db_term_meta->term_meta_find(array('object_id' => $cat_id, 'meta_key' => 'category_img'));
