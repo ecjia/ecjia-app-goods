@@ -461,27 +461,9 @@ function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min =
 function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	$db_goods = RC_Model::model('goods/goods_auto_viewmodel');
 	RC_Loader::load_app_func('common', 'goods');
-	$time = RC_Time::gmtime ();
-	$field = "g.*, wg.warehouse_price, wg.warehouse_promote_price, wag.region_price, wag.region_promote_price, g.model_price, g.model_attr, ".
-			" IF(g.model_inventory < 1, g.goods_number, IF(g.model_inventory < 2, wg.region_number, wag.region_number)) as warehouse_goods_number,".
-			" IFNULL(mp.user_price, IF(g.model_price < 1, g.shop_price, IF(g.model_price < 2, wg.warehouse_price, wag.region_price))) AS warehouse_shop_price,".
-			" IFNULL(mp.user_price, IF(g.model_price < 1, g.shop_price, IF(g.model_price < 2, wg.warehouse_price, wag.region_price)) * '$_SESSION[discount]') AS warehouse_rank_price,".
-			" IF(g.model_price < 1, g.promote_price, IF(g.model_price < 2, wg.warehouse_promote_price, wag.region_promote_price)) as warehouse_promote_price,".
-			' c.measure_unit, g.brand_id as brand_id, b.brand_logo, g.comments_number, g.sales_volume,b.brand_name AS goods_brand, m.type_money AS bonus_money, ' .
-                'IFNULL(AVG(r.comment_rank), 0) AS comment_rank, ' .
-                "IFNULL(mp.user_price, IF(g.model_price < 1, g.shop_price, IF(g.model_price < 2, wg.warehouse_price, wag.region_price)) * '$_SESSION[discount]') AS rank_price ";
+	$time = RC_Time::gmtime();
 
 	$db_goods->view = array (
-		'warehouse_goods' => array(
-			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-			'alias'    => 'wg',
-			'on'       => "g.goods_id = wg.goods_id and wg.region_id = '$warehouse_id'"
-		),
-		'warehouse_area_goods' => array(
-			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-			'alias'    => 'wag',
-			'on'       => "g.goods_id = wag.goods_id and wag.region_id = '$area_id'"
-		),
 		'category' => array(
 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
 			'alias'    => 'c',
@@ -513,19 +495,13 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	if (ecjia::config('review_goods')) {
 		$where['g.review_status'] = array('gt' => 2);
 	}
-	$row = $db_goods->field($field)->group('g.goods_id')->find($where);
+	$row = $db_goods->group('g.goods_id')->find($where);
 	
 	if ($row !== false) {
 		/* 用户评论级别取整 */
 		$row ['comment_rank'] = ceil ( $row ['comment_rank'] ) == 0 ? 5 : ceil ( $row ['comment_rank'] );
 		/* 获得商品的销售价格 */
 		$row ['market_price'] = price_format($row ['market_price']);
-		$row ['shop_price'] = $row ['warehouse_shop_price'];
-		$row ['rank_price'] = $row ['warehouse_rank_price'];
-		$row ['goods_number'] = $row ['warehouse_goods_number'];
-		$row ['promote_price'] = $row ['warehouse_promote_price'];
-		
-		
 		$row ['shop_price_formated'] = price_format ($row ['shop_price'] );
 		
 		/* 修正促销价格 */

@@ -1,7 +1,7 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 单个商品的祥情描述
+ * 单个商品的详情描述
  * @author royalwang
  *
  */
@@ -13,6 +13,9 @@ class desc_module extends api_front implements api_interface {
     	$goods_id = $this->requestData('goods_id', 0);
     	
 		RC_Loader::load_app_func('goods','goods');
+		if ($goods_id < 1) {
+		    return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
+		}
         $goods = get_goods_info($goods_id);
         
         if ($goods === false) {
