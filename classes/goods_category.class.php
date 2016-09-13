@@ -6,8 +6,6 @@
  *
  */
 class goods_category {
-    
-	
 	/**
 	 * 获得商品分类的所有信息
 	 *
@@ -16,7 +14,7 @@ class goods_category {
 	 * @return  mix
 	 */
 	public static function get_cat_info($cat_id) {
-		$db = RC_Model::model('goods/category_model');
+		$db = RC_Loader::load_app_model('category_model', 'goods');
 		return $db->find(array('cat_id' => $cat_id));
 	}
 	
@@ -41,8 +39,8 @@ class goods_category {
      *        	分类查询字符串
      * @return string
      */
-    public static function get_extension_goods($cats, $field = 'g.goods_id') {
-    	$db_goods_cat = RC_Model::model('goods/cat_viewmodel');
+    public static function get_extension_goods($cats) {
+    	$db_goods_cat = RC_Loader::load_app_model('cat_viewmodel', 'goods');
     	$extension_goods_array = array();
     	$data = $db_goods_cat->field('goods_id')->where($cats)->select();
     	if (!empty($data)) {
@@ -51,7 +49,7 @@ class goods_category {
 	    	}
     	}
     	
-    	return self::db_create_in ( $extension_goods_array,  $field);
+    	return self::db_create_in ( $extension_goods_array, 'g.goods_id' );
     }
     
 	/**
@@ -63,7 +61,7 @@ class goods_category {
 	 * @return int
 	 */
 	public static function get_parent_grade($cat_id) {
-		$db = RC_Model::model('goods/category_model');
+		$db = RC_Loader::load_app_model('category_model', 'goods');
 		static $res = NULL;
 		if ($res === NULL) {
 			$data = false;
@@ -112,17 +110,17 @@ class goods_category {
     public static function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
     	// 加载方法
     	RC_Loader::load_app_func('common', 'goods');
-    	$db_goods = RC_Model::model('goods/goods_model');
-    	$db_category = RC_Model::model('goods/sys_category_viewmodel');
-    	$db_goods_cat = RC_Model::model('goods/goods_cat_viewmodel');
+    	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+    	$db_category = RC_Loader::load_app_model('category_viewmodel', 'goods');
+    	$db_goods_catview = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');
     	static $res = NULL;
     
     	if ($res === NULL) {
     		$data = false;
     		if ($data === false) {
-    			$res = $db_category->join('category')->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+    			$res = $db_category->join('category')->field('c.cat_id, c.cat_name, c.measure_unit, c.parent_id, c.is_show, c.show_in_nav, c.grade, c.sort_order, COUNT(s.cat_id) AS has_children')->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
     			$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0,'is_on_sale' => 1))->group ('cat_id asc')->select();
-    			$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0,'g.is_on_sale' => 1))->group ('gc.cat_id')->select();
+    			$res3 = $db_goods_catview->join('goods')->field('gc.cat_id, COUNT(*)|goods_num')->where(array('g.is_delete' => 0,'g.is_on_sale' => 1))->group ('gc.cat_id')->select();
     			$newres = array ();
     			if (!empty($res2)) {
     				foreach($res2 as $k => $v) {
@@ -150,7 +148,6 @@ class goods_category {
     	if (empty ( $res ) == true) {
     		return $re_type ? '' : array ();
     	}
-    
     	$options = self::cat_options ( $cat_id, $res ); // 获得指定分类下的子分类的数组
     
     	$children_level = 99999; // 大于这个分类的将被删除
@@ -221,7 +218,7 @@ class goods_category {
      * @return array
      */
    public static function get_categories_tree($cat_id = 0) {
-    	$db_category = RC_Model::model('goods/category_model');
+    	$db_category = RC_Loader::load_app_model ('category_model', 'goods');
     
     	if ($cat_id > 0) {
     		$parent = $db_category->where(array('cat_id' => $cat_id))->get_field('parent_id');
@@ -238,13 +235,22 @@ class goods_category {
     
     	$count = $db_category->where(array('parent_id' => $parent_id, 'is_show' => 1))->count();
     	if ($count || $parent_id == 0) {
+    		$db_category_view = RC_Loader::load_app_model ('category_viewmodel', 'goods');
+    		$db_category_view->view =array(
+    			'term_meta' => array(
+    				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+    				'alias' => 'tm',
+    				'on' 	=> 'c.cat_id = tm.object_id and meta_key="category_img" and object_type="ecjia.goods" and object_group="category"'
+    			)
+    		);
     		/* 获取当前分类及其子分类 */
-    		$res = $db_category->field('cat_id, cat_name, parent_id, style, is_show')->where(array('parent_id' => $parent_id, 'is_show' => 1))->order( array ('sort_order'=> 'asc', 'cat_id'=> 'asc'))->select();
+    		$res = $db_category_view->field('c.cat_id, c.cat_name, c.parent_id, tm.meta_value, c.is_show')->where(array('parent_id' => $parent_id, 'is_show' => 1))->order( array ('sort_order'=> 'asc', 'cat_id'=> 'asc'))->select();
+
     		foreach ( $res as $row ) {
     			if ($row ['is_show']) {
     				$cat_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
     				$cat_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-    				$cat_arr [$row ['cat_id']] ['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
+    				$cat_arr [$row ['cat_id']] ['img'] = empty($row['meta_value']) ? '' : RC_Upload::upload_url($row['meta_value']);
 //     				$cat_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array ('cid' => $row ['cat_id']), $row ['cat_name'] );
     
     				if (isset ( $row ['cat_id'] ) != NULL) {
@@ -259,26 +265,33 @@ class goods_category {
     }
     
     private static function get_child_tree($tree_id = 0) {
-    	$db_category = RC_Model::model('goods/category_model');
+    	$db_category = RC_Loader::load_app_model('category_model', 'goods');
+    	$db_category_view = RC_Loader::load_app_model ('category_viewmodel', 'goods');
+    	$db_category_view->view =array(
+    		'term_meta' => array(
+    			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+    			'alias' => 'tm',
+    			'on' 	=> 'c.cat_id = tm.object_id and meta_key="category_img" and object_type="ecjia.goods" and object_group="category"'
+    		)
+    	);
     	$three_arr = array ();
     
     	$count = $db_category->where(array('parent_id' => $tree_id, 'is_show' => 1))->count();
     	if ($count > 0 || $tree_id == 0) {
     
-    		$res = $db_category->field('cat_id, cat_name, parent_id, is_show, style')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
+    		$res = $db_category_view->field('c.cat_id, c.cat_name, c.parent_id, c.is_show, tm.meta_value')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
     
     		foreach ( $res as $row ) {
-    			if ($row ['is_show']) {
+    			if ($row ['is_show'])
     				$three_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
-    				$three_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-	//     			$three_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array (
-	//     					'cid' => $row ['cat_id']
-	//     			), $row ['cat_name'] );
-	    			if (isset ( $row ['cat_id'] ) != NULL) {
-	    				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
-	    			}
-	    			$three_arr [$row['cat_id']]['img'] = empty($row['style']) ? '' : RC_Upload::upload_url(). '/' .$row['style'];
+    			$three_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
+//     			$three_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array (
+//     					'cid' => $row ['cat_id']
+//     			), $row ['cat_name'] );
+    			if (isset ( $row ['cat_id'] ) != NULL) {
+    				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
     			}
+    			$three_arr [$row['cat_id']]['img'] = empty($row['meta_value']) ? '' : RC_Upload::upload_url($row['meta_value']);
     		}
     	}
     	return $three_arr;
@@ -331,7 +344,6 @@ class goods_category {
      */
     private static function cat_options($spec_cat_id, $arr) {
     	static $cat_options = array ();
-    
     	if (isset ( $cat_options [$spec_cat_id] )) {
     		return $cat_options [$spec_cat_id];
     	}
@@ -372,7 +384,7 @@ class goods_category {
     						$options [$cat_id] ['id'] = $cat_id;
     						$options [$cat_id] ['name'] = $value ['cat_name'];
     						unset ( $arr [$key] );
-    
+                            
     						if ($value ['has_children'] > 0) {
     							if (end ( $cat_id_array ) != $last_cat_id) {
     								$cat_id_array [] = $last_cat_id;
@@ -444,7 +456,6 @@ class goods_category {
     		return $spec_cat_id_array;
     	}
     }
-    	
 }
 
 // end

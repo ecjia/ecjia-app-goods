@@ -6,7 +6,8 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author royalwang
  *        
  */
-class goods_image {
+class goods_image
+{
 	private    $uploaded_info = array();
 	private    $uploaded_file_path;
 	
@@ -26,6 +27,7 @@ class goods_image {
 	    $this->uploaded_file_name  = $file['name'];
 	}
 	
+	
 	/**
 	 * 设置是否需要自动生成缩略图，默认为自动生成缩略图
 	 * @param boolean $bool
@@ -35,6 +37,7 @@ class goods_image {
 	        $this->auto_thumb = $bool;
 	    }
 	}
+	
 	
 	/**
 	 * 保存某商品的相册图片
@@ -75,12 +78,12 @@ class goods_image {
 	    }
 	    
 	    list($goods_img, $goods_thumb, $goods_original) = $this->generate_goods($goods_id);
-	     
+	    
 	    if (!$goods_original || !$goods_img) {
-	        return new ecjia_error('upload_goods_image_error', __('商品图片路径无效'));
+	        return new ecjia_error('upload_goods_image_error', RC_Lang::get('goods::goods.upload_goods_image_error'));
 	    }
 	    
-	    $this->db_goods = RC_Model::model('goods/goods_model');
+	    $this->db_goods = RC_Loader::load_app_model('goods_model', 'goods');
 	    
 	    
 	    /* 如果有上传图片，删除原来的商品图 */
@@ -110,7 +113,7 @@ class goods_image {
 	    if (ecjia::config('auto_generate_gallery')) {
 	        $data = $this->update_gallery($goods_id, $img_desc);
 	        if (empty($data['img_id'])) {
-	            return new ecjia_error('copy_gallery_image_fail', __('商品相册复制失败'));
+	            return new ecjia_error('copy_gallery_image_fail', RC_Lang::get('goods::goods.copy_gallery_image_fail'));
 	        }
 	    }
 	    
@@ -135,14 +138,12 @@ class goods_image {
 
 	    $goods_thumb     = $this->get_image_url($thumb_path);
 	    if (!$goods_thumb) {
-	        return new ecjia_error('upload_thumb_error', __('商品缩略图路径无效'));
+	        return new ecjia_error('upload_thumb_error', RC_Lang::get('goods::goods.upload_thumb_error'));
 	    }
 	     
-	    $this->db_goods = RC_Model::model('goods/goods_model');
+	    $this->db_goods = RC_Loader::load_app_model('goods_model', 'goods');
 	     
-	    $data = array(
-	        'goods_thumb'    => $goods_thumb,
-	    );
+	    $data = array('goods_thumb' => $goods_thumb);
 	    $this->db_goods->join(null)->where(array('goods_id' => $goods_id))->update($data);
 	     
 	    $this->delete_image($this->uploaded_file_path);
@@ -170,6 +171,8 @@ class goods_image {
         return array($img_url, $thumb_url, $img_original);
 	}
 	
+	
+	
 	public function update_gallery($goods_id, $img_desc = '') {
 	    if (empty($img_desc)) {
 	        $img_desc = $this->uploaded_file_name;
@@ -178,19 +181,19 @@ class goods_image {
 	    list($goods_img, $goods_thumb, $img_original) = $this->generate_gallery($goods_id);
 	    
 	    if (!$img_original || !$goods_img) {
-	        return new ecjia_error(__('商品图片路径无效'));
+	        return new ecjia_error('upload_goods_image_error', RC_Lang::get('goods::goods.upload_goods_image_error'));
 	    }
 	    
 	    $this->delete_image($this->uploaded_file_path);
 	    
-	    $db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
+	    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
 	    
 	    $data = array(
-	        'goods_id' 		=> $goods_id,
-	        'img_url' 		=> $goods_img,
-	        'img_desc' 		=> $img_desc,
-	        'thumb_url' 	=> $goods_thumb,
-	        'img_original' 	=> $img_original . '?999',
+	        'goods_id' => $goods_id,
+	        'img_url' => $goods_img,
+	        'img_desc' => $img_desc,
+	        'thumb_url' => $goods_thumb,
+	        'img_original' => $img_original . '?999',
 	    );
 	    $data['img_id'] = $db_goods_gallery->insert($data);
 	    
@@ -199,14 +202,18 @@ class goods_image {
 	        $this->db_goods_gallery->where(array('goods_id' => $goods_id))->update(array('img_original' => ''));
 	        $this->delete_image(RC_Upload::upload_path() . str_replace('/', DS, $data['img_original']));
 	    }
+	    
 	    return $data;
 	}
+	
+	
 	
 	/**
 	 * 格式化商品图片名称（按目录存储）
 	 *
 	 */
-	public function reformat_image_name($type, $goods_id, $position = '') {
+	public function reformat_image_name($type, $goods_id, $position = '')
+	{
 	    $rand_name = RC_Time::gmtime() . sprintf("%03d", mt_rand(1,999));
 	    $img_ext = '.' . $this->uploaded_info['ext'];
         
@@ -214,9 +221,9 @@ class goods_image {
 	    
 	    $path = RC_Upload::upload_path() . $this->dir . DS . $sub_dir . DS;
 	    
-	    RC_Dir::create($path . 'source_img');
-	    RC_Dir::create($path . 'goods_img');
-	    RC_Dir::create($path . 'thumb_img');
+	    royalcms('files')->makeDirectory($path . 'source_img');
+	    royalcms('files')->makeDirectory($path . 'goods_img');
+	    royalcms('files')->makeDirectory($path . 'thumb_img');
 	    
         $original_img_path = $path . 'source_img' . DS;
         $goods_img_path = $path . 'goods_img' . DS;
@@ -294,7 +301,8 @@ class goods_image {
      * @param int $thumb_height 缩略图高度
      * @return mix 如果成功返回缩略图的路径，失败则返回false
      */
-    public function make_thumb($img, $thumbname, $thumb_width = 0, $thumb_height = 0) {
+    public function make_thumb($img, $thumbname, $thumb_width = 0, $thumb_height = 0)
+    {
     	$image_name = RC_Image::thumb($img, $thumbname, $this->uploaded_info['ext'], $thumb_width, $thumb_height);
     	return $image_name;
     }
@@ -345,6 +353,7 @@ class goods_image {
         
         return @unlink($img_path);
     }
+
 }
 
 // end

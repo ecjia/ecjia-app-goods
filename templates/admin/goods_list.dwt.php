@@ -40,13 +40,13 @@
 <!-- <div class="row-fluid"> -->
 <!-- <div class="choose_list span12">  -->
 <ul class="nav nav-pills">
-	<li class="{if $smarty.get.is_on_sale neq 1 && $smarty.get.is_on_sale neq 2}active{/if}"><a class="data-pjax" href="{if $smarty.get.extension_code eq virtual_card}{RC_Uri::url('goods/admin/init',"is_on_sale=0&extension_code=virtual_card")}{else}{RC_Uri::url('goods/admin/init',"is_on_sale=0")}{/if}">全部 <span class="badge badge-info">{$goods_list.filter.count_goods_num}</span> </a></li>
-	<li class="{if $smarty.get.is_on_sale eq 1}active{/if}"><a class="data-pjax" href="{if $smarty.get.extension_code eq virtual_card}{RC_Uri::url('goods/admin/init',"is_on_sale=1&extension_code=virtual_card")}{else}{RC_Uri::url('goods/admin/init',"is_on_sale=1")}{/if}">已上架<span class="badge badge-info use-plugins-num">{$goods_list.filter.count_on_sale}</span></a></li>
-	<li class="{if $smarty.get.is_on_sale eq 2}active{/if}"><a class="data-pjax" href="{if $smarty.get.extension_code eq virtual_card}{RC_Uri::url('goods/admin/init',"is_on_sale=2&extension_code=virtual_card")}{else}{RC_Uri::url('goods/admin/init',"is_on_sale=2")}{/if}">未上架<span class="badge badge-info unuse-plugins-num">{$goods_list.filter.count_not_sale}</span></a></li>
+	<li class="{if $smarty.get.is_on_sale neq 1 && $smarty.get.is_on_sale neq 2}active{/if}"><a class="data-pjax" href="{RC_Uri::url('goods/admin/init',"is_on_sale=0")}">全部 <span class="badge badge-info">{$goods_list.filter.count_goods_num}</span> </a></li>
+	<li class="{if $smarty.get.is_on_sale eq 1}active{/if}"><a class="data-pjax" href="{RC_Uri::url('goods/admin/init',"is_on_sale=1")}">已上架<span class="badge badge-info use-plugins-num">{$goods_list.filter.count_on_sale}</span></a></li>
+	<li class="{if $smarty.get.is_on_sale eq 2}active{/if}"><a class="data-pjax" href="{RC_Uri::url('goods/admin/init',"is_on_sale=2")}">未上架<span class="badge badge-info unuse-plugins-num">{$goods_list.filter.count_not_sale}</span></a></li>
 	<!-- 上架 -->
 	<!-- <select class="w100" name="is_on_sale"><option value=''>{$lang.intro_type}</option><option value="1">{$lang.on_sale}</option><option value="0">{$lang.not_on_sale}</option></select> -->
 
-	<form class="f_r form-inline" action='{if $smarty.get.extension_code}{RC_Uri::url("goods/admin/init", "extension_code=virtual_card")}{else}{RC_Uri::url("goods/admin/init")}{/if}' method="post" name="searchForm">
+	<form class="f_r form-inline" action='{RC_Uri::url("goods/admin/init")}' method="post" name="searchForm">
 		<!-- 关键字 -->
 		<input type="text" name="keyword" value="{$smarty.get.keyword}" placeholder="请输入商品关键字" size="15" />
 		<button class="btn" type="submit">{$lang.button_search}</button>
@@ -74,7 +74,7 @@
 			</ul>
 		</div>
 
-		<form class="f_r form-inline" action="{if $smarty.get.extension_code}{RC_Uri::url('goods/admin/init','extension_code=virtual_card')}{else}{RC_Uri::url('goods/admin/init')}{/if}"  method="post" name="siftForm">
+		<form class="f_r form-inline" action="{RC_Uri::url('goods/admin/init')}"  method="post" name="siftForm">
 			<div class="screen f_r">
 				<!-- 分类 -->
 				<select class="no_search" name="cat_id">
@@ -113,14 +113,15 @@
 							<th class="w80"> {t}缩略图{/t} </th>
 							<th> {$lang.goods_name} </th>
 							<th class="w150"> {t}商家名称{/t} </th>
-							<th class="w100"> {$lang.goods_sn} </th>
+							<th class="w70">{t}审核{/t} </th>
+							<th class="w100">{$lang.goods_sn} </th>
 							<th class="w50"> {$lang.shop_price} </th>
 							<th class="w80"> {$lang.sort_order} </th>
 							<th class="w30"> {$lang.is_on_sale} </th>
 							<th class="w30"> {$lang.is_best} </th>
 							<th class="w30"> {$lang.is_new} </th>
 							<th class="w30"> {$lang.is_hot} </th>
-							<th class="w70">{t}审核{/t} </th>
+							
 							<!-- {if $use_storage} -->
 							<th class="w30"> {$lang.goods_number} </th>
 							<!-- {/if} --> 
@@ -153,7 +154,8 @@
 									{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goods/admin/product_list" args="goods_id={$goods.goods_id}"}'> {t}货品列表{/t} </a>&nbsp;|&nbsp;{/if}
 									<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t}您确定要删除商品[{$goods.goods_name}]至回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'> {t}删除{/t} </a>
 								</div>
-							</td>						
+							</td>	
+							
 							<td>
 								<!-- {if $goods.shop_name} -->
 							    <font style="color:#F00;">{$goods.shop_name}</font>
@@ -161,6 +163,16 @@
 							    <font style="color:#0e92d0;">{t}自营{/t}</font>
 							    <!-- {/if} -->
 							</td>	
+							
+							<td>
+								<span class="cursor_pointer review_static" data-trigger="editable" data-value="{$goods.review_status}" data-type="select"  data-url="{RC_Uri::url('goods/admin/review')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="请选择审核状态">
+									<!--{if $goods.review_status eq 1}-->未审核<!-- {/if} -->
+									<!--{if $goods.review_status eq 2}-->审核未通过<!-- {/if} -->
+									<!--{if $goods.review_status eq 3 || $goods.review_status eq 4}-->审核已通过<!-- {/if} -->
+									<!--{if $goods.review_status eq 5}-->无需审核<!-- {/if} -->
+								</span>
+							</td>
+							
 							<td>
 								<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_sn')}" data-name="goods_edit_goods_sn" data-pk="{$goods.goods_id}" data-title="请输入商品货号">
 									{$goods.goods_sn} 
@@ -177,7 +189,7 @@
 								</span>
 							</td>
 							<td align="center">
-								<i class="{if $goods.is_on_sale}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{if $smarty.get.extension_code eq virtual_card}{RC_Uri::url('goods/admin/toggle_on_sale',"extension_code=virtual_card")}{else}{RC_Uri::url('goods/admin/toggle_on_sale')}{/if}" data-id="{$goods.goods_id}"></i>
+								<i class="{if $goods.is_on_sale}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_on_sale')}" data-id="{$goods.goods_id}"></i>
 							</td>
 							<td align="center">
 								<i class="{if $goods.is_best}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_best')}" data-id="{$goods.goods_id}"></i>
@@ -188,14 +200,7 @@
 							<td align="center">
 								<i class="{if $goods.is_hot}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_hot')}" data-id="{$goods.goods_id}"></i>
 							</td>
-							<td>
-								<span class="cursor_pointer review_static" data-trigger="editable" data-value="{$goods.review_status}" data-type="select"  data-url="{RC_Uri::url('goods/admin/review')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="请选择审核状态">
-									<!--{if $goods.review_status eq 1}-->未审核<!-- {/if} -->
-									<!--{if $goods.review_status eq 2}-->审核未通过<!-- {/if} -->
-									<!--{if $goods.review_status eq 3 || $goods.review_status eq 4}-->审核已通过<!-- {/if} -->
-									<!--{if $goods.review_status eq 5}-->无需审核<!-- {/if} -->
-								</span>
-							</td>
+						
 							<!-- {if $use_storage} -->
 							<td align="right">
 								<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="请输入库存数量">

@@ -5,19 +5,22 @@
 defined('IN_ECJIA') or exit('No permission resources.');
 
 class admin_gallery extends ecjia_admin {
+	private $db_goods;
 	private $db_goods_gallery;
-	private $tags;
 	
     public function __construct() {
         parent::__construct();
-        $this->db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
+        
+        $this->db_goods 		= RC_Loader::load_app_model('goods_model');
+        $this->db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model');
     }
     
     /**
      * 商品相册
      */
     public function init() {
-        $this->admin_priv('goods_manage');
+        $this->admin_priv('goods_update');
+        
         RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/goods_list.js', __FILE__), array('ecjia-common', 'ecjia-utils', 'smoke', 'jquery-validate', 'jquery-form', 'bootstrap-placeholder', 'jquery-wookmark', 'jquery-imagesloaded', 'jquery-colorbox'));
         RC_Script::enqueue_script('jquery-dropper', RC_Uri::admin_url() . '/statics/lib/dropper-upload/jquery.fs.dropper.js', array(), false, true);
 
@@ -51,25 +54,23 @@ class admin_gallery extends ecjia_admin {
         	'marketPriceRate'	=> ecjia::config('market_price_rate'),
         	'integralPercent'	=> ecjia::config('integral_percent'),
         );
-        RC_Script::localize_script( 'goods_list', 'admin_goodsList_lang', $goods_list_jslang );
+        RC_Script::localize_script('goods_list', 'admin_goodsList_lang', $goods_list_jslang );
         
-		$this->assign('ur_here', __('编辑商品相册'));
-        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑商品相册')));
+		$this->assign('ur_here', RC_Lang::get('goods::goods.edit_goods_photo'));
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods_photo')));
         ecjia_screen::get_current_screen()->add_help_tab(array(
 	        'id'		=> 'overview',
-	        'title'		=> __('概述'),
+	        'title'		=> RC_Lang::get('goods::goods.overview'),
 	        'content'	=>
-	        '<p>' . __('欢迎访问ECJia智能后台商品相册页面，系统中商品相对应的相册都会显示在此列表中。') . '</p>'
+	        '<p>' . RC_Lang::get('goods::goods.goods_gallery_help') . '</p>'
         ));
         
         ecjia_screen::get_current_screen()->set_help_sidebar(
-        	'<p><strong>' . __('更多信息:') . '</strong></p>' .
-        	'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.95.86.E5.93.81.E7.9B.B8.E5.86.8C" target="_blank">关于商品相册帮助文档</a>') . '</p>'
-       );
+       	 	'<p><strong>' . RC_Lang::get('goods::goods.more_info') . '</strong></p>' .
+        	'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.95.86.E5.93.81.E7.9B.B8.E5.86.8C" target="_blank">'. RC_Lang::get('goods::goods.about_goods_gallery') .'</a>') . '</p>'
+        );
         
         $goods_id = intval($_GET['goods_id']);
-        $extension_code = isset($_GET['extension_code']) ? '&extension_code='.$_GET['extension_code'] : '';
-        $code = isset($_GET['extension_code']) ? 'virtual_card' : '';
 
         $this->tags = get_goods_info_nav($goods_id, $extension_code);
         $this->tags['edit_goods_photo']['active'] = 1;
@@ -100,12 +101,11 @@ class admin_gallery extends ecjia_admin {
 		
         //设置选中状态,并分配标签导航
         $this->assign('tags', $this->tags);
-        $this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'.$extension_code), 'text' => RC_Lang::lang('01_goods_list')));
+        $this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::get('goods::goods.goods_list')));
         
         $this->assign('goods_id', $goods_id);
         $this->assign('img_list', $img_list);
-        $this->assign('form_action', RC_Uri::url('goods/admin_gallery/insert', "goods_id=$goods_id.$extension_code"));
-        $this->assign_lang();
+        $this->assign('form_action', RC_Uri::url('goods/admin_gallery/insert', "goods_id=$goods_id"));
         
         $this->display('goods_photo.dwt');
     }
@@ -114,64 +114,70 @@ class admin_gallery extends ecjia_admin {
      * 上传商品相册图片的方法
      */
     public function insert() {
-        $this->admin_priv('goods_manage');
+        $this->admin_priv('goods_update');
         
-        RC_Loader::load_app_class('goods_image', 'goods', false);
+        $step = isset($_GET['step']) ? trim($_GET['step']) : '';
+        
+        RC_Loader::load_app_class('goods_image_data', 'goods', false);
         $goods_id = intval($_GET['goods_id']);
-        $code = isset($_GET['extension_code']) ? trim($_REQUEST['extension_code']) : '';
-        
+
         if (empty($goods_id)) {
-            $this->showmessage(__('参数丢失。'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            $this->showmessage(RC_Lang::get('goods::goods.parameter_missing'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
-        
+
         $upload = RC_Upload::uploader('image', array('save_path' => './images', 'auto_sub_dirs' => true));
+        $upload->add_saving_callback(function ($file, $filename) {
+            return true;
+        });
+        
         if (!$upload->check_upload_file($_FILES['img_url'])) {
             $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
-        
+
         $image_info = $upload->upload($_FILES['img_url']);
         if (empty($image_info)) {
             $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
+        $goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
+        $goods_image->update_gallery();
         
-        $goods_image = new goods_image($image_info);
-        $goods_image->update_gallery($goods_id);
-        
+        $arr['goods_id'] = $goods_id;
         if (!empty($code)) {
-        	$pjaxurl = RC_Uri::url('goods/admin_gallery/init', array('goods_id' => $goods_id, 'extension_code' => $_GET['extension_code']));
-        } else {
-        	$pjaxurl = RC_Uri::url('goods/admin_gallery/init', array('goods_id' => $goods_id));
+        	$arr['extension_code'] = $code;
         }
-        $this->showmessage('新商品相册图片', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+        	
+        if ($step) {
+        	$arr['step'] = 'add_goods_gallery';
+        }
+        $url = RC_Uri::url('goods/admin_gallery/init', $arr);
+        $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $url));
     }
 
 	/**
 	* 删除图片
 	*/
 	public function drop_image() {
-		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 		$img_id = empty($_GET['img_id']) ? 0 : intval($_GET['img_id']);
+		
 		/* 删除图片文件 */
-		$row = $this->db_goods_gallery->field('img_url, thumb_url, img_original')->find(array('img_id' => $img_id));
+		$row = $this->db_goods_gallery->goods_gallery_find('img_url, thumb_url, img_original', array('img_id' => $img_id));
 		strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
 
-		$disk = RC_Filesystem::disk();
-		if ($row['img_url'] != '' && is_file(RC_Upload::upload_path() . '/' . $row['img_url'])) {
-			$disk->delete(RC_Upload::upload_path() . $row['img_url']);
+		RC_Loader::load_app_class('goods_imageutils', 'goods', false);
+		if ($row['img_url']) {
+			RC_Filesystem::disk()->delete(goods_imageutils::getAbsolutePath($row['img_url']));
 		}
-		if ($row['thumb_url'] != '' && is_file(RC_Upload::upload_path() . '/' . $row['thumb_url'])) {
-			$disk->delete(RC_Upload::upload_path() . $row['thumb_url']);
+		if ($row['thumb_url']) {
+			RC_Filesystem::disk()->delete(goods_imageutils::getAbsolutePath($row['thumb_url']));
 		}
-		if ($row['img_original'] != '' && is_file(RC_Upload::upload_path() . '/' . $row['img_original'])) {
-			$disk->delete(RC_Upload::upload_path() . $row['img_original']);
+		if ($row['img_original']) {
+			RC_Filesystem::disk()->delete(goods_imageutils::getAbsolutePath($row['img_original']));
 		}
 
 		/* 删除数据 */
-		$this->db_goods_gallery->where(array('img_id' => $img_id))->delete();
-		$this->showmessage(__('删除图片成功'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		$this->db_goods_gallery->goods_gallery_delete($img_id);
+		$this->showmessage(RC_Lang::get('goods::goods.drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
 	/**
@@ -179,16 +185,13 @@ class admin_gallery extends ecjia_admin {
 	*/
 	public function update_image_desc() {
 		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
-		if (!empty($_SESSION['ru_id'])) {
-			$this->showmessage(__('入驻商家没有操作权限，请登陆商家后台操作！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
 		$img_id = $_GET['img_id'];
 		$val = $_GET['val'];
 		
 		if ($this->db_goods_gallery->where(array('img_id' => $img_id))->update(array('img_desc' => $val))) {
-			$this->showmessage(__('编辑图片名称成功！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+			$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 		} else {
-			$this->showmessage(__('编辑图片名称失败！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			$this->showmessage(RC_Lang::get('goods::goods.edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
@@ -211,7 +214,7 @@ class admin_gallery extends ecjia_admin {
 			
 			$this->db_goods_gallery->where($where)->update($data);
 		}
-		$this->showmessage(__('排序图片成功！'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		$this->showmessage(RC_Lang::get('goods::goods.save_sort_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 }
 

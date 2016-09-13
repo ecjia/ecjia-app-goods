@@ -9,6 +9,10 @@ class goods_cat_model extends Component_Model_Model {
 		$this->table_name = 'goods_cat';
 		parent::__construct();
 	}
+	
+	public function goods_cat_select($where = array(), $field = '*') {
+		return $this->where($where)->field($field)->select();
+	}
 }
 
 // end

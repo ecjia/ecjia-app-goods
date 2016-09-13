@@ -74,11 +74,11 @@ class goods_model extends Component_Model_Model {
 		$where = array();
 		$where['goods_id'] = $goods_id;
 		/*多商户处理*/
-		if (isset($_SESSION['seller_id']) && $_SESSION['seller_id'] > 0 ) {
-			$where['seller_id'] = $_SESSION['seller_id'];
+		if (isset($_SESSION['ru_id']) && $_SESSION['ru_id'] > 0 ) {
+			$where['user_id'] = $_SESSION['ru_id'];
 		}
-		
-		$row = $this->where($where)->find();
+		$field = 'goods_id, goods_name, shop_price, market_price, promote_price, promote_start_date, promote_end_date, goods_thumb, original_img, goods_img';
+		$row = $this->field($field)->where($where)->find();
 	
 		if (! empty ( $row )) {
 			$row['formatted_shop_price']		= price_format($row['shop_price']);
@@ -116,14 +116,41 @@ class goods_model extends Component_Model_Model {
 	 * @param array $parameter
 	 * @return int goods_id
 	 */
-	public function promotion_manage($parameter)
-	{
+	public function promotion_manage($parameter) {
 		if (isset($parameter['goods_id']) && $parameter['goods_id'] > 0) {
 			$act_id = $this->where(array('goods_id' => $parameter['goods_id']))->update($parameter);
 		}
 		return $act_id;
 	}
 	
+	/* 查询字段信息 */
+	public function goods_field($where, $field, $bool=false) {
+	    return $this->where($where)->get_field($field, $bool);
+	}
+	
+    public function is_only($where) {
+    	return $this->where($where)->count();
+    }
+    
+    /*搜索商品*/
+    public function goods_select($where, $in=false, $field='*') {
+        if ($in) {
+            return $this->field($field)->in($where)->select();
+        }
+        return $this->field($field)->where($where)->select();
+    }
+    
+    public function goods_find($where = array(), $field='*') {
+        return $this->field($field)->where($where)->find();
+    }
+    
+    public function goods_update($where, $data) {
+    	return $this->where($where)->update($data);
+    }
+    
+    public function goods_inc($field, $where, $num) {
+    	return $this->inc($field, $where, $num);
+    }
 }
 
 // end

@@ -9,6 +9,14 @@ class group_goods_model extends Component_Model_Model {
 		$this->table_name = 'group_goods';
 		parent::__construct();
 	}
+	
+	public function group_goods_delete($where) {
+		return $this->where($where)->delete();
+	}
+	
+	public function group_goods_select($where) {
+		return $this->where($where)->select();
+	}
 }
 
 // end

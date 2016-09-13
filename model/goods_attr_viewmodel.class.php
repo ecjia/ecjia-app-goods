@@ -12,12 +12,12 @@ class goods_attr_viewmodel extends Component_Model_View {
 		
 		
 		$this->view = array(
-				'attribute' => array(
-				     	'type'		=> Component_Model_View::TYPE_LEFT_JOIN,
-					 	'alias'		=> 'a',
-					 	'field'		=> 'a.attr_type',
-					 	'on'		=> 'a.attr_id = ga.attr_id'
-				)
+			'attribute' => array(
+		     	'type'		=> Component_Model_View::TYPE_LEFT_JOIN,
+			 	'alias'		=> 'a',
+// 			 	'field'		=> 'a.attr_type',
+			 	'on'		=> 'a.attr_id = ga.attr_id'
+			)
 		);	
 		parent::__construct();
 	}

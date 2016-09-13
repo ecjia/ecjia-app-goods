@@ -11,16 +11,11 @@ class goods_activity_viewmodel extends Component_Model_View {
 		$this->table_alias_name = 'ga';
 		
 		$this->view = array(
-				'goods' => array(
-						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-						'alias' => 'g',
-						'on' 	=> 'ga.goods_id =g.goods_id'
-				),
-				'seller_shopinfo' => array(
-						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-						'alias'	=> 'ssi',
-						'on'	=> "ssi.id = ga.seller_id"
-				),
+			'goods' => array(
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias' => 'g',
+				'on' 	=> 'ga.goods_id =g.goods_id'
+			)
 		);
 		
 		parent::__construct();

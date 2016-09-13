@@ -25,11 +25,10 @@ class goods_method {
      *            属性值数组
      * @return array 返回受到影响的goods_attr_id数组
      */
-    function handle_goods_attr($id_list, $is_spec_list, $value_price_list)
-    {
+    function handle_goods_attr($id_list, $is_spec_list, $value_price_list) {
         $goods_id = $this->goods_id;
         
-        $db = RC_Model::model('goods/goods_attr_model');
+        $db = RC_Loader::load_app_model('goods_attr_model', 'goods');
     
         $goods_attr_id = array();
     
