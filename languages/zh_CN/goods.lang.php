@@ -525,7 +525,9 @@ return array(
 	
 	'attr_update'	=> '商品属性更新',
 	'attr_delete'	=> '商品属性删除',
-
+	
+	'business_name'=>'商家名称',
+	'check_goods'=>'审核',
 );
 
 // end
