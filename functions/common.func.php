@@ -988,7 +988,6 @@ function get_goods_info_nav($goods_id=0, $extension_code='') {
         'edit_link_goods'       => array('name' => _('关联商品'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_goods', "goods_id=$goods_id".$extension_code)),
         'edit_link_parts'       => array('name' => _('关联配件'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_parts', "goods_id=$goods_id".$extension_code)),
         'edit_link_article'     => array('name' => _('关联文章'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_article', "goods_id=$goods_id".$extension_code)),
-        'edit_link_area'        => array('name' => _('关联地区'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_area', "goods_id=$goods_id".$extension_code)),
         'product_list'          => array('name' => _('货品管理'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/product_list', "goods_id=$goods_id".$extension_code)),
     );
 }

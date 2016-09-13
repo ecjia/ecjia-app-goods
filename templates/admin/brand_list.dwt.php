@@ -19,10 +19,9 @@
 <!-- 品牌搜索 -->
 <div class="row-fluid">
 	<div class="choose_list f_r">
-		<form class="f_r" action="{url path='goods/admin_brand/init'}" method="post" name="searchForm">
-			<!--<span>{$lang.keyword}</span> TODO --> 
-			<input type="text" name="keywords" value="{$smarty.get.keywords}" size="15" placeholder="请输入品牌关键字" />
-			<button class="btn" type="submit">{$lang.button_search}</button>
+		<form class="f_r" action="{url path='goods/admin_brand/init' args='keywords='}" method="post" name="searchForm">
+			<input type="text" name="keywords" value="{$smarty.get.keywords}" size="15" placeholder="{lang key='goods::brand.brand_keywords'}" />
+			<button class="btn" type="submit">{lang key='system::system.button_search'}</button>
 		</form>
 	</div>
 </div>
@@ -31,30 +30,30 @@
 		<table class="table table-striped dataTable" cellpadding="3" cellspacing="1" id="smpl_tbl">
 			<thead>
 				<tr>
-					<th>{$lang.brand_name}</th>
-					<th class="w100">{$lang.brand_logo}</th>
-					<th>{$lang.site_url}</th>
-					<th>{$lang.brand_desc}</th>
-					<th class="w50">{$lang.sort_order}</th>
-					<th class="w100">{$lang.is_show}</th>
-					<th class="w100">{$lang.handler}</th>
+					<th class="w120">{lang key='goods::brand.brand_logo'}</th>
+					<th>{lang key='goods::brand.brand_name'}</th>
+					<th>{lang key='goods::brand.site_url'}</th>
+					<th>{lang key='goods::brand.brand_desc'}</th>
+					<th class="w50">{lang key='goods::brand.sort_order'}</th>
+					<th class="w100">{lang key='goods::brand.is_show'}</th>
+					<th class="w70">{lang key='system::system.handler'}</th>
 				</tr>
 			</thead>
 			<tbody>
 				<!-- {foreach from=$brand_list.brand item=brand} -->
 				<tr>
-					<td class="first-cell">
-						<span class="cursor_pointer" data-trigger="editable" data-url="{url path='goods/admin_brand/edit_brand_name'}" data-name="edit_brand_name" data-pk="{$brand.brand_id}" data-title="请输入品牌名称">
-							{$brand.brand_name|escape:html}
-						</span>
-					</td>
 					<td>
 						{$brand.brand_logo_html}
+					</td>
+					<td class="first-cell">
+						<span class="cursor_pointer" data-trigger="editable" data-url="{url path='goods/admin_brand/edit_brand_name'}" data-name="edit_brand_name" data-pk="{$brand.brand_id}" data-title="{lang key='goods::brand.no_brand_name'}">
+							{$brand.brand_name|escape:html}
+						</span>
 					</td>
 					<td>{$brand.site_url}</td>
 					<td align="left">{$brand.brand_desc|truncate:36}</td>
 					<td align="right">
-						<span  class="cursor_pointer" data-trigger="editable" data-url="{url path='goods/admin_brand/edit_sort_order'}" data-name="edit_sort_order" data-pk="{$brand.brand_id}" data-title="请输入排序序号">
+						<span  class="cursor_pointer" data-trigger="editable" data-url="{url path='goods/admin_brand/edit_sort_order'}" data-name="edit_sort_order" data-pk="{$brand.brand_id}" data-title="{lang key='goods::brand.no_sort_order'}">
 							{$brand.sort_order}
 						</span>
 					</td>
@@ -62,12 +61,12 @@
 						<i class="{if $brand.is_show}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{url path='goods/admin_brand/toggle_show'}" data-id="{$brand.brand_id}"></i>
 					</td>
 					<td align="center">
-						<a class="data-pjax no-underline" href='{url path="goods/admin_brand/edit" args="id={$brand.brand_id}"}' title="{$lang.edit}"><i class="fontello-icon-edit"></i></a>
-						<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg="{t}您确定要删除品牌[{$brand.brand_name}]吗？{/t}" href='{url path="goods/admin_brand/remove" args="id={$brand.brand_id}"}' title="{t}移除{/t}"><i class="fontello-icon-trash"></i></a>
+						<a class="data-pjax no-underline" href='{url path="goods/admin_brand/edit" args="id={$brand.brand_id}"}' title="{lang key='system::system.edit'}"><i class="fontello-icon-edit"></i></a>
+						<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg="{lang key='goods::brand.drop_confirm'}" href='{url path="goods/admin_brand/remove" args="id={$brand.brand_id}"}' title="{lang key='system::system.drop'}"><i class="fontello-icon-trash"></i></a>
 					</td>
 				</tr>
 				<!-- {foreachelse} -->
-				<tr><td class="no-records" colspan="10">{$lang.no_records}</td></tr>
+				<tr><td class="no-records" colspan="10">{lang key='system::system.no_records'}</td></tr>
 				<!-- {/foreach} -->
 			</tbody>
 		</table>

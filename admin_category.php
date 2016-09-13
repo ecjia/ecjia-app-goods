@@ -48,59 +48,29 @@ class admin_category extends ecjia_admin {
 	 */
 	public function init() {
 	    $this->admin_priv('cat_manage');
-	    
-        ecjia_screen::get_current_screen()->remove_last_nav_here();
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.goods_category')));
+
+		$cat_list = cat_list(0, 0, false);
+		ecjia_screen::get_current_screen()->remove_last_nav_here();
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__(RC_Lang::get('goods::category.goods_category'))));
 
 		$this->assign('ur_here', RC_Lang::get('goods::category.goods_category'));
-		$this->assign('action_link',  array('href' => RC_Uri::url('goods/admin_category/add'), 'text' => RC_Lang::lang('04_category_add')));
-		$this->assign('action_link1',  array('href' => RC_Uri::url('goods/admin_category/move'), 'text' => RC_Lang::lang('move_goods')));
+		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin_category/add'), 'text' => RC_Lang::get('goods::category.add_goods_cat')));
+		$this->assign('action_link1', array('href' => RC_Uri::url('goods/admin_category/move'), 'text' => RC_Lang::get('goods::category.move_goods')));
+		$this->assign('cat_info', $cat_list);
 
-		$cat_list = RC_Cache::app_cache_get('admin_category_list', 'goods');
-		if (empty($cat_list)) {
-			$cat_list = cat_list(0, 0, false);
-			RC_Cache::app_cache_set('admin_category_list', $cat_list, 'goods');
-		}
+		ecjia_screen::get_current_screen()->add_help_tab(array(
+			'id'		=> 'overview',
+			'title'		=> RC_Lang::get('goods::category.overview'),
+            'content'	=> '<p>' . RC_Lang::get('goods::category.goods_category_help') . '</p>'
+			
+		));
+
+		ecjia_screen::get_current_screen()->set_help_sidebar(
+			'<p><strong>' . RC_Lang::get('goods::category.more_info') . '</strong></p>' .
+            '<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品分类#.E5.95.86.E5.93.81.E5.88.86.E7.B1.BB.E5.88.97.E8.A1.A8" target="_blank">'. RC_Lang::get('goods::category.about_goods_category') .'</a>') . '</p>'
 		
-		$quickuri = array(
-            'init'                  => RC_Uri::url('goods/admin/init'),
-            'edit_measure_unit'     => RC_Uri::url('goods/admin_category/edit_measure_unit'),
-            'edit_grade'            => RC_Uri::url('goods/admin_category/edit_grade'),
-            'edit_sort_order'       => RC_Uri::url('goods/admin_category/edit_sort_order'),
-            'toggle_is_show'        => RC_Uri::url('goods/admin_category/toggle_is_show'),
-            'edit'                  => RC_Uri::url('goods/admin_category/edit'),
-            'remove'                => RC_Uri::url('goods/admin_category/remove')
 		);
 
-		if ($cat_list) {
-			$cat_list_str = '';
-			foreach ($cat_list as $cat) {
-				$cat_list_str .= '<tr class="'.$cat['level'].'" id="'.$cat['level'].'_'.$cat['cat_id'].'">';
-				$cat_list_str .= '<td class="first-cell" align="left"><i class="fontello-icon-minus-squared-alt cursor_pointer ecjiafc-blue" id="icon_'.$cat['level'].'_'.$cat['cat_id'].'" style="margin-left:'.$cat['level'].'em" onclick="rowClicked(this)" /></i><span><a href="'.$quickuri['init'].'&cat_id='.$cat['cat_id'].'">'.$cat['cat_name'].'</a></span></td>';
-				$cat_list_str .= isset($cat['shopname']) ? '<td>'.$cat['shopname'].'</td>' : '<td></td>';
-				$cat_list_str .= isset($cat['goods_num']) ? '<td>'.$cat['goods_num'].'</td>' : '<td></td>';
-				$cat_list_str .= '<td><span ';
-				if (!empty($cat['measure_unit'])) {
-					$cat_list_str .= 'class="cursor_pointer" data-trigger="editable" data-url="'.$quickuri['edit_measure_unit'].'" data-name="edit_grade" data-pk="'.$cat['cat_id'].'" data-title="请输入数量单位"';
-				}
-				$cat_list_str .= '>'.$cat['measure_unit'].'</span></td>';
-				$cat_list_str .= '<td><span class="cursor_pointer" data-trigger="editable" data-url="'.$quickuri['edit_grade'].'" data-name="edit_grade" data-pk="'.$cat['cat_id'].'" data-title="请输入价格分级">'.$cat['grade'].'</span></td>';
-				$cat_list_str .= '<td><span  class="cursor_pointer" data-trigger="editable" data-url="'.$quickuri['edit_sort_order'].'" data-name="sort_order" data-pk="'.$cat['cat_id'].'" data-title="请输入排序序号">'.$cat['sort_order'].'</span></td>';
-				$cat_list_str .= '<td><i class="';
-				if ($cat['is_show'] == 1) {
-					$cat_list_str .= 'fontello-icon-ok cursor_pointer';
-				} else {
-					$cat_list_str .= 'fontello-icon-cancel cursor_pointer';
-				}
-				$cat_list_str .= '" data-trigger="toggleState" data-url="'.$quickuri['toggle_is_show'].'" data-id="'.$cat['cat_id'].'"></i></td>';
-				$cat_list_str .= '<td><a class="data-pjax no-underline" href="'.$quickuri['edit'].'&cat_id='.$cat['cat_id'].'" title="编辑"><i class="fontello-icon-edit"></i></a><a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg="您确定要删除分类['.$cat['cat_name'].']吗？" href="'.$quickuri['remove'].'&id='.$cat['cat_id'].'" title="移除"><i class="fontello-icon-trash"></i></a></td>';
-				$cat_list_str .= '</tr>';
-			}
-		} else {
-			$cat_list_str = '<tr><td class="no-records" colspan="11"> 暂无商品分类 </td></tr>';
-		}
-		$this->assign('cat_info', $cat_list_str);
-		
 		$this->display('category_list.dwt');
 	}
 
