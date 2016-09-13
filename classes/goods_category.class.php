@@ -16,7 +16,7 @@ class goods_category {
 	 * @return  mix
 	 */
 	public static function get_cat_info($cat_id) {
-		$db = RC_Loader::load_app_model('category_model', 'goods');
+		$db = RC_Model::model('goods/category_model');
 		return $db->find(array('cat_id' => $cat_id));
 	}
 	
@@ -42,7 +42,7 @@ class goods_category {
      * @return string
      */
     public static function get_extension_goods($cats, $field = 'g.goods_id') {
-    	$db_goods_cat = RC_Loader::load_app_model('cat_viewmodel', 'goods');
+    	$db_goods_cat = RC_Model::model('goods/cat_viewmodel');
     	$extension_goods_array = array();
     	$data = $db_goods_cat->field('goods_id')->where($cats)->select();
     	if (!empty($data)) {
@@ -63,7 +63,7 @@ class goods_category {
 	 * @return int
 	 */
 	public static function get_parent_grade($cat_id) {
-		$db = RC_Loader::load_app_model('category_model', 'goods');
+		$db = RC_Model::model('goods/category_model');
 		static $res = NULL;
 		if ($res === NULL) {
 			$data = false;
@@ -112,9 +112,9 @@ class goods_category {
     public static function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
     	// 加载方法
     	RC_Loader::load_app_func('common', 'goods');
-    	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-    	$db_category = RC_Loader::load_app_model('sys_category_viewmodel', 'goods');
-    	$db_goods_cat = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');
+    	$db_goods = RC_Model::model('goods/goods_model');
+    	$db_category = RC_Model::model('goods/sys_category_viewmodel');
+    	$db_goods_cat = RC_Model::model('goods/goods_cat_viewmodel');
     	static $res = NULL;
     
     	if ($res === NULL) {
@@ -221,7 +221,7 @@ class goods_category {
      * @return array
      */
    public static function get_categories_tree($cat_id = 0) {
-    	$db_category = RC_Loader::load_app_model ('category_model', 'goods');
+    	$db_category = RC_Model::model('goods/category_model');
     
     	if ($cat_id > 0) {
     		$parent = $db_category->where(array('cat_id' => $cat_id))->get_field('parent_id');
@@ -259,7 +259,7 @@ class goods_category {
     }
     
     private static function get_child_tree($tree_id = 0) {
-    	$db_category = RC_Loader::load_app_model('category_model', 'goods');
+    	$db_category = RC_Model::model('goods/category_model');
     	$three_arr = array ();
     
     	$count = $db_category->where(array('parent_id' => $tree_id, 'is_show' => 1))->count();

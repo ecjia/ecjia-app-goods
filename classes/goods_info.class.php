@@ -80,9 +80,9 @@ class goods_info {
 	 */
 	public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array())
 	{
-// 		$dbview = RC_Loader::load_app_model ( 'sys_goods_member_viewmodel', 'goods' );
+// 		$dbview = RC_Model::model ( 'sys_goods_member_viewmodel', 'goods' );
 		$dbview = RC_Model::model('goods/goods_viewmodel');
-		RC_Loader::load_app_func ( 'goods', 'goods' );
+		RC_Loader::load_app_func ('goods', 'goods');
 		$final_price	= 0; // 商品最终购买价格
 		$volume_price	= 0; // 商品优惠价格
 		$promote_price	= 0; // 商品促销价格
@@ -164,7 +164,6 @@ class goods_info {
 	 * @return 优惠价格列表
 	 */
 	public static function get_volume_price_list($goods_id, $price_type = '1') {
-// 		$db = RC_Loader::load_app_model ( 'volume_price_model', 'goods' );
 		$db = RC_Model::model('goods/volume_price_model');
 		$volume_price = array ();
 		$temp_index = '0';
@@ -226,7 +225,7 @@ class goods_info {
 	 * @return string
 	 */
 	public static function is_spec($goods_attr_id_array, $sort = 'asc') {
-		$dbview = RC_Loader::load_app_model ( 'sys_attribute_viewmodel', 'goods' );
+		$dbview = RC_Model::model('goods/sys_attribute_viewmodel');
 	
 		if (empty ( $goods_attr_id_array )) {
 			return $goods_attr_id_array;
@@ -289,7 +288,7 @@ class goods_info {
 	 * @return string
 	 */
 	private function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
-		$dbview = RC_Loader::load_app_model('sys_attribute_viewmodel', 'goods');
+		$dbview = RC_Model::model('goods/sys_attribute_viewmodel');
 	
 		if (empty($goods_attr_id_array)) {
 			return $goods_attr_id_array;

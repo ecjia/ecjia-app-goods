@@ -33,7 +33,7 @@ class goods_goods_info_api extends Component_Event_Api {
 	 * @return void
 	 */
 	private function get_goods_info($goods_id) {
-		$db_goods = RC_Loader::load_app_model ( 'goods_viewmodel', 'goods' );
+		$db_goods = RC_Model::model('goods/goods_viewmodel');
 		RC_Loader::load_app_func('common', 'goods');
 		$time = RC_Time::gmtime ();
 		$db_goods->view = array (
@@ -151,8 +151,8 @@ class goods_goods_info_api extends Component_Event_Api {
 	 * @return array
 	 */
 	private function get_goods_properties($goods_id) {
-		$db_good_type = RC_Loader::load_app_model ('goods_type_viewmodel', 'goods');
-		$db_good_attr = RC_Loader::load_app_model ('goods_attr_viewmodel', 'goods');
+		$db_good_type = RC_Model::model ('goods/goods_type_viewmodel');
+		$db_good_attr = RC_Model::model ('goods/goods_attr_viewmodel');
 		/* 对属性进行重新排序和分组 */
 	
 		$db_good_type->view = array (
@@ -225,7 +225,7 @@ class goods_goods_info_api extends Component_Event_Api {
 	 * @return array
 	 */
 	private function get_user_rank_prices($goods_id, $shop_price) {
-	    $dbview = RC_Loader::load_app_model('user_rank_member_price_viewmodel', 'user');
+	    $dbview = RC_Model::model('user/user_rank_member_price_viewmodel');
 	    $dbview->view =array(
 	    		'member_price' 	=> array(
 	    				'type' 		=> Component_Model_View::TYPE_LEFT_JOIN,
@@ -258,7 +258,7 @@ class goods_goods_info_api extends Component_Event_Api {
 	 */
 	private function get_goods_gallery($goods_id)
 	{
-	    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
+	    $db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
 	    $row = $db_goods_gallery->field('img_id, img_url, thumb_url, img_desc, img_original')->where(array('goods_id' => $goods_id))->limit(ecjia::config('goods_gallery_number'))->select();
 	    $img = array();
 	    /* 格式化相册图片路径 */

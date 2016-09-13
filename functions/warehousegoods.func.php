@@ -8,9 +8,9 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @return array
  */
 function warehouse_get_goods_properties($goods_id) {
-	$db_good_type = RC_Loader::load_app_model ( 'goods_type_viewmodel', 'goods' );
-	$db_good_attr = RC_Loader::load_app_model ( 'goods_attr_viewmodel', 'goods' );
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+	$db_good_type = RC_Model::model('goods/goods_type_viewmodel');
+	$db_good_attr = RC_Model::model('goods/goods_attr_viewmodel');
+	$db_goods = RC_Model::model('goods/goods_model');
 	/* 对属性进行重新排序和分组 */
 
 	$db_good_type->view = array (

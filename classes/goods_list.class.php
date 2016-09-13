@@ -36,8 +36,8 @@ class goods_list {
 			$keywords = '(';
 			$goods_ids = array();
 			if (!empty($arr)) {
-				$db_tag = RC_Loader::load_app_model('tag_model', 'goods');
-				$db_keywords = RC_Loader::load_app_model('keywords_model', 'goods');
+				$db_tag = RC_Model::model('goods/tag_model');
+				$db_keywords = RC_Model::model('goods/keywords_model');
 				foreach ($arr as $key => $val) {
 					if ($key > 0 && $key < count($arr) && count($arr) > 1) {
 						$keywords .= $operator;
@@ -84,7 +84,7 @@ class goods_list {
 	 */
 	public static function get_goods_list($filter) {
 		RC_Loader::load_app_class('goods_category', 'goods', false);
-		$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
+		$dbview = RC_Model::model('goods/goods_member_viewmodel');
 		$dbview->view = array(
 			'member_price' => array(
 					'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
@@ -155,7 +155,7 @@ class goods_list {
 			$where['geohash'] = array('like' => "%$geohash_code%");
 			
 // 			$seller_db = RC_Model::model('seller/seller_shopinfo_model');
-// 			$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+// 			$msi_dbview = RC_Model::model('merchants_shop_information_viewmodel', 'seller');
 // 			$ru_id_info = $msi_dbview->join(array('merchants_shop_information', 'seller_shopinfo'))->field(array('msi.user_id', 'msi.shopNameSuffix', 'msi.shoprz_brandName'))->where(array(
 // 					'geohash'		=> array('like' => "%$where_geohash%"),
 // 					'ssi.status'	=> 1,
@@ -170,7 +170,7 @@ class goods_list {
 // 					$seller_info[$val['user_id']]['seller_name'] = (!empty($val['shoprz_brandName']) && !empty($val['shopNameSuffix'])) ? $val['shoprz_brandName'].$val['shopNameSuffix'] : '';
 					
 // 				}
-// 				$merchants_shop_information_db = RC_Loader::load_app_model('merchants_shop_information_model', 'seller');
+// 				$merchants_shop_information_db = RC_Model::model('merchants_shop_information_model', 'seller');
 // 				$merchants_shop_information_db->where(array('user_id' => $ru_id))->select();
 // 				$where['g.user_id'] = $ru_id;
 // 			} else {
@@ -208,7 +208,7 @@ class goods_list {
 			$cat_filter_attr = explode(',', $cat['filter_attr']);       //提取出此分类的筛选属性
 			$ext_group_goods = array();
 				
-			$db_goods_attr_view = RC_Loader::load_app_model('goods_attr_viewmodel', 'goods');
+			$db_goods_attr_view = RC_Model::model('goods/goods_attr_viewmodel');
 			$db_goods_attr_view->view = array(
 					'goods_attr' => array(
 							'type'		=> Component_Model_View::TYPE_LEFT_JOIN,

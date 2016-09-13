@@ -28,9 +28,9 @@ class admin_attribute extends ecjia_admin {
         RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url('statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css'));
 		RC_Script::enqueue_script('goods_attribute', RC_App::apps_url('statics/js/goods_attribute.js', __FILE__), array(), false, true);
 
-		$this->db_goods_type = RC_Loader::load_app_model('goods_type_model');
-        $this->db_attribute  = RC_Loader::load_app_model('attribute_model', 'goods');
-        $this->db_goods_attr = RC_Loader::load_app_model('goods_attr_model', 'goods');
+		$this->db_goods_type = RC_Model::model('goods/goods_type_model');
+        $this->db_attribute  = RC_Model::model('goods/attribute_model');
+        $this->db_goods_attr = RC_Model::model('goods/goods_attr_model');
 
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品类型列表'), RC_Uri::url('goods/admin_goods_type/init')));
 	}

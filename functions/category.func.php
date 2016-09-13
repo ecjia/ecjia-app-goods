@@ -11,7 +11,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @return  boolean
  */
 function cat_exists($cat_name, $parent_cat, $exclude = 0) {
-	$db = RC_Loader::load_app_model ( 'category_model', 'goods' );
+	$db = RC_Model::model('goods/category_model');
 	return ($db->where(array('parent_id' => $parent_cat, 'cat_name' => $cat_name, 'cat_id' => array('neq' => $exclude)))->count() > 0) ? true : false;
 }
 
@@ -34,9 +34,9 @@ function cat_exists($cat_name, $parent_cat, $exclude = 0) {
 function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
 	// 加载方法
 	RC_Loader::load_app_func('common', 'goods');
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-	$db_category = RC_Loader::load_app_model('sys_category_viewmodel', 'goods');
-	$db_goods_cat = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');
+	$db_goods = RC_Model::model('goods/goods_model');
+	$db_category = RC_Model::model('goods/sys_category_viewmodel');
+	$db_goods_cat = RC_Model::model('goods/goods_cat_viewmodel');
 	static $res = NULL;	
 	if ($res === NULL) {
 		$data = false;
@@ -135,7 +135,7 @@ function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_s
 // ======================================== ru start ========================================
 
 function get_user_category($options, $shopMain_category, $ru_id = 0, $admin_type = 0) {
-	$db_merchants_category = RC_Loader::load_app_model('merchants_category_model', 'seller');
+	$db_merchants_category = RC_Model::model('seller/merchants_category_model');
 	if ($ru_id > 0) {
 		$shopMain_category = get_category_child_tree($shopMain_category);
 		$arr = array();
@@ -166,7 +166,7 @@ function get_user_category($options, $shopMain_category, $ru_id = 0, $admin_type
 }
 
 function get_category_child_tree($shopMain_category){
-	$db_category = RC_Loader::load_app_model('category_model', 'goods');
+	$db_category = RC_Model::model('goods/category_model');
 
 	$category = explode('-',$shopMain_category);
 
@@ -208,7 +208,7 @@ function get_link_cat_id($category) {
 }
 
 function get_class_nav($cat_id) {
-	$db_category = RC_Loader::load_app_model('category_model', 'goods');
+	$db_category = RC_Model::model('goods/category_model');
 	$res = $db_category->field('cat_id,cat_name,parent_id')->where(array('cat_id'=>$cat_id))->select();
 	$arr = array();
 	$arr['catId'] = '';
@@ -232,7 +232,7 @@ function get_class_nav($cat_id) {
 }
 
 function get_parent_child($parent_id = 0){
-	$db_category = RC_Loader::load_app_model('category_model', 'goods');
+	$db_category = RC_Model::model('goods/category_model');
 	$res = $db_category->field('cat_id, cat_name, parent_id')->where(array('parent_id' => $parent_id))->select();
 	$arr = array();
 	$arr['catId'] = '';
@@ -261,7 +261,7 @@ function get_parent_child($parent_id = 0){
  * by guan
  */
 function get_goodsCat_num($cat_id, $goods_ids=array(), $ruCat = array()) {
-	$db_goods_cat_viewmodel = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');
+	$db_goods_cat_viewmodel = RC_Model::model('goods/goods_cat_viewmodel');
 	$cat_goods = $db_goods_cat_viewmodel->join('goods')->where(array_merge(array('g.is_delete'=>0, 'gc.cat_id' => $cat_id), $ruCat))->select();
 
 	if (!empty($cat_goods)) {
@@ -279,7 +279,7 @@ function get_goodsCat_num($cat_id, $goods_ids=array(), $ruCat = array()) {
 function get_fine_store_category($options, $web_type, $array_type = 0, $ru_id){
 	$cat_array = array();
 	if ($web_type == 'admin' || $web_type == 'goodsInfo') {
-		$db = RC_Loader::load_app_model('merchants_category_viewmodel', 'seller');
+		$db = RC_Model::model('seller/merchants_category_viewmodel');
 		$store_cat = $db->join(null)->field('cat_id, user_id')->select();
 
 		if (!empty($store_cat)) {
@@ -364,7 +364,7 @@ function get_admin_goods_cat_list_child($arr){
 
 //添加类目证件标题
 function get_documentTitle_insert_update($dt_list, $cat_id, $dt_id = array()) {
-	$db_merchants_documenttitle = RC_Loader::load_app_model('merchants_documenttitle_model', 'goods');
+	$db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
 	for ($i=0; $i<count($dt_list); $i++) {
 		$dt_list[$i] = !empty($dt_list[$i]) ? trim($dt_list[$i]) : '';
 		if (!empty($dt_id[$i])) {
@@ -427,9 +427,9 @@ function get_documentTitle_insert_update($dt_list, $cat_id, $dt_id = array()) {
 function merchant_cat_list() {
 	// 加载方法
 	RC_Loader::load_app_func('common', 'goods');
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-	$db_category = RC_Loader::load_app_model('sys_category_viewmodel', 'goods');
-	$db_goods_cat = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');
+	$db_goods = RC_Model::model('goods/goods_model');
+	$db_category = RC_Model::model('goods/sys_category_viewmodel');
+	$db_goods_cat = RC_Model::model('goods/goods_cat_viewmodel');
 	$db_category->view = array(
 		'merchants_category' => array(
 			'type'  =>	Component_Model_View::TYPE_LEFT_JOIN,

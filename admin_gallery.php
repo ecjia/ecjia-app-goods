@@ -10,7 +10,7 @@ class admin_gallery extends ecjia_admin {
 	
     public function __construct() {
         parent::__construct();
-        $this->db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model');
+        $this->db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
     }
     
     /**

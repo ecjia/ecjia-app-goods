@@ -45,7 +45,7 @@ function db_create_in($item_list, $field_name = '') {
  * @return array 品牌列表 id => name
  */
 function get_brand_list() {
-	$db = RC_Loader::load_app_model ('brand_model', 'goods');
+	$db = RC_Model::model ('goods/brand_model');
 
 	$res = $db->field('brand_id, brand_name')->order('sort_order asc')->select();
 	$brand_list = array ();
@@ -65,7 +65,7 @@ function get_brand_list() {
   * @return array
   */
  function get_brands($cat = 0, $app = 'brand') {
- 	$db = RC_Loader::load_app_model ('brand_viewmodel', 'goods');
+ 	$db = RC_Model::model ('goods/brand_viewmodel');
 // 	TODO:暂api用，不考虑调用模版配置文件 	
 //  	$template = basename (PHP_SELF);
 //  	$template = substr ($template, 0, strrpos ( $template, '.' ));
@@ -134,8 +134,8 @@ function get_brand_list() {
  */
 function log_account_change($user_id, $user_money = 0, $frozen_money = 0, $rank_points = 0, $pay_points = 0, $change_desc = '', $change_type = ACT_OTHER) {
 	// 链接数据库
-	$db_account_log = RC_Loader::load_app_model ( "account_log_model", "user" );
-	$db_users = RC_Loader::load_app_model ( "users_model", "user" );
+	$db_account_log = RC_Model::model ('user/account_log_model');
+	$db_users = RC_Model::model('user/users_model');
 	/* 插入帐户变动记录 */
 	$account_log = array (
 		'user_id'		=> $user_id,
@@ -203,7 +203,7 @@ function get_image_path($goods_id, $image = '', $thumb = false, $call = 'goods',
  * @return 优惠价格列表
  */
 function get_volume_price_list($goods_id, $price_type = '1') {
-	$db = RC_Loader::load_app_model ( 'volume_price_model', 'goods' );
+	$db = RC_Model::model('goods/volume_price_model');
 	$volume_price = array ();
 	$temp_index = '0';
 
@@ -236,7 +236,7 @@ function get_volume_price_list($goods_id, $price_type = '1') {
  * @return string
  */
 function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
-    $dbview = RC_Loader::load_app_model('sys_attribute_viewmodel', 'goods');
+    $dbview = RC_Model::model('goods/sys_attribute_viewmodel');
     
     if (empty($goods_attr_id_array)) {
         return $goods_attr_id_array;
@@ -312,9 +312,9 @@ if (! function_exists ( 'array_combine' )) {
  */
 function get_snatch_result($id) {
     // 加载数据模型
-    $dbview = RC_Loader::load_app_model ('sys_snatch_log_viewmodel',"snatch");
-    $db_goods_activity = RC_Loader::load_app_model ('goods_activity_model', "goods" );
-    $db_order_info = RC_Loader::load_app_model ( 'order_info_model', "orders" );
+    $dbview = RC_Model::model ('snatch/sys_snatch_log_viewmodel');
+    $db_goods_activity = RC_Model::model ('goods/goods_activity_model');
+    $db_order_info = RC_Model::model('orders/order_info_model');
 
     $rec = $dbview->join('users')->group('lg.bid_price')->order(array('num' => 'asc','lg.bid_price' => 'asc','lg.bid_time' => 'asc'))->find(array('lg.snatch_id' => $id));
     if ($rec) {
@@ -352,7 +352,7 @@ function get_snatch_result($id) {
  * @return array()
  */
 function get_virtual_goods($order_id, $shipping = false) {
-    $db = RC_Loader::load_app_model ( 'order_goods_model', 'orders' );
+    $db = RC_Model::model('orders/order_goods_model');
     if ($shipping) {
         $res = $db->field('goods_id, goods_name, send_number|num, extension_code' )->where ( 'order_id = ' . $order_id . ' AND extension_code > " " ' )->select ();
     } else {
@@ -383,7 +383,7 @@ function get_virtual_goods($order_id, $shipping = false) {
  * @return string
  */
 function is_spec($goods_attr_id_array, $sort = 'asc') {
-    $dbview = RC_Loader::load_app_model ( 'sys_attribute_viewmodel', 'goods' );
+    $dbview = RC_Model::model('goods/sys_attribute_viewmodel');
 
     if (empty ( $goods_attr_id_array )) {
         return $goods_attr_id_array;
@@ -424,8 +424,8 @@ function is_spec($goods_attr_id_array, $sort = 'asc') {
  */
 function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array(), $warehouse_id = 0, $area_id = 0)
 {
-    $dbview = RC_Loader::load_app_model ( 'sys_goods_member_viewmodel', 'goods' );
-    RC_Loader::load_app_func ( 'goods', 'goods' );
+    $dbview = RC_Model::model('goods/sys_goods_member_viewmodel');
+    RC_Loader::load_app_func('goods', 'goods');
     $final_price = '0'; // 商品最终购买价格
     $volume_price = '0'; // 商品优惠价格
     $promote_price = '0'; // 商品促销价格
@@ -471,7 +471,7 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
         $final_price = $user_price;
     }
     /* 手机专享*/
-    $mobilebuy_db = RC_Loader::load_app_model('goods_activity_model', 'goods');
+    $mobilebuy_db = RC_Model::model('goods/goods_activity_model');
     $mobilebuy_ext_info = array('price' => 0);
     $mobilebuy = $mobilebuy_db->find(array(
     	'goods_id'	 => $goods_id,
@@ -553,8 +553,8 @@ function formated_weight($weight)
  */
 function get_package_goods($package_id)
 {
-    $dbview = RC_Loader::load_app_model ( 'package_goods_viewmodel', 'goods' );
-    $db_attr = RC_Loader::load_app_model ( 'goods_attr_model', 'goods' );
+    $dbview = RC_Model::model('goods/package_goods_viewmodel');
+    $db_attr = RC_Model::model('goodsgoods_attr_model');
 
     if ($package_id == 0) {
         $where = " AND pg.admin_id = '$_SESSION[admin_id]'";
@@ -644,8 +644,8 @@ function get_package_goods($package_id)
  * @return array
  */
 function get_promotion_info($goods_id = '') {
-    $db_goods_activity = RC_Loader::load_app_model ("goods_activity_model", "goods");
-    $db_goods = RC_Loader::load_app_model ('goods_model', 'goods');
+    $db_goods_activity = RC_Model::model('goods/goods_activity_model');
+    $db_goods = RC_Model::model('goods/goods_model');
 
     $snatch = array ();
     $group = array ();
@@ -826,8 +826,8 @@ function smarty_insert_scripts($args) {
  * @return array array(package_id, package_name, goods_id,start_time, end_time, min_price, integral)
  */
 function get_package_info($id) {
-    $db = RC_Loader::load_app_model ( 'goods_activity_model', 'goods' );
-    $dbview = RC_Loader::load_app_model ( 'sys_package_goods_viewmodel', 'goods' );
+    $db = RC_Model::model('goods/goods_activity_model');
+    $dbview = RC_Model::model('goods/sys_package_goods_viewmodel');
 
     $id = is_numeric ( $id ) ? intval ( $id ) : 0;
     $now = RC_Time::gmtime ();
@@ -892,8 +892,8 @@ function get_package_info($id) {
  * @return array
  */
 function get_good_products($goods_id, $conditions = '') {
-    $db_products = RC_Loader::load_app_model ( "products_model", "goods" );
-    $db_goods_attr = RC_Loader::load_app_model ( "goods_attr_model", "goods" );
+    $db_products = RC_Model::model('goods/products_model');
+    $db_goods_attr = RC_Model::model('goods/goods_attr_model');
     if (empty ( $goods_id )) {
         return array ();
     }
@@ -967,8 +967,8 @@ function get_good_products_select($goods_id) {
  */
 function get_specifications_list($goods_id, $conditions = '') {
     // 加载数据库
-    $dbview = RC_Loader::load_app_model ( 'sys_goods_attribute_viewmodel', 'goods' );
-    $result = $dbview->join ( 'attribute' )->where ( 'ga.goods_id = ' . $goods_id . '' . $conditions )->select ();
+    $dbview = RC_Model::model('goods/sys_goods_attribute_viewmodel');
+    $result = $dbview->join ('attribute')->where('ga.goods_id = ' . $goods_id . '' . $conditions )->select();
     $return_array = array ();
     foreach ( $result as $value ) {
         $return_array [$value ['goods_attr_id']] = $value;

@@ -58,9 +58,9 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 	function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true, $seller_id, $type='') {
 		// 加载方法
 		RC_Loader::load_app_func('common', 'goods');
-		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-		$db_category = RC_Loader::load_app_model('seller_goods_category_viewmodel', 'goods');
-		$db_goods_cat = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');
+		$db_goods = RC_Model::model('goods/goods_model');
+		$db_category = RC_Model::model('goods/seller_goods_category_viewmodel');
+		$db_goods_cat = RC_Model::model('goods/goods_cat_viewmodel');
 		
 		static $res = NULL;
 	

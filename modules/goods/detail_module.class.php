@@ -321,7 +321,7 @@ class detail_module extends api_front implements api_interface {
 //         	$seller_where['msi.merchants_audit'] = 1;
 //         	$seller_where['msi.user_id'] = $data['seller_id'];
         	$seller_where['ssi.id'] = $goods['seller_id'];
-//         	$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+//         	$msi_dbview = RC_Model::model('merchants_shop_information_viewmodel', 'seller');
         	$ssi_dbview = RC_Model::model('seller/seller_shopinfo_viewmodel');
         	
         	$field ='ssi.*, ssi.id as seller_id, ssi.shop_name as seller_name, sc.cat_name, count(cs.seller_id) as follower, SUM(IF(cs.user_id = '.$_SESSION['user_id'].',1,0)) as is_follower';

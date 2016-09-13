@@ -23,7 +23,7 @@ function goods_sort($goods_a, $goods_b) {
  * @return array
  */
 function get_categories_tree($cat_id = 0) {
-	$db_category = RC_Loader::load_app_model ('category_model', 'goods');
+	$db_category = RC_Model::model('goods/category_model');
 	
 	if ($cat_id > 0) {
 		$parent = $db_category->where(array('cat_id' => $cat_id))->get_field('parent_id');
@@ -61,7 +61,7 @@ function get_categories_tree($cat_id = 0) {
 }
 
 function get_child_tree($tree_id = 0) {
-	$db_category = RC_Loader::load_app_model('category_model', 'goods');
+	$db_category = RC_Model::model('goods/category_model');
 	$three_arr = array ();
 	$count = $db_category->where(array('parent_id' => $tree_id, 'is_show' => 1))->count();
 	if ($count > 0 || $tree_id == 0) {
@@ -93,7 +93,7 @@ function get_child_tree($tree_id = 0) {
  * @return array
  */
 function get_top10($cats = '') {
-	$db_goods = RC_Loader::load_app_model ( 'goods_model', 'goods' );
+	$db_goods = RC_Model::model('goods/goods_model');
 	$cats = get_children ( $cats );
 	$where = ! empty ( $cats ) ? "AND ($cats OR " . get_extension_goods ( $cats ) . ") " : '';
 	/* 排行统计的时间 */
@@ -143,7 +143,7 @@ function get_top10($cats = '') {
  * @return array
  */
 function get_recommend_goods($type = '', $cats = '') {
-	$dbview = RC_Loader::load_app_model ( 'goods_auto_viewmodel', 'goods' );
+	$dbview = RC_Model::model('goods/goods_auto_viewmodel');
 	RC_Loader::load_app_func('common', 'goods');
 	if (! in_array($type, array('best','new','hot'))) {
 		return array ();
@@ -310,7 +310,7 @@ function get_recommend_goods($type = '', $cats = '') {
  * @return array
  */
 function get_promote_goods($cats = '') {
-	$dbview = RC_Loader::load_app_model ( 'goods_auto_viewmodel', 'goods' );
+	$dbview = RC_Model::model('goods/goods_auto_viewmodel');
 	$time = RC_Time::gmtime ();
 	$order_type = ecjia::config ( 'recommend_order' );
 	
@@ -379,7 +379,7 @@ function get_promote_goods($cats = '') {
  * @return array
  */
 function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min = 0, $max = 0, $ext = '') {
-	$db_goods = RC_Loader::load_app_model ( 'goods_model', 'goods' );
+	$db_goods = RC_Model::model('goods/goods_model');
 	$brand_where  = ($brand > 0) ? " AND g.brand_id = '$brand'" : '';
 	$price_where  = ($min > 0) ? " AND g.shop_price >= $min " : '';
 	$price_where .= ($max > 0) ? " AND g.shop_price <= $max " : '';
@@ -459,7 +459,7 @@ function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min =
  * @return void
  */
 function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
-	$db_goods = RC_Loader::load_app_model ( 'goods_auto_viewmodel', 'goods' );
+	$db_goods = RC_Model::model('goods/goods_auto_viewmodel');
 	RC_Loader::load_app_func('common', 'goods');
 	$time = RC_Time::gmtime ();
 	$field = "g.*, wg.warehouse_price, wg.warehouse_promote_price, wag.region_price, wag.region_promote_price, g.model_price, g.model_attr, ".
@@ -598,8 +598,8 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
  * @return array
  */
 function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
-	$db_good_type = RC_Loader::load_app_model ( 'goods_type_viewmodel', 'goods' );
-	$db_good_attr = RC_Loader::load_app_model ( 'goods_attr_viewmodel', 'goods' );
+	$db_good_type = RC_Model::model('goods/goods_type_viewmodel');
+	$db_good_attr = RC_Model::model('goods/goods_attr_viewmodel');
 	/* 对属性进行重新排序和分组 */
 
 	$db_good_type->view = array (
@@ -617,7 +617,7 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 		$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
 	}
 	
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+	$db_goods = RC_Model::model('goods/goods_model');
 	$model_attr = $db_goods->where(array('goods_id' => $goods_id))->get_field('model_attr');
 	
 	$field = 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price';
@@ -715,7 +715,7 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
  * @return array
  */
 function get_same_attribute_goods($attr) {
-	$db = RC_Loader::load_app_model('goods_auto_viewmodel','goods');
+	$db = RC_Model::model('goods/goods_auto_viewmodel');
 	$lnk = array ();
 	if (!empty($attr)) {
 		foreach($attr['lnk'] as $key => $val) {
@@ -763,7 +763,7 @@ function get_same_attribute_goods($attr) {
  * @return array
  */
 function get_goods_gallery($goods_id) {
-	$db = RC_Loader::load_app_model('goods_gallery_model', 'goods');
+	$db = RC_Model::model('goods/goods_gallery_model');
 	$row = $db->field('img_id, img_url, thumb_url, img_desc')->where(array('goods_id' => $goods_id))->limit(ecjia::config ('goods_gallery_number'))->select();
 	/* 格式化相册图片路径 */
 	RC_Loader::load_app_func('common', 'goods');
@@ -789,8 +789,8 @@ function get_goods_gallery($goods_id) {
  * @return array
  */
 function assign_cat_goods($cat_id, $num = 0, $from = 'web', $order_rule = '') {
-	$db_category = RC_Loader::load_app_model ('category_model','goods');
-	$dbview = RC_Loader::load_app_model ('goods_member_viewmodel', 'goods');
+	$db_category = RC_Model::model ('goods/category_model');
+	$dbview = RC_Model::model('goods/goods_member_viewmodel');
 	$children = get_children ( $cat_id );
 	$order_rule = empty($order_rule) ? array ('g.sort_order' => 'asc','g.goods_id' => 'DESC'):$order_rule;
 
@@ -860,8 +860,8 @@ function assign_cat_goods($cat_id, $num = 0, $from = 'web', $order_rule = '') {
  * @return void
  */
 function assign_brand_goods($brand_id, $num = 0, $cat_id = 0, $order_rule = '') {	
-	$db_brand = RC_Loader::load_app_model ( 'brand_model', 'goods' );
-	$dbview = RC_Loader::load_app_model ( 'goods_member_viewmodel', 'goods' );
+	$db_brand = RC_Model::model('goods/brand_model');
+	$dbview = RC_Model::model('goods/goods_member_viewmodel');
 	
 	$cat_where = '';
 	if ($cat_id > 0) {
@@ -931,7 +931,7 @@ function assign_brand_goods($brand_id, $num = 0, $cat_id = 0, $order_rule = '') 
  * @return string
  */
 function get_extension_goods($cats) {
-	$db_goods_cat = RC_Loader::load_app_model('cat_viewmodel', 'goods');
+	$db_goods_cat = RC_Model::model('goods/cat_viewmodel');
 	$extension_goods_array = '';
 	$data = $db_goods_cat->field('goods_id')->where($cats)->select();
 
@@ -975,8 +975,8 @@ function bargain_price($price, $start, $end) {
  * @return void
  */
 function spec_price($spec, $goods_id = 0, $warehouse_area= array()) {
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-	$db = RC_Loader::load_app_model ( 'goods_attr_model', 'goods' );
+	$db_goods = RC_Model::model('goods/goods_model');
+	$db = RC_Model::model('goods/goods_attr_model');
 	if (! empty ( $spec )) {
 		if (is_array ( $spec )) {
 			foreach ( $spec as $key => $val ) {
@@ -988,12 +988,12 @@ function spec_price($spec, $goods_id = 0, $warehouse_area= array()) {
 		$model_attr = $db_goods->where(array('goods_id' => $goods_id))->get_field('model_attr');
 		
 		if ($model_attr == 1) { //仓库属性
-			$db_warehouse_attr = RC_Loader::load_app_model('warehouse_attr_model', 'warehouse');
+			$db_warehouse_attr = RC_Model::model('warehouse/warehouse_attr_model');
 			$warehouse_id = $warehouse_area['warehouse_id'];
 			$price = $db_warehouse_attr->in(array('goods_attr_id' => $spec))->where(array('goods_id' => $goods_id, 'warehouse_id' => $warehouse_id))->sum('`attr_price`|attr_price');
 			
 		} elseif ($model_attr == 2) { //地区属性
-			$db_warehouse_area_attr = RC_Loader::load_app_model('warehouse_area_attr_model', 'warehouse');
+			$db_warehouse_area_attr = RC_Model::model('warehouse/warehouse_area_attr_model');
 			$area_id = $warehouse_area['area_id'];
 			$price = $db_warehouse_area_attr->in(array('goods_attr_id' => $spec))->where(array('goods_id' => $goods_id, 'area_id' => $area_id))->sum('`attr_price`|attr_price');
 		} elseif ($model_attr == 0){
@@ -1016,7 +1016,7 @@ function spec_price($spec, $goods_id = 0, $warehouse_area= array()) {
  * @return array status 状态：
  */
 function group_buy_info($group_buy_id, $current_num = 0) {
-	$db = RC_Loader::load_app_model ('goods_activity_model', 'goods');
+	$db = RC_Model::model('goods/goods_activity_model');
 	/* 取得团购活动信息 */
 	$group_buy_id = intval ( $group_buy_id );
 	$group_buy = $db->field( '*,act_id as group_buy_id, act_desc as group_buy_desc, start_time as start_date, end_time as end_date' )->find(array('act_id' => $group_buy_id, 'act_type' => GAT_GROUP_BUY));
@@ -1094,8 +1094,8 @@ function group_buy_info($group_buy_id, $current_num = 0) {
  */
 function group_buy_stat($group_buy_id, $deposit) {
 	$group_buy_id = intval ( $group_buy_id );
-    $db = RC_Loader::load_app_model ( 'goods_activity_model', 'goods' );
-	$dbview = RC_Loader::load_app_model ( 'order_info_viewmodel', 'goods' );
+    $db = RC_Model::model('goods/goods_activity_model');
+	$dbview = RC_Model::model('goods/order_info_viewmodel');
 	$group_buy_goods_id = $db->where(array('act_id' => $group_buy_id,'act_type' => GAT_GROUP_BUY))->get_field('goods_id');
 
 	/* 取得总订单数和总商品数 */
@@ -1167,10 +1167,10 @@ function group_buy_status($group_buy) {
  * @return array
  */
 function auction_info($act_id, $config = false) {
-	$db_goods_activity = RC_Loader::load_app_model ( 'goods_activity_model', 'goods' );
-	$db_auction_log = RC_Loader::load_app_model ( 'auction_log_model', 'auction' );
-	$dbview = RC_Loader::load_app_model ( 'auction_log_viewmodel', 'auction' );
-	$db_order_info = RC_Loader::load_app_model ( 'order_info_model', 'orders' );
+	$db_goods_activity = RC_Model::model('goods/goods_activity_model');
+	$db_auction_log = RC_Model::model('auction/auction_log_model');
+	$dbview = RC_Model::model('auction/auction_log_viewmodel');
+	$db_order_info = RC_Model::model('orders/order_info_model');
 	
 	$auction = $db_goods_activity->find ( 'act_id = ' . $act_id . '' );
 	if ($auction ['act_type'] != GAT_AUCTION) {
@@ -1225,7 +1225,7 @@ function auction_info($act_id, $config = false) {
  * @return array
  */
 function auction_log($act_id) {
-	$dbview = RC_Loader::load_app_model ('auction_log_viewmodel', 'auction');
+	$dbview = RC_Model::model ('auction/auction_log_viewmodel');
 	$log = array ();
 	$res = $dbview->join('users')->where(array('act_id' => $act_id))->order('log_id DESC')->select();
 	foreach ($res as $row) {
@@ -1270,7 +1270,7 @@ function auction_status($auction) {
  */
 function goods_info($goods_id) {
     // 链接数据库
-	$dbview = RC_Loader::load_app_model ( "goods_auto_viewmodel", "goods" );
+	$dbview = RC_Model::model('goods/goods_auto_viewmodel');
 
 	$dbview->view = array (
 		'brand' => array (
@@ -1304,7 +1304,7 @@ function goods_info($goods_id) {
  * @return array
  */
 function wholesale_info($act_id) {
-	$db = RC_Loader::load_app_model('wholesale_model', 'wholesale');
+	$db = RC_Model::model('wholesale/wholesale_model');
 	$row = $db->find(array (
 		'act_id' => $act_id 
 	));
@@ -1347,8 +1347,8 @@ function add_style($goods_name, $style) {
  * @return array
  */
 function get_goods_attr($goods_id) {
-    $dbview = RC_Loader::load_app_model ( 'goods_auto_viewmodel', 'goods' );
-	$db_goods_attr = RC_Loader::load_app_model ('goods_attr_model', 'goods' );
+    $dbview = RC_Model::model('goods/goods_auto_viewmodel');
+	$db_goods_attr = RC_Model::model('goods/goods_attr_model');
 	
 	$attr_list = array ();
 	$dbview->view = array (
@@ -1391,7 +1391,7 @@ function get_goods_attr($goods_id) {
  * @return array
  */
 function get_goods_fittings($goods_list = array()) {
-	$dbview = RC_Loader::load_app_model ( 'group_viewmodel', 'goods' );
+	$dbview = RC_Model::model('goods/group_viewmodel');
 	
 	$temp_index = 0;
 	$arr = array ();
@@ -1444,10 +1444,10 @@ function get_goods_fittings($goods_list = array()) {
  * @return array
  */
 function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $area_id=0) {
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+	$db_goods = RC_Model::model('goods/goods_model');
 	$model_attr = $db_goods->where(array('goods_id' => $goods_id))->get_field('model_attr');
 	
-	$db = RC_Loader::load_app_model ( 'products_model', 'goods' );
+	$db = RC_Model::model('goods/products_model');
 	$return_array = array ();
 	
 	if (empty ( $spec_goods_attr_id ) || ! is_array ( $spec_goods_attr_id ) || empty ( $goods_id )) {
@@ -1459,14 +1459,14 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
 		$goods_attr = implode ( '|', $goods_attr_array ['sort'] );
 		
 		if ($model_attr == 1) {
-			$db_products_warehouse = RC_Loader::load_app_model('products_warehouse_model', 'warehouse');
+			$db_products_warehouse = RC_Model::model('warehouse/products_warehouse_model');
 			$return_array = $db->find(array (
 				'goods_id' => $goods_id,
 				'goods_attr' => $goods_attr,
 				'warehouse_id' => $warehouse_id
 			));
 		} elseif ($model_attr == 2) {
-			$db_products_area = RC_Loader::load_app_model('products_area_model', 'warehouse');
+			$db_products_area = RC_Model::model('warehouse/products_area_model');
 			$return_array = $db->find(array (
 				'goods_id' => $goods_id,
 				'goods_attr' => $goods_attr,
@@ -1486,8 +1486,8 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
  * @return  array
  */
 function get_goods_type() {
-	$dbview = RC_Loader::load_app_model('goods_type_viewmodel', 'goods');
-	$db_goods_type = RC_Loader::load_app_model('goods_type_model', 'goods');
+	$dbview = RC_Model::model('goods/goods_type_viewmodel');
+	$db_goods_type = RC_Model::model('goods/goods_type_model');
 	$dbview->view = array(
 		'attribute' => array(
 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
@@ -1526,7 +1526,7 @@ function get_goods_type() {
  * @return  array
  */
 function get_attr_list() {
-	$dbview  = RC_Loader::load_app_model('attribute_goods_viewmodel', 'goods');
+	$dbview  = RC_Model::model('goods/attribute_goods_viewmodel');
 	/* 查询条件 */
 	$filter = array();
 	$filter['cat_id'] = empty($_REQUEST['cat_id']) ? 0 : intval($_REQUEST['cat_id']);
@@ -1568,7 +1568,7 @@ function get_attr_list() {
  * @return  array
  */
 function get_goods_type_info($cat_id) {
-	$db_goods_type = RC_Loader::load_app_model('goods_type_model', 'goods');
+	$db_goods_type = RC_Model::model('goods/goods_type_model');
 	return $db_goods_type->find(array('cat_id' => $cat_id));
 }
 
@@ -1582,7 +1582,7 @@ function get_goods_type_info($cat_id) {
  * @return  void
  */
 function update_attribute_group($cat_id, $old_group, $new_group) {
-	$db_goods_type = RC_Loader::load_app_model('goods_type_model', 'goods');
+	$db_goods_type = RC_Model::model('goods/goods_type_model');
 	$data = array(
 		'attr_group' => $new_group,
 	);

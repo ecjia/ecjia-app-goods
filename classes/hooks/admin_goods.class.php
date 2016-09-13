@@ -13,7 +13,7 @@ class goods_hooks {
         
     	$goods = RC_Cache::app_cache_get('admin_dashboard_goods', 'goods');
 	    if (!$goods) {
-			$db_goods = RC_Loader::load_app_model("goods_model","goods");
+			$db_goods = RC_Model::model('goods/goods_model');
 			$time = RC_Time::gmtime();
 			$fields = "SUM(IF(goods_id>0,1,0)) as total,SUM(IF(is_new=1,1,0)) as new,SUM(IF(is_best=1,1,0)) as best,SUM(IF(is_hot=1,1,0)) as hot,SUM(IF(goods_number <= warn_number,1,0)) as warn_goods,SUM(IF(promote_price>0 and promote_start_date<=".$time." and promote_end_date>=".$time.",1,0)) as promote_goods";
 			$row = $db_goods ->field($fields)->where(array("is_delete"=>'0' , "is_real"=>'1'))->select();

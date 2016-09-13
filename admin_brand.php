@@ -24,8 +24,8 @@ class admin_brand extends ecjia_admin {
 		RC_Loader::load_app_func('functions');
 		assign_adminlog_content();
 
-		$this->db_brand = RC_Loader::load_app_model('brand_model', 'goods');
-		$this->db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+		$this->db_brand = RC_Model::model('goods/brand_model');
+		$this->db_goods = RC_Model::model('goods/goods_model');
 	}
 	
 	/**

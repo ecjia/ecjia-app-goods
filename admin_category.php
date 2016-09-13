@@ -35,11 +35,11 @@ class admin_category extends ecjia_admin {
 		RC_Loader::load_app_func('common');
 		RC_Loader::load_app_func('functions');
 
-		$this->db_category = RC_Loader::load_app_model('category_model','goods');
-		$this->db_nav = RC_Loader::load_model('nav_model');
-		$this->db_attribute = RC_Loader::load_app_model('attribute_model','goods');
-		$this->db_cat = RC_Loader::load_app_model('cat_recommend_model','goods');
-		$this->db_goods = RC_Loader::load_app_model('goods_model','goods');
+		$this->db_category = RC_Model::model('goods/category_model');
+		$this->db_nav = RC_Model::model('user/nav_model');
+		$this->db_attribute = RC_Model::model('goods/attribute_model');
+		$this->db_cat = RC_Model::model('goods/cat_recommend_model');
+		$this->db_goods = RC_Model::model('goods/goods_model');
 
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('平台商品分类'),RC_Uri::url('goods/admin_category/init')));
 	}
@@ -248,7 +248,7 @@ class admin_category extends ecjia_admin {
 		}
 
         //类目资质
-        $db_merchants_documenttitle = RC_Loader::load_app_model('merchants_documenttitle_model');
+        $db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
         $title_list =$db_merchants_documenttitle->field('dt_id, dt_title')->where(array('cat_id' => $cat_id))->order(array('dt_id' => 'asc'))->select();
         $this->assign('title_list', $title_list);
 

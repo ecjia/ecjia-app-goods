@@ -57,8 +57,8 @@ class goods_goods_filter_api extends Component_Event_Api {
 	 * @param   object  $filters    过滤条件
 	 */
 	private function attr_filter($options) {
-		$db_attribute_view = RC_Loader::load_app_model('attribute_viewmodel', 'goods');
-		$db_goods_view = RC_Loader::load_app_model ('goods_viewmodel', 'goods');
+		$db_attribute_view = RC_Model::model('goods/attribute_viewmodel');
+		$db_goods_view = RC_Model::model ('goods/goods_viewmodel');
 		$db_attribute_view->view =array(
 				'goods_attr' => array(
 						'type'  => Component_Model_View::TYPE_INNER_JOIN,
@@ -155,7 +155,7 @@ class goods_goods_filter_api extends Component_Event_Api {
 	 * @param   object  $filters    过滤条件
 	 */
 	private function brands_filter($options) {
-		$dbview = RC_Loader::load_app_model('brand_goods_goods_cat_viewmodel', 'goods');
+		$dbview = RC_Model::model('goods/brand_goods_goods_cat_viewmodel');
 
 		$where['is_on_sale'] = 1;
 		$where['is_alone_sale'] = 1;
@@ -209,7 +209,7 @@ class goods_goods_filter_api extends Component_Event_Api {
 	 * @param   object  $filters    过滤条件
 	 */
 	private function price_filter($options) {
-		$db_goods = RC_Loader::load_app_model('goods_viewmodel', 'goods');
+		$db_goods = RC_Model::model('goods/goods_viewmodel');
 		$cat = $this->cat;
 		/* 获取价格分级 */
 		if ($cat['grade'] == 0  && $cat['parent_id'] != 0) {

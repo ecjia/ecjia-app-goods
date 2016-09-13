@@ -29,7 +29,7 @@ class goods_method {
     {
         $goods_id = $this->goods_id;
         
-        $db = RC_Loader::load_app_model('goods_attr_model', 'goods');
+        $db = RC_Model::model('goods/goods_attr_model');
     
         $goods_attr_id = array();
     

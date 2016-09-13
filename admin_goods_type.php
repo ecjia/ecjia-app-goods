@@ -30,10 +30,10 @@ class admin_goods_type extends ecjia_admin {
 		RC_Style::enqueue_style('uniform-aristo');
 		RC_Script::enqueue_script('jquery-uniform');
 		
-		$this->db_attribute = RC_Loader::load_app_model('attribute_model');
-		$this->db_goods_type = RC_Loader::load_app_model('goods_type_model');
-		$this->db_goods_attr = RC_Loader::load_app_model('goods_attr_model');
-		$this->db_attribute_view = RC_Loader::load_app_model('attribute_goods_viewmodel');		
+		$this->db_attribute = RC_Model::model('goods/attribute_model');
+		$this->db_goods_type = RC_Model::model('goods/goods_type_model');
+		$this->db_goods_attr = RC_Model::model('goods/goods_attr_model');
+		$this->db_attribute_view = RC_Model::model('goods/attribute_goods_viewmodel');		
 	}
 	
 	/**

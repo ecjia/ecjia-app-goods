@@ -47,7 +47,7 @@ class goods {
      * @return array
      */
     public static function goods_list($is_delete, $real_goods = 1, $conditions = '', $seller_id) {
-        $db = RC_Loader::load_app_model('goods_auto_viewmodel', 'goods');
+        $db = RC_Model::model('goods/goods_auto_viewmodel');
         /* 过滤条件 */
         $param_str = '-' . $is_delete . '-' . $real_goods;
         $day = getdate();

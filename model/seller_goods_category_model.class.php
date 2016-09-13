@@ -20,7 +20,6 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @return  boolean
 	 */
 	public function cat_exists($cat_name, $parent_cat, $exclude = 0, $seller_id) {
-		//$db = RC_Loader::load_app_model ( 'seller_goods_category_model', 'goods' );
 		return ($this->where(array('parent_id' => $parent_cat, 'cat_name' => $cat_name, 'seller_id' => $seller_id,'cat_id' => array('neq' => $exclude)))->count() > 0) ? true : false;
 	}
 	
@@ -32,7 +31,7 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @return  string
 	 */
 	public function goods_type_list($selected) {
-		$db = RC_Loader::load_app_model('goods_type_model', 'goods');
+		$db = RC_Model::model('goods/goods_type_model');
 		$data = $db->field('cat_id, cat_name')->where(array('enabled' => 1))->select();
 	
 		$lst = '';
@@ -55,7 +54,7 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @return void
 	 */
 	public function get_category_attr_list() {
-		$db = RC_Loader::load_app_model('attribute_goods_viewmodel','goods');
+		$db = RC_Model::model('goods/attribute_goods_viewmodel');
 		$arr = $db->join('goods_type')->where("gt.enabled = 1")->order(array('a.cat_id' => 'asc','a.sort_order' => 'asc'))->select();
 	
 		$list = array();
@@ -79,7 +78,7 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @return void
 	 */
 	public function insert_cat_recommend($recommend_type, $cat_id) {
-		$db = RC_Loader::load_app_model('cat_recommend_model', 'goods');
+		$db = RC_Model::model('goods/cat_recommend_model');
 		/* 检查分类是否为首页推荐 */
 		if (!empty($recommend_type)) {
 			/* 取得之前的分类 */
@@ -127,7 +126,7 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @param array $dt_id
 	 */
 	public function get_documentTitle_insert_update($dt_list, $cat_id, $dt_id = array()){
-		$db_merchants_documenttitle = RC_Loader::load_app_model('merchants_documenttitle_model', 'goods');
+		$db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
 	
 		for($i=0; $i<count($dt_list); $i++){
 	
@@ -161,7 +160,7 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @return  array
 	 */
 	function get_attr_list() {
-		$dbview  = RC_Loader::load_app_model('attribute_goods_viewmodel','goods');
+		$dbview  = RC_Model::model('goods/attribute_goods_viewmodel');
 		/* 查询条件 */
 		$filter = array();
 		$filter['cat_id'] = empty($_REQUEST['cat_id']) ? 0 : intval($_REQUEST['cat_id']);
@@ -204,7 +203,6 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @return  mix
 	 */
 	public function get_cat_info($cat_id) {
-		//$db = RC_Loader::load_app_model('seller_goods_category_model','goods');
 		return $this->find(array('cat_id' => $cat_id));
 	}
 	
@@ -218,7 +216,6 @@ class seller_goods_category_model extends Component_Model_Model {
 	 * @return  mix
 	 */
 	public function cat_update($cat_id, $args, $seller_id) {
-		//$db = RC_Loader::load_app_model('seller_goods_category_model', 'goods');
 		if (empty($args) || empty($cat_id)) {
 			return false;
 		}
@@ -238,7 +235,7 @@ class seller_goods_category_model extends Component_Model_Model {
 	function handle_other_cat($goods_id, $add_list)
 	{
 		/* 查询现有的扩展分类 */
-		$db = RC_Loader::load_app_model('goods_cat_model', 'goods');
+		$db = RC_Model::model('goods/goods_cat_model');
 	
 		$db->where(array('goods_id' => $goods_id))->delete();
 	

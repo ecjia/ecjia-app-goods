@@ -25,19 +25,19 @@ class admin extends ecjia_admin {
 		parent::__construct();
 		
 		
-		$this->db_link_goods = RC_Loader::load_app_model('link_goods_model');
-		$this->db_goods = RC_Loader::load_app_model('goods_model');
-		$this->db_group_goods = RC_Loader::load_app_model('group_goods_model');
-		$this->db_goods_article = RC_Loader::load_app_model('goods_article_model');
-		$this->db_goods_attr = RC_Loader::load_app_model('goods_attr_model');
-		$this->db_goods_attr_view = RC_Loader::load_app_model('goods_attr_viewmodel');
-		$this->db_goods_cat = RC_Loader::load_app_model('goods_cat_model');
-		$this->db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model');
-		$this->db_attribute = RC_Loader::load_app_model('attribute_model');
-		$this->db_products = RC_Loader::load_app_model('products_model');
-		$this->db_brand = RC_Loader::load_app_model('brand_model','goods');
-		$this->db_category = RC_Loader::load_app_model('category_model');
-		$this->db_term_relationship = RC_Loader::load_app_model('term_relationship_model');
+		$this->db_link_goods = RC_Model::model('goods/link_goods_model');
+		$this->db_goods = RC_Model::model('goods/goods_model');
+		$this->db_group_goods = RC_Model::model('goods/group_goods_model');
+		$this->db_goods_article = RC_Model::model('goods/goods_article_model');
+		$this->db_goods_attr = RC_Model::model('goods/goods_attr_model');
+		$this->db_goods_attr_view = RC_Model::model('goods/goods_attr_viewmodel');
+		$this->db_goods_cat = RC_Model::model('goods/goods_cat_model');
+		$this->db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
+		$this->db_attribute = RC_Model::model('goods/attribute_model');
+		$this->db_products = RC_Model::model('goods/products_model');
+		$this->db_brand = RC_Model::model('goods/brand_model','goods');
+		$this->db_category = RC_Model::model('goods/category_model');
+		$this->db_term_relationship = RC_Model::model('goods/term_relationship_model');
 		$this->db_term_meta = RC_Loader::load_sys_model('term_meta_model');
 		
 		RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/goods_list.js', __FILE__), array('ecjia-common', 'ecjia-utils', 'smoke', 'jquery-validate', 'jquery-form', 'bootstrap-placeholder', 'jquery-wookmark', 'jquery-imagesloaded', 'jquery-colorbox'));
@@ -1793,7 +1793,7 @@ class admin extends ecjia_admin {
 			$where .= " AND title LIKE '%" . mysql_like_quote($keyword) . "%' ";
 		}
 
-		$db_article = RC_Loader::load_app_model('article_model', 'article');
+		$db_article = RC_Model::model('article/article_model');
 		$data = $db_article->field('article_id,title')->where($where)->order('article_id DESC')->limit(50)->select();
 		$arr = array();
 		if (!empty($data)) {

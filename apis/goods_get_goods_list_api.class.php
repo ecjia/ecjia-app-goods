@@ -32,7 +32,7 @@ class goods_get_goods_list_api extends Component_Event_Api {
 	 * @param   object  $filters    过滤条件
 	 */
 	private function get_goods_list($filter) {
-		$db = RC_Loader::load_app_model('goods_model', 'goods');
+		$db = RC_Model::model('goods/goods_model');
 		RC_Loader::load_app_func('category', 'goods');
 		$time = RC_Time::gmtime();
 		

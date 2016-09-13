@@ -29,7 +29,7 @@ class groupbuygoods_module extends api_front implements api_interface {
     		
     		$groupwhere['geohash'] = array('like' => "%".$geohash_code."%");
     		
-//     		$msi_dbview = RC_Loader::load_app_model('merchants_shop_information_viewmodel', 'seller');
+//     		$msi_dbview = RC_Model::model('merchants_shop_information_viewmodel', 'seller');
 //     		$ru_id_info = $msi_dbview->join(array('merchants_shop_information', 'seller_shopinfo'))->field(array('msi.user_id', 'msi.shopNameSuffix', 'msi.shoprz_brandName'))->where(array(
 //     				'geohash'		=> array('like' => "%$where_geohash%"),
 //     				'ssi.status'	=> 1,
@@ -45,7 +45,7 @@ class groupbuygoods_module extends api_front implements api_interface {
 //     				$seller_info[$val['user_id']]['seller_name'] = (!empty($val['shoprz_brandName']) && !empty($val['shopNameSuffix'])) ? $val['shoprz_brandName'].$val['shopNameSuffix'] : '';
     					
 //     			}
-//     			$merchants_shop_information_db = RC_Loader::load_app_model('merchants_shop_information_model', 'seller');
+//     			$merchants_shop_information_db = RC_Model::model('merchants_shop_information_model', 'seller');
 //     			$merchants_shop_information_db->where(array('user_id' => $ru_id))->select();
 //     			$groupwhere['g.user_id'] = $ru_id;
 //     		} else {

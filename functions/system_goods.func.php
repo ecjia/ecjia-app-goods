@@ -11,7 +11,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
 * @return array 会员等级列表
 */
 function get_user_rank_list() {
-	$db = RC_Loader::load_app_model('user_rank_model', 'user');
+	$db = RC_Model::model('user/user_rank_model');
 	return $db->order('min_points asc')->select();
 }
 
@@ -24,7 +24,7 @@ function get_user_rank_list() {
 */
 function get_member_price_list($goods_id) {
 	/* 取得会员价格 */
-	$db = RC_Loader::load_app_model('member_price_model', 'goods');
+	$db = RC_Model::model('goods/member_price_model');
 	/* 取得会员价格 */
 	$price_list = array();
 	$data = $db->field('user_rank, user_price')->where(array('goods_id' => $goods_id))->select();
@@ -50,7 +50,7 @@ function get_member_price_list($goods_id) {
 * @return array 返回受到影响的goods_attr_id数组
 */
 function handle_goods_attr($goods_id, $id_list, $is_spec_list, $value_price_list) {
-	$db = RC_Loader::load_app_model('goods_attr_model', 'goods');
+	$db = RC_Model::model('goods/goods_attr_model');
 
 	$goods_attr_id = array();
 
@@ -110,7 +110,7 @@ function handle_goods_attr($goods_id, $id_list, $is_spec_list, $value_price_list
 * @return void
 */
 function handle_member_price($goods_id, $rank_list, $price_list) {
-	$db = RC_Loader::load_app_model('member_price_model', 'goods');
+	$db = RC_Model::model('goods/member_price_model');
 	
 	/* 循环处理每个会员等级 */
 	if (!empty($rank_list)) {
@@ -157,7 +157,7 @@ function handle_member_price($goods_id, $rank_list, $price_list) {
 */
 function handle_other_cat($goods_id, $add_list) {
 	/* 查询现有的扩展分类 */
-	$db = RC_Loader::load_app_model('goods_cat_model', 'goods');
+	$db = RC_Model::model('goods/goods_cat_model');
 
 	$db->where(array('goods_id' => $goods_id))->delete();
 	if (!empty ($add_list)) {
@@ -179,7 +179,7 @@ function handle_other_cat($goods_id, $add_list) {
 * @return void
 */
 function handle_link_goods($goods_id) {
-	$db = RC_Loader::load_app_model('link_goods_model', 'goods');
+	$db = RC_Model::model('goods/link_goods_model');
 	$data1 = array(
 		'goods_id' => $goods_id
 	);
@@ -197,7 +197,7 @@ function handle_link_goods($goods_id) {
 * @return void
 */
 function handle_group_goods($goods_id) {
-	$db = RC_Loader::load_app_model('group_goods_model', 'goods');
+	$db = RC_Model::model('goods/group_goods_model');
 	$data = array('parent_id' => $goods_id);
 	$db->where(array('parent_id' => 0, 'admin_id' => $_SESSION [admin_id]))->update($data);
 }
@@ -209,7 +209,7 @@ function handle_group_goods($goods_id) {
 * @return void
 */
 function handle_goods_article($goods_id) {
-	$db = RC_Loader::load_app_model('goods_article_model', 'goods');
+	$db = RC_Model::model('goods/goods_article_model');
 	$data = array(
 		'goods_id' => $goods_id
 	);
@@ -228,7 +228,7 @@ function handle_goods_article($goods_id) {
 * @return bool
 */
 function update_goods($goods_id, $field, $value) {
-	$db = RC_Loader::load_app_model('goods_model', 'goods');
+	$db = RC_Model::model('goods/goods_model');
 	RC_Loader::load_app_func('common', 'goods');
 	if ($goods_id) {
 		$data = array(
@@ -250,19 +250,19 @@ function update_goods($goods_id, $field, $value) {
 */
 function delete_goods($goods_id) {
 	RC_Loader::load_app_func('common', 'goods');
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-	$db_products = RC_Loader::load_app_model('products_model', 'goods');
-	$db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
-	$db_collect_goods = RC_Loader::load_app_model('collect_goods_model', 'goods');
-	$db_goods_article = RC_Loader::load_app_model('goods_article_model', 'goods');
-	$db_goods_attr = RC_Loader::load_app_model('goods_attr_model', 'goods');
-	$db_goods_cat = RC_Loader::load_app_model('goods_cat_model', 'goods');
-	$db_member = RC_Loader::load_app_model('member_price_model', 'goods');
-	$db_group = RC_Loader::load_app_model('group_goods_model', 'goods');
-	$db_link_goods = RC_Loader::load_app_model('link_goods_model', 'goods');
-	$db_tag = RC_Loader::load_app_model('tag_model', 'goods');
-	$db_comment = RC_Loader::load_app_model('comment_model', 'comment');
-	$db_virtual_card = RC_Loader::load_app_model('virtual_card_model', 'goods');
+	$db_goods = RC_Model::model('goods/goods_model');
+	$db_products = RC_Model::model('goods/products_model');
+	$db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
+	$db_collect_goods = RC_Model::model('goods/collect_goods_model');
+	$db_goods_article = RC_Model::model('goods/goods_article_model');
+	$db_goods_attr = RC_Model::model('goods/goods_attr_model');
+	$db_goods_cat = RC_Model::model('goods/goods_cat_model');
+	$db_member = RC_Model::model('goods/member_price_model');
+	$db_group = RC_Model::model('goods/group_goods_model');
+	$db_link_goods = RC_Model::model('goods/link_goods_model');
+	$db_tag = RC_Model::model('goods/tag_model');
+	$db_comment = RC_Model::model('comment/comment_model');
+	$db_virtual_card = RC_Model::model('goods/virtual_card_model');
 	if (empty($goods_id)) {
 		return;
 	}
@@ -339,7 +339,7 @@ function delete_goods($goods_id) {
 * @return string 唯一的货号
 */
 function generate_goods_sn($goods_id) {
-	$db = RC_Loader::load_app_model('goods_model', 'goods');
+	$db = RC_Model::model('goods/goods_model');
 	$goods_sn = ecjia::config('sn_prefix') . str_repeat('0', 6 - strlen($goods_id)) . $goods_id;
 	$sn_list = $db->field('goods_sn')->where('goods_sn LIKE "' . mysql_like_quote($goods_sn) . '%" AND goods_id <> ' . $goods_id . '')->order('LENGTH(goods_sn) DESC')->select();
 
@@ -366,7 +366,7 @@ function generate_goods_sn($goods_id) {
 * @return bool true，重复；false，不重复
 */
 function check_goods_sn_exist($goods_sn, $goods_id = 0) {
-    $db = RC_Loader::load_app_model('goods_model', 'goods');
+    $db = RC_Model::model('goods/goods_model');
 	$goods_sn = trim($goods_sn);
 	$goods_id = intval($goods_id);
 	if (strlen($goods_sn) == 0) {
@@ -396,7 +396,7 @@ function check_goods_sn_exist($goods_sn, $goods_id = 0) {
 * @return array 规格与属性列表
 */
 function get_attr_list($cat_id, $goods_id = 0) {
-	$dbview = RC_Loader::load_app_model('attribute_goods_viewmodel', 'goods');
+	$dbview = RC_Model::model('goods/attribute_goods_viewmodel');
 	if (empty ($cat_id)) {
 		return array();
 	}
@@ -420,7 +420,7 @@ function get_attr_list($cat_id, $goods_id = 0) {
 * @return array
 */
 function get_goods_type_specifications() {
- 	$db = RC_Loader::load_app_model('attribute_model', 'goods');
+ 	$db = RC_Model::model('goods/attribute_model');
 	$row = $db->field('DISTINCT cat_id')->where(array('attr_type' => 1))->select();
 	$return_arr = array();
 	if (!empty($row)) {
@@ -485,7 +485,7 @@ function build_attr_html($cat_id, $goods_id = 0) {
 * @return array
 */
 function get_linked_goods($goods_id) {
-	$dbview = RC_Loader::load_app_model('link_goods_viewmodel', 'goods');
+	$dbview = RC_Model::model('goods/link_goods_viewmodel');
 	$dbview->view = array(
 		'goods' => array(
 			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
@@ -509,7 +509,7 @@ function get_linked_goods($goods_id) {
 * @return array
 */
 function get_group_goods($goods_id) {
-	$dbview = RC_Loader::load_app_model('group_viewmodel', 'goods');
+	$dbview = RC_Model::model('goods/group_viewmodel');
 	$dbview->view = array(
 		'goods' => array(
 			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
@@ -533,7 +533,7 @@ function get_group_goods($goods_id) {
 * @return array
 */
 function get_goods_articles($goods_id) {
-	$dbview = RC_Loader::load_app_model('goods_article_viewmodel', 'goods');
+	$dbview = RC_Model::model('goods/goods_article_viewmodel');
 	$dbview->view = array(
 		'article' => array(
 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
@@ -560,7 +560,7 @@ function get_goods_articles($goods_id) {
 * @return string number -1，错误；1，存在；0，不存在
 */
 function check_goods_product_exist($goods_id, $conditions = '') {
-	$db = RC_Loader::load_app_model('products_model', 'goods');
+	$db = RC_Model::model('goods/products_model');
 	if (empty ($goods_id)) {
 		return -1; 
 	}
@@ -582,7 +582,7 @@ function check_goods_product_exist($goods_id, $conditions = '') {
 * @return string number
 */
 function product_number_count($goods_id, $conditions = '') {
-	$db = RC_Loader::load_app_model('products_model', 'goods');
+	$db = RC_Model::model('goods/products_model');
 	if (empty($goods_id)) {
 		return -1; // $goods_id不能为空
 	}
@@ -600,7 +600,7 @@ function product_number_count($goods_id, $conditions = '') {
 * @return array
 */
 function product_goods_attr_list($goods_id) {
-	$db = RC_Loader::load_app_model('goods_attr_model', 'goods');
+	$db = RC_Model::model('goods/goods_attr_model');
 
 	$results = $db->field('goods_attr_id, attr_value')->where(array('goods_id' => $goods_id))->select();
 	$return_arr = array();
@@ -621,7 +621,7 @@ function product_goods_attr_list($goods_id) {
 * @return array
 */
 function get_goods_specifications_list($goods_id) {
-	$dbview = RC_Loader::load_app_model('goods_attr_attribute_viewmodel');
+	$dbview = RC_Model::model('goods/goods_attr_attribute_viewmodel');
 	if (empty($goods_id)) {
 		return array(); // $goods_id不能为空
 	}
@@ -648,7 +648,7 @@ function get_goods_specifications_list($goods_id) {
 * @return array
 */
 function product_list($goods_id, $conditions = '') {
-	$db = RC_Loader::load_app_model('products_model', 'goods');
+	$db = RC_Model::model('goods/products_model');
 	/* 过滤条件 */
 	$param_str = '-' . $goods_id;
 
@@ -714,7 +714,7 @@ function product_list($goods_id, $conditions = '') {
 * @return array
 */
 function get_product_info($product_id, $filed = '') {
-	$db = RC_Loader::load_app_model('products_model', 'goods');
+	$db = RC_Model::model('goods/products_model');
 	$return_array = array();
 	if (empty ($product_id)) {
 		return $return_array;
@@ -735,7 +735,7 @@ function get_product_info($product_id, $filed = '') {
 * @return bool true，存在；false，不存在
 */
 function check_goods_specifications_exist($goods_id) {
-	$dbview = RC_Loader::load_app_model('attribute_goods_viewmodel', 'goods');
+	$dbview = RC_Model::model('goods/attribute_goods_viewmodel');
 	$goods_id = intval($goods_id);
 	$dbview->view = array(
 		'goods' => array(
@@ -764,7 +764,7 @@ function check_goods_specifications_exist($goods_id) {
 * @return bool true，重复；false，不重复
 */
 function check_goods_attr_exist($goods_attr, $goods_id, $product_id = 0) {
-	$db = RC_Loader::load_app_model('products_model', 'goods');
+	$db = RC_Model::model('goods/products_model');
 	$goods_id = intval($goods_id);
 	if (strlen($goods_attr) == 0 || empty ($goods_id)) {
 		return true; // 重复
@@ -791,8 +791,8 @@ function check_goods_attr_exist($goods_attr, $goods_id, $product_id = 0) {
 * @return bool true，重复；false，不重复
 */
 function check_product_sn_exist($product_sn, $product_id = 0) {
-	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-	$db_product = RC_Loader::load_app_model('products_model', 'goods');
+	$db_goods = RC_Model::model('goods/goods_model');
+	$db_product = RC_Model::model('goods/products_model');
 	$product_sn = trim($product_sn);
 	$product_id = intval($product_id);
 	if (strlen($product_sn) == 0) {

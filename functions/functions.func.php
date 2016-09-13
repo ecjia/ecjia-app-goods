@@ -58,7 +58,7 @@ function goods_parse_url($url) {
 * @return  void
 */
 function handle_volume_price($goods_id, $number_list, $price_list) {
-	$db = RC_Loader::load_app_model('volume_price_model', 'goods');
+	$db = RC_Model::model('goods/volume_price_model');
 	$db->where(array('price_type' => 1, 'goods_id' => $goods_id))->delete();
 	/* 循环处理每个优惠价格 */
 	foreach ($price_list AS $key => $price) {
@@ -83,7 +83,7 @@ function handle_volume_price($goods_id, $number_list, $price_list) {
 * @return  bool
 */
 function update_goods_stock($goods_id, $value) {
-	$db = RC_Loader::load_app_model('goods_model', 'goods');
+	$db = RC_Model::model('goods/goods_model');
 	RC_Loader::load_app_func('common', 'goods');
 	if ($goods_id) {
 		$data = array(
@@ -132,7 +132,7 @@ function list_link($extension_code = '') {
  * @return  array
  */
 function get_brandlist() {
-	$db = RC_Loader::load_app_model('brand_model', 'goods');
+	$db = RC_Model::model('goods/brand_model');
 	/* 分页大小 */
 	$filter = array();
 	$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
@@ -174,8 +174,8 @@ function get_brandlist() {
  * @return  array
  */
 function get_merchants_brandlist() {
-	$dbview = RC_Loader::load_app_model('merchants_shop_brand_viewmodel', 'goods');
-	$db = RC_Loader::load_app_model('brand_model', 'goods');
+	$dbview = RC_Model::model('goods/merchants_shop_brand_viewmodel');
+	$db = RC_Model::model('goods/brand_model');
 	
 	$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
 	$where = array();
@@ -217,7 +217,7 @@ function get_merchants_brandlist() {
  * @return  mix
  */
 function get_cat_info($cat_id) {
-	$db = RC_Loader::load_app_model('category_model', 'goods');
+	$db = RC_Model::model('goods/category_model');
 	return $db->find(array('cat_id' => $cat_id));
 }
 
@@ -230,7 +230,7 @@ function get_cat_info($cat_id) {
  * @return  mix
  */
 function cat_update($cat_id, $args) {
-	$db = RC_Loader::load_app_model('category_model', 'goods');
+	$db = RC_Model::model('goods/category_model');
 	if (empty($args) || empty($cat_id)) {
 		return false;
 	}
@@ -247,7 +247,7 @@ function cat_update($cat_id, $args) {
  * @return void
  */
 function get_category_attr_list() {
-	$db = RC_Loader::load_app_model('attribute_goods_viewmodel', 'goods');
+	$db = RC_Model::model('goods/attribute_goods_viewmodel');
 	$arr = $db->join('goods_type')->where("gt.enabled = 1")->order(array('a.cat_id' => 'asc','a.sort_order' => 'asc'))->select();
 	$list = array();
 	if (!empty($arr)) {
@@ -270,7 +270,7 @@ function get_category_attr_list() {
  * @return void
  */
 function insert_cat_recommend($recommend_type, $cat_id) {
-	$db = RC_Loader::load_app_model('cat_recommend_model', 'goods');
+	$db = RC_Model::model('goods/cat_recommend_model');
 	/* 检查分类是否为首页推荐 */
 	if (!empty($recommend_type)) {
 		/* 取得之前的分类 */
@@ -315,7 +315,7 @@ function insert_cat_recommend($recommend_type, $cat_id) {
  * @param   object  $filters    过滤条件
  */
 function get_goods_list($filter) {
-	$db = RC_Loader::load_app_model('goods_auto_viewmodel', 'goods');
+	$db = RC_Model::model('goods/goods_auto_viewmodel');
 	$filter = (object)$filter;
 	$filter->keyword = $filter->keyword;
 	//TODO 过滤条件为对象获取方式，后期换回数组
@@ -333,7 +333,7 @@ function get_goods_list($filter) {
  * @return  string
  */
 function goods_type_list($selected) {
-	$db = RC_Loader::load_app_model('goods_type_model', 'goods');
+	$db = RC_Model::model('goods/goods_type_model');
 	$data = $db->field('cat_id, cat_name')->where(array('enabled' => 1))->select();
 
 	$lst = '';
@@ -355,7 +355,7 @@ function goods_type_list($selected) {
  * @return  array
  */
 function get_attr_groups($cat_id) {
-	$db = RC_Loader::load_app_model('goods_type_model', 'goods');
+	$db = RC_Model::model('goods/goods_type_model');
 
 	$data = $db->where(array('cat_id' => $cat_id))->get_field('attr_group');
 	$grp = str_replace("\r", '', $data);
@@ -367,7 +367,7 @@ function get_attr_groups($cat_id) {
 }
 
 function brand_exists($brand_name) {
-	$db = RC_Loader::load_app_model('brand_model', 'goods');
+	$db = RC_Model::model('goods/brand_model');
 	return ($db->where('brand_name = "'. $brand_name .'" ')->count() > 0 ) ? true : false;
 }
 
@@ -422,7 +422,7 @@ function get_bookinglist() {
 	(!empty($args['keywords'])) ? $where['g.goods_name'] = array('like' => '%' . mysql_like_quote($filter['keywords']) . '%') : '';
 	(!empty($args['dispose'])) ? $where['bg.is_dispose'] = $filter['dispose'] : '';
 
-	$dbview = RC_Loader::load_app_model('order_booking_goods_viewmodel', 'goods');
+	$dbview = RC_Model::model('goods/order_booking_goods_viewmodel');
 	$count = $dbview->join('goods')->where($where)->count();
 	$filter['record_count'] = $count;
 
@@ -472,7 +472,7 @@ function get_bookinglist() {
  * @return  array
  */
 function get_booking_info($id) {
-	$db = RC_Loader::load_app_model('goods_booking_viewmodel', 'goods');
+	$db = RC_Model::model('goods/goods_booking_viewmodel');
 	$res = $db->join(array('goods','users'))->find(array('bg.rec_id' => $id));
 
 	/* 格式化时间 */

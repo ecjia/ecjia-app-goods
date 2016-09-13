@@ -24,7 +24,7 @@ function assign_adminlog_content() {
 * @return  void
 */
 function get_cat_info($cat_id) {
-	$db = RC_Loader::load_app_model('category_model', 'goods');
+	$db = RC_Model::model('goods/category_model');
 	return $db->field('cat_name, keywords, cat_desc, style, grade, filter_attr, parent_id')->find(array('cat_id' => $cat_id));
 }
 
@@ -37,7 +37,7 @@ function get_cat_info($cat_id) {
 */
 function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $sort, $order) {
 	/* 获得商品列表 */
-	$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
+	$dbview = RC_Model::model('goods/goods_member_viewmodel');
 // 	$display = $GLOBALS['display'];//TODO:列表布局，暂且注释
 	$display = '';
 	$where = array(
@@ -125,8 +125,8 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
 * @return  integer
 */
 function get_cagtegory_goods_count($children, $brand = 0, $min = 0, $max = 0, $ext='') {
-	$db = RC_Loader::load_app_model('goods_model','goods');
-	$dbview = RC_Loader::load_app_model('goods_member_viewmodel','goods');
+	$db = RC_Model::model('goods/goods_model');
+	$dbview = RC_Model::model('goods/goods_member_viewmodel');
 	RC_Loader::load_app_func('goods','goods');
 	$where = array(
 		'is_on_sale' => 1,
@@ -163,7 +163,7 @@ function get_cagtegory_goods_count($children, $brand = 0, $min = 0, $max = 0, $e
 * @return int
 */
 function get_parent_grade($cat_id) {
-	$db = RC_Loader::load_app_model('category_model','goods');
+	$db = RC_Model::model('category_model','goods');
 	static $res = NULL;
 	if ($res === NULL) {
 		$data = false;
@@ -201,7 +201,7 @@ function get_parent_grade($cat_id) {
  * @return  void
  */
 function get_linked_articles($goods_id) {
-    $dbview = RC_Loader::load_app_model('goods_article_viewmodel','article');
+    $dbview = RC_Model::model('article/goods_article_viewmodel');
     $data = $dbview->join('article')->where(array('ga.goods_id' => "$goods_id" ,'a.is_open' => '1'))->order(array('a.add_time' =>'DESC'))->select();
 
     $arr = array();
@@ -245,7 +245,7 @@ function is_not_null($value) {
 * @return  array
 */
 function get_linked_goods($goods_id) {
-	$db = RC_Loader::load_app_model('link_goods_viewmodel', 'goods');
+	$db = RC_Model::model('goods/link_goods_viewmodel');
 	$data = $db->join(array('goods','member_price'))->where(array('lg.goods_id' => $goods_id, 'g.is_on_sale' => 1, 'g.is_alone_sale' => 1,'g.is_delete' => 0))->limit(ecjia::config('related_goods_number'))->select();
 	$arr = array();
 
@@ -290,7 +290,7 @@ function get_linked_goods($goods_id) {
 	
 	
 	
-// 	$dbview = RC_Loader::load_app_model('user_rank_viewmodel','user');
+// 	$dbview = RC_Model::model('user_rank_viewmodel','user');
 // 	$dbview->view =array(
 // 		'member_price'	=> array(
 // 			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
@@ -336,7 +336,7 @@ function get_linked_goods($goods_id) {
 	
 	
 	
-// 	$dbview = RC_Loader::load_app_model('order_goods_viewmodel','goods');
+// 	$dbview = RC_Model::model('order_goods_viewmodel','goods');
 // 	$data = $dbview->join(array('order_goods','goods'))->where(array('a.goods_id' => $goods_id,'b.goods_id' => array('neq' => $goods_id),'g.is_on_sale' => 1,'g.is_alone_sale' => 1,'g.is_delete' => 0))->group('b.goods_id')->order('num DESC')->limit(ecjia::config('bought_goods'))->select();
 // 	$key = 0;
 // 	$arr = array();
@@ -419,7 +419,7 @@ function get_linked_goods($goods_id) {
 	
 	
 	
-// 	$dbview = RC_Loader::load_app_model('order_info_viewmodel','goods');
+// 	$dbview = RC_Model::model('order_info_viewmodel','goods');
 // 	/* 统计时间段 */
 // 	$period = intval(ecjia::config('top10_time'));
 // 	switch ($period) {
@@ -484,7 +484,7 @@ function get_linked_goods($goods_id) {
 
 	
 	
-// 	$db = RC_Loader::load_app_model('goods_attr_model');
+// 	$db = RC_Model::model('goods_attr_model');
 // 	$query = $db->where(array('goods_id' => $goods_id))->in(array('goods_attr_id' => $attr))->sum('attr_price');
 // 	return $query;
 // }
@@ -533,9 +533,9 @@ function get_linked_goods($goods_id) {
 
 	
 	
-// 	$db_good = RC_Loader::load_app_model('goods_activity_viewmodel','goods');
-// 	$db_package = RC_Loader::load_app_model('package_goods_viewmodel','goods');
-// 	$db_attr = RC_Loader::load_app_model('goods_attr_viewmodel');
+// 	$db_good = RC_Model::model('goods_activity_viewmodel','goods');
+// 	$db_package = RC_Model::model('package_goods_viewmodel','goods');
+// 	$db_attr = RC_Model::model('goods_attr_viewmodel');
 // 	$now = RC_Time::gmtime();
 // 	$res = $db_good->join('package_goods')->where(array('ga.start_time' => array('elt' => $now), 'ga.end_time' => array('egt' => $now, 'and pg.goods_id' => $goods_id)))->group('ga.act_id')->order(array('ga.act_id'=>'asc'))->select();
 
@@ -608,8 +608,8 @@ function get_linked_goods($goods_id) {
 * @return  void
 */
 function get_seachable_attributes($cat_id = 0) {
-	$db_good = RC_Loader::load_app_model('goods_type_viewmodel', 'goods');
-	$db_attribute = RC_Loader::load_app_model('attribute_model', 'goods');
+	$db_good = RC_Model::model('goods/goods_type_viewmodel');
+	$db_attribute = RC_Model::model('goods/attribute_model');
 
 	$attributes = array(
 		'cate' => array(),
@@ -675,7 +675,7 @@ function get_seachable_attributes($cat_id = 0) {
 * @return  void
 */
 function get_brand_info($id) {
-	$db = RC_Loader::load_app_model('brand_model', 'goods');
+	$db = RC_Model::model('goods/brand_model');
 	return $db->find(array('brand_id' => $id));
 }
 
@@ -688,7 +688,7 @@ function get_brand_info($id) {
 * @return  array
 */
 function brand_recommend_goods($type, $brand, $cat = 0) {
-	$db = RC_Loader::load_app_model('goods_auto_viewmodel', 'goods');
+	$db = RC_Model::model('goods/goods_auto_viewmodel');
 
 	static $result = NULL;
 	$time = RC_Time::gmtime();
@@ -764,7 +764,7 @@ function brand_recommend_goods($type, $brand, $cat = 0) {
 * @return  integer
 */
 function goods_count_by_brand($brand_id, $cate = 0) {
-	$db = RC_Loader::load_app_model('goods_member_viewmodel','goods');
+	$db = RC_Model::model('goods/goods_member_viewmodel');
 	if ($cate > 0) {
 		$query = $db->join(null)->where('brand_id = '.$brand_id.' AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND '. get_children($cate).'')->count();
 	}
@@ -780,7 +780,7 @@ function goods_count_by_brand($brand_id, $cate = 0) {
 * @return  array
 */
 function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order) {
-	$dbview = RC_Loader::load_app_model('goods_member_viewmodel','goods');
+	$dbview = RC_Model::model('goods/goods_member_viewmodel');
 	$cate_where = ($cate > 0) ? 'AND ' . get_children($cate) : '';
 
 	/* 获得商品列表 */
@@ -829,7 +829,7 @@ function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order) {
 * @return  array
 */
 function brand_related_cat($brand) {
-	$db = RC_Loader::load_app_model('category_viewmodel','goods');
+	$db = RC_Model::model('goods/category_viewmodel');
 	$arr[] = array(
 		'cat_id' 	=> 0,
 		'cat_name'	=> RC_Lang::lang('all_category'),

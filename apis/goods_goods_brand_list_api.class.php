@@ -28,7 +28,7 @@ class goods_goods_brand_list_api extends Component_Event_Api {
 	private function brandlist($filter) {
 		
 		if (!isset($_SESSION['ru_id'])) {
-			$db = RC_Loader::load_app_model('brand_model', 'goods');
+			$db = RC_Model::model('goods/brand_model');
 			/* 分页大小 */
 			$where = array();
 			/* 记录总数以及页数 */
@@ -64,7 +64,7 @@ class goods_goods_brand_list_api extends Component_Event_Api {
 				}
 			}
 		} else {
-			$db = RC_Loader::load_app_model('merchants_shop_brand_viewmodel', 'goods');
+			$db = RC_Model::model('goods/merchants_shop_brand_viewmodel');
 			/* 分页大小 */
 			$where = array('user_id' => $_SESSION['ru_id']);
 			

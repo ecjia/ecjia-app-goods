@@ -14,7 +14,7 @@ class goods_get_goods_brand_api extends Component_Event_Api {
 	}
 	
 	private function brandlist() {
-		$db = RC_Loader::load_app_model ('brand_model', 'goods');
+		$db = RC_Model::model ('goods/brand_model');
 	
 		$res = $db->field('brand_id, brand_name')->order('sort_order asc')->select();
 		$brand_list = array ();

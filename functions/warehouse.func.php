@@ -5,7 +5,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * 查询仓库列表
  */
 function get_warehouse_goods_list($goods_id = 0) {
-	$db_warehouse_goods = RC_Loader::load_app_model('warehouser_goods_viewmodel','goods');
+	$db_warehouse_goods = RC_Model::model('goods/warehouser_goods_viewmodel');
 	$rs = $db_warehouse_goods->field('wg.w_id, wg.region_id, wg.region_number, wg.warehouse_price, wg.warehouse_promote_price, rw.region_name')->where(array('goods_id' =>$goods_id))->select();
 	return $rs;
 }
@@ -14,8 +14,8 @@ function get_warehouse_goods_list($goods_id = 0) {
  * 查询地区仓库列表
  */
 function get_warehouse_area_goods_list($goods_id = 0) {
-	$db_area_goods = RC_Loader::load_app_model('warehouse_area_goods_viewmodel', 'goods');
-	$db_region = RC_Loader::load_app_model('region_warehouose_model', 'goods');
+	$db_area_goods = RC_Model::model('goods/warehouse_area_goods_viewmodel');
+	$db_region = RC_Model::model('goods/region_warehouose_model');
 	
 	$data = $db_region->where(array('parent_id' => 0))->select();
 	foreach ($data as $key => $val){

@@ -80,7 +80,7 @@ class goods_image {
 	        return new ecjia_error('upload_goods_image_error', __('商品图片路径无效'));
 	    }
 	    
-	    $this->db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+	    $this->db_goods = RC_Model::model('goods/goods_model');
 	    
 	    
 	    /* 如果有上传图片，删除原来的商品图 */
@@ -138,7 +138,7 @@ class goods_image {
 	        return new ecjia_error('upload_thumb_error', __('商品缩略图路径无效'));
 	    }
 	     
-	    $this->db_goods = RC_Loader::load_app_model('goods_model', 'goods');
+	    $this->db_goods = RC_Model::model('goods/goods_model');
 	     
 	    $data = array(
 	        'goods_thumb'    => $goods_thumb,
@@ -183,7 +183,7 @@ class goods_image {
 	    
 	    $this->delete_image($this->uploaded_file_path);
 	    
-	    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
+	    $db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
 	    
 	    $data = array(
 	        'goods_id' 		=> $goods_id,
