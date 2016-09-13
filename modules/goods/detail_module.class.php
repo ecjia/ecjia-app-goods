@@ -15,7 +15,6 @@ class detail_module extends api_front implements api_interface {
         if ($goods_id <= 0) {
         	return new ecjia_error('does not exist', '不存在的信息');
         }
-        $area_id = $this->requestData('area_id', 0);
         
         $rec_type = $this->requestData('rec_type');
         $object_id = $this->requestData('object_id');
@@ -23,48 +22,13 @@ class detail_module extends api_front implements api_interface {
         /* 获得商品的信息 */
         RC_Loader::load_app_func('goods','goods');
         RC_Loader::load_app_func('category','goods');
-        $warehouse_db = RC_Model::model('warehouse/warehouse_model');
         
-        if ( $area_id > 0 ) {
-        	$db_region = RC_Model::model('shipping/region_model');
-        	$region_result = $db_region->where(array('region_id' => $area_id))->find();
-        	
-        	if ($region_result['region_type'] > 2) {//定位为区县
-        		$region_result = $db_region->where(array('region_id' => $region_result['parent_id']))->find();
-        		$area_id = $region_result['parent_id'];
-        	} elseif ($region_result['region_type'] == 2) { //定位为市
-        		$area_id = $region_result['parent_id'];
-        	} else { //定位为省
-        		$area_id = $region_result['region_id'];
-        	}
-        	$warehouse = $warehouse_db->where(array('regionId' => $area_id))->find();
-        	$area_id = $warehouse['region_id'];
-        	$warehouse_id = $warehouse['parent_id'];
-        }
-        
-        $goods = get_goods_info($goods_id, $warehouse_id, $area_id);
-        
+        $goods = get_goods_info($goods_id);
+
         if ($goods === false) {
             /* 如果没有找到任何记录则跳回到首页 */
            return new ecjia_error('does not exist', '不存在的信息');
         } else {
-        	//多店铺开启库存管理以及地区后才会去判断
-        	if ( $area_id > 0 ) {
-        		$warehouse = $warehouse_db->where(array('regionId' => $area_id))->find();
-        		$area = $warehouse['region_id'];
-        		$warehouse_id = $warehouse['parent_id'];
-        		if ($goods['model_inventory'] > 0 || $goods['model_price'] > 0 || $goods['model_attr'] > 0) {
-	
-        			$warehouse_name = $warehouse_db->where(array('region_id' => $warehouse['parent_id']))->get_field('region_name');
-        			$goods['is_warehouse'] = true;
-        			$goods['warehouse'] = $warehouse_name;
-
-        		} else {
-        			$goods['is_warehouse'] = false;
-        		}
-        	}
-        	
-        	
             if ($goods['brand_id'] > 0) {
                 $goods['goods_brand_url'] = build_uri('brand', array('bid' => $goods['brand_id']), $goods['goods_brand']);
             }
@@ -85,10 +49,7 @@ class detail_module extends api_front implements api_interface {
                 }
             }
 
-            $db_goods = RC_Model::model('goods/goods_model');
-            RC_Loader::load_app_func('warehousegoods', 'goods');
-            $properties = get_goods_properties($goods_id, $warehouse_id, $area); // 获得商品的规格和属性
-// 			$properties = warehouse_get_goods_properties($goods_id);
+            $properties = get_goods_properties($goods_id); // 获得商品的规格和属性
             
             // 获取关联礼包
 //             $package_goods_list = get_package_goods_list($goods['goods_id']);
@@ -96,9 +57,11 @@ class detail_module extends api_front implements api_interface {
         }
         
         /* 更新点击次数 */
+        $db_goods = RC_Model::model('goods/goods_model');
         $db_goods->inc('click_count','goods_id='.$goods_id,1);
         
         $data = $goods;
+        
         $data['rank_prices']     = !empty($shop_price) ? get_user_rank_prices($goods_id, $shop_price) : 0;
         $data['pictures']        = EM_get_goods_gallery($goods_id);
         $data['properties']      = $properties['pro'];
@@ -159,14 +122,12 @@ class detail_module extends api_front implements api_interface {
         if ($_SESSION['user_id']) {
             // 查询收藏夹状态
             $db_collect_goods = RC_Model::model('goods/collect_goods_model');
-            $count = $db_collect_goods->where(array('user_id' => $_SESSION[user_id] , 'goods_id' => $goods_id))->count();
+            $count = $db_collect_goods->where(array('user_id' => $_SESSION['user_id'] , 'goods_id' => $goods_id))->count();
             
             if ($count > 0) {
                 $data['collected'] = 1;
             }
         }
-        
-        
         
         $data = API_DATA('GOODS', $data);
         $data['unformatted_shop_price'] = $goods['shop_price'];
@@ -313,6 +274,7 @@ class detail_module extends api_front implements api_interface {
 //         } else {
 //         	$data['related_goods'] = array();
 //         }
+
         //多店铺的内容
         $data['seller_id'] = $goods['seller_id'];
         if ($goods['seller_id'] > 0) {
@@ -334,7 +296,7 @@ class detail_module extends api_front implements api_interface {
         		$info['shop_logo'] = str_replace('../', '/', $info['shop_logo']);
         	}
         	$db_goods = RC_Model::model('goods/goods_model');
-        	$goods_count = $db_goods->where(array('user_id' => $data['seller_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
+        	$goods_count = $db_goods->where(array('seller_id' => $data['seller_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
         	
         	$cs_db = RC_Model::model('seller/collect_store_model');
         	$follower_count = $cs_db->where(array('seller_id' => $data['seller_id']))->count();
@@ -359,10 +321,8 @@ class detail_module extends api_front implements api_interface {
         			
         	);
         }
-        $data['is_warehouse'] = $goods['is_warehouse'];
-        $warehouse_name = empty($warehouse_name) ? '总店' : $warehouse_name;
         $shop_name = empty($info['seller_name']) ? ecjia::config('shop_name') : $info['seller_name'];
-        $data['server_desc'] = '由'.$shop_name.'从'.$warehouse_name.'发货并提供售后服务';
+        $data['server_desc'] = '由'.$shop_name.'发货并提供售后服务';
         
         return $data;
     }
@@ -379,7 +339,7 @@ function EM_get_goods_gallery($goods_id) {
     	!empty($desc_index) && $row[$key]['desc'] = substr($gallery_img['img_original'], $desc_index);
     	$row[$key]['img_url'] = empty($gallery_img ['img_original']) ? RC_Uri::admin_url('statics/images/nopic.png') : goods_image::get_absolute_url($gallery_img ['img_original']);
     	$row[$key]['thumb_url'] = empty($gallery_img ['img_url']) ? RC_Uri::admin_url('statics/images/nopic.png') : goods_image::get_absolute_url($gallery_img ['img_url']);
-    	$img_list_sort[$key] = $img_list[$key]['desc'];
+    	$img_list_sort[$key] = $row[$key]['desc'];
     	$img_list_id[$key] = $gallery_img['img_id'];
     }
     //先使用sort排序，再使用id排序。

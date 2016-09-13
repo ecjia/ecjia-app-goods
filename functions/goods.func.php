@@ -463,6 +463,11 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	RC_Loader::load_app_func('common', 'goods');
 	$time = RC_Time::gmtime();
 
+	$field = "g.*,  g.model_price, g.model_attr, ".
+	    ' c.measure_unit, g.brand_id as brand_id, b.brand_logo, g.comments_number, g.sales_volume,b.brand_name AS goods_brand, m.type_money AS bonus_money, ' .
+	    'IFNULL(AVG(r.comment_rank), 0) AS comment_rank, ' .
+	    "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS rank_price ";
+	
 	$db_goods->view = array (
 		'category' => array(
 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
@@ -495,9 +500,10 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	if (ecjia::config('review_goods')) {
 		$where['g.review_status'] = array('gt' => 2);
 	}
-	$row = $db_goods->group('g.goods_id')->find($where);
-	
+    $row = $db_goods->field($field)->group('g.goods_id')->find($where);
+    
 	if ($row !== false) {
+	    $row['goods_id'] = $goods_id;
 		/* 用户评论级别取整 */
 		$row ['comment_rank'] = ceil ( $row ['comment_rank'] ) == 0 ? 5 : ceil ( $row ['comment_rank'] );
 		/* 获得商品的销售价格 */

@@ -27,7 +27,6 @@ class goods_goods_list_api extends Component_Event_Api {
 		}
 		
 	   	$row = goods_list::get_goods_list($options);
-	    
 	    return $row;
 	}
 	

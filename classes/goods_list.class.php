@@ -213,6 +213,8 @@ class goods_list {
 				$arr[$key]['goods_id']		= $row['goods_id'];
 				$arr[$key]['name']			= $row['goods_name'];
 				$arr[$key]['goods_brief'] 	= $row['goods_brief'];
+				$arr[$key]['seller_id']		= $row['seller_id'];
+				$arr[$key]['seller_name']	= RC_Model::model('goods/seller_shopinfo_model')->get_seller_name_by_id($row['seller_id']);
 				/* 增加商品样式*/
 				$arr[$key]['goods_style_name'] = add_style($row['goods_name'], $row['goods_name_style']);
 				$arr[$key]['market_price']	= $row['market_price'] > 0 ? price_format($row['market_price']) : 0;
