@@ -15,7 +15,7 @@ class goods_goods_filter_api extends Component_Event_Api {
      *
      * @return array
      */
-	public function call(&$options) {	
+	public function call(&$options) {
 	    if (!is_array($options) 
 	        && !isset($options['cat_id'])) {
 	        return new ecjia_error('invalid_parameter', '参数无效');
@@ -159,7 +159,7 @@ class goods_goods_filter_api extends Component_Event_Api {
 
 		$where['is_on_sale'] = 1;
 		$where['is_alone_sale'] = 1;
-		$where['is_delete'] = 0;
+		$where['g.is_delete'] = 0;
 		$where[] = '('.$this->children.' OR '.goods_category::get_children($options['cat_id'], 'gc.cat_id').')';
 		$where['g.brand_id'] = array('gt' => 0);
 		$brands_filter = $dbview->join(array('brand', 'goods_cat'))
@@ -168,7 +168,6 @@ class goods_goods_filter_api extends Component_Event_Api {
 				->order(array('b.sort_order' => 'ASC', 'b.brand_id' => 'ASC'))
 				->group('b.brand_id')
 				->select();
-		
 		if (!empty($brands_filter)) {
 			foreach ($brands_filter AS $key => $val) {
 			
