@@ -8,21 +8,27 @@
 <!-- {/block} --> 
 
 <!-- {block name="main_content"} -->
+{if $step eq '7'}
+<!-- #BeginLibraryItem "/library/goods_step.lbi" --><!-- #EndLibraryItem -->
+{/if}
 <div>
 	<h3 class="heading"> 
 		<!-- {if $ur_here}{$ur_here}{/if} --> 
-		{if $action_link} <a href="{$action_link.href}{if $code}&extension_code={$code}{/if}" class="btn plus_or_reply data-pjax" id="sticky_a">
+		{if $action_link} <a href="{$action_link.href}" class="btn plus_or_reply data-pjax" id="sticky_a">
 		<i class="fontello-icon-reply"></i>{$action_link.text}</a> {/if}
 	</h3>
 </div>
+
 <div class="row-fluid">
 	<div class="span12">
 		<div class="tabbable">
+			{if !$step}
 			<ul class="nav nav-tabs">
 				<!-- {foreach from=$tags item=tag} -->
-				<li {if $tag.active}class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
+				<li{if $tag.active} class="active"{/if}><a{if $tag.active} href="javascript:;"{else}{if $tag.pjax} class="data-pjax"{/if} href='{$tag.href}'{/if}><!-- {$tag.name} --></a></li>
 				<!-- {/foreach} -->
 			</ul>
+			{/if}
 			
 			<form class="form-horizontal" action='{url path="goods/admin/add_link_parts" args="goods_id={$smarty.get.goods_id}{if $code}&extension_code={$code}{/if}"}' method="post" name="theForm" >
 				<div class="tab-content">
@@ -31,35 +37,35 @@
 							<div class="ecjiaf-cb">
 								<!-- <div class="f_l"> -->
 									<select name="cat_id">
-										<option value="0">{$lang.all_category}{$cat_list}</option>
+										<option value="0">{lang key='system::system.all_category'}{$cat_list}</option>
 									</select>
 									<select name="brand_id">
-										<option value="0">{$lang.all_brand}{html_options options=$brand_list}</option>
+										<option value="0">{lang key='system::system.all_brand'}{html_options options=$brand_list}</option>
 									</select>
 								<!-- </div> -->
-								<input type="text" name="keyword" placeholder="{t}商品名称{/t}" />
-								<a class="btn" data-toggle="searchGoods"><!-- {$lang.button_search} --></a>
+								<input type="text" name="keyword" placeholder="{lang key='goods::goods.goods_name'}" />
+								<a class="btn" data-toggle="searchGoods"><!-- {lang key='system::system.button_search'} --></a>
 							</div>
-							<span class="help-inline m_t5">搜索要关联的配件，搜到配件会展示在左侧列表框中。点击左侧列表中选项，配件即可进入右侧已关联列表。保存后生效。您还可以在右侧编辑关联配件的价格。</span>
+							<span class="help-inline m_t5">{lang key='goods::goods.link_parts_notice'}</span>
 						</div>
 						<div class="control-group draggable">
-							<div class="ms-container " id="ms-custom-navigation">
+							<div class="ms-container" id="ms-custom-navigation">
 								<div class="ms-selectable">
 									<div class="search-header">
-										<input class="span12" id="ms-search" type="text" placeholder="{t}筛选搜索到的商品信息{/t}" autocomplete="off">
+										<input class="span12" id="ms-search" type="text" placeholder="{lang key='goods::goods.filter_goods_info'}" autocomplete="off">
 									</div>
 									<ul class="ms-list nav-list-ready">
-										<li class="ms-elem-selectable disabled"><span>暂无内容</span></li>
+										<li class="ms-elem-selectable disabled"><span>{lang key='goods::goods.no_content'}</span></li>
 									</ul>
 								</div>
 								<div class="ms-selection">
-									<div class="custom-header custom-header-align">关联配件</div>
+									<div class="custom-header custom-header-align">{lang key='goods::goods.tab_groupgoods'}</div>
 									<ul class="ms-list nav-list-content">
 										<!-- {foreach from=$group_goods_list item=link_good key=key} -->
 										<li class="ms-elem-selection">
 											<input type="hidden" name="goods_id[]" data-double="0" data-price="{$link_good.goods_price}" value="{$link_good.goods_id}" />
-											<!-- {$link_good.goods_name} --><span class="link_price m_l5">[价格:{$link_good.goods_price}]</span>
-											<span class="edit-list"><a class="change_link_price" href="javascript:;">修改价格</a><i class="fontello-icon-minus-circled ecjiafc-red del"></i></span>
+											<!-- {$link_good.goods_name} --><span class="link_price m_l5">[{lang key='goods::goods.shop_price'}:{$link_good.goods_price}]</span>
+											<span class="edit-list"><a class="change_link_price" href="javascript:;">{lang key='goods::goods.edit_price'}</a><i class="fontello-icon-minus-circled ecjiafc-red del"></i></span>
 										</li>
 										<!-- {/foreach} -->
 									</ul>
@@ -69,13 +75,17 @@
 					</fieldset>
 				</div>
 				<fieldset class="t_c">
-					<button class="btn btn-gebo" type="submit">{t}保存{/t}</button>
-					<input type="hidden" name="goods_id" value="{$goods.goods_id}" />
+					{if $step}
+					<button class="btn btn-gebo" type="submit">{lang key='goods::goods.next_step'}</button>	
+					<button class="btn btn-gebo complete" type="submit" data-url='{if $code}{url path="goods/admin/init" args="extension_code={$code}"}{else}{url path="goods/admin/init"}{/if}'>{lang key='goods::goods.complete'}</button>
+					<input type="hidden" name="step" value="{$step}" />
+					{else}
+					<button class="btn btn-gebo" type="submit">{lang key='goods::goods.save'}</button>
+					{/if}
+					<input type="hidden" name="goods_id" value="{$goods_id}" />
 					{if $code neq ''}
 					<input type="hidden" name="extension_code" value="{$code}" />
 					{/if}
-					<input type="hidden" id="type" value="{$link.type}" />
-					<input type="hidden" name="act" value="{$form_act}" />
 				</fieldset>
 			</form>
 		</div>
