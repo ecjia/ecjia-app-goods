@@ -10,6 +10,12 @@ class mobilebuygoods_module extends api_front implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     	$this->authSession();	
     	
+    	$location = $this->requestdata('location', array());
+//     	$location = array(
+// 	        'latitude'	=> '31.235450744628906',
+// 	        'longitude' => '121.41641998291016',
+// 	    );
+    	
     	$mobilebuywhere['act_type']		= GAT_MOBILE_BUY;
     	$mobilebuywhere['start_time']	= array('elt' => RC_Time::gmtime());
     	$mobilebuywhere['end_time']		= array('egt' => RC_Time::gmtime());
@@ -21,7 +27,6 @@ class mobilebuygoods_module extends api_front implements api_interface {
     		$mobilebuywhere['g.review_status'] = array('gt' => 2);
     	}
     	
-    	$location = $this->requestdata('loaction', array());
     	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
     		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
     		$geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
@@ -32,8 +37,8 @@ class mobilebuygoods_module extends api_front implements api_interface {
     	
     	$db_goods_activity = RC_Model::model('goods/goods_activity_viewmodel');
     	
-    	$count = $db_goods_activity->join(array('goods', 'seller_shopinfo'))->where($groupwhere)->count();
-    	
+    	$count = $db_goods_activity->join(array('goods', 'seller_shopinfo'))->where($mobilebuywhere)->count();
+
 		/* 查询总数为0时直接返回  */
     	if ($count == 0 || !is_array($location) || empty($location['latitude']) || empty($location['longitude'])) {
 			$pager = array(
@@ -87,7 +92,6 @@ class mobilebuygoods_module extends api_front implements api_interface {
     		}
     	}
     	
-    	
     	$pager = array(
     			"total" => $page_row->total_records,
     			"count" => $page_row->total_records,
@@ -95,7 +99,6 @@ class mobilebuygoods_module extends api_front implements api_interface {
     	);
     	
     	return array('data' => $list, 'pager' => $pager);
-    	
     }
 }
 
