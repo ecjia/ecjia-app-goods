@@ -11,6 +11,10 @@ class suggestlist_module extends api_front implements api_interface {
     	$this->authSession();	
     	
     	$location = $this->requestData('location', array());
+// 		$location = array(
+// 				'latitude'	=> '31.235450744628906',
+// 				'longitude' => '121.41641998291016',
+// 		);
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
@@ -35,11 +39,11 @@ class suggestlist_module extends api_front implements api_interface {
     	$page = $this->requestData('pagination.page', 1);
     	
     	$cache_id = sprintf('%X', crc32($action_type . '-' . $sort_type  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank'] . '-' .
-    			ecjia::config('lang')));
+    			'-' . $location['longitude'] . '-' . $location['latitude'] . ecjia::config('lang')));
     	
     	$cache_key = 'api_goods_suggestlist_'.$cache_id;
-//        	$data = RC_Cache::app_cache_get($cache_key, 'goods');
-		$data = null;
+    	
+       	$data = RC_Cache::app_cache_get($cache_key, 'goods');
        	if (empty($data)) {
 	    	switch ($sort_type) {
 	    		case 'goods_id' :
