@@ -524,6 +524,9 @@ return array(
 	
 	'attr_update'	=> 'Update goods attributes',
 	'attr_delete'	=> 'Remove goods attributes',
+	
+	'business_name'=>'Business',
+	'check_goods'=>'Check',
 );
 
 // end
