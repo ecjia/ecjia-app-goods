@@ -21,6 +21,10 @@ class groupbuygoods_module extends api_front implements api_interface {
     		$groupwhere['g.review_status'] = array('gt' => 2);
     	}
     	$location = $this->requestdata('loaction', array()) ;
+//     	$location = array(
+// 	        'latitude'	=> '31.235450744628906',
+// 	        'longitude' => '121.41641998291016',
+// 	    );
     	
     	if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
     		$geohash = RC_Loader::load_app_class('geohash', 'shipping');
@@ -69,7 +73,7 @@ class groupbuygoods_module extends api_front implements api_interface {
 		
 		/* 获取数量 */
     	$size = $this->requestData('pagination.count', 15);
-    	$page = $this->requestData('pagination.page');
+    	$page = $this->requestData('pagination.page', 1);
     	
     	//加载分页类
     	RC_Loader::load_sys_class('ecjia_page', false);
