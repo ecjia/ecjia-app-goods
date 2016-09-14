@@ -10,7 +10,7 @@ class mobilebuygoods_module extends api_front implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     	$this->authSession();	
     	
-    	$location = $this->requestdata('location', array());
+    	$location = $this->requestData('location', array());
 //     	$location = array(
 // 	        'latitude'	=> '31.235450744628906',
 // 	        'longitude' => '121.41641998291016',

@@ -10,7 +10,7 @@ class suggestlist_module extends api_front implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     	$this->authSession();	
     	
-    	$location = $this->requestdata('loaction', array());
+    	$location = $this->requestData('loaction', array());
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
@@ -23,8 +23,8 @@ class suggestlist_module extends api_front implements api_interface {
     		return array('data' => $data['list'], 'pager' => $data['pager']);
     	}
     	RC_Loader::load_app_func('common', 'goods');
-    	$action_type = $this->requestdata('action_type', '');
-    	$sort_type = $this->requestdata('sort_by', '');
+    	$action_type = $this->requestData('action_type', '');
+    	$sort_type = $this->requestData('sort_by', '');
     	$type = array('new', 'best', 'hot', 'promotion');//推荐类型
     	
     	if (!in_array($action_type, $type)) {

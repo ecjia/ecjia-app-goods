@@ -11,7 +11,7 @@ class search_module extends api_front implements api_interface {
     	$this->authSession();
     	
     	$keywords = $this->requestData('keywords');
-    	$location = $this->requestdata('loaction', array());
+    	$location = $this->requestData('loaction', array());
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
