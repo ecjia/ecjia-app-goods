@@ -68,11 +68,15 @@ class list_module extends api_front implements api_interface {
        				"more"	=> '0'
        		);
        		return array('data' => $data['list'], 'pager' => $data['pager']);
+       	} else {
+   	        $geohash = RC_Loader::load_app_class('geohash', 'shipping');
+   	        $geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
+   	        $geohash_code = substr($geohash_code, 0, 5);
        	}
        	
 		$filter = empty($filter['filter_attr']) ? '' : $filter['filter_attr'];
        	$cache_id = sprintf('%X', crc32($category . '-' . $sort_by  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank']. '-' .
-       			ecjia::config('lang') .'-'. $brand. '-'. $keyword. '-' . $max_price . '-' .$min_price . '-' . $filter . '-' . $location['longitude'] . '-' . $location['latitude'] ));
+       			ecjia::config('lang') .'-'. $brand. '-'. $keyword. '-' . $max_price . '-' .$min_price . '-' . $filter . '-' . $geohash_code ));
        	
        	$cache_key = 'api_goods_list_'.$category.'_'.$cache_id;
        	$data = RC_Cache::app_cache_get($cache_key, 'goods');

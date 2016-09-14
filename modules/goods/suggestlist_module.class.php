@@ -25,6 +25,10 @@ class suggestlist_module extends api_front implements api_interface {
     				"more"	=> '0'
     		);
     		return array('data' => $data['list'], 'pager' => $data['pager']);
+    	} else {
+	        $geohash = RC_Loader::load_app_class('geohash', 'shipping');
+	        $geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
+	        $geohash_code = substr($geohash_code, 0, 5);
     	}
     	RC_Loader::load_app_func('common', 'goods');
     	$action_type = $this->requestData('action_type', '');
@@ -39,7 +43,7 @@ class suggestlist_module extends api_front implements api_interface {
     	$page = $this->requestData('pagination.page', 1);
     	
     	$cache_id = sprintf('%X', crc32($action_type . '-' . $sort_type  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank'] . '-' .
-    			'-' . $location['longitude'] . '-' . $location['latitude'] . ecjia::config('lang')));
+    			'-' . $geohash_code . ecjia::config('lang')));
     	
     	$cache_key = 'api_goods_suggestlist_'.$cache_id;
     	
