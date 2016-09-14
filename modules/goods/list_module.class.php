@@ -12,11 +12,10 @@ class list_module extends api_front implements api_interface {
     	
     	//如果用户登录获取其session
     	RC_Loader::load_app_func('main', 'api');
-    	
-    	$location = $this->requestdata('loaction', array()) ;
+    	$location = $this->requestData('location', array()) ;
     	
     	/* 筛选条件*/
-		$filter = $this->requestdata('filter', array());
+		$filter = $this->requestData('filter', array());
         $keyword = isset($filter['keywords']) ? RC_String::unicode2string($filter['keywords']): '';
         $keyword = ! empty($keyword) ? htmlspecialchars(trim($keyword)) : '';
         
@@ -44,7 +43,7 @@ class list_module extends api_front implements api_interface {
         	$order_sort = array('goods_id' => 'DESC');
         }
 
-		$size = $this->requestData('pagination.count', 15);
+		$size = $this->requestData('pagination.count', 20);
 		$page = $this->requestData('pagination.page', 1);
 		
        	$options = array(
@@ -73,11 +72,10 @@ class list_module extends api_front implements api_interface {
        	
 		$filter = empty($filter['filter_attr']) ? '' : $filter['filter_attr'];
        	$cache_id = sprintf('%X', crc32($category . '-' . $sort_by  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank']. '-' .
-       			ecjia::config('lang') .'-'. $brand. '-'. $keyword. '-' . $max_price . '-' .$min_price . '-' . $filter ));
+       			ecjia::config('lang') .'-'. $brand. '-'. $keyword. '-' . $max_price . '-' .$min_price . '-' . $filter . '-' . $location['longitude'] . '-' . $location['latitude'] ));
        	
        	$cache_key = 'api_goods_list_'.$category.'_'.$cache_id;
        	$data = RC_Cache::app_cache_get($cache_key, 'goods');
-       	
        	if (empty($data)) {
 			$result = RC_Api::api('goods', 'goods_list', $options);
 			$data = array();
@@ -146,6 +144,7 @@ class list_module extends api_front implements api_interface {
        			goods_list::get_keywords_where($options['keywords']);
        		}
        	}
+       	
 		return array('data' => $data['list'], 'pager' => $data['pager']);
     }
 }
