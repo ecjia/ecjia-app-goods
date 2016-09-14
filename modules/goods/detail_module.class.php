@@ -207,7 +207,7 @@ class detail_module extends api_front implements api_interface {
         
         $data['favourable_list'] = $favourable_list;
         
-        $location = $this->requestData('loaction', array());
+        $location = $this->requestData('location', array());
         $options = array(
        			'cat_id'	=> $data['cat_id'],
         		'intro'		=> 'hot',

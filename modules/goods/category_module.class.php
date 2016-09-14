@@ -10,7 +10,7 @@ class category_module extends api_front implements api_interface {
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 		$this->authSession();
 		
-		$location = $this->requestData('loaction', array());
+		$location = $this->requestData('location', array());
 		if (is_array($location) && isset($location['latitude']) && isset($location['longitude'])) {
 			$request = array('location' => $location);
 			$geohash = RC_Loader::load_app_class('geohash', 'shipping');
