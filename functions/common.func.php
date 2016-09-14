@@ -108,63 +108,6 @@ function get_brand_list() {
  	return $row;
  }
 
-
-
-
-
-
-/**
- * 记录帐户变动
- *
- * @param int $user_id
- *        	用户id
- * @param float $user_money
- *        	可用余额变动
- * @param float $frozen_money
- *        	冻结余额变动
- * @param int $rank_points
- *        	等级积分变动
- * @param int $pay_points
- *        	消费积分变动
- * @param string $change_desc
- *        	变动说明
- * @param int $change_type
- *        	变动类型：参见常量文件
- * @return void
- */
-function log_account_change($user_id, $user_money = 0, $frozen_money = 0, $rank_points = 0, $pay_points = 0, $change_desc = '', $change_type = ACT_OTHER) {
-	// 链接数据库
-	$db_account_log = RC_Model::model ('user/account_log_model');
-	$db_users = RC_Model::model('user/users_model');
-	/* 插入帐户变动记录 */
-	$account_log = array (
-		'user_id'		=> $user_id,
-		'user_money'	=> $user_money,
-		'frozen_money'	=> $frozen_money,
-		'rank_points'	=> $rank_points,
-		'pay_points'	=> $pay_points,
-		'change_time'	=> RC_Time::gmtime(),
-		'change_desc'	=> $change_desc,
-		'change_type'	=> $change_type 
-	);
-	$db_account_log->insert ( $account_log );
-	
-	/* 更新用户信息 */
-// 	TODO: 暂时先恢复之前的写法
-
-// 	$sql = "UPDATE  ecs_users  SET user_money = user_money + ('$user_money')," .
-// 	" frozen_money = frozen_money + ('$frozen_money')," .
-// 	" rank_points = rank_points + ('$rank_points')," .
-// 	" pay_points = pay_points + ('$pay_points')" .
-// 	" WHERE user_id = '$user_id' LIMIT 1";
-// 	$db_users->query($sql);
-	$step = $user_money.", frozen_money = frozen_money + ('$frozen_money')," .
-	" rank_points = rank_points + ('$rank_points')," .
-	" pay_points = pay_points + ('$pay_points')";
-	
-	$db_users->inc('user_money' , 'user_id='.$user_id , $step);
-}
-
 /**
  * 重新获得商品图片与商品相册的地址
  *
