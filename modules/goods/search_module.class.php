@@ -11,7 +11,11 @@ class search_module extends api_front implements api_interface {
     	$this->authSession();
     	
     	$keywords = $this->requestData('keywords');
-    	$location = $this->requestData('loaction', array());
+    	$location = $this->requestData('location', array());
+// 		$location = array(
+// 				'latitude'	=> '31.235450744628906',
+// 				'longitude' => '121.41641998291016',
+// 		);
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
@@ -35,8 +39,11 @@ class search_module extends api_front implements api_interface {
     	);
     	
     	$result = RC_Api::api('seller', 'seller_list', $options);
+    	if (is_ecjia_error($result)) {
+    	    return $result;
+    	}
     	if (!empty($result['seller_list'])) {
-    		$db_goods_view = RC_Model::model('comment/comment_viewmodel');
+    		$db_comment = RC_Model::model('comment/comment_model');
     		$max_goods = 0;
     		$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
     		$db_favourable = RC_Model::model('favourable/favourable_activity_model');
@@ -47,7 +54,7 @@ class search_module extends api_front implements api_interface {
     		$seller_list = array();
     		foreach ($result['seller_list'] as $row) {
     			$field = 'count(*) as count, SUM(comment_rank) as comment_rank';
-    			$comment = $db_goods_view->join(null)->field($field)->where(array('ru_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
+    			$comment = $db_comment->field($field)->where(array('seller_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
     		
     			$favourable_result = $db_favourable->where(array('seller_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
     			$favourable_list = array();
@@ -99,7 +106,6 @@ class search_module extends api_front implements api_interface {
     				}
     			}
     		
-    		
     			$goods_options = array('page' => 1, 'size' => 3, 'seller_id' => $row['id']);
     			if (!empty($goods_category)) {
     				$goods_options['cat_id'] = $goods_category;
@@ -120,7 +126,7 @@ class search_module extends api_front implements api_interface {
     								'goods_id'	 => $val['goods_id'],
     								'start_time' => array('elt' => RC_Time::gmtime()),
     								'end_time'	 => array('egt' => RC_Time::gmtime()),
-    								'act_type'	 => GAT_MOBILE_BUY,
+    								'act_type'	 => 'GAT_MOBILE_BUY',
     						));
     						if (!empty($mobilebuy)) {
     							$ext_info = unserialize($mobilebuy['ext_info']);
@@ -154,29 +160,29 @@ class search_module extends api_front implements api_interface {
     			}
     			if ($goods_result['page']->total_records >= $max_goods) {
     				array_unshift($seller_list, array(
-    				'id'				=> $row['id'],
-    				'seller_name'		=> $row['seller_name'],
-    				'seller_category'	=> $row['seller_category'],
-    				'seller_logo'		=> $row['seller_logo'],
-    				'seller_goods'		=> $goods_list,
-    				'follower'			=> $row['follower'],
-    				'is_follower'		=> $row['is_follower'],
-    				'goods_count'		=> $goods_result['page']->total_records,
-    				'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
-    				'favourable_list'	=> $favourable_list,
+        				'id'				=> $row['id'],
+        				'seller_name'		=> $row['seller_name'],
+        				'seller_category'	=> $row['seller_category'],
+        				'seller_logo'		=> $row['seller_logo'],
+        				'seller_goods'		=> $goods_list,
+        				'follower'			=> $row['follower'],
+        				'is_follower'		=> $row['is_follower'],
+        				'goods_count'		=> $goods_result['page']->total_records,
+        				'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
+        				'favourable_list'	=> $favourable_list,
     				));
     			} else {
     				$seller_list[] = array(
-    						'id'				=> $row['id'],
-    						'seller_name'		=> $row['seller_name'],
-    						'seller_category'	=> $row['seller_category'],
-    						'seller_logo'		=> $row['seller_logo'],
-    						'seller_goods'		=> $goods_list,
-    						'follower'			=> $row['follower'],
-    						'is_follower'		=> $row['is_follower'],
-    						'goods_count'		=> $goods_result['page']->total_records,
-    						'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
-    						'favourable_list'	=> $favourable_list,
+						'id'				=> $row['id'],
+						'seller_name'		=> $row['seller_name'],
+						'seller_category'	=> $row['seller_category'],
+						'seller_logo'		=> $row['seller_logo'],
+						'seller_goods'		=> $goods_list,
+						'follower'			=> $row['follower'],
+						'is_follower'		=> $row['is_follower'],
+						'goods_count'		=> $goods_result['page']->total_records,
+						'comment'			=> $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
+						'favourable_list'	=> $favourable_list,
     				);
     			}
     		}
