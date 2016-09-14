@@ -28,7 +28,6 @@ class package_goods_viewmodel extends Component_Model_View {
 				'on' 	=> "mp.goods_id = g.goods_id AND mp.user_rank = ".$_SESSION['user_rank']
 			),
 		);
-		
 		parent::__construct();
 	}
 }

@@ -179,15 +179,23 @@ function get_volume_price_list($goods_id, $price_type = '1') {
  * @return string
  */
 function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
-    $dbview = RC_Model::model('goods/sys_attribute_viewmodel');
+//     $dbview = RC_Model::model('goods/sys_attribute_viewmodel');
     
     if (empty($goods_attr_id_array)) {
         return $goods_attr_id_array;
     }
-    
     // 重新排序
-    $row = $dbview->join('goods_attr')->in(array('v.goods_attr_id' => $goods_attr_id_array))->order(array('a.attr_id' => $sort))->select();
-    
+//     $row = $dbview->join('goods_attr')->in(array('v.goods_attr_id' => $goods_attr_id_array))->order(array('a.attr_id' => $sort))->select();
+
+    $row = RC_DB::table('attribute as a')
+	    ->leftJoin('goods_attr as v', function($join){
+	    	$join->on(RC_DB::raw('v.attr_id'), '=', RC_DB::raw('a.attr_id'))->on(RC_DB::raw('a.attr_type'), '=', RC_DB::raw('1'));
+	    })
+	    ->selectRaw('a.attr_type, v.attr_value, v.goods_attr_id')
+	    ->whereIn(RC_DB::raw('v.goods_attr_id'), $goods_attr_id_array)
+	    ->orderby(RC_DB::raw('a.attr_id'), $sort)
+	    ->get();
+	    
     $return_arr = array();
     if (! empty($row)) {
         foreach ($row as $value) {
@@ -494,31 +502,38 @@ function formated_weight($weight)
  * @param integer $package_id
  * @return array
  */
-function get_package_goods($package_id)
-{
-    $dbview = RC_Model::model('goods/package_goods_viewmodel');
-    $db_attr = RC_Model::model('goodsgoods_attr_model');
+function get_package_goods($package_id) {
+//     $dbview = RC_Model::model('goods/package_goods_viewmodel');
+//     $db_attr = RC_Model::model('goods/goods_attr_model');
 
     if ($package_id == 0) {
         $where = " AND pg.admin_id = '$_SESSION[admin_id]'";
     }
 
-    $dbview->view = array (
-        'goods' => array (
-            'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-            'alias' => 'g',
-            'field' => "pg.goods_id, g.goods_name, pg.goods_number, p.goods_attr, p.product_number, p.product_id",
-            'on' 	=> 'pg.goods_id = g.goods_id'
-        ),
-        'products' => array (
-            'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-            'alias' => 'p',
-            'on' 	=> 'pg.product_id = p.product_id'
-        )
-    );
+//     $dbview->view = array (
+//         'goods' => array (
+//             'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+//             'alias' => 'g',
+//             'field' => "pg.goods_id, g.goods_name, pg.goods_number, p.goods_attr, p.product_number, p.product_id",
+//             'on' 	=> 'pg.goods_id = g.goods_id'
+//         ),
+//         'products' => array (
+//             'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+//             'alias' => 'p',
+//             'on' 	=> 'pg.product_id = p.product_id'
+//         )
+//     );
 
-    $resource = $dbview->where('pg.package_id = '.$package_id.''.$where)->select();
-    if (! $resource) {
+//     $resource = $dbview->where('pg.package_id = '.$package_id.''.$where)->select();
+    
+    $resource = RC_DB::table('package_goods as pg')
+    	->leftJoin('goods as g', RC_DB::raw('g.goods_id'), '=', RC_DB::raw('pg.goods_id'))
+    	->leftJoin('products as p', RC_DB::raw('pg.product_id'), '=', RC_DB::raw('p.product_id'))
+    	->selectRaw('pg.goods_id, g.goods_name, pg.goods_number, p.goods_attr, p.product_number, p.product_id')
+    	->whereRaw('pg.package_id = '.$package_id.''.$where)
+    	->get();
+    
+    if (!$resource) {
         return array ();
     }
 
@@ -551,7 +566,8 @@ function get_package_goods($package_id)
     /* 取商品属性 */
     if ($good_product_str != '') {
 
-        $result_goods_attr = $db_attr->field ( 'goods_attr_id, attr_value' )->in ( array ('goods_id' => $good_product_str) )->select ();
+//         $result_goods_attr = $db_attr->field ( 'goods_attr_id, attr_value' )->in ( array ('goods_id' => $good_product_str) )->select ();
+        $result_goods_attr = RC_DB::table('goods_attr')->select('goods_attr_id', 'attr_value')->whereIn('goods_id', $good_product_str)->get();
 
         $_goods_attr = array ();
         foreach ( $result_goods_attr as $value ) {
@@ -562,19 +578,21 @@ function get_package_goods($package_id)
     /* 过滤货品 */
     $format [0] = '%s[%s]';
     $format [1] = '%s';
-    foreach ( $row as $key => $value ) {
-        if ($value ['goods_attr'] != '') {
-            $goods_attr_array = explode ( '|', $value ['goods_attr'] );
-            	
-            $goods_attr = array ();
-            foreach ( $goods_attr_array as $_attr ) {
-                $goods_attr [] = $_goods_attr [$_attr];
-            }
-            	
-            $row [$key] ['goods_name'] = sprintf ( $format [0], $value ['goods_name'], implode ( '，', $goods_attr ));
-        } else {
-            $row [$key] ['goods_name'] = sprintf ( $format [1], $value ['goods_name']);
-        }
+    if (!empty($row)) {
+    	foreach ( $row as $key => $value ) {
+    		if ($value ['goods_attr'] != '') {
+    			$goods_attr_array = explode ( '|', $value ['goods_attr'] );
+    			 
+    			$goods_attr = array ();
+    			foreach ( $goods_attr_array as $_attr ) {
+    				$goods_attr [] = $_goods_attr [$_attr];
+    			}
+    			 
+    			$row [$key] ['goods_name'] = sprintf ( $format [0], $value ['goods_name'], implode ( '，', $goods_attr ));
+    		} else {
+    			$row [$key] ['goods_name'] = sprintf ( $format [1], $value ['goods_name']);
+    		}
+    	}
     }
 
     return $row;
