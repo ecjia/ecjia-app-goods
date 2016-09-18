@@ -1,9 +1,0 @@
-diff a/content/apps/goods/modules/goods/detail_module.class.php b/content/apps/goods/modules/goods/detail_module.class.php	(rejected hunks)
-@@ -12,6 +12,7 @@
-         //å¦‚æžœç”¨æˆ·ç™»å½•èŽ·å–å…¶session
-         
-         $goods_id = $this->requestData('goods_id', 0);
-+        $goods_id = 1044;
-         if ($goods_id <= 0) {
-         	return new ecjia_error('does not exist', 'ä¸å­˜åœ¨çš„ä¿¡æ¯');
-         }
