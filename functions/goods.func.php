@@ -502,7 +502,7 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	}
     $row = $db_goods->field($field)->group('g.goods_id')->find($where);
     
-	if ($row !== false) {
+	if (!empty($row)) {
 	    $row['goods_id'] = $goods_id;
 		/* 用户评论级别取整 */
 		$row ['comment_rank'] = ceil ( $row ['comment_rank'] ) == 0 ? 5 : ceil ( $row ['comment_rank'] );
