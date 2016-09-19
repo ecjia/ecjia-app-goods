@@ -58,8 +58,10 @@ function goods_parse_url($url) {
 * @return  void
 */
 function handle_volume_price($goods_id, $number_list, $price_list) {
-	$db = RC_Model::model('goods/volume_price_model');
-	$db->where(array('price_type' => 1, 'goods_id' => $goods_id))->delete();
+// 	$db = RC_Model::model('goods/volume_price_model');
+// 	$db->where(array('price_type' => 1, 'goods_id' => $goods_id))->delete();
+	
+	RC_DB::table('volume_price')->where('price_type', 1)->where('goods_id', $goods_id)->delete();
 	/* 循环处理每个优惠价格 */
 	foreach ($price_list AS $key => $price) {
 		/* 价格对应的数量上下限 */
@@ -71,7 +73,8 @@ function handle_volume_price($goods_id, $number_list, $price_list) {
 				'volume_number' => $volume_number,
 				'volume_price'  => $price,
 			);
-			$db->insert($data);
+// 			$db->insert($data);
+			RC_DB::table('volume_price')->insert($data);
 		}
 	}
 }
@@ -83,15 +86,17 @@ function handle_volume_price($goods_id, $number_list, $price_list) {
 * @return  bool
 */
 function update_goods_stock($goods_id, $value) {
-	$db = RC_Model::model('goods/goods_model');
-	RC_Loader::load_app_func('common', 'goods');
+// 	$db = RC_Model::model('goods/goods_model');
+// 	RC_Loader::load_app_func('common', 'goods');
+	
 	if ($goods_id) {
 		$data = array(
 			'goods_number'  => goods_number + $value,
 			'last_update'   => RC_Time::gmtime(),
 		);
-		$result = $db->where(array('goods_id' => $goods_id))->update($data);
-		return $result;
+// 		$result = $db->where(array('goods_id' => $goods_id))->update($data);
+// 		return $result;
+		return RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 	} else {
 		return false;
 	}
@@ -217,8 +222,10 @@ function get_merchants_brandlist() {
  * @return  mix
  */
 function get_cat_info($cat_id) {
-	$db = RC_Model::model('goods/category_model');
-	return $db->find(array('cat_id' => $cat_id));
+// 	$db = RC_Model::model('goods/category_model');
+// 	return $db->find(array('cat_id' => $cat_id));
+	
+	return RC_DB::table('category')->where('cat_id', $cat_id)->first();
 }
 
 /**
@@ -230,11 +237,12 @@ function get_cat_info($cat_id) {
  * @return  mix
  */
 function cat_update($cat_id, $args) {
-	$db = RC_Model::model('goods/category_model');
+// 	$db = RC_Model::model('goods/category_model');
 	if (empty($args) || empty($cat_id)) {
 		return false;
 	}
-	return $db->where(array('cat_id' => $cat_id))->update($args);
+// 	return $db->where(array('cat_id' => $cat_id))->update($args);
+	return RC_DB::table('category')->where('cat_id', $cat_id)->update($args);
 }
 
 
@@ -247,8 +255,17 @@ function cat_update($cat_id, $args) {
  * @return void
  */
 function get_category_attr_list() {
-	$db = RC_Model::model('goods/attribute_goods_viewmodel');
-	$arr = $db->join('goods_type')->where("gt.enabled = 1")->order(array('a.cat_id' => 'asc','a.sort_order' => 'asc'))->select();
+// 	$db = RC_Model::model('goods/attribute_goods_viewmodel');
+// 	$arr = $db->join('goods_type')->where("gt.enabled = 1")->order(array('a.cat_id' => 'asc','a.sort_order' => 'asc'))->select();
+	
+	$arr = RC_DB::table('attribute as a')
+		->leftJoin('goods_type as gt', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+		->selectRaw('a.attr_id')
+		->where(RC_DB::raw('gt.enabled'), 1)
+		->orderBy(RC_DB::raw('a.cat_id'), 'asc')
+		->orderBy(RC_DB::raw('a.sort_order'), 'asc')
+		->get();
+	
 	$list = array();
 	if (!empty($arr)) {
 		foreach ($arr as $val) {
@@ -270,28 +287,32 @@ function get_category_attr_list() {
  * @return void
  */
 function insert_cat_recommend($recommend_type, $cat_id) {
-	$db = RC_Model::model('goods/cat_recommend_model');
+// 	$db = RC_Model::model('goods/cat_recommend_model');
 	/* 检查分类是否为首页推荐 */
 	if (!empty($recommend_type)) {
 		/* 取得之前的分类 */
-		$recommend_res = $db->field('recommend_type')->where(array('cat_id' => $cat_id))->select();
+// 		$recommend_res = $db->field('recommend_type')->where(array('cat_id' => $cat_id))->select();
+		$recommend_res = RC_DB::table('cat_recommend')->select('recommend_type')->where('cat_id', $cat_id)->get();
+		
 		if (empty($recommend_res)) {
 			foreach($recommend_type as $data) {
 				$data = intval($data);
 				$query = array(
 					'cat_id' 			=> $cat_id,
 					'recommend_type' 	=> $data
-					);
-				$db->insert($query);
+				);
+// 				$db->insert($query);
+				RC_DB::table('cat_recommend')->insert($query);
 			}
 		} else {
 			$old_data = array();
-			foreach($recommend_res as $data) {
+			foreach ($recommend_res as $data) {
 				$old_data[] = $data['recommend_type'];
 			}
 			$delete_array = array_diff($old_data, $recommend_type);
 			if (!empty($delete_array)) {
-				$db->where(array('cat_id' => $cat_id))->in(array('recommend_type' => $delete_array))->delete();
+// 				$db->where(array('cat_id' => $cat_id))->in(array('recommend_type' => $delete_array))->delete();
+				RC_DB::table('cat_recommend')->where('cat_id', $cat_id)->whereIn('recommend_type', $delete_array)->delete();
 			}
 			$insert_array = array_diff($recommend_type, $old_data);
 			if (!empty($insert_array)) {
@@ -301,12 +322,14 @@ function insert_cat_recommend($recommend_type, $cat_id) {
 						'cat_id'          => $cat_id,
 						'recommend_type'  => $data
 					);
-					$db->insert($query);
+// 					$db->insert($query);
+					RC_DB::table('cat_recommend')->insert($query);
 				}
 			}
 		}
 	} else {
-		$db->where(array('cat_id' => $cat_id))->delete();
+// 		$db->where(array('cat_id' => $cat_id))->delete();
+		RC_DB::table('cat_recommend')->where('cat_id', $cat_id)->delete();
 	}
 }
 
@@ -333,18 +356,19 @@ function get_goods_list($filter) {
  * @return  string
  */
 function goods_type_list($selected) {
-	$db = RC_Model::model('goods/goods_type_model');
-	$data = $db->field('cat_id, cat_name')->where(array('enabled' => 1))->select();
+// 	$db = RC_Model::model('goods/goods_type_model');
+// 	$data = $db->field('cat_id, cat_name')->where(array('enabled' => 1))->select();
+	$data = RC_DB::table('goods_type')->select('cat_id', 'cat_name')->where('enabled', 1)->get();
 
-	$lst = '';
+	$opt = '';
 	if (!empty($data)) {
 		foreach ($data as $row){
-			$lst .= "<option value='$row[cat_id]'";
-			$lst .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
-			$lst .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+			$opt .= "<option value='$row[cat_id]'";
+			$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+			$opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
 		}
 	}
-	return $lst;
+	return $opt;
 }
 
 /**
@@ -355,9 +379,10 @@ function goods_type_list($selected) {
  * @return  array
  */
 function get_attr_groups($cat_id) {
-	$db = RC_Model::model('goods/goods_type_model');
+// 	$db = RC_Model::model('goods/goods_type_model');
+// 	$data = $db->where(array('cat_id' => $cat_id))->get_field('attr_group');
+	$data = RC_DB::table('goods_type')->where('cat_id', $cat_id)->pluck('attr_group');
 
-	$data = $db->where(array('cat_id' => $cat_id))->get_field('attr_group');
 	$grp = str_replace("\r", '', $data);
 	if ($grp) {
 		return explode("\n", $grp);

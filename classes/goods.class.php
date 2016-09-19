@@ -45,26 +45,28 @@ class goods {
      * @return array
      */
     public static function goods_list($is_delete, $real_goods = 1, $conditions = '') {
-        $db = RC_Loader::load_app_model('goods_viewmodel', 'goods');
+//     	$db = RC_Loader::load_app_model('goods_viewmodel', 'goods');
+        
         /* 过滤条件 */
         $param_str = '-' . $is_delete . '-' . $real_goods;
         $day = getdate();
         $today = RC_Time::local_mktime(23, 59, 59, $day ['mon'], $day ['mday'], $day ['year']);
     
-        $filter ['cat_id'] = empty ($_REQUEST ['cat_id']) ? 0 : intval($_REQUEST ['cat_id']);
-        $filter ['intro_type'] = empty ($_REQUEST ['intro_type']) ? '' : trim($_REQUEST ['intro_type']);
-        $filter ['is_promote'] = empty ($_REQUEST ['is_promote']) ? 0 : intval($_REQUEST ['is_promote']);
-        $filter ['stock_warning'] = empty ($_REQUEST ['stock_warning']) ? 0 : intval($_REQUEST ['stock_warning']);
-        $filter ['brand_id'] = empty ($_REQUEST ['brand_id']) ? 0 : intval($_REQUEST ['brand_id']);
-        $filter ['keyword'] = empty ($_REQUEST ['keyword']) ? '' : trim($_REQUEST ['keyword']);
-        $filter ['suppliers_id'] = isset ($_REQUEST ['suppliers_id']) ? (empty ($_REQUEST ['suppliers_id']) ? '' : trim($_REQUEST ['suppliers_id'])) : '';
-        $filter ['is_on_sale'] = !empty($_REQUEST ['is_on_sale']) ? ($_REQUEST ['is_on_sale'] == 1 ? 1 : 2) : 0;
+        $filter ['cat_id'] 			= empty ($_REQUEST ['cat_id']) 			? 0 	: intval($_REQUEST ['cat_id']);
+        $filter ['intro_type'] 		= empty ($_REQUEST ['intro_type']) 		? '' 	: trim($_REQUEST ['intro_type']);
+        $filter ['is_promote'] 		= empty ($_REQUEST ['is_promote']) 		? 0 	: intval($_REQUEST ['is_promote']);
+        $filter ['stock_warning'] 	= empty ($_REQUEST ['stock_warning']) 	? 0 	: intval($_REQUEST ['stock_warning']);
+        $filter ['brand_id'] 		= empty ($_REQUEST ['brand_id']) 		? 0 	: intval($_REQUEST ['brand_id']);
+        $filter ['keyword'] 		= empty ($_REQUEST ['keyword']) 		? '' 	: trim($_REQUEST ['keyword']);
+        
+        $filter ['suppliers_id'] 	= isset ($_REQUEST ['suppliers_id']) 	? (empty ($_REQUEST ['suppliers_id']) ? '' : trim($_REQUEST ['suppliers_id'])) : '';
+        $filter ['is_on_sale'] 		= !empty($_REQUEST ['is_on_sale']) 		? ($_REQUEST ['is_on_sale'] == 1 ? 1 : 2) : 0;
     
-        $filter ['sort_by'] = empty ($_REQUEST ['sort_by']) ? 'goods_id' : trim($_REQUEST ['sort_by']);
-        $filter ['sort_order'] = empty ($_REQUEST ['sort_order']) ? 'DESC' : trim($_REQUEST ['sort_order']);
-        $filter ['extension_code'] = empty ($_REQUEST ['extension_code']) ? '' : trim($_REQUEST ['extension_code']);
-        $filter ['is_delete'] = $is_delete;
-        $filter ['real_goods'] = $real_goods;
+        $filter ['sort_by'] 		= empty ($_REQUEST ['sort_by']) 		? 'goods_id' 	: trim($_REQUEST ['sort_by']);
+        $filter ['sort_order'] 		= empty ($_REQUEST ['sort_order']) 		? 'DESC' 		: trim($_REQUEST ['sort_order']);
+        $filter ['extension_code'] 	= empty ($_REQUEST ['extension_code']) 	? '' 			: trim($_REQUEST ['extension_code']);
+        $filter ['is_delete'] 		= $is_delete;
+        $filter ['real_goods'] 		= $real_goods;
     
         $where = $filter ['cat_id'] > 0 ? " AND " . get_children($filter ['cat_id']) : '';
     
@@ -124,7 +126,8 @@ class goods {
     
         $where .= $conditions;
         /* 记录总数 */
-        $count = $db->join(null)->where('is_delete = ' . $is_delete . '' . $where)->count();
+// 		$count = $db->join(null)->where('is_delete = ' . $is_delete . '' . $where)->count();
+        $count = RC_DB::table('goods as g')->whereRaw('is_delete = ' . $is_delete . '' . $where)->count('goods_id');
 
         $count_where = "is_delete='$is_delete'" . $where . " AND is_on_sale='1'";
 
@@ -135,14 +138,34 @@ class goods {
        
         //TODO  已上架数据
         $count_where = str_replace("is_on_sale='0'", "is_on_sale='1'", $count_where);
-        $count_on_sale = $db->join(null)->where($count_where)->count();
+        
+// 		$count_on_sale = $db->join(null)->where($count_where)->count();
+        $count_on_sale = RC_DB::table('goods as g')->whereRaw($count_where)->count('goods_id');
+        
         //TODO  未上架数据
         $count_where = str_replace("is_on_sale='1'", "is_on_sale='0'", $count_where);
-        $count_not_sale = $db->join(null)->where($count_where)->count();
+        
+// 		$count_not_sale = $db->join(null)->where($count_where)->count();
+        $count_not_sale = RC_DB::table('goods as g')->whereRaw($count_where)->count('goods_id');
+        
         $page = new ecjia_page ($count, 10, 5);
         $filter ['record_count'] = $count;
-        $sql = $db->join(null)->field('goods_id, goods_name, goods_type, goods_sn, shop_price, goods_thumb, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, integral,(promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ')|is_promote')->where('is_delete = ' . $is_delete . '' . $where)->order($filter ['sort_by'] . ' ' . $filter ['sort_order'])->limit($page->limit())->select();
-        $filter ['keyword'] = stripslashes($filter ['keyword']);
+//         $sql = $db->join(null)
+//         	->field('goods_id, goods_name, goods_type, goods_sn, shop_price, goods_thumb, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, integral,(promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ')|is_promote')
+//         	->where('is_delete = ' . $is_delete . '' . $where)
+//         	->order($filter ['sort_by'] . ' ' . $filter ['sort_order'])
+//         	->limit($page->limit())
+//         	->select();
+        
+        $sql = RC_DB::table('goods as g')
+        	->selectRaw('goods_id, goods_name, goods_type, goods_sn, shop_price, goods_thumb, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, integral, (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ') as is_promote, review_status')
+        	->whereRaw('is_delete = ' . $is_delete . '' . $where)
+        	->orderBy($filter ['sort_by'], $filter['sort_order'])
+        	->take(10)
+        	->skip($page->start_id-1)
+        	->get();
+        	
+        $filter ['keyword'] 		= stripslashes($filter ['keyword']);
         $filter ['count_on_sale']	= $count_on_sale;
         $filter ['count_not_sale']	= $count_not_sale;
         $filter ['count_goods_num']	= $count_not_sale + $count_on_sale;

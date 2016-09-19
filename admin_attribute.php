@@ -5,10 +5,6 @@
 defined('IN_ECJIA') or exit('No permission resources.');
 
 class admin_attribute extends ecjia_admin {
-	private $db_attribute;
-	private $db_goods_type;
-	private $db_goods_attr;
-	
 	public function __construct() {
 		parent::__construct();
 
@@ -26,12 +22,9 @@ class admin_attribute extends ecjia_admin {
 		RC_Script::enqueue_script('bootstrap-editable-script', RC_Uri::admin_url('statics/lib/x-editable/bootstrap-editable/js/bootstrap-editable.min.js'), array(), false, true);
         RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url('statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css'));
 		RC_Script::enqueue_script('goods_attribute', RC_App::apps_url('statics/js/goods_attribute.js', __FILE__), array(), false, true);
-
-		$this->db_goods_type = RC_Model::model('goods/goods_type_model');
-        $this->db_attribute  = RC_Model::model('goods/attribute_model');
-        $this->db_goods_attr = RC_Model::model('goods/goods_attr_model');
-
-         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.goods_type_list'), RC_Uri::url('goods/admin_goods_type/init')));
+		RC_Script::localize_script('goods_attribute', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
+		
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.goods_type_list'), RC_Uri::url('goods/admin_goods_type/init')));
 	}
 
 	/**
@@ -91,6 +84,8 @@ class admin_attribute extends ecjia_admin {
 		
 		/* 取得商品分类列表 */
 		$this->assign('goods_type_list', goods_type_list($cat_id));
+		$this->assign('attr_groups', get_attr_groups($cat_id));
+		
 		$this->assign('ur_here', RC_Lang::get('goods::attribute.add_attribute'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin_attribute/init', 'cat_id='.$cat_id), 'text' => RC_Lang::get('goods::attribute.goods_attribute')));
 		$this->assign('form_action', RC_Uri::url('goods/admin_attribute/insert'));
@@ -110,24 +105,24 @@ class admin_attribute extends ecjia_admin {
 		if (empty($cat_id)) {
 			$this->showmessage(RC_Lang::get('goods::attribute.cat_not_empty'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		$count = $this->db_attribute->where(array('attr_name' => $_POST['attr_name'], 'cat_id' => $cat_id ))->count();
+		$count = RC_DB::table('attribute')->where('attr_name', trim($_POST['attr_name']))->where('cat_id', $cat_id)->count();
 		if ($count) {
 			$this->showmessage(RC_Lang::get('goods::attribute.name_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		/* 取得属性信息 */
 		$attr = array(
 			'cat_id'			=> $_POST['cat_id'],
-			'attr_name'			=> $_POST['attr_name'],
+			'attr_name'			=> trim($_POST['attr_name']),
 			'attr_index'		=> $_POST['attr_index'],
 			'attr_input_type'	=> $_POST['attr_input_type'],
 			'is_linked'			=> $_POST['is_linked'],
-			'attr_values'       => isset($_POST['attr_values']) ? $_POST['attr_values'] : '',
-			'attr_type'			=> empty($_POST['attr_type']) ? '0' : intval($_POST['attr_type']),
-			'attr_group'		=> isset($_POST['attr_group']) ? intval($_POST['attr_group']) : 0
+			'attr_values'       => isset($_POST['attr_values']) ? $_POST['attr_values'] 		: '',
+			'attr_type'			=> !empty($_POST['attr_type']) 	? intval($_POST['attr_type']) 	: 0,
+			'attr_group'		=> isset($_POST['attr_group']) 	? intval($_POST['attr_group']) 	: 0
 		);
 		
 		/* 入库、记录日志、提示信息 */
-		$attr_id = $this->db_attribute->insert($attr);
+		$attr_id  =RC_DB::table('attribute')->insertGetId($attr);
 		
 		if ($attr_id) {
 			ecjia_admin::admin_log($_POST['attr_name'], 'add', 'attribute');
@@ -161,7 +156,7 @@ class admin_attribute extends ecjia_admin {
 				'is_linked' 		=> 0,
 			);
 		} else {
-			$attr = $this->db_attribute->find(array('attr_id' => $_GET['attr_id']));
+			$attr = RC_DB::table('attribute')->where('attr_id', $_GET['attr_id'])->first();
 		}
 		$this->assign('attr', $attr);
 		$this->assign('attr_groups', get_attr_groups($attr['cat_id']));
@@ -171,7 +166,7 @@ class admin_attribute extends ecjia_admin {
 		/* 模板赋值 */
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__($is_add ? RC_Lang::get('system::system.10_attribute_add') : RC_Lang::get('system::system.52_attribute_add'))));
 		$this->assign('ur_here', $is_add ? RC_Lang::get('system::system.10_attribute_add') : RC_Lang::get('system::system.52_attribute_add'));
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin_attribute/init', array('cat_id' => $goods_type)), 'text' => RC_Lang::get('goods::attribute.goods_attribute')));
+		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin_attribute/init', array('cat_id' => $attr['cat_id'])), 'text' => RC_Lang::get('goods::attribute.goods_attribute')));
 		$this->assign('form_action', RC_Uri::url('goods/admin_attribute/update'));
 		
 		ecjia_screen::get_current_screen()->add_help_tab(array(
@@ -197,24 +192,24 @@ class admin_attribute extends ecjia_admin {
 		$cat_id = isset($_REQUEST['cat_id']) ? intval($_REQUEST['cat_id']) : 0;
 		$attr_id = isset($_POST['attr_id']) ? intval($_POST['attr_id']) : 0;
 		/* 检查名称是否重复 */
-		if ($this->db_attribute->attribute_count(array('cat_id' => $cat_id, 'attr_name' => $_POST['attr_name'], 'attr_id' => array('neq' => $_POST['attr_id'])))) {
+		if (RC_DB::table('attribute')->where('cat_id', $cat_id)->where('attr_name', trim($_POST['attr_name']))->where('attr_id', '!=', $_POST['attr_id'])->count()) {
 			$this->showmessage(RC_Lang::get('goods::attribute.name_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 			
 		/* 取得属性信息 */
 		$attr = array(
 			'cat_id'			=> $cat_id,
-			'attr_name'			=> $_POST['attr_name'],
+			'attr_name'			=> trim($_POST['attr_name']),
 			'attr_index'		=> $_POST['attr_index'],
 			'attr_input_type'	=> $_POST['attr_input_type'],
 			'is_linked'			=> $_POST['is_linked'],
-			'attr_values'       => isset($_POST['attr_values']) ? $_POST['attr_values'] : '',
-			'attr_type'			=> empty($_POST['attr_type']) ? '0' : intval($_POST['attr_type']),
-			'attr_group'		=> isset($_POST['attr_group']) ? intval($_POST['attr_group']) : 0
+			'attr_values'       => isset($_POST['attr_values']) ? $_POST['attr_values'] 		: '',
+			'attr_type'			=> !empty($_POST['attr_type']) 	? intval($_POST['attr_type']) 	: 0 ,
+			'attr_group'		=> isset($_POST['attr_group']) 	? intval($_POST['attr_group']) 	: 0
 		);
 	
 		/* 入库、记录日志、提示信息 */
-		$this->db_attribute->attribute_manage($attr);
+		RC_DB::table('attribute')->where('attr_id', $attr_id)->update($attr);
 		ecjia_admin::admin_log($_POST['attr_name'], 'edit', 'attribute');
 		
 		$links = array(
@@ -228,11 +223,12 @@ class admin_attribute extends ecjia_admin {
 	 */
 	public function remove() {
 		$this->admin_priv('attr_delete', ecjia::MSGTYPE_JSON);
-		
 
 		$id = intval($_GET['id']);
-		$this->db_attribute->where(array('attr_id' => $id))->delete();
-		$this->db_goods_attr->where(array('attr_id' => $id))->delete();
+		
+		RC_DB::table('attribute')->where('attr_id', $id)->delete();
+		RC_DB::table('goods_attr')->where('attr_id', $id)->delete();
+		
 		$this->showmessage(RC_Lang::get('goods::attribute.drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
@@ -242,15 +238,18 @@ class admin_attribute extends ecjia_admin {
 	public function batch() {
 		$this->admin_priv('attr_delete', ecjia::MSGTYPE_JSON);
 		
+		$cat_id = !empty($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
 		/* 取得要操作的编号 */
 		if (isset($_POST['checkboxes'])) {
-			$count = count(explode(',', $_POST['checkboxes']));
-			$ids	= isset($_POST['checkboxes']) ? $_POST['checkboxes'] : 0;
-			$this->db_attribute->in(array('attr_id' => $ids))->delete();
-			$this->db_goods_attr->in(array('attr_id' => $ids))->delete();
+			$ids	= explode(',', $_POST['checkboxes']);
+			$count 	= count($ids);
+			
+			RC_DB::table('attribute')->whereIn('attr_id', $ids)->delete();
+			RC_DB::table('goods_attr')->whereIn('attr_id', $ids)->delete();
+			
 			/* 记录日志 */
 			ecjia_admin::admin_log('', 'batch_remove', 'attribute');
-			$this->showmessage(sprintf(RC_Lang::get('goods::attribute.drop_ok'), $count), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_attribute/init')));
+			$this->showmessage(sprintf(RC_Lang::get('goods::attribute.drop_ok'), $count), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_attribute/init', array('cat_id' => $cat_id))));
 		}
 	}
 	
@@ -264,19 +263,16 @@ class admin_attribute extends ecjia_admin {
 		$val = trim($_POST['value']);
 	
 		/* 取得该属性所属商品属性id */
-		$cat_id= $this->db_attribute->where(array('attr_id' => $id))->get_field('cat_id');
+		$cat_id = RC_DB::table('attribute')->where('attr_id', $id)->pluck('cat_id');
 		/* 检查名称是否重复 */
 		if (!empty($val)) {
-			if ($val != $attr['attr_name']) {
-				if ($this->db_attribute->attribute_count(array('attr_name' => $val, 'cat_id' => $attr['cat_id'])) != 0) {
-					$this->showmessage(RC_Lang::get('goods::attribute.name_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-				}
+			if (RC_DB::table('attribute')->where('attr_name', $val)->where('cat_id', $cat_id)->where('attr_id', '!=', $id)->count() != 0) {	
+				$this->showmessage(RC_Lang::get('goods::attribute.name_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
 			$data = array(
-				'attr_id' 	=> $id,
 				'attr_name' => $val
 			);
-			if ($this->db_attribute->attribute_manage($data)) {
+			if (RC_DB::table('attribute')->where('attr_id', $id)->update($data)) {
 				ecjia_admin::admin_log($val, 'edit', 'attribute');
 				$this->showmessage(RC_Lang::get('goods::attribute.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 			}
@@ -300,10 +296,9 @@ class admin_attribute extends ecjia_admin {
 		}
 	
 		$data = array(
-			'attr_id' 		=> $id,
 			'sort_order' 	=> $val
 		);
-		if ($this->db_attribute->attribute_manage($data)) {
+		if (RC_DB::table('attribute')->where('attr_id', $id)->update($data)) {
 			$this->showmessage(RC_Lang::get('goods::attribute.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		}
 	}

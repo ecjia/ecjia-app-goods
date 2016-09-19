@@ -11,8 +11,10 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @return  boolean
  */
 function cat_exists($cat_name, $parent_cat, $exclude = 0) {
-	$db = RC_Model::model('goods/category_model');
-	return ($db->where(array('parent_id' => $parent_cat, 'cat_name' => $cat_name, 'cat_id' => array('neq' => $exclude)))->count() > 0) ? true : false;
+// 	$db = RC_Model::model('goods/category_model');
+// 	return ($db->where(array('parent_id' => $parent_cat, 'cat_name' => $cat_name, 'cat_id' => array('neq' => $exclude)))->count() > 0) ? true : false;
+	
+	return (RC_DB::table('category')->where('parent_id', $parent_cat)->where('cat_name', $cat_name)->where('cat_id', '!=', $exclude)->count() > 0) ? true : false;
 }
 
 /**
@@ -34,16 +36,35 @@ function cat_exists($cat_name, $parent_cat, $exclude = 0) {
 function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
 	// 加载方法
 	RC_Loader::load_app_func('common', 'goods');
-	$db_goods = RC_Model::model('goods/goods_model');
-	$db_category = RC_Model::model('goods/sys_category_viewmodel');
-	$db_goods_cat = RC_Model::model('goods/goods_cat_viewmodel');
+	
+// 	$db_goods = RC_Model::model('goods/goods_model');
+// 	$db_category = RC_Model::model('goods/sys_category_viewmodel');
+// 	$db_goods_cat = RC_Model::model('goods/goods_cat_viewmodel');
+	
 	static $res = NULL;	
 	if ($res === NULL) {
 		$data = false;
 		if ($data === false) {
-			$res = $db_category->join('category')->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
-			$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0, 'is_on_sale' => 1))->group ('cat_id asc')->select();
-			$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0, 'g.is_on_sale' => 1))->group ('gc.cat_id')->select();
+			
+// 			$res = $db_category->join('category')->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+// 			$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0, 'is_on_sale' => 1))->group ('cat_id asc')->select();
+// 			$res3 = $db_goods_cat->join('goods')->where(array('g.is_delete' => 0, 'g.is_on_sale' => 1))->group ('gc.cat_id')->select();
+			
+			$res = RC_DB::table('category as c')
+				->leftJoin('category as s', RC_DB::raw('c.cat_id'), '=', RC_DB::raw('s.parent_id'))
+				->selectRaw('c.cat_id, c.cat_name, c.measure_unit, c.parent_id, c.is_show, c.show_in_nav, c.grade, c.sort_order, COUNT(s.cat_id) AS has_children')
+				->groupBy(RC_DB::raw('c.cat_id'))
+				->orderBy(RC_DB::raw('c.parent_id'), 'asc')->orderBy(RC_DB::raw('c.sort_order'), 'asc')
+				->get();
+			
+			$res2 = RC_DB::table('goods')->selectRaw('cat_id, COUNT(*) as goods_num')->where('is_delete', 0)->where('is_on_sale', 1)->groupBy('cat_id')->get();
+			
+			$res3 = RC_DB::table('goods_cat as gc')
+				->leftJoin('goods as g', RC_DB::raw('g.goods_id'), '=', RC_DB::raw('gc.goods_id'))
+				->where(RC_DB::raw('g.is_delete'), 0)->where(RC_DB::raw('g.is_on_sale'), 1)
+				->groupBy(RC_DB::raw('gc.cat_id'))
+				->get();
+			
 			$newres = array ();
 			if (!empty($res2)) {
 				foreach($res2 as $k => $v) {
@@ -364,11 +385,13 @@ function get_admin_goods_cat_list_child($arr){
 
 //添加类目证件标题
 function get_documentTitle_insert_update($dt_list, $cat_id, $dt_id = array()) {
-	$db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
+// 	$db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
+	
 	for ($i=0; $i<count($dt_list); $i++) {
 		$dt_list[$i] = !empty($dt_list[$i]) ? trim($dt_list[$i]) : '';
 		if (!empty($dt_id[$i])) {
-			$catId = $db_merchants_documenttitle->where(array('dt_id' => $dt_id[$i]))->get_field('cat_id');
+// 			$catId = $db_merchants_documenttitle->where(array('dt_id' => $dt_id[$i]))->get_field('cat_id');
+			$catId = RC_DB::table('merchants_documenttitle')->where('dt_id', $dt_id[$i])->pluck('cat_id');
 		} else {
 			$catId = 0;
 		}
@@ -378,21 +401,26 @@ function get_documentTitle_insert_update($dt_list, $cat_id, $dt_id = array()) {
 				'dt_title' 	=> $dt_list[$i]
 			);
 			if ($catId > 0) {
-				$db_merchants_documenttitle->where(array('dt_id' => $dt_id[$i]))->update($parent);
+// 				$db_merchants_documenttitle->where(array('dt_id' => $dt_id[$i]))->update($parent);
+				RC_DB::table('merchants_documenttitle')->where('dt_id', $dt_id[$i])->update($parent);
 			} else {
-				$id[] = $db_merchants_documenttitle->insert($parent);
+// 				$id[] = $db_merchants_documenttitle->insert($parent);
+				$id[] = RC_DB::table('merchants_documenttitle')->insertGetId($parent);
 			}
 			
 		} else {
 			if ($catId > 0) {
 				//删除二级类目表数据
 // 				$db_merchants_documenttitle->where(array('dt_id' => $dt_id[$i], 'user_id' => $_SESSION['ru_id']))->delete();
-				$db_merchants_documenttitle->where(array('dt_id' => $dt_id[$i]))->delete();
+// 				$db_merchants_documenttitle->where(array('dt_id' => $dt_id[$i]))->delete();
+				RC_DB::table('merchants_documenttitle')->where('dt_id', $dt_id[$i])->delete();
 			}
 		}
 	}
 	$list = !empty($id) ? array_merge($dt_id, $id) : $dt_id;
-	$dt_id_list = $db_merchants_documenttitle->where(array('cat_id' => $cat_id))->get_field('dt_id', true);
+// 	$dt_id_list = $db_merchants_documenttitle->where(array('cat_id' => $cat_id))->get_field('dt_id', true);
+	$dt_id_list = RC_DB::table('merchants_documenttitle')->where('cat_id', $cat_id)->lists('dt_id');
+	
 	$arr = array();
 	if (!empty($dt_id_list)) {
 		foreach ($dt_id_list as $v) {
@@ -401,7 +429,8 @@ function get_documentTitle_insert_update($dt_list, $cat_id, $dt_id = array()) {
 			}
 		}
 		if (!empty($arr)) {
-			$db_merchants_documenttitle->in(array('dt_id' => $arr))->delete();
+// 			$db_merchants_documenttitle->in(array('dt_id' => $arr))->delete();
+			RC_DB::table('merchants_documenttitle')->whereIn('dt_id', $arr)->delete();
 		}
 	}
 }

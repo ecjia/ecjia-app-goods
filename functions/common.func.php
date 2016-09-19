@@ -45,13 +45,14 @@ function db_create_in($item_list, $field_name = '') {
  * @return array 品牌列表 id => name
  */
 function get_brand_list() {
-	$db = RC_Model::model ('goods/brand_model');
-
-	$res = $db->field('brand_id, brand_name')->order('sort_order asc')->select();
+// 	$db = RC_Model::model('goods/brand_model');
+// 	$res = $db->field('brand_id, brand_name')->order('sort_order asc')->select();
+	$res = RC_DB::table('brand')->select('brand_id', 'brand_name')->orderBy('sort_order', 'asc')->get();
+	
 	$brand_list = array ();
 	if (! empty ( $res )) {
 		foreach ( $res as $row ) {
-			$brand_list[$row ['brand_id']]= addslashes($row ['brand_name']);
+			$brand_list[$row ['brand_id']] = addslashes($row ['brand_name']);
 		}
 	}
 	return $brand_list;
@@ -146,23 +147,29 @@ function get_image_path($goods_id, $image = '', $thumb = false, $call = 'goods',
  * @return 优惠价格列表
  */
 function get_volume_price_list($goods_id, $price_type = '1') {
-	$db = RC_Model::model('goods/volume_price_model');
-	$volume_price = array ();
+// 	$db = RC_Model::model('goods/volume_price_model');
+// 	$res = $db->field ('`volume_number` , `volume_price`')->where(array('goods_id' => $goods_id, 'price_type' => $price_type))->order ('`volume_number` asc')->select();
+	
+	$res = RC_DB::table('volume_price')
+		->select('volume_number', 'volume_price')
+		->where('goods_id', $goods_id)
+		->where('price_type', $price_type)
+		->orderBy('volume_number', 'asc')
+		->get();
+	
+	$volume_price = array();
 	$temp_index = '0';
-
-	$res = $db->field ('`volume_number` , `volume_price`')->where(array('goods_id' => $goods_id, 'price_type' => $price_type))->order ('`volume_number` asc')->select();
-	if (! empty ( $res )) {
-		foreach ( $res as $k => $v ) {
-			$volume_price [$temp_index] = array ();
-			$volume_price [$temp_index] ['number'] = $v ['volume_number'];
-			$volume_price [$temp_index] ['price'] = $v ['volume_price'];
-			$volume_price [$temp_index] ['format_price'] = price_format ( $v ['volume_price'] );
+	if (!empty($res)) {
+		foreach ($res as $k => $v) {
+			$volume_price[$temp_index] 					= array();
+			$volume_price[$temp_index]['number'] 		= $v['volume_number'];
+			$volume_price[$temp_index]['price'] 		= $v['volume_price'];
+			$volume_price[$temp_index]['format_price'] 	= price_format($v['volume_price']);
 			$temp_index ++;
 		}
 	}
 	return $volume_price;
 }
-
 
 
 /**

@@ -29,7 +29,6 @@ class goods_type_viewmodel extends Component_Model_View {
 	public function goods_type_list($option) {
 		return $this->join($option['table'])->field($option['field'])->group($option['group'])->order($option['order'])->limit($option['limit'])->select();
 	}
-	
 }
 
 // end

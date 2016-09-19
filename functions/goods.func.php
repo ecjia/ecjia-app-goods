@@ -1473,38 +1473,52 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
  * @return  array
  */
 function get_goods_type() {
-	$dbview = RC_Model::model('goods/goods_type_viewmodel');
-	$db_goods_type = RC_Model::model('goods/goods_type_model');
-	$dbview->view = array(
-		'attribute' => array(
-			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-			'alias' => 'a',
-			'field' => 'gt.*,count(a.cat_id)|attr_count',
-			'on'    => 'a.cat_id = gt.cat_id'
-		),
-// 		'merchants_shop_information' => array(
-// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias' => 'ms',
-// 			'on'    => 'ms.user_id = gt.user_id'
-// 		),
-		'seller_shopinfo' => array(
-				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias' => 'ssi',
-				'on'    => 'ssi.id = gt.seller_id'
-		),
-	);
-	$count = $db_goods_type->count();
-	$page = new ecjia_page($count, 15, 5);
-	$field = 'gt.*, count(a.cat_id) | attr_count, ssi.shop_name';
-	$all = $dbview->field($field)->group('gt.cat_id')->order(array('gt.cat_id' => 'desc'))->limit($page->limit())->select();
+// 	$dbview = RC_Model::model('goods/goods_type_viewmodel');
+// 	$db_goods_type = RC_Model::model('goods/goods_type_model');
 	
-	if (!empty($all)) {
-		foreach ($all AS $key=>$val) {
-			$all[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
-			$all[$key]['shop_name'] = $val['seller_id'] == 0 ? '' : $val['shop_name'];
+// 	$dbview->view = array(
+// 		'attribute' => array(
+// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+// 			'alias' => 'a',
+// 			'field' => 'gt.*,count(a.cat_id)|attr_count',
+// 			'on'    => 'a.cat_id = gt.cat_id'
+// 		),
+// // 		'merchants_shop_information' => array(
+// // 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+// // 			'alias' => 'ms',
+// // 			'on'    => 'ms.user_id = gt.user_id'
+// // 		),
+// 		'seller_shopinfo' => array(
+// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+// 			'alias' => 'ssi',
+// 			'on'    => 'ssi.id = gt.seller_id'
+// 		),
+// 	);
+// 	$count = $db_goods_type->count();
+	
+	$count = RC_DB::table('goods_type')->count();
+	$page = new ecjia_page($count, 15, 5);
+	
+	$field = 'gt.*, count(a.cat_id) as attr_count, ssi.shop_name';
+// 	$goods_type_list = $dbview->field($field)->group('gt.cat_id')->order(array('gt.cat_id' => 'desc'))->limit($page->limit())->select();
+	
+	$goods_type_list = RC_DB::table('goods_type as gt')
+		->leftJoin('attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+		->leftJoin('seller_shopinfo as ssi', RC_DB::raw('ssi.id'), '=', RC_DB::raw('gt.seller_id'))
+		->selectRaw($field)
+		->groupBy(RC_DB::Raw('gt.cat_id'))
+		->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
+		->take(15)
+		->skip($page->start_id-1)
+		->get();
+	
+	if (!empty($goods_type_list)) {
+		foreach ($goods_type_list AS $key=>$val) {
+			$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
+			$goods_type_list[$key]['shop_name'] = $val['seller_id'] == 0 ? '' : $val['shop_name'];
 		}
 	}
-	return array('type' => $all, 'page' => $page->show(5), 'desc' => $page->page_desc());
+	return array('item' => $goods_type_list, 'page' => $page->show(5), 'desc' => $page->page_desc());
 }
 
 /**
@@ -1513,29 +1527,38 @@ function get_goods_type() {
  * @return  array
  */
 function get_attr_list() {
-	$dbview  = RC_Model::model('goods/attribute_goods_viewmodel');
+// 	$dbview  = RC_Model::model('goods/attribute_goods_viewmodel');
+	$db_attribute = RC_DB::table('attribute as a');
 	/* 查询条件 */
 	$filter = array();
-	$filter['cat_id'] = empty($_REQUEST['cat_id']) ? 0 : intval($_REQUEST['cat_id']);
-	$filter['sort_by'] = empty($_REQUEST['sort_by']) ? 'sort_order' : trim($_REQUEST['sort_by']);
-	$filter['sort_order'] = empty($_REQUEST['sort_order']) ? 'asc' : trim($_REQUEST['sort_order']);
+	$filter['cat_id'] 		= empty($_REQUEST['cat_id']) 		? 0 			: intval($_REQUEST['cat_id']);
+	$filter['sort_by'] 		= empty($_REQUEST['sort_by']) 		? 'sort_order' 	: trim($_REQUEST['sort_by']);
+	$filter['sort_order']	= empty($_REQUEST['sort_order']) 	? 'asc' 		: trim($_REQUEST['sort_order']);
 	
-	$where = (!empty($filter['cat_id'])) ? " a.cat_id = '$filter[cat_id]' " : '';
-	$count = $dbview->join(null)->where($where)->count();
-
-	/* 加载分页类 */
+	$where = (!empty($filter['cat_id'])) ? " a.cat_id = '".$filter['cat_id']."' " : '';
+	if (!empty($filter['cat_id'])) {
+		$db_attribute->whereRaw($where);
+	}
+// 	$count = $dbview->join(null)->where($where)->count();
+	$count = $db_attribute->count('attr_id');
 	$page = new ecjia_page($count, 15, 5);
 
 	/* 查询 */
-	$dbview->view =array(
-		'goods_type' => array(
-			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-			'alias' => 't',
-			'field' => 'a.*, t.cat_name',
-			'on'    => 'a.cat_id = t.cat_id'
-		)
-	);
-	$row = $dbview->join('goods_type')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
+// 	$dbview->view =array(
+// 		'goods_type' => array(
+// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+// 			'alias' => 't',
+// 			'field' => 'a.*, t.cat_name',
+// 			'on'    => 'a.cat_id = t.cat_id'
+// 		)
+// 	);
+// 	$row = $dbview->join('goods_type')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
+	
+	$row = $db_attribute
+		->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))
+		->selectRaw('a.*, t.cat_name')
+		->orderby($filter['sort_by'], $filter['sort_order'])
+		->take(15)->skip($page->start_id-1)->get();
 
 	if (!empty($row)) {
 		foreach ($row AS $key => $val) {
@@ -1555,8 +1578,10 @@ function get_attr_list() {
  * @return  array
  */
 function get_goods_type_info($cat_id) {
-	$db_goods_type = RC_Model::model('goods/goods_type_model');
-	return $db_goods_type->find(array('cat_id' => $cat_id));
+// 	$db_goods_type = RC_Model::model('goods/goods_type_model');
+// 	return $db_goods_type->find(array('cat_id' => $cat_id));
+	
+	return RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
 }
 
 /**
@@ -1569,11 +1594,12 @@ function get_goods_type_info($cat_id) {
  * @return  void
  */
 function update_attribute_group($cat_id, $old_group, $new_group) {
-	$db_goods_type = RC_Model::model('goods/goods_type_model');
+// 	$db_goods_type = RC_Model::model('goods/goods_type_model');
 	$data = array(
 		'attr_group' => $new_group,
 	);
-	$db_goods_type->where(array('cat_id' => $cat_id, 'attr_group' => $old_group))->update($data);
+// 	$db_goods_type->where(array('cat_id' => $cat_id, 'attr_group' => $old_group))->update($data);
+	RC_DB::table('goods_type')->where('cat_id', $cat_id)->where('attr_group', $old_group)->update($data);
 }
 
 // end

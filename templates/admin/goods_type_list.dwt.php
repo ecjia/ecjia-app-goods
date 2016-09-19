@@ -24,7 +24,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<!-- {foreach from=$goods_type_arr.type item=goods_type} -->
+				<!-- {foreach from=$goods_type_list.item item=goods_type} -->
 				<tr>
 					<td class="hide-edit-area">
 						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin_goods_type/edit_type_name')}" data-name="edit_type_name" data-pk="{$goods_type.cat_id}" data-title="{lang key='goods::goods_type.enter_type_name'}"><!-- {$goods_type.cat_name} --></span>
@@ -41,7 +41,7 @@
 				<!-- {foreachelse} --><tr><td class="no-records" colspan="4">{lang key='system::system.no_records'}</td></tr><!-- {/foreach} -->
 			</tbody>
 		</table>
-		<!-- {$goods_type_arr.page} -->
+		<!-- {$goods_type_list.page} -->
 	</div>
 </div>
 <!-- {/block} -->

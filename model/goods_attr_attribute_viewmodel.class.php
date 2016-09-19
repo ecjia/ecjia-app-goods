@@ -9,17 +9,14 @@ class goods_attr_attribute_viewmodel extends Component_Model_View {
 		$this->db_setting = 'default';
 		$this->table_name = 'goods_attr';
 		$this->table_alias_name = 'ga';
-		
-
 		$this->view = array(
-				'attribute' => array(
-						'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-						'alias' => 'a',
-						'field' => 'ga.goods_attr_id, ga.attr_value',
-						'on'    => 'a.attr_id = ga.attr_id',
-				),
+			'attribute' => array(
+				'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+				'alias' => 'a',
+				'field' => 'ga.goods_attr_id, ga.attr_value',
+				'on'    => 'a.attr_id = ga.attr_id',
+			),
 		);
-		
 		parent::__construct();
 	}
 

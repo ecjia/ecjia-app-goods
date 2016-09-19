@@ -38,8 +38,8 @@
 						<span class="input-must">{lang key='system::system.require_field'}</span>
 					</div>
 				</div>
-				
-                <!-- {if $attr_groups} -->				  
+
+				<!-- {if $attr_groups} -->				  
 				<div class="control-group formSep">
 					<label class="control-label">{lang key='goods::attribute.label_attr_group'}</label>
 					<div class="controls no-chzn-container">
