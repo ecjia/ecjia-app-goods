@@ -214,6 +214,7 @@
 				<!-- {/foreach} -->
 			</tbody>
 		</table>
+		<!-- {$goods_list.page} -->
 	</div>
 </div>
 <!-- {/block} -->
