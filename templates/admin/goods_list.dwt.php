@@ -154,12 +154,8 @@
 						</div>
 					</td>	
 					
-					<td>
-						<!-- {if $goods.shop_name} -->
-					    <font style="color:#F00;">{$goods.shop_name}</font>
-					    <!-- {else} -->
-					    <font style="color:#0e92d0;">{t}自营{/t}</font>
-					    <!-- {/if} -->
+					<td class="ecjiafc-red">
+					    {$goods.merchants_name}
 					</td>	
 					
 					<td>

@@ -158,7 +158,8 @@ class goods {
 //         	->select();
         
         $sql = RC_DB::table('goods as g')
-        	->selectRaw('goods_id, goods_name, goods_type, goods_sn, shop_price, goods_thumb, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, integral, (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ') as is_promote, review_status')
+        	->leftJoin('store_franchisee as s', RC_DB::raw('g.store_id'), '=', RC_DB::raw('s.store_id'))
+        	->selectRaw('goods_id, goods_name, goods_type, goods_sn, shop_price, goods_thumb, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, integral, (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ') as is_promote, review_status, s.merchants_name')
         	->whereRaw('is_delete = ' . $is_delete . '' . $where)
         	->orderBy($filter ['sort_by'], $filter['sort_order'])
         	->take(10)
