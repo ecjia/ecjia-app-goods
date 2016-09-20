@@ -165,8 +165,8 @@
 					<td>
 						<span class="cursor_pointer review_static" data-trigger="editable" data-value="{$goods.review_status}" data-type="select"  data-url="{RC_Uri::url('goods/admin/review')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="请选择审核状态">
 							<!--{if $goods.review_status eq 1}-->未审核<!-- {/if} -->
-							<!--{if $goods.review_status eq 2}-->审核未通过<!-- {/if} -->
-							<!--{if $goods.review_status eq 3 || $goods.review_status eq 4}-->审核已通过<!-- {/if} -->
+							<span class="ecjiafc-red"><!--{if $goods.review_status eq 2}-->审核未通过<!-- {/if} --></span>
+							<span class="ecjiafc-blue"><!--{if $goods.review_status eq 3 || $goods.review_status eq 4}-->审核已通过<!-- {/if} --></span>
 							<!--{if $goods.review_status eq 5}-->无需审核<!-- {/if} -->
 						</span>
 					</td>
