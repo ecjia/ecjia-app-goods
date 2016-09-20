@@ -15,13 +15,41 @@
 			app.goods_list.review_static();
 		},
 		review_static : function(){
-			$('.review_static').editable({
-				source: [
-					{value: 1, text: '未审核'},
-					{value: 2, text: '审核未通过'},
-					{value: 3, text: '审核已通过'},
-					{value: 5, text: '无需审核'}
-				]
+			$('.review_static').each(function(){
+				var $this   = $(this);
+				var oldval	= $this.text();
+				var url     = $this.attr('data-url');
+				var name	= $this.attr('data-name') || 0;
+				var pk      = $this.attr('data-pk') || 0;
+				var title  	= $this.attr('data-title');
+				var type	= $this.attr('data-text') || 'text';
+				if(!name || !pk || !url){console.log('editable缺少参数');return;}
+				if(!title)title = '编辑信息!';
+				var pjaxurl = $this.attr('data-pjax-url') || '';
+				$this.editable({
+					source: [
+						{value: 1, text: '未审核'},
+						{value: 2, text: '审核未通过'},
+						{value: 3, text: '审核已通过'},
+						{value: 5, text: '无需审核'}
+					],
+					url : url,
+					name : name,
+					pk : pk,
+					title : '请输入商品货号',
+					type : type,
+					dataType : 'json', 
+					success : function(data){
+						if(data.state == 'error')return data.message;
+						if(pjaxurl!=''){
+							ecjia.pjax(pjaxurl, function(){
+								ecjia.admin.showmessage(data); 
+							});
+						} else {
+							ecjia.admin.showmessage(data);
+						}
+					}
+				});
 			}).on('shown', function(e) {
 				if ($(".editable-container select option").length) {
 					$(".editable-container select").chosen({
