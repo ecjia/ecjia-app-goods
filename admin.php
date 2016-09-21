@@ -201,6 +201,7 @@ class admin extends ecjia_admin {
 		$action_link = array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::get('goods::goods.goods_list'));
 
 		$goods_list = goods::goods_list(1, -1);
+		
 		$this->assign('goods_list', $goods_list);
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
 		$this->assign('filter', $goods_list['filter']);
