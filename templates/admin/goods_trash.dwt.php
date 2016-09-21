@@ -8,6 +8,18 @@
 <!-- {/block} -->
 
 <!-- {block name="main_content"} -->
+<ul class="nav nav-pills">
+	<li class="{if $filter.type eq ''}active{/if}">
+		<a class="data-pjax" href='{url path="goods/admin/trash" args="{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}"}'>{lang key='goods::goods.intro_type'}
+			<span class="badge badge-info">{if $filter.count}{$filter.count}{else}0{/if}</span>
+		</a>
+	</li>
+	<li class="{if $filter.type eq 'merchant'}active{/if}">
+		<a class="data-pjax" href='{url path="goods/admin/trash" args="type=merchant{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}"}'>{lang key='goods::goods.merchant'}
+			<span class="badge badge-info">{if $filter.merchant}{$filter.merchant}{else}0{/if}</span>
+		</a>
+	</li>
+</ul>
 <div class="admin_goods goods_admin_trash">
 	<div>
 		<h3 class="heading">
@@ -33,6 +45,7 @@
 		<div class="choose_list f_r" >
 			<form action="{RC_Uri::url('goods/admin/trash')}"  method="post" class="f_r" name="searchForm">
 				<!-- <span>{lang key='goods::goods.keyword'} ：</span> TODO-->
+				<input type="text" class="w180" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{lang key='goods::goods.enter_merchant_keywords'}"/>
 				<input type="text" name="keyword" value="{$smarty.get.keyword}" placeholder="{lang key='goods::goods.enter_goods_keywords'}"/>
 				<button class="btn" type="submit">{lang key='system::system.button_search'}</button>
 			</form>
