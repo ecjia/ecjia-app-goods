@@ -518,7 +518,17 @@
 		search : function () {
 			$("form[name='searchForm']").on('submit',  function(e){
 				e.preventDefault();
-				var url = $("form[name='searchForm']").attr('action') + '&keyword=' +$("input[name='keyword']").val();
+				var url = $("form[name='searchForm']").attr('action');
+
+				var merchant_keywords = $("input[name='merchant_keywords']").val();
+				var keywords = $("input[name='keywords']").val();
+                //
+                if (keywords != '') {
+					url += '&keywords=' + keywords;
+                }
+                if (merchant_keywords != '') {
+					url += '&merchant_keywords=' + merchant_keywords;
+                }
 				ecjia.pjax(url);
 			});
 		}
