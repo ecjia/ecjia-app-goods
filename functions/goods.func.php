@@ -1495,16 +1495,38 @@ function get_goods_type() {
 // 		),
 // 	);
 // 	$count = $db_goods_type->count();
+
+	$filter['merchant_keywords']= !empty($_GET['merchant_keywords'])	? trim($_GET['merchant_keywords']) 	: '';
+	$filter['keywords'] 		= !empty($_GET['keywords']) 			? trim($_GET['keywords']) 			: '';
 	
-	$count = RC_DB::table('goods_type')->count();
+	$db_goods_type = RC_DB::table('goods_type as gt')->leftJoin('store_franchisee as s', RC_DB::raw('s.store_id'), '=', RC_DB::raw('gt.store_id'));
+	
+	if (!empty($filter['merchant_keywords'])) {
+		$db_goods_type->where(RC_DB::raw('s.merchants_name'), 'like', '%'.mysql_like_quote($filter['merchant_keywords']).'%');
+	}
+	
+	if (!empty($filter['keywords'])) {
+		$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
+	}
+	
+	$filter_count = $db_goods_type
+		->select(RC_DB::raw('count(*) as count'), RC_DB::raw('SUM(IF(gt.store_id > 0, 1, 0)) as merchant'))
+		->first();
+	
+	$filter['count'] 	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
+	$filter['merchant'] = $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
+	
+	$filter['type'] = isset($_GET['type']) ? $_GET['type'] : '';
+	if (!empty($filter['type'])) {
+		$db_goods_type->where(RC_DB::raw('gt.store_id'), '>', 0);
+	}
+	
+	$count = $db_goods_type->count();
 	$page = new ecjia_page($count, 15, 5);
 	
-	$field = 'gt.*, count(a.cat_id) as attr_count, ssi.shop_name';
-// 	$goods_type_list = $dbview->field($field)->group('gt.cat_id')->order(array('gt.cat_id' => 'desc'))->limit($page->limit())->select();
-	
-	$goods_type_list = RC_DB::table('goods_type as gt')
+	$field = 'gt.*, count(a.cat_id) as attr_count, s.merchants_name';
+	$goods_type_list = $db_goods_type
 		->leftJoin('attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
-		->leftJoin('seller_shopinfo as ssi', RC_DB::raw('ssi.id'), '=', RC_DB::raw('gt.seller_id'))
 		->selectRaw($field)
 		->groupBy(RC_DB::Raw('gt.cat_id'))
 		->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
@@ -1518,7 +1540,7 @@ function get_goods_type() {
 			$goods_type_list[$key]['shop_name'] = $val['seller_id'] == 0 ? '' : $val['shop_name'];
 		}
 	}
-	return array('item' => $goods_type_list, 'page' => $page->show(5), 'desc' => $page->page_desc());
+	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(5), 'desc' => $page->page_desc());
 }
 
 /**

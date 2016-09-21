@@ -108,9 +108,11 @@ class admin extends ecjia_admin {
 		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
 		
 		$seller_id = empty($_GET['seller_id']) ? 0 : $_GET['seller_id'];
-		$goods_list = goods::goods_list(0,1, '', $seller_id);
+		$goods_list = goods::goods_list(0, 1, '', $seller_id);
 
 		$this->assign('goods_list', $goods_list);
+		$this->assign('filter', $goods_list['filter']);
+		
 		$specifications = get_goods_type_specifications();
 		$this->assign('specifications', $specifications);
 		
