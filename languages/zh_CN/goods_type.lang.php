@@ -63,6 +63,13 @@ return array(
 	
 	'edit_type_help'	=> '欢迎访问ECJia智能后台编辑商品类型页面，可以在此页面编辑商品类型信息。',
 	'about_edit_type'	=> '关于编辑商品类型帮助文档',
+	
+	'merchants_name'	=> '商家名称',
+	'merchants'			=> '商家',
+	'all'				=> '全部',
+	'merchant_keywords'	=> '请输入商家名称关键字',
+	'goods_type_keywords' => '请输入商品类型关键字',
+	'search'			=> '搜索',
 );
 
 // end

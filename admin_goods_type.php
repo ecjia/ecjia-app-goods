@@ -48,10 +48,13 @@ class admin_goods_type extends ecjia_admin {
 		
 		$type = !empty($_GET['type']) ? $_GET['type'] : '';
 		$goods_type_list = get_goods_type();
-		
-		$this->assign('goods_type_list',   	$goods_type_list);
+
+		$this->assign('goods_type_list',	$goods_type_list);
+		$this->assign('filter',				$goods_type_list['filter']);
+
 		$this->assign('ur_here',          	RC_Lang::get('goods::goods_type.goods_type_list'));
 		$this->assign('action_link',      	array('text' => RC_Lang::get('goods::goods_type.add_goods_type'), 'href' => RC_Uri::url('goods/admin_goods_type/add')));
+		$this->assign('form_search',  		RC_Uri::url('goods/admin_goods_type/init'));
 		
 		$this->display('goods_type_list.dwt');
 	}
