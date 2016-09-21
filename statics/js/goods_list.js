@@ -10,7 +10,7 @@
 			});
 			bath_url = $("a[name=move_cat_ture]").attr("data-url");
 			app.goods_list.list_search();
-			app.goods_list.sift();
+			app.goods_list.filter();
 			app.goods_list.batch_move_cat();
 			app.goods_list.review_static();
 		},
@@ -64,28 +64,69 @@
 		list_search : function() {
 			$("form[name='searchForm']").on('submit', function(e) {
 				e.preventDefault();
-				var cat_id = $("select[name='cat_id']").val();		//分类
-				var brand_id = $("select[name='brand_id']").val();	//品牌
-				var keyword = $("input[name='keyword']").val();		//关键字
-				var intro_type = $("select[name='intro_type']").val(); //状态
+				var cat_id = $("select[name='cat_id']").val();						//分类
+				var brand_id = $("select[name='brand_id']").val();					//品牌
+				var intro_type = $("select[name='intro_type']").val(); 				//状态
+				var keywords = $("input[name='keywords']").val();					//关键字
+				var merchant_keywords = $("input[name='merchant_keywords']").val();	//商家关键字
 				var url = $("form[name='searchForm']").attr('action');
+				
 				if(cat_id == 'undefind')cat_id='';
 				if(brand_id == 'undefind')brand_id='';
 				if(intro_type == 'undefind')intro_type='';
-				ecjia.pjax(url + '&cat_id=' + cat_id + '&brand_id=' + brand_id + '&keyword=' + keyword +'&intro_type=' + intro_type);
+				if(keywords == 'undefind')keywords='';
+				if(merchant_keywords == 'undefind')merchant_keywords='';
+				
+				if (cat_id != '') {
+					url += '&cat_id=' + cat_id;
+				}
+				if (brand_id != '') {
+					url += '&brand_id=' + brand_id;
+				}
+				if (intro_type != '') {
+					url += '&intro_type=' + intro_type;
+				}
+				if (keywords != '') {
+					url += '&keywords=' + keywords;
+				}
+				if (merchant_keywords != '') {
+					url += '&merchant_keywords=' + merchant_keywords;
+				}
+				ecjia.pjax(url);
 			});
 		},
-		sift : function() {
+		filter : function() {
 			$('.screen-btn').on('click', function(e) {
 				e.preventDefault();
-				var cat_id = $("select[name='cat_id']").val();		//分类
-				var brand_id = $("select[name='brand_id']").val();	//品牌
-				var intro_type = $("select[name='intro_type']").val(); //状态
-				var url = $("form[name='siftForm']").attr('action');
+				var cat_id = $("select[name='cat_id']").val();						//分类
+				var brand_id = $("select[name='brand_id']").val();					//品牌
+				var intro_type = $("select[name='intro_type']").val(); 				//状态
+				var keywords = $("input[name='keywords']").val();					//关键字
+				var merchant_keywords = $("input[name='merchant_keywords']").val();	//商家关键字
+				var url = $("form[name='filterForm']").attr('action');
+				
 				if(cat_id == 'undefind')cat_id='';
 				if(brand_id == 'undefind')brand_id='';
 				if(intro_type == 'undefind')intro_type='';
-				ecjia.pjax(url + '&cat_id=' + cat_id + '&brand_id=' + brand_id + '&intro_type=' + intro_type);
+				if(keywords == 'undefind')keywords='';
+				if(merchant_keywords == 'undefind')merchant_keywords='';
+				
+				if (cat_id != '') {
+					url += '&cat_id=' + cat_id;
+				}
+				if (brand_id != '') {
+					url += '&brand_id=' + brand_id;
+				}
+				if (intro_type != '') {
+					url += '&intro_type=' + intro_type;
+				}
+				if (keywords != '') {
+					url += '&keywords=' + keywords;
+				}
+				if (merchant_keywords != '') {
+					url += '&merchant_keywords=' + merchant_keywords;
+				}
+				ecjia.pjax(url);
 			});
 		},
 		batch_move_cat : function() {
