@@ -96,13 +96,13 @@ class admin_brand extends ecjia_admin {
 		$site_url 	= RC_Format::sanitize_url( $_POST['site_url'] );
 		$brand_name = htmlspecialchars($_POST['brand_name']);
 		
-		if (empty($$brand_name)) {
+		if (empty($brand_name)) {
 			$this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
-		$is_only = $this->db_brand->where(array('brand_name' => $_POST['brand_name']))->count();
+		$is_only = $this->db_brand->where(array('brand_name' => $brand_name))->count();
 		if ($is_only != 0) {
-			$this->showmessage(sprintf(RC_Lang::lang('brandname_exist'), stripslashes($_POST['brand_name'])),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($_POST['brand_name'])),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
 		/*对描述处理*/
@@ -213,7 +213,7 @@ class admin_brand extends ecjia_admin {
 		$is_only = $this->db_brand->where(array('brand_name' => $brand_name, 'brand_id' => array('neq' => $id)))->count();
 
 		if ($is_only != 0){
-			$this->showmessage(sprintf(RC_Lang::lang('brandname_exist'), stripslashes($_POST['brand_name'])), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($brand_name)), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
 		$site_url = RC_Format::sanitize_url( $_POST['site_url'] );
@@ -321,9 +321,10 @@ class admin_brand extends ecjia_admin {
 	
 	public function add_brand() {
 	    $this->admin_priv('brand_manage', ecjia::MSGTYPE_JSON);
+	    
 		$brand = empty($_REQUEST['brand']) ? '' : trim($_REQUEST['brand']);
 		if (brand_exists($brand)) {
-			$this->showmessage(RC_Lang::lang('brand_name_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($brand_name)), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} else {
 			$_POST = array(
 				'brand_name' => $brand	

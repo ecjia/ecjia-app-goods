@@ -57,6 +57,9 @@ class admin extends ecjia_admin {
 		RC_Style::enqueue_style('goodsapi', RC_Uri::home_url('content/apps/goods/statics/styles/goodsapi.css'));
 		RC_Script::enqueue_script('ecjia-region', RC_Uri::admin_url('statics/ecjia.js/ecjia.region.js'), array('jquery'), false, true);
 
+		RC_Script::localize_script('goods_list', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
+		RC_Script::localize_script('product', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
+		
 		RC_Loader::load_app_class('goods', 'goods', false);
 		RC_Loader::load_app_class('goods_image', 'goods', false);
 
@@ -1826,6 +1829,57 @@ class admin extends ecjia_admin {
 		}
 		$pjaxurl = RC_Uri::url('goods/admin/edit_link_article', array('goods_id' => $goods_id));
 		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+	}
+	
+	/**
+	 * 商品添加/编辑页 添加商品品牌
+	 */
+	public function add_brand() {
+		$brand_name = !empty($_POST['brand_name']) ? trim($_POST['brand_name']) : '';
+		$is_only = $this->db_brand->brand_count(array('brand_name' => $brand_name));
+		if ($is_only != 0) {
+			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($brand_name)), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+	
+		$data = array(
+			'brand_name'	=> $brand_name,
+			'is_show'		=> 0,
+			'sort_order'	=> 1,
+		);
+		$brand_id = $this->db_brand->brand_manage($data);
+		ecjia_admin::admin_log($brand_name, 'add', 'brand');
+	
+		$arr = array('id' => $brand_id, 'name' => $brand_name);
+		$this->showmessage(RC_Lang::get('goods::brand.brandadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $arr));
+	}
+	
+	/**
+	 * 商品添加/编辑页 添加商品分类
+	 */
+	public function add_category() {
+	
+		$cat['parent_id']	= !empty($_POST['cat_id'])		? intval($_POST['cat_id'])	: 0;
+		$cat['cat_name']	= !empty($_POST['cat_name'])	? trim($_POST['cat_name'])	: '';
+		$cat['sort_order']  = 1;
+	
+		if (cat_exists($cat['cat_name'], $cat['parent_id'])) {
+			$this->showmessage(RC_Lang::get('goods::category.catname_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+		$cat_id = $this->db_category->category_manage($cat);
+		ecjia_admin::admin_log($cat['cat_name'], 'add', 'category');
+	
+		$cat_select = cat_list(0, $cat_id, true);
+		$cat_list = cat_list(0, $cat_id, false);
+	
+		$arr = array();
+		if (!empty($cat_list)) {
+			foreach ($cat_list as $k => $v) {
+				if ($cat_id == $v['cat_id']) {
+					$arr = $v;
+				}
+			}
+		}
+		$this->showmessage(RC_Lang::get('goods::category.catadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $cat_select, 'opt' => $arr));
 	}
 }
 
