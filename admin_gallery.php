@@ -71,7 +71,8 @@ class admin_gallery extends ecjia_admin {
         );
         
         $goods_id = intval($_GET['goods_id']);
-
+        $extension_code = isset($_GET['extension_code']) ? '&extension_code='.$_GET['extension_code'] : '';
+        
         $this->tags = get_goods_info_nav($goods_id, $extension_code);
         $this->tags['edit_goods_photo']['active'] = 1;
         /* 图片列表 */
