@@ -158,7 +158,7 @@ class goods {
         $filter ['merchant'] 		= $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
         
         $sql = $db_goods
-        	->selectRaw('goods_id, goods_name, goods_type, goods_sn, shop_price, goods_thumb, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, integral, (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ') as is_promote, review_status, s.merchants_name')
+        	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.goods_thumb, g.is_on_sale, g.is_best, g.is_new, g.is_hot, g.sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name')
         	->orderBy($filter ['sort_by'], $filter['sort_order'])
         	->take(10)
         	->skip($page->start_id-1)
