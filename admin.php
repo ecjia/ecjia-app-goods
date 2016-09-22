@@ -153,6 +153,10 @@ class admin extends ecjia_admin {
 		if (empty($goods)) {
 			$this->showmessage(RC_Lang::get('goods::goods.no_goods'), ecjia::MSGSTAT_ERROR | ecjia::MSGTYPE_HTML, array('links' => array(array('text'=> RC_Lang::get('goods::goods.return_last_page'),'href'=>'javascript:history.go(-1)'))));
 		}
+		
+		if (!empty($goods['goods_desc'])) {
+			$goods['goods_desc'] = stripslashes($goods['goods_desc']);
+		}
 
 // 		$cat_name   = $this->db_category->where(array('cat_id' => $goods['cat_id']))->get_field('cat_name');
 // 		$brand_name = $this->db_brand->where(array('brand_id' => $goods['brand_id']))->get_field('brand_name');
@@ -1399,8 +1403,8 @@ class admin extends ecjia_admin {
 		}
 
 		$data = array(
-			'goods_desc'			=> $_POST['goods_desc'],
-		  	'last_update'		   => RC_Time::gmtime(),
+			'goods_desc'	=> $_POST['goods_desc'],
+		  	'last_update'	=> RC_Time::gmtime(),
 		);
 		$this->db_goods->join(null)->where(array('goods_id' => $_REQUEST['goods_id']))->update($data);
 
