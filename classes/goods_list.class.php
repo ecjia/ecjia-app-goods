@@ -85,8 +85,16 @@ class goods_list {
 	public static function get_goods_list($filter) {
 		RC_Loader::load_app_class('goods_category', 'goods', false);
 		$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
-		$children = '';
-		isset($filter['cat_id']) and $children = goods_category::get_children($filter['cat_id']);
+		
+		if (isset($filter['cat_id']) && !empty($filter['cat_id'])) {
+			$cache_key = 'category_'.$filter['cat_id'];
+			$children = RC_Cache::app_cache_get($cache_key, 'goods');
+			if (empty($children)) {
+				$children = goods_category::get_children($filter['cat_id']);
+				RC_Cache::app_cache_set($cache_key, $children, 'goods');
+			}
+		}
+		
 		$where = array(
 			'is_on_sale'	=> 1,
 			'is_alone_sale' => 1,
@@ -134,6 +142,11 @@ class goods_list {
 				default:
 						
 			}
+		}
+		
+		/* 店铺条件*/
+		if (isset($filter['store_id']) && !empty($filter['store_id'])) {
+			$where['g.store_id'] = $filter['store_id'];
 		}
 	
 		/* 扩展商品查询条件 */

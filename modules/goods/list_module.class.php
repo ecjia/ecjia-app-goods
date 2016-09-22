@@ -10,8 +10,6 @@ class list_module extends api_front implements api_interface {
      public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {	
     	$this->authSession();
     	
-    	//如果用户登录获取其session
-    	RC_Loader::load_app_func('main', 'api');
     	$location = $this->requestData('location', array()) ;
     	
     	/* 筛选条件*/
@@ -46,18 +44,7 @@ class list_module extends api_front implements api_interface {
 		$size = $this->requestData('pagination.count', 20);
 		$page = $this->requestData('pagination.page', 1);
 		
-       	$options = array(
-       			'cat_id'	=> $category,
-       			'brand'		=> $brand,
-       			'keywords'	=> $keyword,
-       			'min'		=> $min_price,
-       			'max'		=> $max_price,
-       			'sort'		=> $order_sort,
-       			'page'		=> $page,
-       			'size'		=> $size,
-       			'filter_attr' => $filter_attr,
-       			'location'	=> $location,
-       	);
+       	
        	/*经纬度为空判断*/
        	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
        		$data = array();
@@ -69,24 +56,38 @@ class list_module extends api_front implements api_interface {
        		);
        		return array('data' => $data['list'], 'pager' => $data['pager']);
        	} else {
-   	        $geohash = RC_Loader::load_app_class('geohash', 'shipping');
+   	        $geohash = RC_Loader::load_app_class('geohash', 'store');
    	        $geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
    	        $geohash_code = substr($geohash_code, 0, 5);
        	}
+       	
+       	$options = array(
+       			'cat_id'	=> $category,
+       			'brand'		=> $brand,
+       			'keywords'	=> $keyword,
+       			'min'		=> $min_price,
+       			'max'		=> $max_price,
+       			'sort'		=> $order_sort,
+       			'page'		=> $page,
+       			'size'		=> $size,
+       			'filter_attr' => $filter_attr,
+       	);
        	
 		$filter = empty($filter['filter_attr']) ? '' : $filter['filter_attr'];
        	$cache_id = sprintf('%X', crc32($category . '-' . $sort_by  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank']. '-' .
        			ecjia::config('lang') .'-'. $brand. '-'. $keyword. '-' . $max_price . '-' .$min_price . '-' . $filter . '-' . $geohash_code ));
        	
-       	$cache_key = 'api_goods_list_'.$category.'_'.$cache_id;
+       	$cache_key = 'goods_list_'.$cache_id;
        	$data = RC_Cache::app_cache_get($cache_key, 'goods');
        	if (empty($data)) {
+       		
+       		$options['store_id'] = RC_Api::api('store', 'neighbors_store_id', array('geohash' => $geohash_code));
 			$result = RC_Api::api('goods', 'goods_list', $options);
 			$data = array();
 	        $data['pager'] = array(
-					"total" => $result['page']->total_records,
-					"count" => $result['page']->total_records,
-					"more" => $result['page']->total_pages <= $page ? 0 : 1,
+					"total"	=> $result['page']->total_records,
+					"count"	=> $result['page']->total_records,
+					"more"	=> $result['page']->total_pages <= $page ? 0 : 1,
 			);
 	        $data['list'] = array();
 			if (!empty($result['list'])) {
