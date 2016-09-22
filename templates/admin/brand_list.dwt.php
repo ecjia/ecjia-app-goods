@@ -19,7 +19,7 @@
 <!-- 品牌搜索 -->
 <div class="row-fluid">
 	<div class="choose_list f_r">
-		<form class="f_r" action="{url path='goods/admin_brand/init' args='keywords='}" method="post" name="searchForm">
+		<form class="f_r" action="{url path='goods/admin_brand/init'}" method="post" name="searchForm">
 			<input type="text" name="keywords" value="{$smarty.get.keywords}" size="15" placeholder="{lang key='goods::brand.brand_keywords'}" />
 			<button class="btn" type="submit">{lang key='system::system.button_search'}</button>
 		</form>

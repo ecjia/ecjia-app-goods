@@ -6,7 +6,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 
 class admin_category extends ecjia_admin {
 	private $db_category;
-	private $db_nav;
 	private $db_attribute;
 	private $db_cat;
 	private $db_goods;
@@ -22,7 +21,6 @@ class admin_category extends ecjia_admin {
 		RC_Loader::load_app_func('functions');
 		
 		$this->db_category 	= RC_Model::model('goods/category_model');
-		$this->db_nav 		= RC_Model::model('user/nav_model');
 		$this->db_attribute = RC_Model::model('goods/attribute_model');
 		$this->db_cat 		= RC_Model::model('goods/cat_recommend_model');
 		$this->db_goods 	= RC_Model::model('goods/goods_model');
@@ -165,7 +163,7 @@ class admin_category extends ecjia_admin {
 
             //分类证件 start
             $dt_list = isset($_POST['document_title'])? $_POST['document_title'] : array();
-            get_documentTitle_insert_update($dt_list, $cat_id);
+//             get_documentTitle_insert_update($dt_list, $cat_id);
             
             //分类证件 end
             RC_Cache::app_cache_delete('cat_pid_releate', 'goods');
@@ -220,11 +218,11 @@ class admin_category extends ecjia_admin {
 		}
 
         //类目资质
-        $db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
+//         $db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
 //         $title_list = $db_merchants_documenttitle->field('dt_id, dt_title')->where(array('cat_id' => $cat_id))->order(array('dt_id' => 'asc'))->select();
 
-        $title_list = RC_DB::table('merchants_documenttitle')->select('dt_id', 'dt_title')->where('cat_id', $cat_id)->orderBy('dt_id', 'asc')->get();
-        $this->assign('title_list', $title_list);
+//         $title_list = RC_DB::table('merchants_documenttitle')->select('dt_id', 'dt_title')->where('cat_id', $cat_id)->orderBy('dt_id', 'asc')->get();
+//         $this->assign('title_list', $title_list);
 
 		/* 模板赋值 */
 		$this->assign('attr_list', $attr_list); // 取得商品属性
@@ -325,7 +323,6 @@ class admin_category extends ecjia_admin {
 		$upload = RC_Upload::uploader('image', array('save_path' => 'data/category', 'auto_sub_dirs' => true));
 
 		if (empty($_POST['old_img'])) {
-// 			$file_name = $this->db_category->where(array('cat_id' => $cat_id))->get_field('style');
 			$file_name = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('style');
 			$upload->remove($file_name);
 			$cat['style'] = '';
@@ -339,10 +336,8 @@ class admin_category extends ecjia_admin {
 			$cat['style'] = $upload->get_position($image_info);
 		}
 
-// 		$info = $this->db_category->field('cat_name, show_in_nav')->find(array('cat_id' => $cat_id));
 		$info = RC_DB::table('category')->select('cat_name', 'show_in_nav')->where('cat_id', $cat_id)->first();
 		
-// 		$this->db_category->where(array('cat_id' => $cat_id))->update($cat);
 		RC_DB::table('category')->where('cat_id', $cat_id)->update($cat);
 		
 		if ($cat['cat_name'] != $info['cat_name']) {
@@ -350,7 +345,6 @@ class admin_category extends ecjia_admin {
 			$data = array(
 				'name' => $cat['cat_name'],
 			);
-// 			$this->db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->update($data);
 			RC_DB::table('nav')->where('ctype', 'c')->where('cid', $cat_id)->where('type', 'middle')->update($data);
 		}
 
@@ -358,19 +352,17 @@ class admin_category extends ecjia_admin {
        	$dt_list = isset($_POST['document_title']) ? $_POST['document_title'] : array();
      	$dt_id = isset($_POST['dt_id'])? $_POST['dt_id'] : array();
             
-		get_documentTitle_insert_update($dt_list, $cat_id, $dt_id);
+// 		get_documentTitle_insert_update($dt_list, $cat_id, $dt_id);
       	//分类证件 end
 
 		if ($cat['show_in_nav'] != $info['show_in_nav']) {
 			/* 是否显示于导航栏发生了变化 */
 			if ($cat['show_in_nav'] == 1) {
 				/* 显示 */
-// 				$nid = $this->db_nav->field('id')->find(array('ctype' => 'c','cid' => $cat_id, 'type' => 'middle'));
 				$nid = RC_DB::table('nav')->select('id')->where('ctype', 'c')->where('cid', $cat_id)->where('type', 'middle')->first();
 				
 				if (empty($nid)) {
 					/* 不存在 */
-// 					$vieworder = $this->db_nav->where(array('type' => 'middle'))->max('vieworder');
 					$vieworder = RC_DB::table('nav')->where('type', 'middle')->max('vieworder');
 					
 					$vieworder += 2;
@@ -385,13 +377,11 @@ class admin_category extends ecjia_admin {
 						'url' 		=> $uri,
 						'type' 		=> 'middle',
 					);
-// 					$this->db_nav->insert($data);
 					RC_DB::table('nav')->insert($data);
 				} else {
 					$data = array(
 						'ifshow' => '1'
 					);
-// 					$this->db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->update($data);
 					RC_DB::table('nav')->where('ctype', 'c')->where('cid', $cat_id)->where('type', 'middle')->update($data);
 				}
 			} else {
@@ -399,7 +389,6 @@ class admin_category extends ecjia_admin {
 				$data = array(
 					'ifshow' => '0'
 				);
-// 				$this->db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->update($data);
 				RC_DB::table('nav')->where('ctype', 'c')->where('cid', $cat_id)->where('type', 'middle')->update($data);
 			}
 		}
@@ -410,7 +399,8 @@ class admin_category extends ecjia_admin {
 
 		ecjia_admin::admin_log($_POST['cat_name'], 'edit', 'category');
 		RC_Cache::app_cache_delete('admin_category_list', 'goods');
-		$this->showmessage(RC_Lang::get('goods::category.catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('max_id' => $cat_id));
+		
+		$this->showmessage(RC_Lang::get('goods::category.catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
 	}
 
 	/**
