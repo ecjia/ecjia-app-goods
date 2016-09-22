@@ -276,9 +276,9 @@ function delete_goods($goods_id) {
 	$db_member 			= RC_Model::model('goods/member_price_model');
 	$db_group 			= RC_Model::model('goods/group_goods_model');
 	$db_link_goods 		= RC_Model::model('goods/link_goods_model');
-	$db_tag 			= RC_Model::model('goods/tag_model');
+// 	$db_tag 			= RC_Model::model('goods/tag_model');
 	$db_comment 		= RC_Model::model('comment/comment_model');
-	$db_virtual_card 	= RC_Model::model('goods/virtual_card_model');
+// 	$db_virtual_card 	= RC_Model::model('goods/virtual_card_model');
 	
 	if (empty($goods_id)) {
 		return;
@@ -353,7 +353,7 @@ function delete_goods($goods_id) {
 	RC_DB::table('member_price')->whereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('group_goods')->whereIn('parent_id', $goods_id)->orWhereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('link_goods')->whereIn('goods_id', $goods_id)->orWhereIn('link_goods_id', $goods_id)->delete();
-	RC_DB::table('tag')->whereIn('goods_id', $goods_id)->delete();
+// 	RC_DB::table('tag')->whereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('comment')->where('comment_type', 0)->whereIn('id_value', $goods_id)->delete();
 	
 	/* 删除相应虚拟商品记录 */
