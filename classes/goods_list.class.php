@@ -6,11 +6,11 @@
  *
  */
 class goods_list {
-    
+
 	private static $keywords_where;
 	/* 初始化搜索条件 */
 	public static function get_keywords_where($keyword) {
-	
+
 		$keywords = '';
 		$tag_where = '';
 		if (!empty($keyword)) {
@@ -32,26 +32,26 @@ class goods_list {
 				$arr = explode(' ', $keyword);
 				$operator = " AND ";
 			}
-	
+
 			$keywords = '(';
 			$goods_ids = array();
 			if (!empty($arr)) {
-				$db_tag = RC_Loader::load_app_model('tag_model', 'goods');
-				$db_keywords = RC_Loader::load_app_model('keywords_model', 'goods');
+				// $db_tag = RC_Loader::load_app_model('tag_model', 'goods');
+				$db_keywords = RC_Model::model('goods/keywords_model');
 				foreach ($arr as $key => $val) {
 					if ($key > 0 && $key < count($arr) && count($arr) > 1) {
 						$keywords .= $operator;
 					}
 					$val = mysql_like_quote(trim($val));
 					$keywords .= "(goods_name LIKE '%$val%' OR goods_sn LIKE '%$val%' OR keywords LIKE '%$val%')";
-						
-						
-					$res = $db_tag->field('DISTINCT goods_id')->where("tag_words LIKE '%$val%'")->select();
-					if (! empty($res)) {
-						foreach ($res as $row) {
-							$goods_ids[] = $row['goods_id'];
-						}
-					}
+
+
+					// $res = $db_tag->field('DISTINCT goods_id')->where("tag_words LIKE '%$val%'")->select();
+					// if (! empty($res)) {
+					// 	foreach ($res as $row) {
+					// 		$goods_ids[] = $row['goods_id'];
+					// 	}
+					// }
 					//插入keywords表数据 will.chen
 					$count = $db_keywords->where(array('date' => RC_Time::local_date('Y-m-d'), 'keyword'=>addslashes(str_replace('%', '', $val))))->get_field('count');
 					if (!empty($count) && $count > 0) {
@@ -67,17 +67,17 @@ class goods_list {
 				}
 			}
 			$keywords .= ')';
-	
-			$goods_ids = array_unique($goods_ids);
-			/* 标签查询*/
-			$tag_where = $goods_ids;
+
+			// $goods_ids = array_unique($goods_ids);
+			// /* 标签查询*/
+			// $tag_where = $goods_ids;
 		}
 		self::$keywords_where['keywords']	= $keywords;
-		self::$keywords_where['tag_where']	= $tag_where;
+		// self::$keywords_where['tag_where']	= $tag_where;
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * 取得商品列表
 	 * @param   object  $filters    过滤条件
@@ -85,7 +85,7 @@ class goods_list {
 	public static function get_goods_list($filter) {
 		RC_Loader::load_app_class('goods_category', 'goods', false);
 		$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
-		
+
 		if (isset($filter['cat_id']) && !empty($filter['cat_id'])) {
 			$cache_key = 'category_'.$filter['cat_id'];
 			$children = RC_Cache::app_cache_get($cache_key, 'goods');
@@ -94,7 +94,7 @@ class goods_list {
 				RC_Cache::app_cache_set($cache_key, $children, 'goods');
 			}
 		}
-		
+
 		$where = array(
 			'is_on_sale'	=> 1,
 			'is_alone_sale' => 1,
@@ -112,16 +112,16 @@ class goods_list {
 		if (isset($filter['max']) && $filter['max'] > 0) {
 			$where[] = "shop_price <= ".$filter['max'];
 		}
-	
+
 		if (!empty(self::$keywords_where['keywords'])) {
 			$where[] = self::$keywords_where['keywords'];
 		}
-	
+
 		if (!empty(self::$keywords_where['tag_where'])) {
 			$where[] = 'or';
 			$where['g.goods_id'] = self::$keywords_where['tag_where'];
 		}
-		
+
 		if (!empty($filter['intro'])) {
 			switch ($filter['intro']) {
 				case 'best':
@@ -140,22 +140,22 @@ class goods_list {
 					$where['g.promote_end_date']	= array('egt' => $time);
 					break;
 				default:
-						
+
 			}
 		}
-		
+
 		/* 店铺条件*/
 		if (isset($filter['store_id']) && !empty($filter['store_id'])) {
 			$where['g.store_id'] = $filter['store_id'];
 		}
-	
+
 		/* 扩展商品查询条件 */
 		if (!empty($filter['filter_attr'])) {
 			$cat = goods_category::get_cat_info($filter['cat_id']);
 			$cat_filter_attr = explode(',', $cat['filter_attr']);       //提取出此分类的筛选属性
 			// 			$ext_sql = "SELECT DISTINCT(b.goods_id) FROM " . $ecs->table('goods_attr') . " AS a, " . $ecs->table('goods_attr') . " AS b " .  "WHERE ";
 			$ext_group_goods = array();
-				
+
 			$db_goods_attr_view = RC_Loader::load_app_model('goods_attr_viewmodel', 'goods');
 			$db_goods_attr_view->view = array(
 				'goods_attr' => array(
@@ -171,7 +171,7 @@ class goods_list {
 					// 					$sql = $ext_sql . "b.attr_value = a.attr_value AND b.attr_id = " . $cat_filter_attr[$k] ." AND a.goods_attr_id = " . $v;
 					// 					$ext_group_goods = $db->getColCached($sql);
 					$ext_group_goods = $db_goods_attr_view->field(array('DISTINCT(b.goods_id) as goods_id'))->join(array('goods_attr'))->where(array('b.attr_id' => $cat_filter_attr[$k], 'ga.goods_attr_id' => $v))->select();
-	
+
 					if (!empty($ext_group_goods)) {
 						foreach ($ext_group_goods as $val) {
 							$goods_ids[] = $val['goods_id'];
@@ -180,17 +180,17 @@ class goods_list {
 					$where[] = $this->db_create_in($goods_ids, 'g.goods_id');
 				}
 			}
-	
+
 		}
-	
+
 		/* 返回商品总数 */
 		$count = $dbview->join(null)->where($where)->count();
-	
+
 		//实例化分页
 		$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
-	
+
 		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($page_row->limit())->select();
-	
+
 		$arr = array();
 		if (!empty($data)) {
 			RC_Loader::load_app_func('goods', 'goods');
@@ -211,18 +211,18 @@ class goods_list {
 				// 				} elseif ($row['is_hot'] != 0) {
 				// 					$watermark_img = 'watermark_hot_small';
 				// 				}
-	
+
 				// 				if ($watermark_img != '') {
 				// 					$arr[$row['goods_id']]['watermark_img'] = $watermark_img;
 				// 				}
-	
-	
+
+
 				if ($filter['display'] == 'grid') {
 					$arr[$key]['goods_name'] = ecjia::config('goods_name_length') > 0 ? RC_String::sub_str($row['goods_name'], ecjia::config('goods_name_length')) : $row['goods_name'];
 				} else {
 					$arr[$key]['goods_name'] = $row['goods_name'];
 				}
-	
+
 				$arr[$key]['goods_id']		= $row['goods_id'];
 				$arr[$key]['name']			= $row['goods_name'];
 				$arr[$key]['goods_brief'] 	= $row['goods_brief'];
@@ -234,12 +234,12 @@ class goods_list {
 				$arr[$key]['shop_price']	= $row['shop_price'] > 0 ? price_format($row['shop_price']) : RC_Lang::get('goods::goods.free');
 				$arr[$key]['type']			= $row['goods_type'];
 				$arr[$key]['promote_price']	= ($promote_price > 0) ? price_format($promote_price) : '';
-	
+
 				$arr[$key]['goods_thumb']	= !empty($row['goods_thumb']) ? RC_Upload::upload_url($row['goods_thumb']) : RC_Uri::admin_url('statics/images/nopic.png');
 				$arr[$key]['original_img']	= !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : RC_Uri::admin_url('statics/images/nopic.png');
 				$arr[$key]['goods_img']		= !empty($row['goods_img']) ? RC_Upload::upload_url($row['goods_img']) : RC_Uri::admin_url('statics/images/nopic.png');
 				$arr[$key]['url'] 			= build_uri('goods', array('gid' => $row['goods_id']), $row['goods_name']);
-					
+
 				/* 增加返回原始未格式价格  will.chen*/
 				$arr[$key]['unformatted_shop_price']	= $row['shop_price'];
 				$arr[$key]['unformatted_promote_price'] = $promote_price;
@@ -248,8 +248,8 @@ class goods_list {
 		}
 		return array('list' => $arr, 'page' => $page_row);
 	}
-	
-	
+
+
 	/**
 	 * 创建像这样的查询: "IN('a','b')";
 	 *
