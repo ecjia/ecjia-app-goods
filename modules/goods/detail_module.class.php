@@ -269,8 +269,6 @@ class detail_module extends api_front implements api_interface {
 						'object_id'		=> $object_id,
 						'saving_price'	=>	$saving_price,
 						'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-						'seller_id'		=> $val['store_id'],
-						'seller_name'	=> $val['seller_name'],
 				);
 			}
 		}
