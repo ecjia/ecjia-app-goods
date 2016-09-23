@@ -69,7 +69,7 @@ class detail_module extends api_front implements api_interface {
         $data['collected']       = 0;
         
         $db_favourable = RC_Model::model('favourable/favourable_activity_model');
-        $favourable_result = $db_favourable->where(array('seller_id' => $goods['seller_id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
+        $favourable_result = $db_favourable->where(array('store_id' => $goods['store_id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
         $favourable_list = array();
         if (empty($rec_type)) {
         	if (!empty($favourable_result)) {
@@ -183,6 +183,7 @@ class detail_module extends api_front implements api_interface {
 //         		}
         	
         }
+
         /* 计算节约价格*/
         $saving_price = ($data['unformatted_shop_price'] - $price) > 0 ? $data['unformatted_shop_price'] - $price : 0;
         $data['activity_type']	= $activity_type;
@@ -204,6 +205,7 @@ class detail_module extends api_front implements api_interface {
         } else {
         	$data['goods_url'] = null;
         }
+
         
         $data['favourable_list'] = $favourable_list;
         
@@ -215,6 +217,7 @@ class detail_module extends api_front implements api_interface {
        			'size'		=> 8,
        			'location'	=> $location,
        	);
+         
         //商品详情页猜你喜欢  api2.4功能
     	$result = RC_Api::api('goods', 'goods_list', $options);
         
@@ -266,8 +269,6 @@ class detail_module extends api_front implements api_interface {
 						'object_id'		=> $object_id,
 						'saving_price'	=>	$saving_price,
 						'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-						'seller_id'		=> $val['seller_id'],
-						'seller_name'	=> $val['seller_name'],
 				);
 			}
 		}
