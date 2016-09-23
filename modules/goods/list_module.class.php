@@ -123,22 +123,22 @@ class list_module extends api_front implements api_interface {
                     }
 
                     $data['list'][] = array(
-                        'goods_id'        => $val['goods_id'],
-                        'name'            => $val['name'],
-                        'market_price'    => $val['market_price'],
-                        'shop_price'      => $val['shop_price'],
-                        'promote_price'   => $val['promote_price'],
+                        'goods_id'                  => $val['goods_id'],
+                        'name'                      => $val['name'],
+                        'market_price'              => $val['market_price'],
+                        'shop_price'                => $val['shop_price'],
+                        'promote_price'             => $val['promote_price'],
                         'img' => array(
                             'thumb'   => $val['goods_img'],
                             'url'     => $val['original_img'],
                             'small'   => $val['goods_thumb']
                         ),
-                        'activity_type' => $activity_type,
-                        'object_id'        => $object_id,
-                        'saving_price'    =>    $saving_price,
-                        'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-                        'seller_id'        => $val['seller_id'],
-                        'seller_name'      => $val['seller_name'],
+                        'activity_type'             => $activity_type,
+                        'object_id'                 => $object_id,
+                        'saving_price'              => $saving_price,
+                        'formatted_saving_price'    => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
+                        'store_id'                  => $val['store_id'],
+                        'store_name'                => $val['store_name'],
                     );
                 }
             }
