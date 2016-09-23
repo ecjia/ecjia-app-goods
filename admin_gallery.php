@@ -5,14 +5,9 @@
 defined('IN_ECJIA') or exit('No permission resources.');
 
 class admin_gallery extends ecjia_admin {
-	private $db_goods;
-	private $db_goods_gallery;
-	
-    public function __construct() {
+
+	public function __construct() {
         parent::__construct();
-        
-        $this->db_goods 		= RC_Loader::load_app_model('goods_model');
-        $this->db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model');
     }
     
     /**
