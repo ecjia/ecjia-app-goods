@@ -5,8 +5,7 @@
 defined('IN_ECJIA') or exit('No permission resources.');
 
 class admin_brand extends ecjia_admin {
-	private $db_brand;
-	private $db_goods;
+	
 	public function __construct() {
 		parent::__construct();
 		
@@ -18,13 +17,8 @@ class admin_brand extends ecjia_admin {
 		RC_Script::enqueue_script('jquery-uniform');
 		RC_Style::enqueue_style('uniform-aristo');
 		RC_Script::enqueue_script('goods_brand', RC_Uri::home_url('content/apps/goods/statics/js/goods_brand.js'), array());
-
-		RC_Loader::load_app_func('common');
-		RC_Loader::load_app_func('functions');
-		assign_adminlog_content();
-
-		$this->db_brand = RC_Model::model('goods/brand_model');
-		$this->db_goods = RC_Model::model('goods/goods_model');
+		
+		RC_Loader::load_app_class('goods_brand', 'goods', false);
 	}
 	
 	/**
@@ -48,10 +42,10 @@ class admin_brand extends ecjia_admin {
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品品牌#.E5.95.86.E5.93.81.E5.93.81.E7.89.8C.E5.88.97.E8.A1.A8" target="_blank">'. RC_Lang::get('goods::brand.about_goods_brand') .'</a>') . '</p>'
 		);
 		
-		
 		$this->assign('ur_here', RC_Lang::get('goods::brand.goods_brand'));
 		$this->assign('action_link', array('text' => RC_Lang::get('goods::brand.add_brand'), 'href' => RC_Uri::url('goods/admin_brand/add')));
-		$brand_list = get_brandlist();
+		
+		$brand_list = $this->get_brand_list();
 		$this->assign('brand_list', $brand_list);
 		
 		$this->display('brand_list.dwt');
@@ -90,26 +84,23 @@ class admin_brand extends ecjia_admin {
     	/*检查品牌名是否重复*/
 		$this->admin_priv('brand_update', ecjia::MSGTYPE_JSON);
 		
-		$brand_logo	= '';
-		$is_show = isset($_REQUEST['is_show']) ? intval($_REQUEST['is_show']) : 0;
-		
-		$site_url 	= RC_Format::sanitize_url( $_POST['site_url'] );
-		$brand_name = htmlspecialchars($_POST['brand_name']);
+		$brand_name = !empty($_POST['brand_name'])	? htmlspecialchars($_POST['brand_name'])		: '';
+		$site_url 	= !empty($_POST['site_url'])	? RC_Format::sanitize_url( $_POST['site_url'] ) : '';
+		$brand_desc = !empty($_POST['brand_desc'])  ? $_POST['brand_desc']							: '';
+		$sort_order = !empty($_POST['sort_order'])	? intval($_POST['sort_order'])					: 0;
+		$is_show 	= isset($_REQUEST['is_show']) 	? intval($_REQUEST['is_show'])					: 0;
 		
 		if (empty($brand_name)) {
 			$this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
+		$goods_brand = new goods_brand();
+		$is_only = $goods_brand->brand_count(array('brand_name' => $brand_name));
 		
-		$is_only = $this->db_brand->where(array('brand_name' => $brand_name))->count();
 		if ($is_only != 0) {
 			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($_POST['brand_name'])),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
-		/*对描述处理*/
-		if (!empty($_POST['brand_desc'])) {
-			$_POST['brand_desc'] = $_POST['brand_desc'];
-		}
-		
+		$brand_logo	= '';
 		/* 处理上传的LOGO图片 */
 		if ((isset($_FILES['brand_img']['error']) && $_FILES['brand_img']['error'] == 0) || (!isset($_FILES['brand_img']['error']) && isset($_FILES['brand_img']['tmp_name']) && $_FILES['brand_img']['tmp_name'] != 'none')) {
 			$upload = RC_Upload::uploader('image', array('save_path' => 'data/brandlogo', 'auto_sub_dirs' => false));
@@ -129,25 +120,15 @@ class admin_brand extends ecjia_admin {
     			$brand_logo = trim($_POST['url_logo']);
     		}
     	}
-    	
-    	/*插入数据*/
-    	$_POST = array(
-    		'brand_name'	=> $brand_name,
-    		'site_url'		=> $site_url,
-    		'brand_desc'  	=> $_POST['brand_desc'],
-    		'brand_logo'	=> $brand_logo,
-    		'is_show'		=> $is_show,
-    		'sort_order'	=> $_POST['sort_order'],
-    	);
-    
-    	$brand_id = $this->db_brand->insert();
-    	ecjia_admin::admin_log($brand_name,'add','brand');
+    	$brand_id = $goods_brand->insert_brand($brand_name, $site_url, $brand_desc, $brand_logo, $sort_order, $is_show);
     
     	$link[0]['text'] = RC_Lang::get('goods::brand.back_list');
     	$link[0]['href'] = RC_Uri::url('goods/admin_brand/init');
     	
     	$link[1]['text'] = RC_Lang::get('goods::brand.continue_add');
     	$link[1]['href'] = RC_Uri::url('goods/admin_brand/add');
+    	
+    	ecjia_admin::admin_log($brand_name, 'add', 'brand');
     	$this->showmessage(RC_Lang::get('goods::brand.brandadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', "id=$brand_id"), 'links' => $link, 'max_id' => $brand_id));
     }
 
@@ -172,23 +153,25 @@ class admin_brand extends ecjia_admin {
 		$this->assign('ur_here', RC_Lang::get('goods::brand.edit_brand'));
 		$this->assign('action_link', array('text' => RC_Lang::get('goods::brand.goods_brand'), 'href' => RC_Uri::url('goods/admin_brand/init')));
 		
-		$brand_id =  intval($_GET['id']);
-		$brand_arr = $this->db_brand->field('brand_id, brand_name, site_url, brand_logo, brand_desc, brand_logo, is_show, sort_order')->find(array('brand_id' => $_REQUEST['id']));
+		$brand_id = intval($_GET['id']);
+		
+		$goods_brand = new goods_brand();
+		$brand = $goods_brand->brand_info($brand_id);
 		
 		/* 标记为图片链接还是文字链接 */
-		if (!empty($brand_arr['brand_logo'])) {
-			if (strpos($brand_arr['brand_logo'], 'http://') === false) {
-				$brand_arr['type']	= 1;
-				$brand_arr['url']	= RC_Upload::upload_url($brand_arr['brand_logo']);
+		if (!empty($brand['brand_logo'])) {
+			if (strpos($brand['brand_logo'], 'http://') === false) {
+				$brand['type']	= 1;
+				$brand['url']	= RC_Upload::upload_url($brand['brand_logo']);
 			} else {
-				$brand_arr['type']	= 0;
-				$brand_arr['url'] = $brand_arr['brand_logo'];
+				$brand['type']	= 0;
+				$brand['url']	= $brand['brand_logo'];
 			}
 		} else {
-			$brand_arr['type']	= 0;
+			$brand['type']	= 0;
 		}
 		
-		$this->assign('brand', $brand_arr);
+		$this->assign('brand', $brand);
 		$this->assign('form_action', RC_Uri::url('goods/admin_brand/update'));
 		
 		$this->display('brand_info.dwt');
@@ -200,25 +183,26 @@ class admin_brand extends ecjia_admin {
 	public function update() {
 	    $this->admin_priv('brand_update', ecjia::MSGTYPE_JSON);
 
-	    $id 		= !empty($_POST['id']) 			? intval($_POST['id']) 						: 0;
-	    $brand_name = !empty($_POST['brand_name']) 	? htmlspecialchars($_POST['brand_name']) 	: '';
-	    $brand_desc = !empty($_POST['brand_desc'])  ? $_POST['brand_desc']						: '';
-	    $is_show = isset($_REQUEST['is_show']) ? intval($_REQUEST['is_show']) : 0;
+	    $id         = !empty($_POST['id'])    		? intval($_POST['id'])                         	: 0;
+		$brand_name = !empty($_POST['brand_name'])	? htmlspecialchars($_POST['brand_name'])		: '';
+		$site_url 	= !empty($_POST['site_url'])	? RC_Format::sanitize_url( $_POST['site_url'] ) : '';
+		$brand_desc = !empty($_POST['brand_desc'])  ? $_POST['brand_desc']							: '';
+		$sort_order = !empty($_POST['sort_order'])	? intval($_POST['sort_order'])					: 0;
+		$is_show 	= isset($_REQUEST['is_show']) 	? intval($_REQUEST['is_show'])					: 0;
 	    
 	    if (empty($brand_name)) {
 	    	$this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	    }
 	    
+	    $goods_brand = new goods_brand();
+	    
 		/*检查品牌名是否相同*/
-		$is_only = $this->db_brand->where(array('brand_name' => $brand_name, 'brand_id' => array('neq' => $id)))->count();
-
+		$is_only = $goods_brand->brand_count(array('brand_name' => $brand_name, 'brand_id' => array('neq' => $id)));
 		if ($is_only != 0){
 			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($brand_name)), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-
-		$site_url = RC_Format::sanitize_url( $_POST['site_url'] );
-		$old_logo = $this->db_brand->where(array('brand_id' => $id))->get_field('brand_logo');
-
+		
+		$old_logo = $goods_brand->brand_field($id, 'brand_logo');
 		/* 如果有图片LOGO要上传 */
 		if ((isset($_FILES['brand_img']['error']) && $_FILES['brand_img']['error'] == 0) || (!isset($_FILES['brand_img']['error']) && isset($_FILES['brand_img']['tmp_name']) && $_FILES['brand_img']['tmp_name'] != 'none')) {
 			$upload = RC_Upload::uploader('image', array('save_path' => 'data/brandlogo', 'auto_sub_dirs' => false));
@@ -247,12 +231,12 @@ class admin_brand extends ecjia_admin {
 		$data = array(
 			'brand_name'	=> $brand_name,
 			'site_url' 		=> $site_url,
-			'brand_desc' 	=> $brand_desc,
-			'is_show' 		=> $is_show,
 			'brand_logo' 	=> $brand_logo,
-			'sort_order' 	=> !empty($_POST['sort_order']) ? intval($_POST['sort_order']) : 0
+			'brand_desc' 	=> $brand_desc,
+			'sort_order' 	=> $sort_order,
+			'is_show' 		=> $is_show,
 		);
-		$this->db_brand->where(array('brand_id' => $id))->update($data);
+		$goods_brand->update_brand($id, $data);
 		
 		ecjia_admin::admin_log($brand_name, 'edit', 'brand');
 		$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_succed'), $brand_name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', array('id' => $id))));
@@ -271,17 +255,18 @@ class admin_brand extends ecjia_admin {
 			$this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
+		$goods_brand = new goods_brand();
+		
 		/* 检查名称是否重复 */
-		if ($this->db_brand->where(array('brand_name' => $name, 'brand_id' => array('neq' => $id)))->count() != 0) {
+		$is_only = $goods_brand->brand_count(array('brand_name' => $name, 'brand_id' => array('neq' => $id)));
+		if ($is_only != 0) {
 			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} else {
 			$data = array('brand_id' => $id, 'brand_name' => $name);
-			if ($this->db_brand->brand_manage($data)) {
-				ecjia_admin::admin_log($name,'edit','brand');
-				$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_succed'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content'=> stripslashes($name)));
-			} else {
-				$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_fail'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('content'=> stripslashes($name)));
-			}
+			$goods_brand->update_brand($id, $data);
+			
+			ecjia_admin::admin_log($name,'edit', 'brand');
+			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_succed'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content'=> stripslashes($name)));
 		}
 	}
 	
@@ -293,16 +278,15 @@ class admin_brand extends ecjia_admin {
 		
 		$id     = intval($_POST['pk']);
 		$order  = intval($_POST['value']);
+		$data 	= array('sort_order' => $order);
 		
-		$brand_info = $this->db_brand->brand_find($id);
+		$goods_brand = new goods_brand();
+		$brand_name = $goods_brand->brand_field($id, 'brand_name');
 		
-		$data = array('brand_id' => $id, 'sort_order' => $order);
-		if ($this->db_brand->brand_manage($data)) {
-			ecjia_admin::admin_log(addslashes($brand_info['brand_name']), 'edit', 'brand');
-			$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/init', array('content'=> $order))));
-		} else {
-			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_fail'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+		$goods_brand->update_brand($id, $data);
+		
+		ecjia_admin::admin_log($brand_name, 'edit', 'brand');
+		$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/init', array('content'=> $order))));
 	}
 	
 	/**
@@ -313,28 +297,14 @@ class admin_brand extends ecjia_admin {
 	
 		$id	 = intval($_POST['id']);
 		$val = intval($_POST['val']);
-		$data = array('brand_id' => $id, 'is_show' => $val);
+		$data = array('is_show' => $val);
 	
-		$this->db_brand->brand_manage($data);
+		$goods_brand = new goods_brand();
+		$goods_brand->update_brand($id, $data);
+		
 		$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 	}
-	
-	public function add_brand() {
-	    $this->admin_priv('brand_manage', ecjia::MSGTYPE_JSON);
-	    
-		$brand = empty($_REQUEST['brand']) ? '' : trim($_REQUEST['brand']);
-		if (brand_exists($brand)) {
-			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($brand_name)), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		} else {
-			$_POST = array(
-				'brand_name' => $brand	
-			);
-			$brand_id = $this->db_brand->insert();
-			$arr = array("id" => $brand_id, "brand" => $brand);
-			$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content'=> $arr));
-		}
-	}
-	
+
 	/**
 	 * 删除品牌
 	 */
@@ -342,19 +312,22 @@ class admin_brand extends ecjia_admin {
 		$this->admin_priv('brand_delete', ecjia::MSGTYPE_JSON);
 		
 		$id = intval($_GET['id']);
+		$goods_brand = new goods_brand();
+		$brand_info = $goods_brand->brand_info($id);
+		
 		/* 删除该品牌的图标 */
-		$brand_info = $this->db_brand->brand_find($id);
 		if (!empty($brand_info['brand_logo'])) {
 			$disk = RC_Filesystem::disk();
 			$disk->delete(RC_Upload::upload_path() . $brand_info['brand_logo']);
 		}
 
-		$this->db_brand->brand_remove($id);
+		$goods_brand->brand_delete($id);
+		
 		/* 更新商品的品牌编号 */
 		$data = array(
 			'brand_id' => '0'
 		);
-		$this->db_goods->goods_update(array('brand_id' => $id), $data);
+		RC_DB::table('goods')->where('brand_id', $id)->update($data);
 		
 		ecjia_admin::admin_log($brand_info['brand_name'], 'remove', 'brand');
 		$this->showmessage(RC_Lang::get('goods::brand.drop_succeed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
@@ -367,16 +340,61 @@ class admin_brand extends ecjia_admin {
 	    $this->admin_priv('brand_manage', ecjia::MSGTYPE_JSON);
 
 	   	$brand_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-		$brand_info = $this->db_brand->brand_find($brand_id);
+		$goods_brand = new goods_brand();
+		$brand_info = $goods_brand->brand_info($brand_id);
 		
 		if (!empty($brand_info['brand_logo'])) {
 			$disk = RC_Filesystem::disk();
 			$disk->delete(RC_Upload::upload_path() . $brand_info['brand_logo']);
-			
-			$data = array('brand_id' => $brand_id, 'brand_logo' => '');
-			$this->db_brand->brand_manage($data);
 		}
+		
+		$data = array('brand_logo' => '');
+		$goods_brand->update_brand($brand_id, $data);
+		
 		$this->showmessage(RC_Lang::get('goods::brand.drop_succeed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', array('id' => $brand_id))));
+	}
+	
+	/**
+	 * 获取品牌列表
+	 *
+	 * @access  public
+	 * @return  array
+	 */
+	private function get_brand_list() {
+		$db_brand = RC_DB::table('brand');
+	
+		/* 分页大小 */
+		$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
+	
+		if ($keywords) {
+			$db_brand->where('brand_name', 'like', '%' . mysql_like_quote($keywords) . '%');
+		}
+	
+		$count = $db_brand->count();
+		$page = new ecjia_page($count, 10, 5);
+		$data = $db_brand->orderby('sort_order', 'asc')->take(10)->skip($page->start_id-1)->get();
+	
+		$arr = array();
+		if (!empty($data)) {
+			foreach ($data as $key => $rows) {
+				if (empty($rows['brand_logo'])) {
+					$rows['brand_logo_html'] = "<img src='" . RC_Uri::admin_url('statics/images/nopic.png') . "' style='width:100px;height:100px;' />";
+				} else {
+					if ((strpos($rows['brand_logo'], 'http://') === false) && (strpos($rows['brand_logo'], 'https://') === false)) {
+						$logo_url = RC_Upload::upload_url($rows['brand_logo']);
+						$logo_url = file_exists(RC_Upload::upload_path($rows['brand_logo'])) ? $logo_url : RC_Uri::admin_url('statics/images/nopic.png');
+							
+						$rows['brand_logo_html'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
+					} else {
+						$rows['brand_logo_html'] = "<img src='" . RC_Uri::admin_url('statics/images/nopic.png') . "' style='width:100px;height:100px;' />";
+					}
+				}
+				$site_url = empty($rows['site_url']) ? 'N/A' : '<a href="'.$rows['site_url'].'" target="_brank">'.$rows['site_url'].'</a>';
+				$rows['site_url'] = $site_url;
+				$arr[] = $rows;
+			}
+		}
+		return array('brand' => $arr, 'page' => $page->show(5), 'desc' => $page->page_desc());
 	}
 }
 

@@ -136,48 +136,6 @@ function list_link($extension_code = '') {
  * @access  public
  * @return  array
  */
-function get_brandlist() {
-	$db = RC_Model::model('goods/brand_model');
-	/* 分页大小 */
-	$filter = array();
-	$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
-	$where = array();
-	if ($keywords) {
-		$where[] = "brand_name LIKE '%" . mysql_like_quote($keywords) . "%'";
-	}
-	$count = $db->where($where)->count();
-	$page = new ecjia_page($count, 10, 5);
-	
-	$data = $db->where($where)->order('sort_order asc')->limit($page->limit())->select();
-	
-	$arr = array();
-	if (!empty($data)) {
-		foreach ($data as $key => $rows) {
-			if (empty($rows['brand_logo'])) {
-				$rows['brand_logo_html'] = "<img src='" . RC_Uri::admin_url('statics/images/nopic.png') . "' style='width:100px;height:100px;' />";
-			} else {
-				if ((strpos($rows['brand_logo'], 'http://') === false) && (strpos($rows['brand_logo'], 'https://') === false)) {
-				    $logo_url = RC_Upload::upload_url($rows['brand_logo']);
-				    $logo_url = file_exists(RC_Upload::upload_path($rows['brand_logo'])) ? $logo_url : RC_Uri::admin_url('statics/images/nopic.png');
-					$rows['brand_logo_html'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
-				} else {
-					$rows['brand_logo_html'] = "<img src='" . RC_Uri::admin_url('statics/images/nopic.png') . "' style='width:100px;height:100px;' />";
-				}
-			}
-			$site_url = empty($rows['site_url']) ? 'N/A' : '<a href="'.$rows['site_url'].'" target="_brank">'.$rows['site_url'].'</a>';
-			$rows['site_url'] = $site_url;
-			$arr[] = $rows;
-		}
-	}
-	return array('brand' => $arr, 'page' => $page->show(5), 'desc' => $page->page_desc());
-}
-
-/**
- * 获取品牌列表
- *
- * @access  public
- * @return  array
- */
 function get_merchants_brandlist() {
 	$dbview = RC_Model::model('goods/merchants_shop_brand_viewmodel');
 	$db = RC_Model::model('goods/brand_model');
