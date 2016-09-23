@@ -76,7 +76,7 @@ class admin_gallery extends ecjia_admin {
         $this->tags = get_goods_info_nav($goods_id, $extension_code);
         $this->tags['edit_goods_photo']['active'] = 1;
         /* 图片列表 */
-        $img_list = $this->db_goods_gallery->where(array('goods_id' => $goods_id))->select();
+        $img_list = RC_DB::table('goods_gallery')->where('goods_id', $goods_id)->get();
         
         $img_list_sort = $img_list_id = array();
         $no_picture = ecjia::config('no_picture');
@@ -162,7 +162,7 @@ class admin_gallery extends ecjia_admin {
 		$img_id = empty($_GET['img_id']) ? 0 : intval($_GET['img_id']);
 		
 		/* 删除图片文件 */
-		$row = $this->db_goods_gallery->goods_gallery_find('img_url, thumb_url, img_original', array('img_id' => $img_id));
+		$row = RC_DB::table('goods_gallery')->select('img_url', 'thumb_url', 'img_original')->where('img_id', $img_id)->first();
 		strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
 
 		RC_Loader::load_app_class('goods_imageutils', 'goods', false);
@@ -177,7 +177,7 @@ class admin_gallery extends ecjia_admin {
 		}
 
 		/* 删除数据 */
-		$this->db_goods_gallery->goods_gallery_delete($img_id);
+		RC_DB::table('goods_gallery')->where('img_id', $img_id)->delete();
 		$this->showmessage(RC_Lang::get('goods::goods.drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
@@ -189,11 +189,8 @@ class admin_gallery extends ecjia_admin {
 		$img_id = $_GET['img_id'];
 		$val = $_GET['val'];
 		
-		if ($this->db_goods_gallery->where(array('img_id' => $img_id))->update(array('img_desc' => $val))) {
-			$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
-		} else {
-			$this->showmessage(RC_Lang::get('goods::goods.edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+		RC_DB::table('goods_gallery')->where('img_id', $img_id)->update(array('img_desc' => $val));
+		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
 	/**
@@ -204,16 +201,13 @@ class admin_gallery extends ecjia_admin {
 		
 		$sort = $_GET['info'];
 		$i = 1;
+		
 		foreach ($sort as $k => $v) {
-			//$v['img_original'] = substr($v['img_original'], 0, strrpos($v['img_original'], '?')) . '?' . $i;
-			//$v['img_original'] = str_replace(SITE_UPLOAD_URL . '/', '', $v['img_original']);
 			$v['img_original'] = strrpos($v['img_original'], '?') > 0 ? substr($v['img_original'], 0, strrpos($v['img_original'], '?')) . '?' . $i : $v['img_original']. '?' . $i;
 			$v['img_original'] = str_replace(RC_Upload::upload_url() . '/', '', $v['img_original']);
 			$i++;
-			$where = array('img_id' => $v['img_id']);
 			$data = array('img_original' => $v['img_original']);
-			
-			$this->db_goods_gallery->where($where)->update($data);
+			RC_DB::table('goods_gallery')->where('img_id', $v['img_id'])->update($data);
 		}
 		$this->showmessage(RC_Lang::get('goods::goods.save_sort_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
