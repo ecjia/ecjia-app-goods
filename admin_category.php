@@ -129,7 +129,7 @@ class admin_category extends ecjia_admin {
 			if (empty($image_info)) {
 				$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
-			$cat['style'] = $upload->get_position($image_info);
+			$cat['category_img'] = $upload->get_position($image_info);
 		}
 
 		/* 入库的操作 */
@@ -242,7 +242,7 @@ class admin_category extends ecjia_admin {
 			$this->assign('cat_recommend', $cat_recommend);
 		}
 
-		$cat_info['style'] = !empty($cat_info['style']) ? RC_Upload::upload_url($cat_info['style']) : $cat_info['style'];
+		$cat_info['category_img'] = !empty($cat_info['category_img']) ? RC_Upload::upload_url($cat_info['category_img']) : '';
 		
 		$this->assign('cat_info', $cat_info);
 		$this->assign('cat_select', cat_list(0, $cat_info['parent_id'], true));
@@ -322,18 +322,18 @@ class admin_category extends ecjia_admin {
 		/* 更新分类图片 */
 		$upload = RC_Upload::uploader('image', array('save_path' => 'data/category', 'auto_sub_dirs' => true));
 
-		if (empty($_POST['old_img'])) {
-			$file_name = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('style');
-			$upload->remove($file_name);
-			$cat['style'] = '';
-		}
-
 		if (isset($_FILES['cat_img']) && $upload->check_upload_file($_FILES['cat_img'])) {
 			$image_info = $upload->upload($_FILES['cat_img']);
 			if (empty($image_info)) {
 				$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
-			$cat['style'] = $upload->get_position($image_info);
+			$cat['category_img'] = $upload->get_position($image_info);
+			$logo = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('category_img');
+				
+			if (!empty($logo)) {
+				$disk = RC_Filesystem::disk();
+				$disk->delete(RC_Upload::upload_path() . $logo);
+			}
 		}
 
 		$info = RC_DB::table('category')->select('cat_name', 'show_in_nav')->where('cat_id', $cat_id)->first();
@@ -551,7 +551,7 @@ class admin_category extends ecjia_admin {
 
 		if ($cat_count == 0 && $goods_count == 0) {
 // 			$old_logo = $this->db_category->where(array('cat_id' => $cat_id))->get_field('style');
-			$old_logo = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('style');
+			$old_logo = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('category_img');
 			
 			if (!empty($old_logo)) {
 				$disk = RC_Filesystem::disk();
@@ -578,28 +578,17 @@ class admin_category extends ecjia_admin {
 		
 		$cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
 // 		$term_meta_info = $this->db_term_meta->term_meta_find(array('object_id' => $cat_id, 'meta_key' => 'category_img'));
-		$term_meta_info = RC_DB::table('term_meta')->where('object_id', $cat_id)->where('meta_key', 'category_img')->first();
-
-		if (!empty($term_meta_info['meta_value'])) {
+		
+		$logo = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('category_img');
+			
+		if (!empty($logo)) {
 			$disk = RC_Filesystem::disk();
-			$disk->delete(RC_Upload::upload_path() . $term_meta_info['meta_value']);
-			
-			$data = array('meta_value' => '');
-// 			$where = array(
-// 				'object_id'		=> $cat_id,
-// 				'object_type'	=> 'ecjia.goods',
-// 				'object_group'	=> 'category',
-// 				'meta_key'		=> 'category_img',
-// 			);
-// 			$this->db_term_meta->term_meta_manage($data, $where);
-			
-			RC_DB::table('term_meta')
-				->where('object_id', $cat_id)
-				->where('object_type', 'ecjia.goods')
-				->where('object_group', 'category')
-				->where('meta_key', 'category_img')
-				->update($data);
+			$disk->delete(RC_Upload::upload_path() . $logo);
 		}
+		
+		RC_DB::table('category')->where('cat_id', $cat_id)->update(array('category_img' => ''));
+		
+		
 		$this->showmessage(RC_Lang::get('goods::category.drop_cat_img_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
 	}
 }

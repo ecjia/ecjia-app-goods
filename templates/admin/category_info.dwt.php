@@ -254,15 +254,15 @@
 						<div class="accordion-inner">
 							<label>{lang key='goods::category.lab_upload_picture'}</label>
 							<div class="ecjiaf-db">
-								<div class="fileupload {if $cat_info.style}fileupload-exists{else}fileupload-new{/if} m_t10" data-provides="fileupload">
-									<div class="fileupload-preview fileupload-exists thumbnail"><input type="hidden" name="old_img" value="1" />{if $cat_info.style}<img src="{$cat_info.style}" >{/if}</div>
+								<div class="fileupload {if $cat_info.category_img}fileupload-exists{else}fileupload-new{/if} m_t10" data-provides="fileupload">
+									<div class="fileupload-preview fileupload-exists thumbnail"><input type="hidden" name="old_img" value="1" />{if $cat_info.category_img}<img src="{$cat_info.category_img}" >{/if}</div>
 									<div>
 										<span class="btn btn-file">
 											<span class="fileupload-new">{lang key='goods::category.select_cat_img'}</span>
 											<span class="fileupload-exists">{lang key='goods::category.edit_cat_img'}</span>
 											<input type="file" name="cat_img" />
 										</span>
-										<a class="btn fileupload-exists" {if $cat_info.style eq ''} data-dismiss="fileupload" href="javascript:;"  {else} data-toggle="removefile" data-msg="{lang key='goods::category.drop_cat_img_confirm'}" data-href='{url path="goods/admin_category/remove_logo" args="cat_id={$cat_info.cat_id}"}' data-removefile="true"{/if}>{lang key='system::system.drop'}</a>
+										<a class="btn fileupload-exists" {if $cat_info.category_img eq ''} data-dismiss="fileupload" href="javascript:;"  {else} data-toggle="removefile" data-msg="{lang key='goods::category.drop_cat_img_confirm'}" data-href='{url path="goods/admin_category/remove_logo" args="cat_id={$cat_info.cat_id}"}' data-removefile="true"{/if}>{lang key='system::system.drop'}</a>
 									</div>
 								</div>
 							</div>
