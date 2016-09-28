@@ -62,6 +62,8 @@ class admin extends ecjia_admin {
 		
 		RC_Loader::load_app_class('goods', 'goods', false);
 		RC_Loader::load_app_class('goods_image', 'goods', false);
+		RC_Loader::load_app_class('goods_image_data', 'goods', false);
+		RC_Loader::load_app_class('goods_imageutils', 'goods', false);
 
 		RC_Loader::load_app_func('functions');
 		RC_Loader::load_app_func('common');
@@ -543,16 +545,16 @@ class admin extends ecjia_admin {
 		if (isset($_POST['other_cat'])) {
 			handle_other_cat($goods_id, array_unique($_POST['other_cat']));
 		}
-
+	
 		/* 更新上传后的商品图片 */
 		if ($proc_goods_img) {
-			if (!empty($image_info)) {
-				$goods_image = new goods_image($image_info);
+			if (isset($image_info)) {
+				$goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
 				if ($proc_thumb_img) {
 					$goods_image->set_auto_thumb(false);
 				}
 				
-				$result = $goods_image->update_goods($goods_id);
+				$result = $goods_image->update_goods();
 				if (is_ecjia_error($result)) {
 					$this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 				}
@@ -561,14 +563,15 @@ class admin extends ecjia_admin {
 
 		/* 更新上传后的缩略图片 */
 		if ($proc_thumb_img) {
-			if (!empty($thumb_info)) {
-				$thumb_image = new goods_image($thumb_info);
-				$result = $thumb_image->update_thumb($goods_id);
+			if (isset($thumb_info)) {
+				$thumb_image = new goods_image_data($thumb_info['name'], $thumb_info['tmpname'], $thumb_info['ext'], $goods_id);
+				$result = $thumb_image->update_thumb();
 				if (is_ecjia_error($result)) {
 					$this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 				}
 			}
 		}
+		
 		/* 记录上一次选择的分类和品牌 */
 		setcookie('ECSCP[last_choose]', $catgory_id . '|' . $brand_id, RC_Time::gmtime() + 86400);
 
@@ -585,7 +588,7 @@ class admin extends ecjia_admin {
 		krsort($link);
 		$link = array_combine($key_array, $link);
 
-		$this->showmessage(RC_Lang::get('goods::goods.edit_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'max_id' => $goods_id));
+		$this->showmessage(RC_Lang::get('goods::goods.edit_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'pjaxurl' => RC_Uri::url('goods/admin/edit', array('goods_id' => $goods_id))));
 }
 
 	/**

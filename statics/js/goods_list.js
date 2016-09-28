@@ -350,19 +350,19 @@
 			$this.find('[name="cat_id"]').on('change', function() {
 				$this.find('[name="cat_id"]').val() < 1 ? $('.cat_id_error').css('display', 'block') : $('.cat_id_error').css('display', 'none');
 			});
-
+			
 			var option = {
 				rules : {
 					goods_name : {required : true},
 					shop_price : {required : true , min : 0},
 					goods_number : {required : true , min : 0},
-					//cat_id : {min : 1}
+					cat_id : {min : 1}
 				},
 				messages:{
 					goods_name : {required :"请输入商品名称！"},
 					shop_price : {required : "请输入商品价格！", min : "请输入正确价格格式！"},
 					goods_number : {required : "请输入商品库存！" , min : "商品库存最小只能为0！"},
-					//cat_id : {required :"请选择商品分类！"}
+					cat_id : {required :"请选择商品分类！"}
 				},
 				submitHandler:function() {
 					$this.ajaxSubmit({
