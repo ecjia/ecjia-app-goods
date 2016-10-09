@@ -203,7 +203,6 @@
 			$('[data-toggle="goto_newpage"]').on('click', function(e) {
 				e.preventDefault();
 				var url = $(this).attr('data-href') || $(this).attr('href');
-				console.log(url);
 				smoke.confirm('您确定放弃当前页面编辑的内容吗？',function(e){
 					if (e){
 						window.location.href = url;
