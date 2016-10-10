@@ -72,6 +72,27 @@
                 $("input[name='attr_input_type']:checked").val() == 1 ? $('.attr_values').show() : $('.attr_values').hide();
             });
             $('input[name="attr_input_type"]:checked').trigger('click');
+            
+            $('select[name="cat_id"]').on('change', function () {
+                var $this = $(this),
+                    url = $this.attr('data-url'),
+                	info = {
+                		'cat_id' : $this.val()
+                	};
+                $.post(url, info, function(data) {
+                	$('.attr_list').html('');
+                	if (data.content.length > 0) {
+                		for (var i = 0; i < data.content.length; i++) {
+                			var opt = '<option value="'+ i +'">'+ data.content[i] +'</option>';
+                			$('.attr_list').append(opt);
+                		}
+                		$('.attr_list').trigger("liszt:updated");
+                		$('#attrGroups').show();
+                	} else {
+                		$('#attrGroups').hide();
+                	}
+                })
+            });
  
             app.edit_arrt.edit_type_attr();
         },

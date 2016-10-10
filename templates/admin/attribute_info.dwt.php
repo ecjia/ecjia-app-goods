@@ -31,7 +31,7 @@
 				<div class="control-group formSep">
 					<label class="control-label">{lang key='goods::attribute.label_cat_id'}</label>
 					<div class="controls no-chzn-container">
-						<select class="w350" name="cat_id">
+						<select class="w350" name="cat_id" data-url="{url path= 'goods/admin_attribute/get_attr_group'}">
 							<option value="0">{lang key='system::system.select_please'}</option>
 							<!-- {$goods_type_list} -->
 						</select>
@@ -39,18 +39,16 @@
 					</div>
 				</div>
 
-				<!-- {if $attr_groups} -->				  
-				<div class="control-group formSep">
+				<div class="control-group formSep {if !$attr_groups}hide{/if}" id="attrGroups">
 					<label class="control-label">{lang key='goods::attribute.label_attr_group'}</label>
 					<div class="controls no-chzn-container">
-						<select class="w350" name="attr_group">
+						<select class="w350 attr_list" name="attr_group">
 							<!-- {if $attr_groups} -->
 							<!-- {html_options options=$attr_groups selected=$attr.attr_group} -->
 							<!-- {/if} -->
 						</select>
 					</div>
 				</div>
-				<!-- {/if} -->
 				
 				<div class="control-group formSep">
 					<label class="control-label">{lang key='goods::attribute.label_attr_index'}</label>

@@ -111,7 +111,7 @@ class admin_attribute extends ecjia_admin {
 		}
 		/* 取得属性信息 */
 		$attr = array(
-			'cat_id'			=> $_POST['cat_id'],
+			'cat_id'			=> $cat_id,
 			'attr_name'			=> trim($_POST['attr_name']),
 			'attr_index'		=> $_POST['attr_index'],
 			'attr_input_type'	=> $_POST['attr_input_type'],
@@ -301,6 +301,13 @@ class admin_attribute extends ecjia_admin {
 		if (RC_DB::table('attribute')->where('attr_id', $id)->update($data)) {
 			$this->showmessage(RC_Lang::get('goods::attribute.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		}
+	}
+	
+	public function get_attr_group() {
+		$cat_id = !empty($_POST['cat_id']) ? $_POST['cat_id'] : 0;
+		
+		$data = get_attr_groups($cat_id);
+		$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $data));
 	}
 }
 
