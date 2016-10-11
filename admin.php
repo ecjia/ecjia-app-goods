@@ -58,7 +58,7 @@ class admin extends ecjia_admin {
 		RC_Script::enqueue_script('ecjia-region', RC_Uri::admin_url('statics/ecjia.js/ecjia.region.js'), array('jquery'), false, true);
 
 		RC_Script::localize_script('goods_list', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
-		RC_Script::localize_script('product', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
+// 		RC_Script::localize_script('product', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
 		
 		RC_Loader::load_app_class('goods', 'goods', false);
 		RC_Loader::load_app_class('goods_image', 'goods', false);
@@ -1242,13 +1242,9 @@ class admin extends ecjia_admin {
 	public function product_remove() {
 		$this->admin_priv('remove_back', ecjia::MSGTYPE_JSON);
 	
-		if (empty($_GET['id'])) {
-			$this->showmessage(RC_Lang::get('goods::goods.product_id_null'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		} else {
-			$product_id = intval($_REQUEST['id']);
-		}
+		$product_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
 		$product = get_product_info($product_id, 'product_number, goods_id');
-	
+		
 // 		$result = $this->db_products->where(array('product_id' => $product_id))->delete();
 		$result = RC_DB::table('products')->where('product_id', $product_id)->delete();
 		if ($result) {

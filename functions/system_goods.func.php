@@ -776,7 +776,7 @@ function product_list($goods_id, $conditions = '') {
 *            字段
 * @return array
 */
-function get_product_info($product_id, $filed = '') {
+function get_product_info($product_id, $field = '') {
 // 	$db = RC_Model::model('goods/products_model');
 	
 	$return_array = array();
