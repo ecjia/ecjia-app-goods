@@ -185,19 +185,13 @@ class admin_goods_type extends ecjia_admin {
 		$this->admin_priv('goods_type_delete', ecjia::MSGTYPE_JSON);
 		
 		$id = intval($_GET['id']);
-// 		$name = $this->db_goods_type->where(array('cat_id' => $id))->get_field('cat_name');
 		$name = RC_DB::table('goods_type')->where('cat_id', $id)->pluck('cat_name');
 		
-// 		if ($this->db_goods_type->where(array('cat_id' => $id))->delete()) {
 		if (RC_DB::table('goods_type')->where('cat_id', $id)->delete()) {
-			
 			ecjia_admin::admin_log(addslashes($name), 'remove', 'goods_type');
 			/* 清除该类型下的所有属性 */
-// 			$arr = $this->db_attribute->field('attr_id')->find(array('cat_id' => $id));
-			$arr = RC_DB::table('attribute')->select('attr_id')->where('cat_id', $id)->first();
+			$arr = RC_DB::table('attribute')->where('cat_id', $id)->lists('attr_id');
 			if (!empty($arr)) {
-// 				$this->db_attribute->in(array('attr_id' => $arr))->delete();
-// 				$this->db_goods_attr->in(array('attr_id' => $arr))->delete();
 
 				RC_DB::table('attribute')->whereIn('attr_id', $arr)->delete();
 				RC_DB::table('goods_attr')->whereIn('attr_id', $arr)->delete();
@@ -218,10 +212,8 @@ class admin_goods_type extends ecjia_admin {
 
 		/* 检查名称是否重复 */
 		if(!empty($type_name)) {
-// 			$is_only = $this->db_goods_type->where(array('cat_name' => $type_name))->count();
 			$is_only = RC_DB::table('goods_type')->where('cat_name', $type_name)->count();
 			if ($is_only == 0) {
-// 				$this->db_goods_type->where(array('cat_id' => $type_id))->update(array('cat_name' => $type_name));
 				RC_DB::table('goods_type')->where('cat_id', $type_id)->update(array('cat_name' => $type_name));
 				
 				ecjia_admin::admin_log($type_name, 'edit', 'goods_type');
@@ -244,7 +236,6 @@ class admin_goods_type extends ecjia_admin {
 		$val    = intval($_POST['val']);
 		$data 	= array('enabled' => $val);
 		
-// 		$this->db_goods_type->where(array('cat_id' => $id))->update($data);
 		RC_DB::table('goods_type')->where('cat_id', $id)->update($data);
 		
 		$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
