@@ -1192,6 +1192,7 @@
 			app.goods_photo.save_sort();
 			app.goods_photo.sort_ok();
 			app.goods_photo.edit_title();
+			app.goods_photo.sort_cancel();
 		},
 
 		save_sort : function() {
@@ -1233,24 +1234,29 @@
 				});
 			});
 		},
-		edit_title : function() {
-			$(document).on('click', '[data-toggle="edit"]', function(e) {
-				e.preventDefault();
-				var $this = $(this),
-					value = $(this).parent().find('.edit_title').text();
-
-				$this.parent('p').find('.edit_title').html('<input class="edit-inline" type="text" value="' + value + '" />').find('.edit-inline').focus().select();;
-				$this.css('display', 'none').parent('p').find('.ajaxremove , .move-mod-head').css('display', 'none');
-				$this.parent('p').find('[data-toggle="sort-cancel"] , [data-toggle="sort-ok"]').css('display', 'inline-block');
-
-				$('[data-toggle="sort-cancel"]').off('click').on('click', function() {
-					$this.parent().find('.edit_title').html(value);
-					$this.css('display', 'inline-block').parent('p').find('.ajaxremove , .move-mod-head').css('display', 'inline-block');
-					$this.parent('p').find('[data-toggle="sort-cancel"] , [data-toggle="sort-ok"]').css('display', 'none');
-					
-				});
-			});
-		},
+        edit_title: function () {
+            $('[data-toggle="edit"]').on('click', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    value = $(this).parent().find('.edit_title').text();
+ 
+                $this.parent('p').find('.edit_title').html('<input class="edit-inline" type="text" value="' + value + '" />').find('.edit-inline').focus().select();
+                $this.parent('p').find('.ajaxremove , .move-mod-head, [data-toggle="edit"]').css('display', 'none');
+                $this.parent('p').find('[data-toggle="sort-cancel"] , [data-toggle="sort-ok"]').css('display', 'block');
+            });
+        },
+        
+        sort_cancel: function () {
+        	$('[data-toggle="sort-cancel"]').on('click', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    value = $(this).parent().find('.edit-inline').val();
+ 
+                $this.parent().find('.edit_title').html(value);
+                $this.parent('p').find('.ajaxremove , .move-mod-head, [data-toggle="edit"]').css('display', 'block');
+                $this.parent('p').find('[data-toggle="sort-cancel"] , [data-toggle="sort-ok"]').css('display', 'none');
+            });
+        },
 
 		loaded_img : function() {
 			$('div.wookmark_list').imagesLoaded(function() {
