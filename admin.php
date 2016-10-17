@@ -857,14 +857,15 @@ class admin extends ecjia_admin {
 	public function edit_goods_number() {
 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 
-		$goods_id = intval($_POST['pk']);
-		$goods_num = intval($_POST['value']);
+		$goods_id 	= intval($_POST['pk']);
+		$goods_num 	= !empty($_POST['value']) ? intval($_POST['value']) : 0;
+		
 		$data = array(
-			'goods_number' => $goods_num,
-			'last_update' => RC_Time::gmtime()
-			);
-		if ($goods_num < 0 || $_POST['value'] != $goods_num) {
-			$this->showmessage(RC_Lang::get('goods::goods._error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			'goods_number' 	=> $goods_num,
+			'last_update' 	=> RC_Time::gmtime()
+		);
+		if ($goods_num < 0) {
+			$this->showmessage(RC_Lang::get('goods::goods.goods_number_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 		
