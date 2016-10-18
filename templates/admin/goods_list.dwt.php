@@ -134,15 +134,14 @@
 					<th class="w100">{lang key='goods::goods.check_goods'}</th>
 					<th class="w100" data-toggle="sortby" data-sortby="goods_sn">{lang key='goods::goods.goods_sn'}</th>
 					<th class="w70" data-toggle="sortby" data-sortby="shop_price">{lang key='goods::goods.shop_price'}</th>
-					<th class="w70" data-toggle="sortby" data-sortby="sort_order">{lang key='goods::goods.sort_order'}</th>
 					<th class="w50"> {lang key='goods::goods.is_on_sale'} </th>
 					<th class="w35"> {lang key='goods::goods.is_best'} </th>
 					<th class="w35"> {lang key='goods::goods.is_new'} </th>
 					<th class="w35"> {lang key='goods::goods.is_hot'} </th>
-					
 					<!-- {if $use_storage} -->
 					<th class="w70" data-toggle="sortby" data-sortby="goods_number"> {lang key='goods::goods.goods_number'} </th>
 					<!-- {/if} --> 
+					<th class="w70" data-toggle="sortby" data-sortby="sort_order">排序</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -198,11 +197,6 @@
 						</span> 
 					</td>
 					<td align="center">
-						<span  class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="请输入排序序号"> 
-							{$goods.sort_order}
-						</span>
-					</td>
-					<td align="center">
 						<i class="{if $goods.is_on_sale}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_on_sale')}" data-id="{$goods.goods_id}"></i>
 					</td>
 					<td align="center">
@@ -214,14 +208,18 @@
 					<td align="center">
 						<i class="{if $goods.is_hot}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_hot')}" data-id="{$goods.goods_id}"></i>
 					</td>
-				
 					<!-- {if $use_storage} -->
 					<td align="right">
-						<span class="cursor_pointer" data-placement="left" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="请输入库存数量">
+						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="请输入库存数量">
 							{$goods.goods_number}
 						</span>
 					</td>
 					<!-- {/if} -->
+					<td align="center">
+						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="请输入排序序号"> 
+							{$goods.sort_order}
+						</span>
+					</td>
 				</tr>
 				<!-- {foreachelse}-->
 				<tr>
