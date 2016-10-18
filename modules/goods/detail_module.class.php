@@ -295,8 +295,8 @@ class detail_module extends api_front implements api_interface {
 			// 		        	->find();
 
             $db_view = RC_Model::model('goods/store_franchisee_viewmodel');
-            $field = 'sf.*, sc.cat_name';
-            $info = $db_view->field($field)->where(array('sf.status' => 1, 'sf.store_id' => $goods['store_id']))->find();
+            $field = 'ssi.*, sc.cat_name';
+            $info = $db_view->field($field)->where(array('ssi.status' => 1, 'ssi.store_id' => $goods['store_id']))->find();
             $store_config = array(
                 'shop_title'                => '', // 店铺标题
                 'shop_kf_mobile'            => '', // 客服手机号码
