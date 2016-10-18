@@ -8,13 +8,13 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class suggestlist_module extends api_front implements api_interface {
 
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
-    	$this->authSession();	
-    	
+    	$this->authSession();
+
     	$location = $this->requestData('location', array());
-// 		$location = array(
-// 				'latitude'	=> '31.235450744628906',
-// 				'longitude' => '121.41641998291016',
-// 		);
+		// $location = array(
+		// 		'latitude'	=> '31.235450744628906',
+		// 		'longitude' => '121.41641998291016',
+		// );
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
@@ -34,19 +34,19 @@ class suggestlist_module extends api_front implements api_interface {
     	$action_type = $this->requestData('action_type', '');
     	$sort_type = $this->requestData('sort_by', '');
     	$type = array('new', 'best', 'hot', 'promotion');//推荐类型
-    	
+
     	if (!in_array($action_type, $type)) {
     		return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
     	}
-    	
+
     	$size = $this->requestData('pagination.count', 15);
     	$page = $this->requestData('pagination.page', 1);
-    	
+
     	$cache_id = sprintf('%X', crc32($action_type . '-' . $sort_type  .'-' . $page . '-' . $size . '-' . $_SESSION['user_rank'] . '-' .
     			'-' . $geohash_code . ecjia::config('lang')));
-    	
+
     	$cache_key = 'api_goods_suggestlist_'.$cache_id;
-    	
+
        	$data = RC_Cache::app_cache_get($cache_key, 'goods');
        	if (empty($data)) {
 	    	switch ($sort_type) {
@@ -66,7 +66,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    			$order_by = array('sort_order' => 'asc', 'goods_id' => 'desc');
 	    			break;
 	    	}
-	    	
+
 	    	$options = array(
 	    			'intro'		=> $action_type,
 	    			'sort'		=> $order_by,
@@ -75,7 +75,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    			'location'	=> $location,
 	    	);
 	    	$result = RC_Api::api('goods', 'goods_list', $options);
-	    	
+
 	    	$data['pager'] = array(
 						"total" => $result['page']->total_records,
 						"count" => $result['page']->total_records,
@@ -93,7 +93,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    			$activity_type = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
 	    			/* 计算节约价格*/
 	    			$saving_price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_shop_price'] - $val['unformatted_promote_price'] : (($val['unformatted_market_price'] > 0 && $val['unformatted_market_price'] > $val['unformatted_shop_price']) ? $val['unformatted_market_price'] - $val['unformatted_shop_price'] : 0);
-	    			 
+
 	    			$mobilebuy_price = $object_id = 0;
 	    			if (!is_ecjia_error($result_mobilebuy) && $is_active) {
 	    				$mobilebuy = $mobilebuy_db->find(array(
@@ -113,7 +113,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    					}
 	    				}
 	    			}
-	    				
+
 	    			$data['list'][] = array(
 	    					'goods_id'		=> $val['goods_id'],
 	    					'id'			=> $val['goods_id'],
@@ -130,8 +130,8 @@ class suggestlist_module extends api_front implements api_interface {
 	    					'object_id'		=> $object_id,
 	    					'saving_price'	=>	$saving_price,
 	    					'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-	    					'seller_id'		=> $val['seller_id'],
-	    					'seller_name'	=> $val['seller_name'],
+	    					'store_id'		=> $val['store_id'],
+	    					'store_name'	=> $val['store_name'],
 	    			);
 	    		}
 	    	}
