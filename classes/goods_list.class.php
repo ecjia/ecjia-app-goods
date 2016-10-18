@@ -84,7 +84,8 @@ class goods_list {
 	 */
 	public static function get_goods_list($filter) {
 		RC_Loader::load_app_class('goods_category', 'goods', false);
-		$dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
+		// $dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
+		$dbview = RC_Model::model('goods/goods_member_viewmodel');
 
 		if (isset($filter['cat_id']) && !empty($filter['cat_id'])) {
 			$cache_key = 'category_'.$filter['cat_id'];
@@ -156,7 +157,8 @@ class goods_list {
 			// 			$ext_sql = "SELECT DISTINCT(b.goods_id) FROM " . $ecs->table('goods_attr') . " AS a, " . $ecs->table('goods_attr') . " AS b " .  "WHERE ";
 			$ext_group_goods = array();
 
-			$db_goods_attr_view = RC_Loader::load_app_model('goods_attr_viewmodel', 'goods');
+			// $db_goods_attr_view = RC_Loader::load_app_model('goods_attr_viewmodel', 'goods');
+			$db_goods_attr_view = RC_Model::model('goods/goods_attr_viewmodel');
 			$db_goods_attr_view->view = array(
 				'goods_attr' => array(
 					'type'		=> Component_Model_View::TYPE_LEFT_JOIN,
@@ -190,7 +192,6 @@ class goods_list {
 		$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
 
 		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($page_row->limit())->select();
-
 		$arr = array();
 		if (!empty($data)) {
 			RC_Loader::load_app_func('goods', 'goods');
