@@ -1537,7 +1537,7 @@ function get_goods_type() {
 	if (!empty($goods_type_list)) {
 		foreach ($goods_type_list AS $key=>$val) {
 			$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
-			$goods_type_list[$key]['shop_name'] = $val['seller_id'] == 0 ? '' : $val['shop_name'];
+			$goods_type_list[$key]['merchants_name'] = $val['store_id'] == 0 ? '' : $val['merchants_name'];
 		}
 	}
 	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(5), 'desc' => $page->page_desc());
