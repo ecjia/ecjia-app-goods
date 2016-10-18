@@ -29,8 +29,23 @@ class search_module extends api_front implements api_interface {
             return array('data' => $data, 'pager' => $pager);
         }
 
-           $size = $this->requestData('pagination.count', 15);
+        $size = $this->requestData('pagination.count', 15);
         $page = $this->requestData('pagination.page', 1);
+        if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
+            $data = array();
+            $data['list'] = array();
+            $data['pager'] = array(
+                "total" => '0',
+                "count" => '0',
+                "more"    => '0'
+            );
+            return array('data' => $data['list'], 'pager' => $data['pager']);
+        }else{
+            $geohash = RC_Loader::load_app_class('geohash', 'store');
+            $geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
+            $geohash_code = substr($geohash_code, 0, 5);
+        }
+
         $options = array(
                 'location'        => $location,
                 'keywords'        => $keywords,
@@ -38,7 +53,8 @@ class search_module extends api_front implements api_interface {
                 'page'            => $page,
         );
 
-        $result = RC_Api::api('seller', 'seller_list', $options);
+        $result = RC_Api::api('store', 'stroe_list', $options);
+
         if (is_ecjia_error($result)) {
             return $result;
         }
@@ -52,11 +68,11 @@ class search_module extends api_front implements api_interface {
             $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
             $is_active = ecjia_app::is_active('ecjia.mobilebuy');
             $seller_list = array();
-            foreach ($result['seller_list'] as $row) {
+            foreach ($result['list'] as $row) {
                 $field = 'count(*) as count, SUM(comment_rank) as comment_rank';
-                $comment = $db_comment->field($field)->where(array('seller_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
+                $comment = $db_comment->field($field)->where(array('store_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
 
-                $favourable_result = $db_favourable->where(array('seller_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
+                $favourable_result = $db_favourable->where(array('store_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
                 $favourable_list = array();
                 if (empty($rec_type)) {
                     if (!empty($favourable_result)) {
@@ -106,7 +122,7 @@ class search_module extends api_front implements api_interface {
                     }
                 }
 
-                $goods_options = array('page' => 1, 'size' => 3, 'seller_id' => $row['id']);
+                $goods_options = array('page' => 1, 'size' => 3, 'store_id' => $row['id']);
                 if (!empty($goods_category)) {
                     $goods_options['cat_id'] = $goods_category;
                 }
