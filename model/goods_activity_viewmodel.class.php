@@ -14,10 +14,10 @@ class goods_activity_viewmodel extends Component_Model_View {
 				'alias' => 'g',
 				'on' 	=> 'ga.goods_id =g.goods_id'
 			),
-		    'seller_shopinfo' => array(
+		    'store_franchisee' => array(
 		        'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 		        'alias' => 'ssi',
-		        'on' 	=> 'ssi.id =g.seller_id'
+		        'on' 	=> 'ssi.store_id =g.store_id'
 		    )
 		);
 		
