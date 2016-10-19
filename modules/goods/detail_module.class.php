@@ -280,10 +280,10 @@ class detail_module extends api_front implements api_interface {
         $data['store_id'] = $goods['store_id'];
         if ($goods['store_id'] > 0) {
         	$seller_where = array();
-        	$seller_where['sf.status'] = 1; // 店铺开启状态
+        	$seller_where['ssi.status'] = 1; // 店铺开启状态
 //         	$seller_where['msi.merchants_audit'] = 1;
 //         	$seller_where['msi.user_id'] = $data['seller_id'];
-        	$seller_where['sf.store_id'] = $goods['store_id'];
+        	$seller_where['ssi.store_id'] = $goods['store_id'];
 
         	// $msi_dbview = RC_Model::model('merchants_shop_information_viewmodel', 'seller');
         	// $ssi_dbview = RC_Model::model('seller/seller_shopinfo_viewmodel');
