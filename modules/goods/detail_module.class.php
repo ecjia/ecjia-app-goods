@@ -295,8 +295,8 @@ class detail_module extends api_front implements api_interface {
 			// 		        	->find();
 
             $db_view = RC_Model::model('goods/store_franchisee_viewmodel');
-            $field = 'ssi.*, sc.cat_name';
-            $info = $db_view->field($field)->where(array('ssi.status' => 1, 'ssi.store_id' => $goods['store_id']))->find();
+            $field = 'sf.*, sc.cat_name';
+            $info = $db_view->field($field)->where(array('sf.status' => 1, 'sf.store_id' => $goods['store_id']))->find();
             $store_config = array(
                 'shop_title'                => '', // 店铺标题
                 'shop_kf_mobile'            => '', // 客服手机号码
@@ -328,15 +328,15 @@ class detail_module extends api_front implements api_interface {
         	$cs_db = RC_Model::model('store/collect_store_model');
         	$follower_count = $cs_db->where(array('store_id' => $data['store_id']))->count();
 
-        	$db_goods_view = RC_Model::model('comment/comment_viewmodel');
+        	$db_goods_view = RC_Model::model('goods/comment_viewmodel');
 
         	$field = 'count(*) as count, SUM(IF(comment_rank>3,1,0)) as comment_rank, SUM(IF(comment_server>3,1,0)) as comment_server, SUM(IF(comment_delivery>3,1,0)) as comment_delivery';
-        	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.seller_id' => $goods['seller_id'], 'parent_id' => 0, 'status' => 1))->find();
+        	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.store_id' => $goods['store_id'], 'parent_id' => 0, 'status' => 1))->find();
 
 
         	$data['merchant_info'] = array(
-        			'store_id'			=> $info['store_id'],
-        			'store_name'		=> $info['merchants_name'],
+        			'seller_id'			=> $info['store_id'],
+        			'seller_name'		=> $info['merchants_name'],
         			'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
         			'goods_count'		=> $goods_count,
         			'follower'			=> $follower_count,
