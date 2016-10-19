@@ -244,13 +244,13 @@ class goods_category {
     			)
     		);
     		/* 获取当前分类及其子分类 */
-    		$res = $db_category_view->field('c.cat_id, c.cat_name, c.parent_id, tm.meta_value, c.is_show')->where(array('parent_id' => $parent_id, 'is_show' => 1))->order( array ('sort_order'=> 'asc', 'cat_id'=> 'asc'))->select();
-
+    		$res = $db_category_view->field('c.cat_id, c.cat_name, c.parent_id, tm.meta_value, c.is_show, c.category_img')->where(array('parent_id' => $parent_id, 'is_show' => 1))->order( array ('sort_order'=> 'asc', 'cat_id'=> 'asc'))->select();
     		foreach ( $res as $row ) {
     			if ($row ['is_show']) {
     				$cat_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
     				$cat_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-    				$cat_arr [$row ['cat_id']] ['img'] = empty($row['meta_value']) ? '' : RC_Upload::upload_url($row['meta_value']);
+    				//$cat_arr [$row ['cat_id']] ['img'] = empty($row['meta_value']) ? '' : RC_Upload::upload_url($row['meta_value']);
+    				$cat_arr [$row ['cat_id']] ['img'] = empty($row['category_img']) ? '' : RC_Upload::upload_url($row['category_img']);
 //     				$cat_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array ('cid' => $row ['cat_id']), $row ['cat_name'] );
     
     				if (isset ( $row ['cat_id'] ) != NULL) {
@@ -279,7 +279,7 @@ class goods_category {
     	$count = $db_category->where(array('parent_id' => $tree_id, 'is_show' => 1))->count();
     	if ($count > 0 || $tree_id == 0) {
     
-    		$res = $db_category_view->field('c.cat_id, c.cat_name, c.parent_id, c.is_show, tm.meta_value')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
+    		$res = $db_category_view->field('c.cat_id, c.cat_name, c.parent_id, c.is_show, tm.meta_value, c.category_img')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
     
     		foreach ( $res as $row ) {
     			if ($row ['is_show'])
@@ -291,7 +291,8 @@ class goods_category {
     			if (isset ( $row ['cat_id'] ) != NULL) {
     				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
     			}
-    			$three_arr [$row['cat_id']]['img'] = empty($row['meta_value']) ? '' : RC_Upload::upload_url($row['meta_value']);
+    			//$three_arr [$row['cat_id']]['img'] = empty($row['meta_value']) ? '' : RC_Upload::upload_url($row['meta_value']);
+    			$three_arr [$row['cat_id']]['img'] = empty($row['category_img']) ? '' : RC_Upload::upload_url($row['category_img']);
     		}
     	}
     	return $three_arr;

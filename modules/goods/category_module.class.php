@@ -12,7 +12,7 @@ class category_module extends api_front implements api_interface {
 		
 		$cache_key = 'api_goods_category';
 		$categoryGoods = RC_Cache::app_cache_get($cache_key, 'goods');
-		
+	
 		if (empty($categoryGoods)) {
 			$categoryGoods = array();
 			RC_Loader::load_app_class('goods_category', 'goods', false);
