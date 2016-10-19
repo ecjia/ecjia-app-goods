@@ -177,9 +177,9 @@ class search_module extends api_front implements api_interface {
                 if ($goods_result['page']->total_records >= $max_goods) {
                     array_unshift($seller_list, array(
                         'id'                    => $row['id'],
-                        'seller_name'           => $row['seller_name'],
-                        'seller_category'       => $row['seller_category'],
-                        'seller_logo'           => $row['seller_logo'],
+                        'seller_name'           => $row['merchants_name'],
+                        'seller_category'       => $row['shop_cat_name'],
+                        'seller_logo'           => $row['shop_logo'],
                         'seller_goods'          => $goods_list,
                         'follower'              => $row['follower'],
                         'is_follower'           => $row['is_follower'],
@@ -190,9 +190,9 @@ class search_module extends api_front implements api_interface {
                 } else {
                     $seller_list[] = array(
                         'id'                    => $row['id'],
-                        'seller_name'           => $row['seller_name'],
-                        'seller_category'       => $row['seller_category'],
-                        'seller_logo'           => $row['seller_logo'],
+                        'seller_name'           => $row['merchants_name'],
+                        'seller_category'       => $row['shop_cat_name'],
+                        'seller_logo'           => $row['shop_logo'],
                         'seller_goods'          => $goods_list,
                         'follower'              => $row['follower'],
                         'is_follower'           => $row['is_follower'],
