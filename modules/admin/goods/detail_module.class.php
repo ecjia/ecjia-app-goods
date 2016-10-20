@@ -7,7 +7,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class detail_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
-    		
+
 		$this->authadminSession();
 		if ($_SESSION['admin_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
@@ -25,8 +25,8 @@ class detail_module extends api_admin implements api_interface {
 		$where['is_delete'] = 0;
 		$db_goods = RC_Model::model('goods/goods_model');
 
-		if ($_SESSION['seller_id'] > 0) {
-			$where = array_merge($where, array('seller_id' => $_SESSION['seller_id']));
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
 		$row = $db_goods->find($where);
 		if (empty($row)) {
@@ -34,10 +34,10 @@ class detail_module extends api_admin implements api_interface {
 		} else {
 			$brand_db		= RC_Model::model('goods/brand_model');
 			$category_db	= RC_Model::model('goods/category_model');
-			
+
 			$brand_name = $row['brand_id'] > 0 ? $brand_db->where(array('brand_id' => $row['brand_id']))->get_field('brand_name') : '';
 			$category_name = $category_db->where(array('cat_id' => $row['cat_id']))->get_field('cat_name');
-			
+
 			if (ecjia::config('shop_touch_url', ecjia::CONFIG_EXISTS)) {
 				$goods_desc_url = ecjia::config('shop_touch_url').'index.php?m=goods&c=index&a=init&id='.$id.'&hidenav=1&hidetab=1';
 			} else {
@@ -64,7 +64,7 @@ class detail_module extends api_admin implements api_interface {
 					'goods_weight'	=> $row['goods_weight']  = (intval($row['goods_weight']) > 0) ?
 										$row['goods_weight'] . __('千克') :
 										($row['goods_weight'] * 1000) . __('克'),
-					'is_promote'	=> $row['is_promote'] == 1 ? true : false, 
+					'is_promote'	=> $row['is_promote'] == 1 ? true : false,
 					'is_best'		=> $row['is_best'] == 1 ? true : false,
 					'is_new'		=> $row['is_new'] == 1 ? true : false,
 					'is_hot'		=> $row['is_hot'] == 1 ? true : false,
@@ -88,9 +88,9 @@ class detail_module extends api_admin implements api_interface {
 
 			RC_Loader::load_app_func('system_goods', 'goods');
 			RC_Loader::load_app_func('common', 'goods');
-			
+
 			$goods_detail['user_rank'] = array();
-			
+
 			$discount_price = get_member_price_list($id);
 			$user_rank = get_user_rank_list();
 		    if(!empty($user_rank)){
@@ -111,16 +111,16 @@ class detail_module extends api_admin implements api_interface {
 		    	foreach ($volume_number as $key=>$value) {
 		    		$goods_detail['volume_number'][] =array(
 		    			   'number'	=> $value['number'],
-		    			   'price'	=> $value['price']	
+		    			   'price'	=> $value['price']
 		    		);
 		    	}
 		    }
-			
+
 			return $goods_detail;
 		}
-		
+
 	}
-	
+
 }
 /**
  * 判断某个商品是否正在特价促销期
