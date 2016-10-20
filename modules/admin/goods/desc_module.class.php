@@ -9,13 +9,10 @@ class desc_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     		
 		$this->authadminSession();
-		if ($_SESSION['admin_id'] <= 0) {
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		if (!$this->admin_priv('goods_manage')) {
-			return new ecjia_error('privilege_error', '对不起，您没有执行此项操作的权限！');
-		}
-
+		
         /* 获得商品的信息 */
     	$goods_id = $this->requestData('goods_id', 0);
     	
