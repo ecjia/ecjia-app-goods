@@ -7,7 +7,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class brand_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
-    		
+
 		$this->authadminSession();
 		if ($_SESSION['admin_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
@@ -32,7 +32,7 @@ class brand_module extends api_admin implements api_interface {
 				);
 			}
 		}
-		
+
         $pager = array(
 			"total" => $result['page']->total_records,
 			"count" => $result['page']->total_records,
