@@ -1,4 +1,4 @@
-<?php 
+<?php
 defined('IN_ECJIA') or exit('No permission resources.');
 
 class merchants_category_viewmodel extends Component_Model_View {
@@ -6,18 +6,13 @@ class merchants_category_viewmodel extends Component_Model_View {
 	public $view = array();
 	public function __construct() {
 		$this->table_name = 'merchants_category';
-		$this->table_alias_name = 'mc';
+		$this->table_alias_name = 'c';
 
 		$this->view = array(
-			'category' => array(
+			'merchants_category' => array(
 					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias' => 'c',
-					'on'    => 'mc.cat_id = c.cat_id ',
-			),
-			'merchants_shop_information' => array(
-					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias' => 'ms',
-					'on'    => 'ms.user_id = mc.user_id ',
+					'alias' => 's',
+					'on'    => 'c.cat_id = s.parent_id ',
 			),
 		);
 		parent::__construct();
