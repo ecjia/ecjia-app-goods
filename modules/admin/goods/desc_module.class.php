@@ -7,7 +7,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class desc_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
-    		
+
 		$this->authadminSession();
 		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
@@ -15,10 +15,10 @@ class desc_module extends api_admin implements api_interface {
 		
         /* 获得商品的信息 */
     	$goods_id = $this->requestData('goods_id', 0);
-    	
+
 		RC_Loader::load_app_func('goods','goods');
         $goods = get_goods_info($goods_id);
-        
+
         if ($goods === false) {
             /* 如果没有找到任何记录则跳回到首页 */
            	return new ecjia_error('not_exists_info', '不存在的信息');
