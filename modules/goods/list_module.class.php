@@ -93,16 +93,16 @@ class list_module extends api_front implements api_interface {
             if (!empty($result['list'])) {
                 $mobilebuy_db = RC_Model::model('goods/goods_activity_model');
                 /* 手机专享*/
-                $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
-                $is_active = ecjia_app::is_active('ecjia.mobilebuy');
+//                 $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
+//                 $is_active = ecjia_app::is_active('ecjia.mobilebuy');
                 foreach ($result['list'] as $val) {
                     /* 判断是否有促销价格*/
                     $price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_promote_price'] : $val['unformatted_shop_price'];
                     $activity_type = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
-                     /* 计算节约价格*/
+                    /* 计算节约价格*/
                     $saving_price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_shop_price'] - $val['unformatted_promote_price'] : (($val['unformatted_market_price'] > 0 && $val['unformatted_market_price'] > $val['unformatted_shop_price']) ? $val['unformatted_market_price'] - $val['unformatted_shop_price'] : 0);
 
-                    $mobilebuy_price = $object_id = 0;
+                    /* $mobilebuy_price = $object_id = 0;
                     if (!is_ecjia_error($result_mobilebuy) && $is_active) {
                         $mobilebuy = $mobilebuy_db->find(array(
                             'goods_id'     => $val['goods_id'],
@@ -120,7 +120,7 @@ class list_module extends api_front implements api_interface {
                                 $saving_price = ($val['unformatted_shop_price'] - $mobilebuy_price) > 0 ? $val['unformatted_shop_price'] - $mobilebuy_price : 0;
                             }
                         }
-                    }
+                    } */
 
                     $data['list'][] = array(
                         'goods_id'                  => $val['goods_id'],
@@ -134,7 +134,7 @@ class list_module extends api_front implements api_interface {
                             'small'   => $val['goods_thumb']
                         ),
                         'activity_type'             => $activity_type,
-                        'object_id'                 => $object_id,
+                        'object_id'                 => 0,//$object_id,
                         'saving_price'              => $saving_price,
                         'formatted_saving_price'    => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
                         'seller_id'                  => $val['store_id'],
