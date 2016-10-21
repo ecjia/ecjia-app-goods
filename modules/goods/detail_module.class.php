@@ -347,6 +347,7 @@ class detail_module extends api_front implements api_interface {
         			)
         	);
         }
+        $data['seller_id'] = $info['store_id'];
         $shop_name = empty($info['store_name']) ? ecjia::config('shop_name') : $info['store_name'];
         $data['server_desc'] = '由'.$shop_name.'发货并提供售后服务';
 
