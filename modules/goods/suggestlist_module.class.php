@@ -11,10 +11,10 @@ class suggestlist_module extends api_front implements api_interface {
     	$this->authSession();
 
     	$location = $this->requestData('location', array());
-		// $location = array(
-		// 		'latitude'	=> '31.235450744628906',
-		// 		'longitude' => '121.41641998291016',
-		// );
+		$location = array(
+				'latitude'	=> '31.235450744628906',
+				'longitude' => '121.41641998291016',
+		);
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
@@ -47,7 +47,7 @@ class suggestlist_module extends api_front implements api_interface {
 
     	$cache_key = 'api_goods_suggestlist_'.$cache_id;
 
-       	$data = RC_Cache::app_cache_get($cache_key, 'goods');
+     //   	$data = RC_Cache::app_cache_get($cache_key, 'goods');
        	if (empty($data)) {
 	    	switch ($sort_type) {
 	    		case 'goods_id' :
@@ -75,13 +75,13 @@ class suggestlist_module extends api_front implements api_interface {
 	    			'location'	=> $location,
 	    	);
 	    	$result = RC_Api::api('goods', 'goods_list', $options);
-
 	    	$data['pager'] = array(
 						"total" => $result['page']->total_records,
 						"count" => $result['page']->total_records,
 						"more" => $result['page']->total_pages <= $page ? 0 : 1,
 			);
 	    	$data['list'] = array();
+
 	    	if (!empty($result['list'])) {
 	    		$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
 	    		/* 手机专享*/
@@ -130,8 +130,8 @@ class suggestlist_module extends api_front implements api_interface {
 	    					'object_id'		=> $object_id,
 	    					'saving_price'	=>	$saving_price,
 	    					'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-	    					'store_id'		=> $val['store_id'],
-	    					'store_name'	=> $val['store_name'],
+	    					'seller_id'		=> $val['store_id'],
+	    					'seller_name'	=> $val['store_name'],
 	    			);
 	    		}
 	    	}
