@@ -7,8 +7,12 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class updateprice_module extends api_admin implements api_interface {
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
-    	$this->authadminSession();
 
+    	$this->authadminSession();
+        
+        if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
 		//请求参数：
        	$goods_id				= $this->requestData('goods_id', 0);
     	if (empty($goods_id)) {
