@@ -75,21 +75,21 @@ class goods_model extends Component_Model_Model {
 		if (isset($_SESSION['store_id']) && $_SESSION['store_id'] > 0 ) {
 			$where['store_id'] = $_SESSION['store_id'];
 		}
-		$field = 'goods_id, goods_name, shop_price, market_price, promote_price, promote_start_date, promote_end_date, goods_thumb, original_img, goods_img';
+		$field = 'goods_id, store_id, goods_name, shop_price, market_price, promote_price, promote_start_date, promote_end_date, goods_thumb, original_img, goods_img';
 		$row = $this->field($field)->where($where)->find();
 
 		if (! empty ( $row )) {
-			$row['formatted_shop_price']		= price_format($row['shop_price']);
-			$row['formatted_market_price']		= price_format($row['market_price']);
-			$row['formatted_promote_price']		= price_format($row['promote_price']);
-			$row['promote_start_date']			=  $row['promote_start_date'];
-			$row['promote_end_date']  			=  $row['promote_end_date'];
+			$row['formatted_shop_price']		        = price_format($row['shop_price']);
+			$row['formatted_market_price']		        = price_format($row['market_price']);
+			$row['formatted_promote_price']		        = price_format($row['promote_price']);
+			$row['promote_start_date']			        =  $row['promote_start_date'];
+			$row['promote_end_date']  			        =  $row['promote_end_date'];
 			$row['formatted_promote_start_date']  		= RC_Time::local_date('Y-m-d H:i:s', $row['promote_start_date']);
 			$row['formatted_promote_end_date']    		= RC_Time::local_date('Y-m-d H:i:s', $row['promote_end_date']);
-			$row['img']							= array(
-					'goods_thumb'  => !empty($row['goods_thumb']) ? RC_Upload::upload_url($row['goods_thumb']) : RC_Uri::admin_url('statics/images/nopic.png'),
-					'original_img' => !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : RC_Uri::admin_url('statics/images/nopic.png'),
-					'goods_img'    => !empty($row['goods_img']) ? RC_Upload::upload_url($row['goods_img']) : RC_Uri::admin_url('statics/images/nopic.png')
+			$row['img']							        = array(
+				'goods_thumb'  => !empty($row['goods_thumb']) ? RC_Upload::upload_url($row['goods_thumb']) : RC_Uri::admin_url('statics/images/nopic.png'),
+				'original_img' => !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : RC_Uri::admin_url('statics/images/nopic.png'),
+				'goods_img'    => !empty($row['goods_img']) ? RC_Upload::upload_url($row['goods_img']) : RC_Uri::admin_url('statics/images/nopic.png')
 			);
 		}
 		unset($row['goods_thumb']);
