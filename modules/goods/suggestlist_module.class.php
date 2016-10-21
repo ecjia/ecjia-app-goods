@@ -47,7 +47,7 @@ class suggestlist_module extends api_front implements api_interface {
 
     	$cache_key = 'api_goods_suggestlist_'.$cache_id;
 
-     //   	$data = RC_Cache::app_cache_get($cache_key, 'goods');
+       	$data = RC_Cache::app_cache_get($cache_key, 'goods');
        	if (empty($data)) {
 	    	switch ($sort_type) {
 	    		case 'goods_id' :
