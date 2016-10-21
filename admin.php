@@ -173,6 +173,13 @@ class admin extends ecjia_admin {
 			$goods['goods_thumb'] = RC_Upload::upload_url($goods['goods_thumb']);
 			$goods['goods_img'] = RC_Upload::upload_url($goods['goods_img']);
 		}
+		if (!empty($goods['add_time'])) {
+			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods['add_time']);
+		}
+		if (!empty($goods['last_update'])) {
+			$goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
+		}
+		
 		$code = isset($_GET['extension_code']) ? 'virtual_card' : '';
 		$this->assign('code', $code);
 		
