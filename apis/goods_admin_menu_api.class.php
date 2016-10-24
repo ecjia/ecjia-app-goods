@@ -1,7 +1,7 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * ECJI后台商品菜单API
+ * ECJIA后台商品菜单API
  */
 class goods_admin_menu_api extends Component_Event_Api
 {
