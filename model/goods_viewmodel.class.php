@@ -28,6 +28,11 @@ class goods_viewmodel extends Component_Model_View {
 				'alias' => 'a',
 				'on' 	=> 'g.goods_type = a.cat_id'
 			),
+            'member_price' 	=> array(
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'	=> 'mp',
+				'on' 	=> "mp.goods_id = g.goods_id AND mp.user_rank = ".$_SESSION['user_rank'],
+			),
 		);
 		parent::__construct();
 	}

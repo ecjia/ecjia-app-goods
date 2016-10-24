@@ -6,7 +6,7 @@
  *
  */
 class goods_info {
-    
+
 	/**
 	 * 取指定规格的货品信息
 	 *
@@ -16,15 +16,15 @@ class goods_info {
 	 * @return array
 	 */
 	public static function get_products_info($goods_id, $spec_goods_attr_id) {
-		
+
 		$return_array = array ();
-	
+
 		if (empty ( $spec_goods_attr_id ) || ! is_array ( $spec_goods_attr_id ) || empty ( $goods_id )) {
 			return $return_array;
 		}
-	
+
 		$goods_attr_array = self::sort_goods_attr_id_array ( $spec_goods_attr_id );
-	
+
 		if (isset ( $goods_attr_array ['sort'] )) {
 			//$db = RC_Model::model('goods/products_model');
 			$db = RC_DB::table('products');
@@ -37,7 +37,7 @@ class goods_info {
 		}
 		return $return_array;
 	}
-	
+
 	/**
 	 * 获得指定的规格的价格
 	 *
@@ -62,10 +62,10 @@ class goods_info {
 		} else {
 			$price = 0;
 		}
-	
+
 		return $price;
 	}
-	
+
 	/**
 	 * 取得商品最终使用价格
 	 *
@@ -82,17 +82,17 @@ class goods_info {
 	 */
 	public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array())
 	{
-		//$dbview = RC_Model::model('goods/goods_viewmodel');
+		$db_goodsview = RC_Model::model('goods/goods_viewmodel');
 		$dbview = RC_DB::table('goods as g')->leftJoin('member_price as mp', RC_DB::raw('g.goods_id'), '=', RC_DB::raw('mp.goods_id'));
 		RC_Loader::load_app_func ('goods', 'goods');
 		$final_price	= 0; // 商品最终购买价格
 		$volume_price	= 0; // 商品优惠价格
 		$promote_price	= 0; // 商品促销价格
 		$user_price		= 0; // 商品会员价格
-	
+
 		// 取得商品优惠价格列表
 		$price_list = self::get_volume_price_list ($goods_id, '1');
-	
+
 		if (! empty ( $price_list )) {
 			foreach ( $price_list as $value ) {
 				if ($goods_num >= $value ['number']) {
@@ -100,25 +100,25 @@ class goods_info {
 				}
 			}
 		}
-		$field = "g.promote_price, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . $_SESSION['discount'] . "') AS shop_price";
+		$field = "g.promote_price, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . intval($_SESSION['discount']) . "') AS shop_price";
 		// 取得商品促销价格列表
-		//$goods = $dbview->field($field)->join('member_price')->find(array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
-		$goods = $dbview
-					->selectRaw($field)
-					->where(RC_DB::raw('g.goods_id'), '=', $goods_id)
-					->where(RC_DB::raw('g.is_delete'), '<>', 0)
-					->first();
-		
+		$goods = $db_goodsview->join(array('member_price'))->field($field)->where(array('g.goods_id' => $goods_id, 'g.is_delete' => 0))->find();
+		// $goods = $dbview
+		// 			->selectRaw($field)
+		// 			->where(RC_DB::raw('g.goods_id'), '=', $goods_id)
+		// 			->where(RC_DB::raw('g.is_delete'), '<>', 0)
+		// 			->first();
+
 		/* 计算商品的促销价格 */
 		if ($goods ['promote_price'] > 0) {
-			$promote_price = self::bargain_price ($goods ['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
+			$promote_price = self::bargain_price ($goods['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
 		} else {
 			$promote_price = 0;
 		}
-	
+
 		// 取得商品会员价格列表
-		$user_price = $goods ['shop_price'];
-	
+		$user_price = $goods['shop_price'];
+
 		// 比较商品的促销价格，会员价格，优惠价格
 		if (empty ( $volume_price ) && empty ( $promote_price )) {
 			// 如果优惠价格，促销价格都为空则取会员价格
@@ -151,12 +151,12 @@ class goods_info {
 					->where('end_time', '>=', RC_Time::gmtime())
 					->where('act_type', '=', GAT_MOBILE_BUY)
 					->first();
-		
+
 		if (!empty($mobilebuy)) {
 			$mobilebuy_ext_info = unserialize($mobilebuy['ext_info']);
 		}
 		$final_price =  ($final_price > $mobilebuy_ext_info['price'] && !empty($mobilebuy_ext_info['price'])) ? $mobilebuy_ext_info['price'] : $final_price;
-	
+	    
 		// 如果需要加入规格价格
 		if ($is_spec_price) {
 			if (! empty ( $spec )) {
@@ -164,11 +164,11 @@ class goods_info {
 				$final_price += $spec_price;
 			}
 		}
-	
+
 		// 返回商品最终购买价格
 		return $final_price;
 	}
-	
+
 	/**
 	 * 取得商品优惠价格列表
 	 *
@@ -184,7 +184,7 @@ class goods_info {
 		$db = RC_DB::table('volume_price');
 		$volume_price = array ();
 		$temp_index = '0';
-	
+
 		//$res = $db->field ('`volume_number` , `volume_price`')->where(array('goods_id' => $goods_id, 'price_type' => $price_type))->order (array('volume_number' => 'asc'))->select();
 		$res = $db
 				->select(RC_DB::raw('volume_number, volume_price'))
@@ -203,7 +203,7 @@ class goods_info {
 		}
 		return $volume_price;
 	}
-	
+
 	/**
 	 * 获得指定的商品属性
 	 * @access	  public
@@ -238,7 +238,7 @@ class goods_info {
 		}
 		return $attr;
 	}
-	
+
 	/**
 	 *
 	 * 是否存在规格
@@ -257,7 +257,7 @@ class goods_info {
 		if (empty ( $goods_attr_id_array )) {
 			return $goods_attr_id_array;
 		}
-	
+
 		// 重新排序
 		//$row = $dbview->join ( 'goods_attr' )->in ( array ('v.goods_attr_id' => $goods_attr_id_array) )->order ( array ('a.attr_id' => $sort) )->select ();
 		$row = $dbview
@@ -271,14 +271,14 @@ class goods_info {
 				$return_arr ['row'] [$value ['goods_attr_id']] = $value;
 			}
 		}
-	
+
 		if (! empty ( $return_arr )) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 判断某个商品是否正在特价促销期
 	 *
@@ -291,7 +291,7 @@ class goods_info {
 	 *        	促销结束日期
 	 * @return float 如果还在促销期则返回促销价，否则返回0
 	 */
-	private function bargain_price($price, $start, $end) {
+	private static function bargain_price($price, $start, $end) {
 		if ($price == 0) {
 			return 0;
 		} else {
@@ -303,7 +303,7 @@ class goods_info {
 			}
 		}
 	}
-	
+
 	/**
 	 * 将 goods_attr_id 的序列按照 attr_id 重新排序
 	 *
@@ -325,7 +325,7 @@ class goods_info {
 		if (empty($goods_attr_id_array)) {
 			return $goods_attr_id_array;
 		}
-	
+
 		// 重新排序
 		//$row = $dbview->join('goods_attr')->in(array('v.goods_attr_id' => $goods_attr_id_array))->order(array('a.attr_id' => $sort))->select();
 		$row = $dbview
@@ -336,16 +336,16 @@ class goods_info {
 		if (! empty($row)) {
 			foreach ($row as $value) {
 				$return_arr['sort'][] = $value['goods_attr_id'];
-	
+
 				$return_arr['row'][$value['goods_attr_id']] = $value;
 			}
 		}
 		return $return_arr;
 	}
-	
-	
-	
-	
+
+
+
+
 }
 
 // end
