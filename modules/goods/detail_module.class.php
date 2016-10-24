@@ -277,7 +277,7 @@ class detail_module extends api_front implements api_interface {
 //         }
 
         //多店铺的内容
-        $data['store_id'] = $goods['store_id'];
+        $data['seller_id'] = $goods['store_id'];
         if ($goods['store_id'] > 0) {
         	$seller_where = array();
         	$seller_where['ssi.status'] = 1; // 店铺开启状态
@@ -323,10 +323,10 @@ class detail_module extends api_front implements api_interface {
         		$info['shop_logo'] = str_replace('../', '/', $info['shop_logo']);
         	}
         	$db_goods = RC_Model::model('goods/goods_model');
-        	$goods_count = $db_goods->where(array('store_id' => $data['store_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
+        	$goods_count = $db_goods->where(array('store_id' => $data['seller_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
 
         	$cs_db = RC_Model::model('store/collect_store_model');
-        	$follower_count = $cs_db->where(array('store_id' => $data['store_id']))->count();
+        	$follower_count = $cs_db->where(array('store_id' => $data['seller_id']))->count();
 
         	$db_goods_view = RC_Model::model('goods/comment_viewmodel');
 
@@ -334,20 +334,20 @@ class detail_module extends api_front implements api_interface {
         	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.store_id' => $goods['store_id'], 'parent_id' => 0, 'status' => 1))->find();
 
 
-        	$data['merchant_info'] = array(
-        			'seller_id'			=> $info['store_id'],
-        			'seller_name'		=> $info['merchants_name'],
-        			'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
-        			'goods_count'		=> $goods_count,
-        			'follower'			=> $follower_count,
-        			'comment' 			=> array(
-        					'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
-        					'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
-        					'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
-        			)
-        	);
+        	// $data['merchant_info'] = array(
+        	// 		'seller_id'			=> $info['store_id'],
+        	// 		'seller_name'		=> $info['merchants_name'],
+        	// 		'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
+        	// 		'goods_count'		=> $goods_count,
+        	// 		'follower'			=> $follower_count,
+        	// 		'comment' 			=> array(
+        	// 				'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
+        	// 				'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
+        	// 				'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
+        	// 		)
+        	// );
         }
-        $data['seller_id'] = $info['store_id'];
+        // $data['is_warehouse'] = null;
         $shop_name = empty($info['store_name']) ? ecjia::config('shop_name') : $info['store_name'];
         $data['server_desc'] = '由'.$shop_name.'发货并提供售后服务';
 
