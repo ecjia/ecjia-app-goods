@@ -360,7 +360,7 @@ class admin extends ecjia_admin {
 		
 		$this->assign('data_term_meta', 	$data_term_meta);
 		$this->assign('term_meta_key_list', $term_meta_key_list);
-		
+
 		$this->assign('goods', 				$goods);
 		$this->assign('goods_name_color', 	$goods_name_style[0]);
 		$this->assign('cat_list', 			$cat_list);
@@ -463,7 +463,7 @@ class admin extends ecjia_admin {
 		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
 		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
 		$goods_weight 		= !empty($_POST['goods_weight']) 						? $_POST['goods_weight'] * $_POST['weight_unit'] 			: 0;
-		
+
 		$is_best 		= isset($_POST['is_best']) 			? 1 : 0;
 		$is_new 		= isset($_POST['is_new']) 			? 1 : 0;
 		$is_hot 		= isset($_POST['is_hot']) 			? 1 : 0;
