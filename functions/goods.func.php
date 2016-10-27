@@ -1585,7 +1585,7 @@ function get_attr_list() {
 
 	if (!empty($row)) {
 		foreach ($row AS $key => $val) {
-			//$row[$key]['attr_input_type_desc'] = RC_Lang::lang("value_attr_input_type/$val[attr_input_type]");
+			$row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
 			$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
 		}
 	}
