@@ -447,13 +447,13 @@ function get_attr_list($cat_id, $goods_id = 0) {
 
 	$dbview->view = array(
 		'goods_attr' => array(
-			'type' => Component_Model_View::TYPE_LEFT_JOIN,
+			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 			'alias' => 'v',
 			'field' => 'a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, v.attr_value, v.attr_price',
-			'on' => "v.attr_id = a.attr_id AND v.goods_id = '$goods_id'"
+			'on' 	=> "v.attr_id = a.attr_id AND v.goods_id = '$goods_id'"
 		)
 	);
-	$row = $dbview->where('a.cat_id = "' . intval($cat_id) . '" OR a.cat_id = 0')->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.attr_price' => 'asc', 'v.goods_attr_id' => 'asc'))->select();
+	$row = $dbview->where('a.cat_id = "' . intval($cat_id) . '"')->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.attr_price' => 'asc', 'v.goods_attr_id' => 'asc'))->select();
 	return $row;
 }
 
