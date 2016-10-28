@@ -170,10 +170,10 @@ class admin_category extends ecjia_admin {
             RC_Cache::app_cache_delete('cat_option_static', 'goods');
 
 			/*添加链接*/
-            $link[0]['text'] = RC_Lang::get('goods::category.continue_add');
+            $link[0]['text'] = RC_Lang::get('goods::category.back_list');
             $link[0]['href'] = RC_Uri::url('goods/admin_category/init');
             
-			$link[1]['text'] = RC_Lang::get('goods::category.back_list');
+			$link[1]['text'] = RC_Lang::get('goods::category.continue_add');
 			$link[1]['href'] = RC_Uri::url('goods/admin_category/add');
 			RC_Cache::app_cache_delete('admin_category_list', 'goods');
 			
