@@ -1622,69 +1622,69 @@ class admin extends ecjia_admin {
 	/**
 	* 关联配件
 	*/
-	public function edit_link_parts() {
-		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+// 	public function edit_link_parts() {
+// 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 		
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_link_parts')));
-		ecjia_screen::get_current_screen()->add_help_tab(array(
-			'id'		=> 'overview',
-			'title'		=> RC_Lang::get('goods::goods.overview'),
-			'content'	=> '<p>' . RC_Lang::get('goods::goods.edit_link_parts_help') . '</p>'
-		));
+// 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
+// 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_link_parts')));
+// 		ecjia_screen::get_current_screen()->add_help_tab(array(
+// 			'id'		=> 'overview',
+// 			'title'		=> RC_Lang::get('goods::goods.overview'),
+// 			'content'	=> '<p>' . RC_Lang::get('goods::goods.edit_link_parts_help') . '</p>'
+// 		));
 		
-		ecjia_screen::get_current_screen()->set_help_sidebar(
-			'<p><strong>' . RC_Lang::get('goods::goods.more_info') . '</strong></p>' .
-			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.85.B3.E8.81.94.E9.85.8D.E4.BB.B6" target="_blank">'. RC_Lang::get('goods::goods.about_edit_link_parts') .'</a>') . '</p>'
-		);
+// 		ecjia_screen::get_current_screen()->set_help_sidebar(
+// 			'<p><strong>' . RC_Lang::get('goods::goods.more_info') . '</strong></p>' .
+// 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.85.B3.E8.81.94.E9.85.8D.E4.BB.B6" target="_blank">'. RC_Lang::get('goods::goods.about_edit_link_parts') .'</a>') . '</p>'
+// 		);
 		
-		$goods_id = intval($_GET['goods_id']);
+// 		$goods_id = intval($_GET['goods_id']);
 		
-		$group_goods_list = get_group_goods($goods_id);
-		$this->db_goods_attr->join(null)->where(array('goods_id' => 0))->delete();
+// 		$group_goods_list = get_group_goods($goods_id);
+// 		$this->db_goods_attr->join(null)->where(array('goods_id' => 0))->delete();
 
-		//设置选中状态,并分配标签导航
-		$this->assign('tags', $this->tags);
-		$this->assign('cat_list', cat_list());
-		$this->assign('brand_list', get_brand_list());
-		$this->assign('group_goods_list', $group_goods_list);
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::lang('01_goods_list')));
-		$this->assign('goods_id', $goods_id);
-		$this->assign('ur_here', RC_Lang::get('goods::goods.edit_link_parts'));
+// 		//设置选中状态,并分配标签导航
+// 		$this->assign('tags', $this->tags);
+// 		$this->assign('cat_list', cat_list());
+// 		$this->assign('brand_list', get_brand_list());
+// 		$this->assign('group_goods_list', $group_goods_list);
+// 		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::lang('01_goods_list')));
+// 		$this->assign('goods_id', $goods_id);
+// 		$this->assign('ur_here', RC_Lang::get('goods::goods.edit_link_parts'));
 		
-		$this->display('link_parts.dwt');
-	}
+// 		$this->display('link_parts.dwt');
+// 	}
 
 	/**
 	* 关联文章
 	*/
-	public function edit_link_article() {
-		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+// 	public function edit_link_article() {
+// 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 		
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_link_article')));
-		ecjia_screen::get_current_screen()->add_help_tab(array(
-			'id'		=> 'overview',
-			'title'		=> RC_Lang::get('goods::goods.overview'),
-			'content'	=> '<p>' . RC_Lang::get('goods::goods.edit_link_article_help') . '</p>'
-		));
+// 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
+// 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_link_article')));
+// 		ecjia_screen::get_current_screen()->add_help_tab(array(
+// 			'id'		=> 'overview',
+// 			'title'		=> RC_Lang::get('goods::goods.overview'),
+// 			'content'	=> '<p>' . RC_Lang::get('goods::goods.edit_link_article_help') . '</p>'
+// 		));
 		
-		ecjia_screen::get_current_screen()->set_help_sidebar(
-			'<p><strong>' . RC_Lang::get('goods::goods.more_info') . '</strong></p>' .
-			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.85.B3.E8.81.94.E6.96.87.E7.AB.A0" target="_blank">'. RC_Lang::get('goods::goods.about_edit_link_article') .'</a>') . '</p>'
-		);
-		$this->assign('ur_here', RC_Lang::get('goods::goods.edit_link_article'));
+// 		ecjia_screen::get_current_screen()->set_help_sidebar(
+// 			'<p><strong>' . RC_Lang::get('goods::goods.more_info') . '</strong></p>' .
+// 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.85.B3.E8.81.94.E6.96.87.E7.AB.A0" target="_blank">'. RC_Lang::get('goods::goods.about_edit_link_article') .'</a>') . '</p>'
+// 		);
+// 		$this->assign('ur_here', RC_Lang::get('goods::goods.edit_link_article'));
 		
-		$goods_id = intval($_GET['goods_id']);
-		$goods_article_list = get_goods_articles($goods_id);
+// 		$goods_id = intval($_GET['goods_id']);
+// 		$goods_article_list = get_goods_articles($goods_id);
 		
-		//设置选中状态,并分配标签导航
-		$this->assign('tags', $this->tags);
-		$this->assign('goods_article_list',	$goods_article_list);
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::lang('01_goods_list')));
+// 		//设置选中状态,并分配标签导航
+// 		$this->assign('tags', $this->tags);
+// 		$this->assign('goods_article_list',	$goods_article_list);
+// 		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::lang('01_goods_list')));
 		
-		$this->display('link_article.dwt');
-	}
+// 		$this->display('link_article.dwt');
+// 	}
 
 	/**
 	 * 搜索商品，仅返回名称及ID
@@ -1777,70 +1777,70 @@ class admin extends ecjia_admin {
 	/**
 	* 增加一个配件
 	*/
-	public function add_link_parts() {
-	    $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+// 	public function add_link_parts() {
+// 	    $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 
-		$goods_id = intval($_GET['goods_id']);
-		$linked_array = !empty($_GET['linked_array']) ? $_GET['linked_array'] : '';
-		$this->db_group_goods->where(array('parent_id' => $goods_id))->delete();
-		$this->db_term_relationship->where(array('object_type'=>'ecjia.goods', 'object_group'=>'group_goods', 'object_id'=>$goods_id))->delete();
+// 		$goods_id = intval($_GET['goods_id']);
+// 		$linked_array = !empty($_GET['linked_array']) ? $_GET['linked_array'] : '';
+// 		$this->db_group_goods->where(array('parent_id' => $goods_id))->delete();
+// 		$this->db_term_relationship->where(array('object_type'=>'ecjia.goods', 'object_group'=>'group_goods', 'object_id'=>$goods_id))->delete();
 
-		$data = array();
-		if (!empty($linked_array)) {
-			foreach ($linked_array AS $key=>$val) {
-				$data[] = array(
-					'parent_id'		=> $goods_id,
-					'goods_id'		=> $val['id'],
-					'goods_price'	=> $val['price'],
-					'admin_id'		=> $_SESSION['admin_id'],
-				);
-				$sort_data[] = array(
-					'object_type'		=> 'ecjia.goods',
-					'object_group'		=> 'group_goods',
-					'object_id'			=> $goods_id,
-					'item_key1'			=> 'goods_id',
-					'item_value1'		=> $val['id'],
-					'item_key2'			=> 'goods_sort',
-					'item_value2'		=> $key,
-				);
-			}
-		}
+// 		$data = array();
+// 		if (!empty($linked_array)) {
+// 			foreach ($linked_array AS $key=>$val) {
+// 				$data[] = array(
+// 					'parent_id'		=> $goods_id,
+// 					'goods_id'		=> $val['id'],
+// 					'goods_price'	=> $val['price'],
+// 					'admin_id'		=> $_SESSION['admin_id'],
+// 				);
+// 				$sort_data[] = array(
+// 					'object_type'		=> 'ecjia.goods',
+// 					'object_group'		=> 'group_goods',
+// 					'object_id'			=> $goods_id,
+// 					'item_key1'			=> 'goods_id',
+// 					'item_value1'		=> $val['id'],
+// 					'item_key2'			=> 'goods_sort',
+// 					'item_value2'		=> $key,
+// 				);
+// 			}
+// 		}
 		
-		if (!empty($data)) {
-			$this->db_group_goods->batch_insert($data);
-			$this->db_term_relationship->batch_insert($sort_data);
-		}
+// 		if (!empty($data)) {
+// 			$this->db_group_goods->batch_insert($data);
+// 			$this->db_term_relationship->batch_insert($sort_data);
+// 		}
 
-		$pjaxurl = RC_Uri::url('goods/admin/edit_link_parts', array('goods_id' => $goods_id));
-		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
-	}
+// 		$pjaxurl = RC_Uri::url('goods/admin/edit_link_parts', array('goods_id' => $goods_id));
+// 		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+// 	}
 
 	/**
 	* 添加关联文章
 	*/
-	public function add_link_article() {
-		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+// 	public function add_link_article() {
+// 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 		
-		$goods_id = isset($_GET['goods_id']) ? intval($_GET['goods_id']) : 0;
-		$linked_array = !empty($_GET['linked_array']) ? $_GET['linked_array'] : '';
-		$this->db_goods_article->where(array('goods_id' => $goods_id))->delete();
+// 		$goods_id = isset($_GET['goods_id']) ? intval($_GET['goods_id']) : 0;
+// 		$linked_array = !empty($_GET['linked_array']) ? $_GET['linked_array'] : '';
+// 		$this->db_goods_article->where(array('goods_id' => $goods_id))->delete();
 
-		$data = array();
-		if (!empty($linked_array)) {
-			foreach ($linked_array AS $val) {
-				$data[] = array(
-					'goods_id' => $goods_id,
-					'article_id' => $val['article_id'],
-					'admin_id' => $_SESSION['admin_id'],
-				);
-			}
-		}
-		if (!empty($data)) {
-			$this->db_goods_article->batch_insert($data);
-		}
-		$pjaxurl = RC_Uri::url('goods/admin/edit_link_article', array('goods_id' => $goods_id));
-		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
-	}
+// 		$data = array();
+// 		if (!empty($linked_array)) {
+// 			foreach ($linked_array AS $val) {
+// 				$data[] = array(
+// 					'goods_id' => $goods_id,
+// 					'article_id' => $val['article_id'],
+// 					'admin_id' => $_SESSION['admin_id'],
+// 				);
+// 			}
+// 		}
+// 		if (!empty($data)) {
+// 			$this->db_goods_article->batch_insert($data);
+// 		}
+// 		$pjaxurl = RC_Uri::url('goods/admin/edit_link_article', array('goods_id' => $goods_id));
+// 		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+// 	}
 	
 	/**
 	 * 商品添加/编辑页 添加商品品牌
