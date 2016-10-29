@@ -197,7 +197,7 @@ class admin extends ecjia_admin {
 	* 商品回收站
 	*/
 	public function trash()	{
-        $this->admin_priv('remove_back', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_recycle')));
 	    ecjia_screen::get_current_screen()->add_help_tab(array(
@@ -639,7 +639,7 @@ class admin extends ecjia_admin {
 			/* 放入回收站 */
 			if ($_GET['type'] == 'trash') {
 				/* 检查权限 */
-				$this->admin_priv('remove_back');
+				$this->admin_priv('goods_update');
 				update_goods($goods_id, 'is_delete', '1');
 				$action = 'batch_trash';
 			} 
@@ -700,14 +700,14 @@ class admin extends ecjia_admin {
 			/* 还原 */
 			elseif ($_GET['type'] == 'restore') {
 				/* 检查权限 */
-				$this->admin_priv('remove_back');
+				$this->admin_priv('goods_update');
 				update_goods($goods_id, 'is_delete', '0');
 				$action = 'batch_restore';
 			} 
 			/* 删除 */
 			elseif ($_GET['type'] == 'drop') {
 				/* 检查权限 */
-				$this->admin_priv('remove_back');
+				$this->admin_priv('goods_delete');
 				delete_goods($goods_id);
 				/* 记录日志 */
 				if (!empty($data)) {
@@ -975,7 +975,7 @@ class admin extends ecjia_admin {
 	* 放入回收站
 	*/
 	public function remove() {
-        $this->admin_priv('remove_back', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 
     	$goods_id = intval($_GET['id']);
 //     	$goods_name = $this->db_goods->goods_field(array('goods_id' => $goods_id), 'goods_name');
@@ -991,7 +991,7 @@ class admin extends ecjia_admin {
 	* 还原回收站中的商品
 	*/
 	public function restore_goods() {
-	    $this->admin_priv('remove_back', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 	    
 		$goods_id = intval($_GET['id']);
 		$data = array(
@@ -1270,7 +1270,7 @@ class admin extends ecjia_admin {
 	 * 货品删除
 	 */
 	public function product_remove() {
-		$this->admin_priv('remove_back', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 	
 		$product_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
 		$product = get_product_info($product_id, 'product_number, goods_id');
@@ -1347,9 +1347,6 @@ class admin extends ecjia_admin {
 		$link[] = array('href' => RC_Uri::url('goods/admin/product_list', 'goods_id=' . $_POST['goods_id']), 'text' => RC_Lang::lang('item_list'));
 		/* 批量操作 - 批量删除 */
 		if ($_POST['type'] == 'drop') {
-	       //检查权限
-			$this->admin_priv('remove_back');
-
 	       //取得要操作的商品编号
 			$product_id = !empty($_POST['checkboxes']) ? join(',', $_POST['checkboxes']) : 0;
 	       //取出货品库存总数
