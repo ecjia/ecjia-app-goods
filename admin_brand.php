@@ -394,7 +394,7 @@ class admin_brand extends ecjia_admin {
 				$arr[] = $rows;
 			}
 		}
-		return array('brand' => $arr, 'page' => $page->show(5), 'desc' => $page->page_desc());
+		return array('brand' => $arr, 'page' => $page->show(2), 'desc' => $page->page_desc());
 	}
 }
 

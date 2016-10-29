@@ -1541,7 +1541,7 @@ function get_goods_type() {
 			//$goods_type_list[$key]['merchants_name'] = $val['store_id'] == 0 ? '' : $val['merchants_name'];后期增加
 		}
 	}
-	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(5), 'desc' => $page->page_desc());
+	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
 }
 
 /**

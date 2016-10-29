@@ -57,46 +57,44 @@
 
 <div class="row-fluid list-page">
 	<div class="span12">
-		<form method="post" action="{$form_action}" name="listForm" >
-			<div class="row-fluid">
-				<table class="table table-striped smpl_tbl">
-					<thead>
-						<tr>
-							<th class="table_checkbox">
-								<input type="checkbox" data-toggle="selectall" data-children=".checkbox"/>	
-							</th>
-							<th class="w50">{lang key='system::system.record_id'}</th>
-							<th class="w110">{lang key='goods::goods.business_name'}</th>
-							<th>{lang key='goods::goods.goods_name'}</th>
-							<th class="w100">{lang key='goods::goods.goods_sn'}</th>
-							<th class="w100">{lang key='goods::goods.shop_price'}</th>
-							<th class="w70">{lang key='system::system.handler'}</th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- {foreach from=$goods_list.goods item=goods} -->
-						<tr>
-							<td>
-								<input class="checkbox" value="{$goods.goods_id}" name="checkboxes[]" type="checkbox"/>
-							</td>
-							<td>{$goods.goods_id}</td>
-							<td class="ecjiafc-red">{$goods.merchants_name}</td>
-							<td>{$goods.goods_name|escape:html}</td>
-							<td>{$goods.goods_sn}</td>
-							<td align="right">{$goods.shop_price}</td>
-							<td align="center">
-								<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg='{lang key="goods::goods.restore_goods_confirm"}' href='{RC_Uri::url("goods/admin/restore_goods", "id={$goods.goods_id}")}' title="{lang key='goods::goods.restore'}"><i class="fontello-icon-export"></i></a>
-								<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg='{lang key="goods::goods.drop_goods_confirm"}' href='{RC_Uri::url("goods/admin/drop_goods", "id={$goods.goods_id}")}' title="{lang key='system::system.drop'}"><i class="fontello-icon-trash"></i></a>
-							</td>
-						</tr>
-						<!-- {foreachelse} -->
-						<tr><td class="no-records" colspan="10">{lang key='system::system.no_records'}</td></tr>
-						<!-- {/foreach} -->
-					</tbody>
-				</table>
-				<!-- {$goods_list.page} -->
-				</div>
-			</form>
+		<div class="row-fluid">
+			<table class="table table-striped smpl_tbl">
+				<thead>
+					<tr>
+						<th class="table_checkbox">
+							<input type="checkbox" data-toggle="selectall" data-children=".checkbox"/>	
+						</th>
+						<th class="w50">{lang key='system::system.record_id'}</th>
+						<th class="w110">{lang key='goods::goods.business_name'}</th>
+						<th>{lang key='goods::goods.goods_name'}</th>
+						<th class="w100">{lang key='goods::goods.goods_sn'}</th>
+						<th class="w100">{lang key='goods::goods.shop_price'}</th>
+						<th class="w70">{lang key='system::system.handler'}</th>
+					</tr>
+				</thead>
+				<tbody>
+			<!-- {foreach from=$goods_list.goods item=goods} -->
+					<tr>
+						<td>
+							<input class="checkbox" value="{$goods.goods_id}" name="checkboxes[]" type="checkbox"/>
+						</td>
+						<td>{$goods.goods_id}</td>
+						<td class="ecjiafc-red">{$goods.merchants_name}</td>
+						<td>{$goods.goods_name|escape:html}</td>
+						<td>{$goods.goods_sn}</td>
+						<td align="right">{$goods.shop_price}</td>
+						<td align="center">
+							<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg='{lang key="goods::goods.restore_goods_confirm"}' href='{RC_Uri::url("goods/admin/restore_goods", "id={$goods.goods_id}")}' title="{lang key='goods::goods.restore'}"><i class="fontello-icon-export"></i></a>
+							<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg='{lang key="goods::goods.drop_goods_confirm"}' href='{RC_Uri::url("goods/admin/drop_goods", "id={$goods.goods_id}")}' title="{lang key='system::system.drop'}"><i class="fontello-icon-trash"></i></a>
+						</td>
+					</tr>
+			<!-- {foreachelse} -->
+					<tr><td class="no-records" colspan="10">{lang key='system::system.no_records'}</td></tr>
+			<!-- {/foreach} -->
+				</tbody>
+			</table>
+	<!-- {$goods_list.page} -->
+			</div>
 		</div>
 	</div>
 </div>
