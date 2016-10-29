@@ -221,7 +221,7 @@
 					</td>
 					<!-- {/if} -->
 					<td align="center">
-						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="请输入排序序号"> 
+						<span class="cursor_pointer" data-placement="left" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="请输入排序序号"> 
 							{$goods.sort_order}
 						</span>
 					</td>
