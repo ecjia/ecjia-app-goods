@@ -436,7 +436,7 @@
 													<!-- {/if} -->
 													<!-- 优惠价格 -->
 													<div class="control-group control-group-small">
-														<label class="w80 fl t_r"><b>{lang key='goods::goods.volume_price'}：</b></label>
+														<label class="w80 f_l t_r"><b>{lang key='goods::goods.volume_price'}：</b></label>
 														<div class="f_l m_l10">
 															<!-- {foreach from=$volume_price_list item=volume_price name="volume_price_tab"} -->
 															<div class="goods-span">
@@ -445,9 +445,15 @@
 																<span class="m_l5 l_h30">{lang key='goods::goods.volume_price'}</span>
 																<input class="w80" type="text" name="volume_price[]" size="8" value="{$volume_price.price}"/>
 																<span>
+																	{if $smarty.foreach.volume_price_tab.last}
 																	<a class="l_h30 t_l no-underline" href="javascript:;" data-toggle="clone-obj" data-parent=".goods-span">
 																		<i class="fontello-icon-plus hide"></i>
 																	</a>
+																	{else}
+																	<a class="l_h30 t_l no-underline" href="javascript:;" data-toggle="remove-obj" data-parent=".goods-span">
+																		<i class="fontello-icon-cancel ecjiafc-red"></i>
+																	</a>
+																	{/if}
 																</span>
 															</div>
 															<!-- {/foreach} -->
