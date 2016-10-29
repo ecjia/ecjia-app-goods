@@ -12,7 +12,7 @@ class trash_module extends api_admin implements api_interface {
 		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		if (!$this->admin_priv('remove_back')) {
+		if (!$this->admin_priv('goods_update')) {
 			return new ecjia_error('privilege_error', '对不起，您没有执行此项操作的权限！');
 		}
 
