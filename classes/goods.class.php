@@ -180,7 +180,7 @@ class goods {
         return array(
             'goods'		=> $row,
             'filter'	=> $filter,
-            'page'		=> $page->show(5),
+            'page'		=> $page->show(2),
             'desc'		=> $page->page_desc()
         );
     }
