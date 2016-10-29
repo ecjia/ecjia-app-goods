@@ -626,8 +626,6 @@ class admin extends ecjia_admin {
 	* 批量操作
 	*/
 	public function batch() {
-	    $this->admin_priv('goods_delete', ecjia::MSGTYPE_JSON);
-
 		/* 取得要操作的商品编号 */
 		$goods_id = !empty($_POST['checkboxes']) ? $_POST['checkboxes'] : 0;
 		if (!isset($_GET['type']) || $_GET['type'] == '') {
@@ -717,6 +715,30 @@ class admin extends ecjia_admin {
 						ecjia_admin::admin_log($v['goods_name'], 'batch_remove', 'goods');
 					}
 				}
+			}
+			/* 审核通过 */
+			elseif ($_GET['type'] == 'pass') {
+				/* 检查权限 */
+				$this->admin_priv('goods_update');
+				update_goods($goods_id, 'review_status', '3');
+			}
+			/* 审核未通过 */
+			elseif ($_GET['type'] == 'not_pass') {
+				/* 检查权限 */
+				$this->admin_priv('goods_update');
+				update_goods($goods_id, 'review_status', '2');
+			}
+			/* 设为未审核 */
+			elseif ($_GET['type'] == 'not_audited') {
+				/* 检查权限 */
+				$this->admin_priv('goods_update');
+				update_goods($goods_id, 'review_status', '1');
+			}
+			/* 无需审核 */
+			elseif ($_GET['type'] == 'not_check') {
+				/* 检查权限 */
+				$this->admin_priv('goods_update');
+				update_goods($goods_id, 'review_status', '5');
 			}
 		}
 		
