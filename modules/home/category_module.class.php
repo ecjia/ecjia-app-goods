@@ -8,11 +8,11 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class category_module extends api_front implements api_interface {
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 		$this->authSession();
-		
+
         RC_Loader::load_app_func('goods', 'goods');
         RC_Loader::load_app_func('category', 'goods');
         RC_Loader::load_app_func('global', 'api');
-        
+
         $categoryGoods = array();
         $category = get_categories_tree();
         if (! empty($category)) {
@@ -64,7 +64,7 @@ class category_module extends api_front implements api_interface {
 	                	/* 判断是否有促销价格*/
 	                	$price = ($v['unformatted_shop_price'] > $v['unformatted_promote_price'] && $v['unformatted_promote_price'] > 0) ? $v['unformatted_promote_price'] : $v['unformatted_shop_price'];
 	                	$activity_type = ($v['unformatted_shop_price'] > $v['unformatted_promote_price'] && $v['unformatted_promote_price'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
-	                	
+
 	                	$mobilebuy_price = $groupbuy_price = $object_id = 0;
 	                	if (!empty($mobilebuy)) {
 	                		$ext_info = unserialize($mobilebuy['ext_info']);
@@ -81,8 +81,8 @@ class category_module extends api_front implements api_interface {
 // 							$activity_type = $groupbuy_price > $price ? $activity_type : 'GROUPBUY_GOODS';
 // 						}
 	                	/* 计算节约价格*/
-	                	$saving_price = ($v['unformatted_shop_price'] - $price) > 0 ? $v['unformatted_shop_price'] - $price : 0;                		
-                	
+	                	$saving_price = ($v['unformatted_shop_price'] - $price) > 0 ? $v['unformatted_shop_price'] - $price : 0;
+
                         $ngoods[] = array(
                             'id' => $v['id'],
                             'name' => $v['name'],
@@ -101,7 +101,7 @@ class category_module extends api_front implements api_interface {
                         	'formatted_saving_price' => '已省'.$saving_price.'元'
                         );
                     }
-                
+
                 $categoryGoods[] = array(
                     'id' => $val['id'],
                     'name' => $val['name'],
@@ -109,7 +109,7 @@ class category_module extends api_front implements api_interface {
                 );
             }
         }
-        
+
         return $categoryGoods;
     }
 }
@@ -118,10 +118,10 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
 {
 	$where = array();
     $brand > 0 ? $where['g.brand_id'] = $brand : ''; // " AND g.brand_id = '$brand'" : '';
-    
+
     $min > 0 ? $where[] = "g.shop_price >= $min " : '';
     $max > 0 ? $where[] = "g.shop_price <= $max " : '';
-    
+
     $num = 0;
     $type2lib = array(
         'best' => 'recommend_best',
@@ -148,11 +148,11 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
             $where['promote_end_date'] = array('egt' => $time);
             break;
     }
-    
+
     if (!empty($cats)) {
         $where[] = "(" . $cats . " OR " . get_extension_goods($cats) . ")";
     }
-    
+
     $order_type = ecjia::config('recommend_order');
     $order = ($order_type == 0) ? array(
         'g.sort_order' => 'desc',
@@ -162,12 +162,13 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
     $where['g.is_on_sale'] = 1;
     $where['g.is_alone_sale'] = 1;
     $where['g.is_delete'] = 0;
-    
+    $where['g.review_status'] = array('gt' => 2);
+
     if (ecjia::config('review_goods')) {
     	$where['g.review_status'] = array('gt' => 2);
     }
-    
-	
+
+
     $dbview = RC_Model::model('goods/goods_brand_member_viewmodel');
     $res = $dbview->join(array('brand', 'member_price'))
 					->where($where)
@@ -177,10 +178,10 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
 
     $idx = 0;
     $goods = array();
-    
+
     if (! empty($res) && is_array($res)) {
         foreach ($res as $key => $row) {
-            
+
             if ($row['promote_price'] > 0) {
                 $promote_price = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
                 $goods[$idx]['promote_price'] = $promote_price > 0 ? price_format($promote_price) : '';
@@ -188,7 +189,7 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
             	$promote_price = 0;
                 $goods[$idx]['promote_price'] = '';
             }
-            
+
             $goods[$idx]['id'] = $row['goods_id'];
             $goods[$idx]['name'] = $row['goods_name'];
             $goods[$idx]['brief'] = $row['goods_brief'];
@@ -203,11 +204,11 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
                 'gid' => $row['goods_id']
             ), $row['goods_name']);
             $goods[$idx]['short_style_name'] = add_style($goods[$idx]['short_name'], $row['goods_name_style']);
-            
-            
+
+
             $goods[$idx]['unformatted_shop_price'] = $row['org_price'];
             $goods[$idx]['unformatted_promote_price'] = $promote_price;
-            
+
             $idx ++;
         }
     }

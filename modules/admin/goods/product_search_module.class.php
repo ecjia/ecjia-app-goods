@@ -40,7 +40,7 @@ class product_search_module extends api_admin implements api_interface {
             $where['store_id'] = $_SESSION['store_id'];
         }
     	if ($device_code == '8001') {
-    		$where = array_merge($where, array('is_delete' => 0, 'is_on_sale' => 1, 'is_alone_sale' => 1));
+    		$where = array_merge($where, array('is_delete' => 0, 'is_on_sale' => 1, 'is_alone_sale' => 1, 'review_status' => array('gt' => 2)));
     		if (ecjia::config('review_goods')) {
     			$where['review_status'] = array('gt' => 2);
     		}
