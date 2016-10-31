@@ -75,18 +75,20 @@ class admin_gallery extends ecjia_admin {
         $img_list = RC_DB::table('goods_gallery')->where('goods_id', $goods_id)->get();
         
         $img_list_sort = $img_list_id = array();
-        $no_picture = ecjia::config('no_picture');
-        if (substr($no_picture, 0, 1) == '.') {
-        	$no_picture = str_replace('../', '', $no_picture);
-        }
+      	$no_picture = RC_Uri::admin_url('statics/images/nopic.png');
+//         if (substr($no_picture, 0, 1) == '.') {
+//         	$no_picture = str_replace('../', '', $no_picture);
+//         }
+
          /* 格式化相册图片路径 */
         if (!empty($img_list)) {
         	foreach ($img_list as $key => $gallery_img) {
         		$desc_index = intval(strrpos($gallery_img['img_original'], '?')) + 1;
         		!empty($desc_index) && $img_list[$key]['desc'] = substr($gallery_img['img_original'], $desc_index);
-        		$img_list[$key]['img_url'] = empty($gallery_img['img_url']) ?  RC_Upload::upload_url().'/'.$no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_url'];
-        		$img_list[$key]['thumb_url'] = empty($gallery_img['thumb_url']) ?  RC_Upload::upload_url().'/'.$no_picture : RC_Upload::upload_url() . '/' . $gallery_img['thumb_url'];
-        		$img_list[$key]['img_original'] = empty($gallery_img['img_original']) ?  RC_Upload::upload_url().'/'.$no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_original'];
+        		
+        		$img_list[$key]['img_url'] 		= empty($gallery_img['img_url']) 		|| !file_exists(RC_Upload::upload_path($gallery_img['img_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_url'];
+        		$img_list[$key]['thumb_url'] 	= empty($gallery_img['thumb_url']) 		|| !file_exists(RC_Upload::upload_path($gallery_img['thumb_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['thumb_url'];
+        		$img_list[$key]['img_original'] = empty($gallery_img['img_original']) 	|| !file_exists(RC_Upload::upload_path($gallery_img['img_original'])) 	?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_original'];
         	
         		$img_list_sort[$key] = $img_list[$key]['desc'];
         		$img_list_id[$key] = $gallery_img['img_id'];
