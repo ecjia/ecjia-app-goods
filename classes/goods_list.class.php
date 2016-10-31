@@ -101,6 +101,9 @@ class goods_list {
 			'is_alone_sale' => 1,
 			'is_delete'		=> 0,
 		);
+        if (ecjia::config('review_goods')) {
+    		$where['g.review_status'] = array('gt' => 2);
+    	}
 		if (!empty($children)) {
 			$where[] = "(". $children ." OR ".goods_category::get_extension_goods($children).")";
 		}
