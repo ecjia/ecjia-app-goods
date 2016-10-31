@@ -50,7 +50,6 @@ class list_module extends api_admin implements api_interface {
 		$where = array();
 		$where = array(
 			'is_delete' => 0,
-            'review_status' => array('gt' => 2),
 		);
 
 		if ($_SESSION['store_id'] > 0) {
