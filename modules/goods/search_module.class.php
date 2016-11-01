@@ -12,10 +12,10 @@ class search_module extends api_front implements api_interface {
 
         $keywords = $this->requestData('keywords');
         $location = $this->requestData('location', array());
-        $location = array(
-                'latitude'    => '31.235450744628906',
-                'longitude' => '121.41641998291016',
-        );
+//         $location = array(
+//                 'latitude'    => '31.235450744628906',
+//                 'longitude' => '121.41641998291016',
+//         );
         /*经纬度为空判断*/
         if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
             $data = array();
@@ -270,8 +270,8 @@ class search_module extends api_front implements api_interface {
                             'object_id'                 => $object_id,
                             'saving_price'              => $saving_price,
                             'formatted_saving_price'    => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-                            'store_id'                  => $val['store_id'],
-                            'store_name'                => $val['store_name'],
+                            'seller_id'                  => $val['store_id'],
+                            'seller_name'                => $val['store_name'],
                     );
                 }
             }

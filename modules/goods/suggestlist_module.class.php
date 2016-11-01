@@ -11,10 +11,10 @@ class suggestlist_module extends api_front implements api_interface {
     	$this->authSession();
 
     	$location = $this->requestData('location', array());
-		$location = array(
-				'latitude'	=> '31.235450744628906',
-				'longitude' => '121.41641998291016',
-		);
+// 		$location = array(
+// 				'latitude'	=> '31.235450744628906',
+// 				'longitude' => '121.41641998291016',
+// 		);
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
