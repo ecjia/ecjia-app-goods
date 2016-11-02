@@ -352,6 +352,19 @@ class detail_module extends api_front implements api_interface {
         $shop_name = empty($info['store_name']) ? ecjia::config('shop_name') : $info['store_name'];
         $data['server_desc'] = '由'.$shop_name.'发货并提供售后服务';
 
+        /* 分享链接*/
+        $data['share_link'] = '';
+        if (ecjia::config('mobile_share_link', ecjia::CONFIG_EXISTS)) {
+        	ecjia_api::$controller->assign('goods_id', $goods['goods_id']);
+        	if ($_SESSION['user_id'] > 0) {
+        		$user_invite_code = RC_Api::api('affiliate', 'user_invite_code');
+        		ecjia_api::$controller->assign('invite_code', $user_invite_code);
+        	}
+        	$share_link = ecjia_api::$controller->fetch_string(ecjia::config('mobile_share_link'));
+        	$data['share_link']	= $share_link;
+        }
+        
+        
         return $data;
     }
 }
