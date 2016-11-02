@@ -813,7 +813,7 @@ function assign_cat_goods($cat_id, $num = 0, $from = 'web', $order_rule = '') {
 	}
 	
 	if ($from == 'web') {
-		ecjia::$view_object->assign('cat_goods_' . $cat_id, $goods);
+		ecjia_front::$controller->assign('cat_goods_' . $cat_id, $goods);
 	} elseif ($from == 'wap') {
 		$cat ['goods'] = $goods;
 	}
