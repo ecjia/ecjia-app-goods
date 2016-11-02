@@ -40,7 +40,7 @@ class search_module extends api_front implements api_interface {
                 "more"    => '0'
             );
             return array('data' => $data['list'], 'pager' => $data['pager']);
-        }else{
+        } else {
             $geohash = RC_Loader::load_app_class('geohash', 'store');
             $geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
             $geohash_code = substr($geohash_code, 0, 5);
@@ -53,7 +53,7 @@ class search_module extends api_front implements api_interface {
                 'page'            => $page,
         );
 
-        $result = RC_Api::api('store', 'stroe_list', $options);
+        $result = RC_Api::api('store', 'store_list', $options);
 
         if (is_ecjia_error($result)) {
             return $result;
@@ -65,8 +65,8 @@ class search_module extends api_front implements api_interface {
             $db_favourable = RC_Model::model('favourable/favourable_activity_model');
 
             /* 手机专享*/
-            $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
-            $is_active = ecjia_app::is_active('ecjia.mobilebuy');
+//             $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
+//             $is_active = ecjia_app::is_active('ecjia.mobilebuy');
             $seller_list = array();
             foreach ($result['list'] as $row) {
                 $field = 'count(*) as count, SUM(comment_rank) as comment_rank';
@@ -74,51 +74,49 @@ class search_module extends api_front implements api_interface {
 
                 $favourable_result = $db_favourable->where(array('store_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
                 $favourable_list = array();
-                if (empty($rec_type)) {
-                    if (!empty($favourable_result)) {
-                        foreach ($favourable_result as $val) {
-                            if ($val['act_range'] == '0') {
-                                $favourable_list[] = array(
-                                        'name' => $val['act_name'],
-                                        'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-                                        'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-                                );
-                            } else {
-                                $act_range_ext = explode(',', $val['act_range_ext']);
-                                switch ($val['act_range']) {
-                                    case 1 :
-                                        if (in_array($goods['cat_id'], $act_range_ext)) {
-                                            $favourable_list[] = array(
-                                                    'name' => $val['act_name'],
-                                                    'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-                                                    'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-                                            );
-                                        }
-                                        break;
-                                    case 2 :
-                                        if (in_array($goods['brand_id'], $act_range_ext)) {
-                                            $favourable_list[] = array(
-                                                    'name' => $val['act_name'],
-                                                    'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-                                                    'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-                                            );
-                                        }
-                                        break;
-                                    case 3 :
-                                        if (in_array($goods['goods_id'], $act_range_ext)) {
-                                            $favourable_list[] = array(
-                                                    'name' => $val['act_name'],
-                                                    'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-                                                    'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-                                            );
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
+                if (!empty($favourable_result)) {
+                    foreach ($favourable_result as $val) {
+                        if ($val['act_range'] == '0') {
+                            $favourable_list[] = array(
+                                    'name' => $val['act_name'],
+                                    'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+                                    'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+                            );
+                        } else {
+                            $act_range_ext = explode(',', $val['act_range_ext']);
+                            switch ($val['act_range']) {
+                                case 1 :
+                                    if (in_array($val['cat_id'], $act_range_ext)) {
+                                        $favourable_list[] = array(
+                                                'name' => $val['act_name'],
+                                                'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+                                                'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+                                        );
+                                    }
+                                    break;
+                                case 2 :
+                                    if (in_array($val['brand_id'], $act_range_ext)) {
+                                        $favourable_list[] = array(
+                                                'name' => $val['act_name'],
+                                                'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+                                                'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+                                        );
+                                    }
+                                    break;
+                                case 3 :
+                                    if (in_array($val['goods_id'], $act_range_ext)) {
+                                        $favourable_list[] = array(
+                                                'name' => $val['act_name'],
+                                                'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+                                                'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+                                        );
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-
                         }
+
                     }
                 }
 
@@ -197,7 +195,7 @@ class search_module extends api_front implements api_interface {
                         'follower'              => $row['follower'],
                         'is_follower'           => $row['is_follower'],
                         'goods_count'           => $goods_result['page']->total_records,
-                        'comment'               => $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
+                        'comment'               => '100%',//$comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
                         'favourable_list'       => $favourable_list,
                     );
                 }
