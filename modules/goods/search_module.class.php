@@ -54,7 +54,7 @@ class search_module extends api_front implements api_interface {
         );
 
         $result = RC_Api::api('store', 'store_list', $options);
-
+        
         if (is_ecjia_error($result)) {
             return $result;
         }
@@ -68,9 +68,9 @@ class search_module extends api_front implements api_interface {
 //             $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
 //             $is_active = ecjia_app::is_active('ecjia.mobilebuy');
             $seller_list = array();
-            foreach ($result['list'] as $row) {
+            foreach ($result['seller_list'] as $row) {
                 $field = 'count(*) as count, SUM(comment_rank) as comment_rank';
-                $comment = $db_comment->field($field)->where(array('store_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
+//                 $comment = $db_comment->field($field)->where(array('store_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
 
                 $favourable_result = $db_favourable->where(array('store_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
                 $favourable_list = array();
