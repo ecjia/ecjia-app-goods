@@ -253,8 +253,12 @@ class admin extends ecjia_admin {
 	    	'<p><strong>' . RC_Lang::get('goods::goods.more_info') . '</strong></p>' .
 	    	'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品回收站" target="_blank">'. RC_Lang::get('goods::goods.about_goods_trash') .'</a>') . '</p>'
 	    );
+	    $cat_id = empty($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
+	    
 	    
 		$this->assign('ur_here', RC_Lang::get('goods::goods.goods_recycle'));
+		$this->assign('cat_list', cat_list(0, $cat_id));
+		
 		
 		$this->assign('action_link', $action_link);
 		$action_link = array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::get('goods::goods.goods_list'));

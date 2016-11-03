@@ -47,6 +47,10 @@
 	</form>
 	<div class="choose_list f_r" >
 		<form action="{RC_Uri::url('goods/admin/trash')}{if $filter.type}&type={$filter.type}{/if}"  method="post" class="f_r" name="searchForm">
+			<select class="w220" name="cat_id">
+			<option value="0">{lang key='goods::goods.goods_cat'}</option>
+			<!-- {$cat_list} -->
+		    </select>
 			<!-- <span>{lang key='goods::goods.keyword'} ：</span> TODO-->
 			<input type="text" class="w180" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{lang key='goods::goods.enter_merchant_keywords'}"/>
 			<input type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{lang key='goods::goods.enter_goods_keywords'}"/>
