@@ -163,8 +163,8 @@ p{margin:0px;}
 }
 
 #tbody {
-    float: left;
     width: 460px;
+	margin: 0 auto;
 }
 #mainbody {
     width: 418px;
