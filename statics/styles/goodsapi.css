@@ -188,12 +188,17 @@ border-radius:4px;
 #showArea{width:900px;}
 #showArea img {display:block;float:left;cursor:pointer;max-width: 60px;max-height: 60px;margin: 4px 0 0 12px;}
 
+.goods_preview .basic_info {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+    background: #fff;
+}
+
 #attributes div.attributes-list {
     clear: both;
     margin-bottom: 10px;
     border: 1px solid #e6e6e6;
 	border-radius:4px;
-	margin-left:10px;
 }
 
 #attributes .attr-list-hd {

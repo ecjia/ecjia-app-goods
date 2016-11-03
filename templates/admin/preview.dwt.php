@@ -33,8 +33,8 @@
 
 <div class="row-fluid goods_preview">
 	<div class="span12">
-		<div class="row-fluid showview">
-			<div class="span6 left">
+		<div class="row-fluid basic_info">
+			<div class="span6">
 				<div id="tbody">
 				    <div id="mainbody">
 				    	<!-- {foreach from=$goods_photo_list key=k item=val} -->
@@ -182,8 +182,9 @@
 				</div>
 			</div>
 		</div>
+		
 		{if $attr_list}
-		<div id="attributes">
+		<div id="attributes" class="t_c">
 			<div class="attributes-list" id="J_AttrList">
 				<div class="tm-clear tb-hidden tm_brandAttr" id="J_BrandAttr" style="display: block;">
 					<p class="attr-list-hd tm-clear"><a class="ui-more-nbg tm-MRswitchAttrs" href="#J_Attrs"><i class="ui-more-nbg-arrow tm-MRswitchAttrs"></i></a><em>产品参数：</em></p>
