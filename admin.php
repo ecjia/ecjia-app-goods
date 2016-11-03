@@ -159,18 +159,29 @@ class admin extends ecjia_admin {
 		if (!empty($goods['goods_desc'])) {
 			$goods['goods_desc'] = stripslashes($goods['goods_desc']);
 		}
-
+		
+		//商品属性
+		$attr_list = get_attr_list($goods['goods_type'], $goods_id);
+		$this->assign('attr_list', $attr_list);
+		
+		//平台分类
 		$cat_name = RC_DB::table('category')->where('cat_id', $goods['cat_id'])->pluck('cat_name');
+		
+		//品牌
 		$brand_name = RC_DB::table('brand')->where('brand_id', $goods['brand_id'])->pluck('brand_name');
+		
+		//商家名称
 		$merchants_name = RC_DB::table('store_franchisee')->where('store_id', $goods['store_id'])->pluck('merchants_name');
 
-		if (!file_exists(RC_Upload::upload_path($goods['goods_thumb'])) || empty($goods['goods_thumb'])) {
-			$goods['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
-			$goods['goods_img'] = RC_Uri::admin_url('statics/images/nopic.png');
-		} else {
-			$goods['goods_thumb'] = RC_Upload::upload_url($goods['goods_thumb']);
-			$goods['goods_img'] = RC_Upload::upload_url($goods['goods_img']);
-		}
+// 		if (!file_exists(RC_Upload::upload_path($goods['goods_thumb'])) || empty($goods['goods_thumb'])) {
+// 			$goods['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
+// 			$goods['goods_img'] = RC_Uri::admin_url('statics/images/nopic.png');
+// 		} else {
+// 			$goods['goods_thumb'] = RC_Upload::upload_url($goods['goods_thumb']);
+// 			$goods['goods_img'] = RC_Upload::upload_url($goods['goods_img']);
+// 		}
+		
+		//添加和更新时间
 		if (!empty($goods['add_time'])) {
 			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods['add_time']);
 		}
@@ -178,6 +189,7 @@ class admin extends ecjia_admin {
 			$goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
 		}
 		
+		//促销信息
 		$time = RC_Time::gmtime();
 		$goods['is_promote_now'] = false;
 		if ($goods['is_promote'] == 1) {
@@ -191,6 +203,7 @@ class admin extends ecjia_admin {
 		$code = isset($_GET['extension_code']) ? 'virtual_card' : '';
 		$this->assign('code', $code);
 		
+		//商品相册
 		$goods_photo_list = RC_DB::table('goods_gallery')->where('goods_id', $goods['goods_id'])->get();
 		if (!empty($goods_photo_list)) {
 			foreach ($goods_photo_list as $k => $v) {

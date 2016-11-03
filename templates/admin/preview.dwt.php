@@ -32,7 +32,7 @@
 </div>
 
 <div class="row-fluid goods_preview">
-	<div class="span12 ">
+	<div class="span12">
 		<div class="row-fluid showview">
 			<div class="span6 left">
 				<div id="tbody">
@@ -182,6 +182,20 @@
 				</div>
 			</div>
 		</div>
+		{if $attr_list}
+		<div id="attributes">
+			<div class="attributes-list" id="J_AttrList">
+				<div class="tm-clear tb-hidden tm_brandAttr" id="J_BrandAttr" style="display: block;">
+					<p class="attr-list-hd tm-clear"><a class="ui-more-nbg tm-MRswitchAttrs" href="#J_Attrs"><i class="ui-more-nbg-arrow tm-MRswitchAttrs"></i></a><em>产品参数：</em></p>
+					<ul id="J_AttrUL">
+						<!-- {foreach from=$attr_list item=val} -->
+	         			<li>{$val.attr_name}：{$val.attr_value}</li>       			
+	         			<!-- {/foreach} -->																			    						    						    							    						    							    							    						    							    						    							    						    							    					    					    																																																																																																																											    								     <li title="&nbsp;32GB&nbsp;128GB&nbsp;256GB">存储容量:&nbsp;32GB&nbsp;128GB&nbsp;256GB</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		{/if}
 		<div class="t_c">{$goods.goods_desc}</div>
 	</div>
 </div>
