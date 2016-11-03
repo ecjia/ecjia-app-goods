@@ -23,7 +23,9 @@
 
 <div class="row-fluid">
 	<div class="choose_list" >
-		<strong class="f_l">{lang key='goods::goods.lab_goods_sn'}{$goods.goods_sn}</strong>
+		{if $merchants_name}
+		<strong class="f_l">商家名称：{$merchants_name}</strong>
+		{/if}
 		<form class="f_r" method="post" action="{url path='goods/admin/preview'}" name="searchForm" data-id="{$goods.goods_id}">
 			<input type="text" name="keywords" value="{$goods.goods_id}" placeholder="{lang key='goods::goods.id_or_sn'}"/>
 			<button class="btn" type="submit">{lang key='goods::goods.search'}</button>
@@ -99,6 +101,13 @@
 				  	<div class="tb-key">
 				    	<div class="tb-skin">
 				      		<div class="tb-sku">
+				      			<dl class="tb-amount tm-clear">
+				          			<dt class="tb-metatit">商品货号</dt>
+				          			<dd id="J_Amount">
+							            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_sn}</em>
+							            <span id="J_StockTips"></span>
+				          			</dd>
+				        		</dl>
 				        		<dl class="tb-amount tm-clear">
 				          			<dt class="tb-metatit">数量</dt>
 				          			<dd id="J_Amount">

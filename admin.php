@@ -231,6 +231,7 @@ class admin extends ecjia_admin {
 		$this->assign('goods', $goods);
 		$this->assign('cat_name', $cat_name);
 		$this->assign('brand_name', $brand_name);
+		$this->assign('merchants_name', $merchants_name);
 		
 		$this->display('preview.dwt');
 	}
