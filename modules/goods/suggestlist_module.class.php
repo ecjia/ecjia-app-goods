@@ -85,8 +85,8 @@ class suggestlist_module extends api_front implements api_interface {
 	    	if (!empty($result['list'])) {
 	    		$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
 	    		/* 手机专享*/
-	    		$result_mobilebuy = ecjia_app::validate_application('mobilebuy');
-	    		$is_active = ecjia_app::is_active('ecjia.mobilebuy');
+// 	    		$result_mobilebuy = ecjia_app::validate_application('mobilebuy');
+// 	    		$is_active = ecjia_app::is_active('ecjia.mobilebuy');
 	    		foreach ($result['list'] as $val) {
 	    			/* 判断是否有促销价格*/
 	    			$price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_promote_price'] : $val['unformatted_shop_price'];
@@ -95,7 +95,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    			$saving_price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_shop_price'] - $val['unformatted_promote_price'] : (($val['unformatted_market_price'] > 0 && $val['unformatted_market_price'] > $val['unformatted_shop_price']) ? $val['unformatted_market_price'] - $val['unformatted_shop_price'] : 0);
 
 	    			$mobilebuy_price = $object_id = 0;
-	    			if (!is_ecjia_error($result_mobilebuy) && $is_active) {
+	    			/* if (!is_ecjia_error($result_mobilebuy) && $is_active) {
 	    				$mobilebuy = $mobilebuy_db->find(array(
 	    						'goods_id'	 => $val['goods_id'],
 	    						'start_time' => array('elt' => RC_Time::gmtime()),
@@ -112,7 +112,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    						$saving_price = ($val['unformatted_shop_price'] - $mobilebuy_price) > 0 ? $val['unformatted_shop_price'] - $mobilebuy_price : 0;
 	    					}
 	    				}
-	    			}
+	    			} */
 
 	    			$data['list'][] = array(
 	    					'goods_id'		=> $val['goods_id'],
@@ -121,6 +121,9 @@ class suggestlist_module extends api_front implements api_interface {
 	    					'market_price'	=> $val['market_price'],
 	    					'shop_price'	=> $val['shop_price'],
 	    					'promote_price'	=> $val['promote_price'],
+    	    			    'unformatted_promote_price' => $val['unformatted_promote_price'],
+    	    			    'promote_start_date' => $val['promote_start_date'],
+    	    			    'promote_end_date' => $val['promote_end_date'],
 	    					'img' => array(
 	    							'thumb'	=> $val['goods_img'],
 	    							'url'	=> $val['original_img'],
