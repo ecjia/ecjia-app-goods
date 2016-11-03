@@ -192,9 +192,15 @@ class goods_list {
 		$count = $dbview->join(null)->where($where)->count();
 
 		//实例化分页
-		$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
-
-		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($page_row->limit())->select();
+		if (empty($filter['size']) && empty($filter['page'])) {
+			$page_row = new ecjia_page($count, 20, 6, '', 1);
+			$limit = null;
+		} else {
+			$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
+			$limit = $page_row->limit();
+		}
+		
+		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($limit)->select();
 		$arr = array();
 		if (!empty($data)) {
 			RC_Loader::load_app_func('goods', 'goods');
