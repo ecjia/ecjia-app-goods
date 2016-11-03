@@ -3,6 +3,7 @@
 
 <!-- {block name="footer"} -->
 <script type="text/javascript">
+	var images_url = "{$images_url}";
 	ecjia.admin.preview.init();
 </script>
 <!-- {/block} -->
@@ -33,78 +34,155 @@
 <div class="row-fluid goods_preview">
 	<div class="span12 ">
 		<div class="row-fluid showview">
-			<div class="span4 left">
-				<img alt="{$goods.goods_name}" class="span10 thumbnail" src="{$goods.goods_img}">
+			<div class="span6 left">
+				<div id="tbody">
+				    <div id="mainbody">
+				    	<!-- {foreach from=$goods_photo_list key=k item=val} -->
+				    	{if $k eq 0}
+				      	<img src="{$val.img_url}" id="mainphoto" />
+				      	{/if}
+				      	<!-- {/foreach} -->
+				    </div>
+				    <img src="{$images_url}/goleft.gif" width="11" height="56" id="goleft" />
+				    <img src="{$images_url}/goright.gif" width="11" height="56" id="goright" />
+				    <div id="photos">
+				    	<div id="showArea">
+					        <!-- SRC: 缩略图地址 REL: 大图地址  NAME: 网址 -->
+					        <!-- {foreach from=$goods_photo_list key=k item=val} -->
+					        <img src="{$val.thumb_url}" rel="{$val.img_url}" />
+					        <!-- {/foreach} -->
+				      	</div>
+				    </div>
+				</div>
 			</div>
-			<div class="span8">
-				<h2 class="m_b10"{if $goods.goods_name_style} style="color:{$goods.goods_name_style};"{/if}>{$goods.goods_name} </h2>
-				<h2 class="m_b10 price">￥{$goods.shop_price}</h2>
-				<p>{lang key='goods::goods.is_best'}：{if $goods.is_best}<i class="fontello-icon-ok"></i>{else}<i class="fontello-icon-cancel"></i>{/if}</p>
-				<p>{lang key='goods::goods.is_new'}：{if $goods.is_new}<i class="fontello-icon-ok"></i>{else}<i class="fontello-icon-cancel"></i>{/if}</p>
-				<p>{lang key='goods::goods.is_hot'}：{if $goods.is_hot}<i class="fontello-icon-ok"></i>{else}<i class="fontello-icon-cancel"></i>{/if}</p>
+			<div class="span6" id="detail">
+				<div class="tb-wrap">
+				  	<div class="tb-detail-hd">
+				    	<h1 data-spm="1000983">{$goods.goods_name}</h1>
+				    	<div class="tb-detail-sellpoint"></div>
+				 	</div>
+				  	<div class="tm-fcs-panel">
+				    	<dl class="tm-tagPrice-panel">
+				      		<dt class="tb-metatit">市场售价</dt>
+				      		<dd>
+				     			<em class="tm-yen">¥</em>
+				    			<span class="tm-price">{$goods.market_price}</span>
+				    		</dd>
+				    	</dl>
+				    	<dl class="{if $goods.is_promote_now}tm-tagPrice-panel{else}tm-promo-price{/if}">
+					     	<dt class="tb-metatit">本店售价</dt>
+					      	<dd>
+					          	<em class="tm-yen">¥</em>
+					          	<span class="tm-price">{$goods.shop_price}</span>&nbsp;&nbsp;
+					      	</dd>
+				    	</dl>
+				    	
+				    	{if $goods.is_promote_now}
+				    	<dl class="tm-promo-panel tm-promo-cur">
+					     	<dt class="tb-metatit">促销价格</dt>
+					      	<dd>
+					        	<div class="tm-promo-price">
+					          		<em class="tm-yen">¥</em>
+					          		<span class="tm-price">{$goods.promote_price}</span>&nbsp;&nbsp;
+					          	</div>
+					      	</dd>
+				    	</dl>
+				    	
+				    	<dl class="tm-promo-panel tm-promo-cur">
+					     	<dt class="tb-metatit">促销时间</dt>
+					      	<dd>
+					          	<span class="tm-price">{$goods.promote_start_time} 至 {$goods.promote_end_time}</span>
+					      	</dd>
+				    	</dl>
+				    	{/if}
+				  	</div>
+				  	<div class="tb-key">
+				    	<div class="tb-skin">
+				      		<div class="tb-sku">
+				        		<dl class="tb-amount tm-clear">
+				          			<dt class="tb-metatit">数量</dt>
+				          			<dd id="J_Amount">
+							            <em id="J_EmStock" class="tb-hidden" style="display: inline;">库存{$goods.goods_number}件</em>
+							            <span id="J_StockTips"></span>
+				          			</dd>
+				        		</dl>
+				        		<dl class="tb-amount tm-clear">
+				          			<dt class="tb-metatit">警告数量</dt>
+				          			<dd id="J_Amount">
+				            			<em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.warn_number}件</em>
+				            			<span id="J_StockTips"></span>
+				          			</dd>
+				        		</dl>
+								<dl class="tb-amount tm-clear">
+								    <dt class="tb-metatit">商品重量</dt>
+								    <dd id="J_Amount">
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_weight}</em>
+								        <span id="J_StockTips"></span>
+								    </dd>
+								</dl>
+								<dl class="tb-amount tm-clear">
+								    <dt class="tb-metatit">商品分类</dt>
+								    <dd id="J_Amount">
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$cat_name}</em>
+								        <span id="J_StockTips"></span>
+								    </dd>
+								</dl>
+								<dl class="tb-amount tm-clear">
+								    <dt class="tb-metatit">商品品牌</dt>
+								    <dd id="J_Amount">
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$brand_name}</em>
+								        <span id="J_StockTips"></span>
+								    </dd>
+								</dl>
 
-				<!-- <p>{t}商品分类：{/t}{$cat_name}</p>
-				<p>{t}商品品牌：{/t}{$brand_name}</p> -->
-				<!-- <p>{t}简单描述：{/t}{$goods.goods_brief}</p> -->
-			</div>
-		</div>
-		
-		<div class="foldable-list move-mod-group" id="goods_info_sort_submit">
-			<div class="accordion-group">
-				<div class="accordion-heading">
-					<a class="accordion-toggle collapsed move-mod-head" data-toggle="collapse" data-target="#goods_info_area_submit">
-						<strong>{lang key='goods::goods.product_information'}</strong>
-					</a>
-				</div>
-				<div class="accordion-body in collapse" id="goods_info_area_submit">
-					<table class="table table-oddtd m_b0">
-						<tbody class="first-td-no-leftbd">
-							<tr>
-								<td><div align="right"><strong>{lang key='goods::goods.add_time'}</strong></div></td>
-								<td>{$goods.add_time}</td>
-								<td><div align="right"><strong>{lang key='goods::goods.last_update'}</strong></div></td>
-								<td>{$goods.last_update}</td>
-							</tr>
-							<tr>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_goods_number'}</strong></div></td>
-								<td>{$goods.goods_number}</td>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_warn_number'}</strong></div></td>
-								<td>{$goods.warn_number}</td>
-							</tr>
-							<tr>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_shop_price'}</strong></div></td>
-								<td>{$goods.shop_price}</td>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_market_price'}</strong></div></td>
-								<td>{$goods.market_price}</td>
-							</tr>
-							<tr>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_goods_weight'}</strong></div></td>
-								<td>{$goods.goods_weight}</td>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_keywords'}</strong></div></td>
-								<td>{$goods.keywords}</td>
-							</tr>
-							<tr>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_goods_brief'}</strong></div></td>
-								<td colspan="3">{$goods.goods_brief}</td>
-							</tr>
-							<tr>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_goods_cat'}</strong></div></td>
-								<td>{$goods.cat_name}</td>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_goods_brand'}</strong></div></td>
-								<td>{$goods.brand_name}</td>
-							</tr>
-							<tr>
-								<td><div align="right"><strong>{lang key='goods::goods.lab_seller_note'}</strong></div></td>
-								<td colspan="3">{$goods.seller_note}</td>
-							</tr>
-						</tbody>
-					</table>
+								<dl class="tb-amount tm-clear">
+								    <dt class="tb-metatit">添加时间</dt>
+								    <dd id="J_Amount">
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.add_time}</em>
+								        <span id="J_StockTips"></span>
+								    </dd>
+								</dl>
+								<dl class="tb-amount tm-clear">
+								    <dt class="tb-metatit">更新时间</dt>
+								    <dd id="J_Amount">
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.last_update}</em>
+								        <span id="J_StockTips"></span>
+								    </dd>
+								</dl>
+								
+								<dl class="tb-amount tm-clear">
+								    <dt class="tb-metatit">加入推荐</dt>
+								    <dd id="J_Amount">
+								    	{lang key='goods::goods.is_best'}
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">
+								        	{if $goods.is_best}
+								            <i class="fontello-icon-ok"></i>{else}
+								            <i class="fontello-icon-cancel"></i>
+								            {/if}
+								        </em>
+								        {lang key='goods::goods.is_new'}
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">
+								        	{if $goods.is_new}
+								            <i class="fontello-icon-ok"></i>{else}
+								            <i class="fontello-icon-cancel"></i>
+								            {/if}
+								        </em>
+								        {lang key='goods::goods.is_hot'}
+								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">
+								        	{if $goods.is_hot}
+								            <i class="fontello-icon-ok"></i>{else}
+								            <i class="fontello-icon-cancel"></i>
+								            {/if}
+								        </em>
+								    </dd>
+								</dl>
+							</div>
+				    	</div>
+				  	</div>
 				</div>
 			</div>
 		</div>
-		<div>
-			{$goods.goods_desc}
-		</div>
+		<div class="t_c">{$goods.goods_desc}</div>
 	</div>
 </div>
 <!-- {/block} -->
