@@ -238,6 +238,9 @@ class goods_list {
 				$arr[$key]['shop_price']	= $row['shop_price'] > 0 ? price_format($row['shop_price']) : RC_Lang::get('goods::goods.free');
 				$arr[$key]['type']			= $row['goods_type'];
 				$arr[$key]['promote_price']	= ($promote_price > 0) ? price_format($promote_price) : '';
+				//增加促销时间
+				$arr[$key]['promote_start_date']=  RC_Time::local_date('Y/m/d H:i:s O', $row['promote_start_date']);
+				$arr[$key]['promote_end_date']	=  RC_Time::local_date('Y/m/d H:i:s O', $row['promote_end_date']);
 
 				$arr[$key]['goods_thumb']	= !empty($row['goods_thumb']) ? RC_Upload::upload_url($row['goods_thumb']) : RC_Uri::admin_url('statics/images/nopic.png');
 				$arr[$key]['original_img']	= !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : RC_Uri::admin_url('statics/images/nopic.png');
