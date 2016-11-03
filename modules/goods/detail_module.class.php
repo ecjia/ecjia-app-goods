@@ -328,10 +328,10 @@ class detail_module extends api_front implements api_interface {
         	$cs_db = RC_Model::model('store/collect_store_model');
         	$follower_count = $cs_db->where(array('store_id' => $data['seller_id']))->count();
 
-        	$db_goods_view = RC_Model::model('goods/comment_viewmodel');
+//         	$db_goods_view = RC_Model::model('goods/comment_viewmodel');
 
-        	$field = 'count(*) as count, SUM(IF(comment_rank>3,1,0)) as comment_rank, SUM(IF(comment_server>3,1,0)) as comment_server, SUM(IF(comment_delivery>3,1,0)) as comment_delivery';
-        	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.store_id' => $goods['store_id'], 'parent_id' => 0, 'status' => 1))->find();
+//         	$field = 'count(*) as count, SUM(IF(comment_rank>3,1,0)) as comment_rank, SUM(IF(comment_server>3,1,0)) as comment_server, SUM(IF(comment_delivery>3,1,0)) as comment_delivery';
+//         	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.store_id' => $goods['store_id'], 'parent_id' => 0, 'status' => 1))->find();
 
 
         	$data['merchant_info'] = array(
@@ -341,9 +341,12 @@ class detail_module extends api_front implements api_interface {
         			'goods_count'		=> $goods_count,
         			'follower'			=> $follower_count,
         			'comment' 			=> array(
-        					'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
-        					'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
-        					'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
+        			    'comment_goods'		=> '100%',
+        			    'comment_server'	=> '100%',
+        			    'comment_delivery'	=> '100%',
+//         					'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
+//         					'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
+//         					'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
         			)
         	);
         }
