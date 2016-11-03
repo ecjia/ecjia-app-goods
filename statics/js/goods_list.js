@@ -663,6 +663,8 @@
 
 				var merchant_keywords = $("input[name='merchant_keywords']").val();
 				var keywords = $("input[name='keywords']").val();
+				var cat_id = $("select[name='cat_id']").val(); 			//分类
+
                 //
                 if (keywords != '') {
 					url += '&keywords=' + keywords;
@@ -670,6 +672,7 @@
                 if (merchant_keywords != '') {
 					url += '&merchant_keywords=' + merchant_keywords;
                 }
+                url += '&cat_id=' + cat_id;
 				ecjia.pjax(url);
 			});
 		}
