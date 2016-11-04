@@ -41,25 +41,59 @@
 <!-- <div class="choose_list span12">  -->
 <ul class="nav nav-pills">
 	<li class="{if !$smarty.get.type}active{/if}">
-		<a class="data-pjax" href="{RC_Uri::url('goods/admin/init')}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}">{lang key='goods::goods.intro_type'} 
+		<a class="data-pjax" href="{RC_Uri::url('goods/admin/init')}
+			{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
+			{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
+			{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
+			{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
+			{if $filter.keywords}&keywords={$filter.keywords}{/if}
+			{if $filter.review_status}&review_status={$filter.review_status}{/if}
+			{if $filter.store_id}&store_id={$filter.store_id}{/if}
+			
+			">
+			{lang key='goods::goods.intro_type'} 
 			<span class="badge badge-info">{$goods_list.filter.count_goods_num}</span>
 		</a>
 	</li>
 	
 	<li class="{if $smarty.get.type eq 1}active{/if}">
-		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=1{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}")}'>{lang key='goods::goods.is_on_saled'}
+		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=1
+			{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
+			{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
+			{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
+			{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
+			{if $filter.keywords}&keywords={$filter.keywords}{/if}
+			{if $filter.review_status}&review_status={$filter.review_status}{/if}
+			{if $filter.store_id}&store_id={$filter.store_id}{/if}
+			")}'>{lang key='goods::goods.is_on_saled'}
 			<span class="badge badge-info use-plugins-num">{$goods_list.filter.count_on_sale}</span>
 		</a>
 	</li>
 	
 	<li class="{if $smarty.get.type eq 2}active{/if}">	
-		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=2{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}")}'>{lang key='goods::goods.not_on_saled'}
+		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=2
+			{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
+			{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
+			{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
+			{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
+			{if $filter.keywords}&keywords={$filter.keywords}{/if}
+			{if $filter.review_status}&review_status={$filter.review_status}{/if}
+			{if $filter.store_id}&store_id={$filter.store_id}{/if}
+			")}'>{lang key='goods::goods.not_on_saled'}
 			<span class="badge badge-info unuse-plugins-num">{$goods_list.filter.count_not_sale}</span>
 		</a>
 	</li>
 	
 	<li class="{if $smarty.get.type eq 'merchant'}active{/if}">
-		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=merchant{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}")}'>{lang key='goods::goods.merchant'}
+		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=merchant
+			{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
+			{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
+			{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
+			{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
+			{if $filter.keywords}&keywords={$filter.keywords}{/if}
+			{if $filter.review_status}&review_status={$filter.review_status}{/if}
+			{if $filter.store_id}&store_id={$filter.store_id}{/if}
+			")}'>{lang key='goods::goods.merchant'}
 			<span class="badge badge-info unuse-plugins-num">{$goods_list.filter.merchant}</span>
 		</a>
 	</li>
@@ -99,7 +133,25 @@
 			</ul>
 		</div>
 
-		<form class="f_r form-inline" action="{RC_Uri::url('goods/admin/init')}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filterForm">
+		<form class="form-inline" action="{RC_Uri::url('goods/admin/init')}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filterForm">
+			<div class="f_l">
+				<select class="w150" name="review_status">
+					<option value="0">请选择审核状态</option>
+					<option value="1" {if $filter.review_status eq 1}selected{/if}>未审核</option>
+					<option value="2" {if $filter.review_status eq 2}selected{/if}>审核未通过</option>
+					<option value="3" {if $filter.review_status eq 3}selected{/if}>已审核</option>
+					<option value="5" {if $filter.review_status eq 5}selected{/if}>无需审核</option>
+				</select>
+				
+				<select class="w180" name="store_id">
+					<option value="0">请选择商家</option>
+					<!-- {foreach from=$store_list item=val} -->
+					<option value="{$val.store_id}" {if $filter.store_id eq $val.store_id}selected{/if}>{$val.merchants_name}</option>
+					<!-- {/foreach} -->
+				</select>
+				<button class="btn filter-btn" type="button">{lang key='goods::goods.filter'}</button>
+			</div>
+			
 			<div class="screen f_r">
 				<!-- 分类 -->
 				<select class="w220" name="cat_id">
@@ -129,7 +181,7 @@
 	<div class="span12">
 		<table class="table table-striped smpl_tbl table_vam table-hide-edit" id="smpl_tbl" data-uniform="uniform">
 			<thead>
-				<tr data-sorthref="{RC_Uri::url('goods/admin/init', "{if $smarty.get.cat_id}cat_id={$smarty.get.cat_id}{/if}&brand_id={$smarty.get.brand_id}&intro_type={$smarty.get.intro_type}{if $smarty.get.extension_code}&extension_code={$smarty.get.extension_code}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}")}">
+				<tr data-sorthref='{RC_Uri::url("goods/admin/init", "{if $smarty.get.type}&type={$smarty.get.type}{/if}")}'>
 					<th class="table_checkbox">
 						<input type="checkbox" name="select_rows" data-toggle="selectall" data-children=".checkbox"/>
 					</th>

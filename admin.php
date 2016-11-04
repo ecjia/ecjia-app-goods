@@ -121,6 +121,9 @@ class admin extends ecjia_admin {
 		$specifications = get_goods_type_specifications();
 		$this->assign('specifications', $specifications);
 		
+		$store_list = RC_DB::table('store_franchisee')->select('store_id', 'merchants_name')->get();
+		$this->assign('store_list', $store_list);
+		
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
 		
 		$this->display('goods_list.dwt');

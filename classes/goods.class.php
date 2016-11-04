@@ -68,7 +68,10 @@ class goods {
         $filter ['extension_code'] 	= empty ($_REQUEST ['extension_code']) 	? '' 			: trim($_REQUEST ['extension_code']);
         $filter ['is_delete'] 		= $is_delete;
         $filter ['real_goods'] 		= $real_goods;
-    
+        
+        $filter ['review_status']	= empty ($_REQUEST ['review_status'])	? 0 	: intval($_REQUEST ['review_status']);
+        $filter ['store_id']		= empty ($_REQUEST ['store_id'])		? 0 	: intval($_REQUEST ['store_id']);
+        
         $where = $filter ['cat_id'] > 0 ? " AND " . get_children($filter ['cat_id']) : '';
     
         /* 推荐类型 */
@@ -112,6 +115,16 @@ class goods {
         /* 商家关键字 */
         if (!empty ($filter ['merchant_keywords'])) {
         	$where .= " AND (s.merchants_name LIKE '%" . mysql_like_quote($filter ['merchant_keywords']) . "%')";
+        }
+        
+        /* 审核状态 */
+        if (!empty($filter['review_status'])) {
+        	$where .= " AND g.review_status=".$filter['review_status'];
+        }
+        
+        /* 店铺id*/
+        if (!empty($filter['store_id'])) {
+        	$where .= " AND g.store_id=".$filter['store_id'];
         }
     
         if ($real_goods > -1) {
