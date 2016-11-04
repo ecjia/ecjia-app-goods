@@ -33,31 +33,10 @@
 	</div>
 </div>
 
-<div class="row-fluid goods_preview">
-	<div class="span12">
-		<div class="row-fluid basic_info">
-			<div class="span6">
-				<div id="tbody">
-				    <div id="mainbody">
-				    	<!-- {foreach from=$goods_photo_list key=k item=val} -->
-				    	{if $k eq 0}
-				      	<img src="{$val.img_url}" id="mainphoto" />
-				      	{/if}
-				      	<!-- {/foreach} -->
-				    </div>
-				    <img src="{$images_url}/goleft.gif" width="11" height="56" id="goleft" />
-				    <img src="{$images_url}/goright.gif" width="11" height="56" id="goright" />
-				    <div id="photos">
-				    	<div id="showArea">
-					        <!-- SRC: 缩略图地址 REL: 大图地址  NAME: 网址 -->
-					        <!-- {foreach from=$goods_photo_list key=k item=val} -->
-					        <img src="{$val.thumb_url}" rel="{$val.img_url}" />
-					        <!-- {/foreach} -->
-				      	</div>
-				    </div>
-				</div>
-			</div>
-			<div class="span6" id="detail">
+<div id="detail">
+	<div class="tm-detail-meta tm-clear">
+		<div class="tm-clear">
+			<div class="tb-property">
 				<div class="tb-wrap">
 				  	<div class="tb-detail-hd">
 				    	<h1 data-spm="1000983">{$goods.goods_name}</h1>
@@ -190,10 +169,31 @@
 				  	</div>
 				</div>
 			</div>
+			<div class="tb-gallery">
+				<div id="tbody">
+				    <div id="mainbody">
+				    	<!-- {foreach from=$goods_photo_list key=k item=val} -->
+				    	{if $k eq 0}
+				      	<img src="{$val.img_url}" id="mainphoto" />
+				      	{/if}
+				      	<!-- {/foreach} -->
+				    </div>
+				    <img src="{$images_url}/goleft.gif" width="11" height="56" id="goleft" />
+				    <img src="{$images_url}/goright.gif" width="11" height="56" id="goright" />
+				    <div id="photos">
+				    	<div id="showArea">
+					        <!-- SRC: 缩略图地址 REL: 大图地址  NAME: 网址 -->
+					        <!-- {foreach from=$goods_photo_list key=k item=val} -->
+					        <img src="{$val.thumb_url}" rel="{$val.img_url}" />
+					        <!-- {/foreach} -->
+				      	</div>
+				    </div>
+				</div>
+			</div>
 		</div>
 		
 		{if $attr_list}
-		<div id="attributes" class="t_c">
+		<div id="attributes">
 			<div class="attributes-list" id="J_AttrList">
 				<div class="tm-clear tb-hidden tm_brandAttr" id="J_BrandAttr" style="display: block;">
 					<p class="attr-list-hd tm-clear"><a class="ui-more-nbg tm-MRswitchAttrs" href="#J_Attrs"><i class="ui-more-nbg-arrow tm-MRswitchAttrs"></i></a><em>产品参数：</em></p>
