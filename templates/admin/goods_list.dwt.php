@@ -49,7 +49,6 @@
 			{if $filter.keywords}&keywords={$filter.keywords}{/if}
 			{if $filter.review_status}&review_status={$filter.review_status}{/if}
 			{if $filter.store_id}&store_id={$filter.store_id}{/if}
-			
 			">
 			{lang key='goods::goods.intro_type'} 
 			<span class="badge badge-info">{$goods_list.filter.count_goods_num}</span>
