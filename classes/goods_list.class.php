@@ -87,6 +87,12 @@ class goods_list {
 		// $dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
 		$dbview = RC_Model::model('goods/goods_member_viewmodel');
 
+		$where = array(
+		    'is_on_sale'	=> 1,
+		    'is_alone_sale' => 1,
+		    'is_delete'		=> 0,
+		);
+		
 		if (isset($filter['cat_id']) && !empty($filter['cat_id'])) {
 			$cache_key = 'category_'.$filter['cat_id'];
 			$children = RC_Cache::app_cache_get($cache_key, 'goods');
@@ -95,12 +101,22 @@ class goods_list {
 				RC_Cache::app_cache_set($cache_key, $children, 'goods');
 			}
 		}
+		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
+		    $merchant_cat_list = RC_DB::table('merchants_category')->selectRaw('cat_id')
+		    ->where('parent_id', $filter['merchant_cat_id'])
+		    ->where('store_id', $filter['store_id'])
+		    ->where('is_show', 1)
+		    ->get();
+		    $children_cat = "'".$filter['merchant_cat_id']."'";
+		    if ($merchant_cat_list) {
+		        foreach ($merchant_cat_list as $cat) {
+		            $children_cat .= ",'".$cat['cat_id']."'";
+		        }
+		    }
+		    
+		    $where[] = "merchant_cat_id IN (" . $children_cat.")";
+		}
 
-		$where = array(
-			'is_on_sale'	=> 1,
-			'is_alone_sale' => 1,
-			'is_delete'		=> 0,
-		);
         if (ecjia::config('review_goods')) {
     		$where['g.review_status'] = array('gt' => 2);
     	}
@@ -201,6 +217,7 @@ class goods_list {
 		}
 		
 		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($limit)->select();
+		
 		$arr = array();
 		if (!empty($data)) {
 			RC_Loader::load_app_func('goods', 'goods');
