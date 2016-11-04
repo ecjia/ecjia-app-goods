@@ -86,17 +86,17 @@ function handle_volume_price($goods_id, $number_list, $price_list) {
 * @return  bool
 */
 function update_goods_stock($goods_id, $value) {
-// 	$db = RC_Model::model('goods/goods_model');
+	$db = RC_Model::model('goods/goods_model');
 // 	RC_Loader::load_app_func('common', 'goods');
 	
 	if ($goods_id) {
-		$data = array(
-			'goods_number'  => goods_number + $value,
-			'last_update'   => RC_Time::gmtime(),
-		);
+// 		$data = array(
+// 			'goods_number'  => goods_number + $value,
+// 			'last_update'   => RC_Time::gmtime(),
+// 		);
 // 		$result = $db->where(array('goods_id' => $goods_id))->update($data);
 // 		return $result;
-		return RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+		return $db->inc('goods_number', 'goods_id  ='.$goods_id, "'".$value."', last_update=".RC_Time::gmtime());
 	} else {
 		return false;
 	}
