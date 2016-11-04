@@ -313,11 +313,16 @@ function get_goods_list($filter) {
  * @param   integer     $selected   选定的类型编号
  * @return  string
  */
-function goods_type_list($selected) {
+function goods_type_list($selected, $store_id = 0) {
 // 	$db = RC_Model::model('goods/goods_type_model');
 // 	$data = $db->field('cat_id, cat_name')->where(array('enabled' => 1))->select();
-	$data = RC_DB::table('goods_type')->select('cat_id', 'cat_name')->where('enabled', 1)->get();
+	$db_goods_type = RC_DB::table('goods_type')->select('cat_id', 'cat_name')->where('enabled', 1);
 
+	if (!empty($store_id)) {
+		$db_goods_type->where('store_id', $store_id);
+	}
+	$data = $db_goods_type->get();
+	
 	$opt = '';
 	if (!empty($data)) {
 		foreach ($data as $row){
