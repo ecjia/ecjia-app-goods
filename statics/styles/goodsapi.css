@@ -185,7 +185,7 @@ border-radius:4px;
 
 #goleft {float:left;clear:left;margin:6px 0px 0 0px;}
 #goright {float:right;clear:right;margin:6px 40px 0 0px;}
-#photos {width: 377px;height:70px;line-height:64px;margin:0;overflow:hidden;}
+#photos {width: 377px;height:70px;line-height:64px;margin:0;overflow:hidden;margin-bottom: 20px;}
 #showArea{width:900px;}
 #showArea img {display:block;float:left;cursor:pointer;max-width: 60px;height: 60px;margin: 4px 0 0 12px;}
 

@@ -171,6 +171,7 @@
 			</div>
 			<div class="tb-gallery">
 				<div id="tbody">
+					{if $goods_photo_list}
 				    <div id="mainbody">
 				    	<!-- {foreach from=$goods_photo_list key=k item=val} -->
 				    	{if $k eq 0}
@@ -188,6 +189,11 @@
 					        <!-- {/foreach} -->
 				      	</div>
 				    </div>
+				    {else}
+				    <div id="mainbody">
+				    	<img src="{$no_picture}" id="mainphoto" />
+				    </div>
+				    {/if}
 				</div>
 			</div>
 		</div>
