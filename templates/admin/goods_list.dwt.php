@@ -18,7 +18,7 @@
 			<div>
 				<select class="noselect w200" size="15" name="target_cat">
 					<option value="0">{lang key='goods::goods.goods_cat'}</option>
-					<!-- {$cat_list} -->
+					<!-- {$move_cat_list} -->
 				</select>
 			</div>
 			<div>
