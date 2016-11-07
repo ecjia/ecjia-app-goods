@@ -298,20 +298,16 @@ class detail_module extends api_front implements api_interface {
             $field = 'sf.*, sc.cat_name';
             $info = $db_view->field($field)->where(array('sf.status' => 1, 'sf.store_id' => $goods['store_id']))->find();
             $store_config = array(
-                'shop_title'                => '', // 店铺标题
                 'shop_kf_mobile'            => '', // 客服手机号码
-                'shop_kf_email'             => '', // 客服邮件地址
-                'shop_kf_qq'                => '', // 客服QQ号码
-                'shop_kf_ww'                => '', // 客服淘宝旺旺
-                'shop_kf_type'              => '', // 客服样式
+//                 'shop_kf_email'             => '', // 客服邮件地址
+//                 'shop_kf_qq'                => '', // 客服QQ号码
+//                 'shop_kf_ww'                => '', // 客服淘宝旺旺
+//                 'shop_kf_type'              => '', // 客服样式
                 'shop_logo'                 => '', // 默认店铺页头部LOGO
-                'shop_thumb_logo'           => '', // Logo缩略图
                 'shop_banner_pic'           => '', // banner图
-                'shop_qrcode_logo'          => '', // 二维码中间Logo
                 'shop_trade_time'           => '', // 营业时间
                 'shop_description'          => '', // 店铺描述
                 'shop_notice'               => '', // 店铺公告
-                'shop_front_logo'           => '', // 店铺封面图
             );
             $config = RC_DB::table('merchants_config')->where('store_id', $goods['store_id'])->select('code','value')->get();
             foreach ($config as $key => $value) {
@@ -339,6 +335,7 @@ class detail_module extends api_front implements api_interface {
         			'seller_name'		=> $info['merchants_name'],
         			'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
         			'goods_count'		=> $goods_count,
+        	        'manage_mode'       => $info['manage_mode'],
         			'follower'			=> $follower_count,
         			'comment' 			=> array(
         			    'comment_goods'		=> '100%',
@@ -366,7 +363,6 @@ class detail_module extends api_front implements api_interface {
         	$share_link = ecjia_api::$controller->fetch_string(ecjia::config('mobile_share_link'));
         	$data['share_link']	= $share_link;
         }
-        
         
         return $data;
     }
