@@ -142,7 +142,7 @@
 					<option value="5" {if $filter.review_status eq 5}selected{/if}>无需审核</option>
 				</select>
 				
-				<select class="w180" name="store_id">
+				<select class="w150" name="store_id">
 					<option value="0">请选择商家</option>
 					<!-- {foreach from=$store_list item=val} -->
 					<option value="{$val.store_id}" {if $filter.store_id eq $val.store_id}selected{/if}>{$val.merchants_name}</option>
@@ -153,7 +153,7 @@
 			
 			<div class="screen f_r">
 				<!-- 分类 -->
-				<select class="w220" name="cat_id">
+				<select class="w150" name="cat_id">
 					<option value="0">{lang key='goods::goods.goods_cat'}</option>
 					<!-- {$cat_list} -->
 				</select>
