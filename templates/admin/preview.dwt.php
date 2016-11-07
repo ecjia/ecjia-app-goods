@@ -142,24 +142,21 @@
 								    <dt class="tb-metatit">加入推荐</dt>
 								    <dd id="J_Amount">
 								    	{lang key='goods::goods.is_best'}
-								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">
+								        <em id="J_EmStock" class="tb-hidden m_r5" style="display: inline;">
 								        	{if $goods.is_best}
-								            <i class="fontello-icon-ok"></i>{else}
-								            <i class="fontello-icon-cancel"></i>
+								            <i class="fontello-icon-ok"></i>{else}<i class="fontello-icon-cancel ecjiafc-red"></i>
 								            {/if}
 								        </em>
 								        {lang key='goods::goods.is_new'}
-								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">
+								        <em id="J_EmStock" class="tb-hidden m_r5" style="display: inline;">
 								        	{if $goods.is_new}
-								            <i class="fontello-icon-ok"></i>{else}
-								            <i class="fontello-icon-cancel"></i>
+								            <i class="fontello-icon-ok"></i>{else}<i class="fontello-icon-cancel ecjiafc-red"></i>
 								            {/if}
 								        </em>
 								        {lang key='goods::goods.is_hot'}
 								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">
 								        	{if $goods.is_hot}
-								            <i class="fontello-icon-ok"></i>{else}
-								            <i class="fontello-icon-cancel"></i>
+								            <i class="fontello-icon-ok"></i>{else}<i class="fontello-icon-cancel ecjiafc-red"></i>
 								            {/if}
 								        </em>
 								    </dd>
