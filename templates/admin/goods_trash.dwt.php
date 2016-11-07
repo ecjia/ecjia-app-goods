@@ -8,8 +8,6 @@
 <!-- {/block} -->
 
 <!-- {block name="main_content"} -->
-
-<div class="admin_goods goods_admin_trash">
 <div>
 	<h3 class="heading">
 		<!-- {if $ur_here}{$ur_here}{/if} -->
@@ -45,18 +43,22 @@
 			</ul>
 		</div>
 	</form>
-	<div class="choose_list f_r" >
-		<form action="{RC_Uri::url('goods/admin/trash')}{if $filter.type}&type={$filter.type}{/if}"  method="post" class="f_r" name="searchForm">
-			<select class="w220" name="cat_id">
-			<option value="0">{lang key='goods::goods.goods_cat'}</option>
-			<!-- {$cat_list} -->
-		    </select>
-			<!-- <span>{lang key='goods::goods.keyword'} ：</span> TODO-->
-			<input type="text" class="w180" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{lang key='goods::goods.enter_merchant_keywords'}"/>
-			<input type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{lang key='goods::goods.enter_goods_keywords'}"/>
+	
+	<form class="form-inline" action="{RC_Uri::url('goods/admin/trash')}{if $filter.type}&type={$filter.type}{/if}"  method="post" class="f_r" name="searchForm">
+		<div class="f_r" >
+			<div class="f_l m_r5">
+				<select class="w180" name="cat_id">
+					<option value="0">{lang key='goods::goods.goods_cat'}</option>
+					<!-- {foreach from=$cat_list item=cat} -->
+					<option value="{$cat.cat_id}" {if $cat.cat_id == $smarty.get.cat_id}selected{/if} {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
+					<!-- {/foreach} -->
+			    </select>
+		    </div>
+			<input type="text" class="w150" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{lang key='goods::goods.enter_merchant_keywords'}"/>
+			<input type="text" class="w150" name="keywords" value="{$smarty.get.keywords}" placeholder="{lang key='goods::goods.enter_goods_keywords'}"/>
 			<button class="btn" type="submit">{lang key='system::system.button_search'}</button>
-		</form>
-	</div>
+		</div>
+	</form>
 </div>
 
 <div class="row-fluid list-page">
@@ -77,7 +79,7 @@
 					</tr>
 				</thead>
 				<tbody>
-			<!-- {foreach from=$goods_list.goods item=goods} -->
+					<!-- {foreach from=$goods_list.goods item=goods} -->
 					<tr>
 						<td>
 							<input class="checkbox" value="{$goods.goods_id}" name="checkboxes[]" type="checkbox"/>
@@ -92,13 +94,12 @@
 							<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg='{lang key="goods::goods.drop_goods_confirm"}' href='{RC_Uri::url("goods/admin/drop_goods", "id={$goods.goods_id}")}' title="{lang key='system::system.drop'}"><i class="fontello-icon-trash"></i></a>
 						</td>
 					</tr>
-			<!-- {foreachelse} -->
-					<tr><td class="no-records" colspan="10">{lang key='system::system.no_records'}</td></tr>
-			<!-- {/foreach} -->
+					<!-- {foreachelse} -->
+					<tr><td class="no-records" colspan="7">{lang key='system::system.no_records'}</td></tr>
+					<!-- {/foreach} -->
 				</tbody>
 			</table>
-	<!-- {$goods_list.page} -->
-			</div>
+			<!-- {$goods_list.page} -->
 		</div>
 	</div>
 </div>

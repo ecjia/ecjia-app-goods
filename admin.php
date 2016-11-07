@@ -259,7 +259,7 @@ class admin extends ecjia_admin {
 	    
 	    
 		$this->assign('ur_here', RC_Lang::get('goods::goods.goods_recycle'));
-		$this->assign('cat_list', cat_list(0, $cat_id));
+		$this->assign('cat_list', cat_list(0, $cat_id, false));
 		
 		
 		$this->assign('action_link', $action_link);
@@ -1680,7 +1680,7 @@ class admin extends ecjia_admin {
 		//设置选中状态,并分配标签导航
 		$this->assign('tags', $this->tags);
 		$this->assign('link_goods_list', $linked_goods);
-		$this->assign('cat_list', cat_list());
+		$this->assign('cat_list', cat_list(0, 0, false));
 		$this->assign('brand_list', get_brand_list());
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::lang('01_goods_list')));
 		$this->assign('ur_here', RC_Lang::get('goods::goods.edit_link_goods'));
@@ -1714,7 +1714,7 @@ class admin extends ecjia_admin {
 
 // 		//设置选中状态,并分配标签导航
 // 		$this->assign('tags', $this->tags);
-// 		$this->assign('cat_list', cat_list());
+// 		$this->assign('cat_list', cat_list(0, 0, false));
 // 		$this->assign('brand_list', get_brand_list());
 // 		$this->assign('group_goods_list', $group_goods_list);
 // 		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin/init'), 'text' => RC_Lang::lang('01_goods_list')));

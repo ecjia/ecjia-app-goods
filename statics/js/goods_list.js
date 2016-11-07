@@ -752,7 +752,7 @@
 		search_link_goods : function() {
 			/* 查找商品 */
 			$('[data-toggle="searchGoods"]').on('click', function() {
-				var $choose_list = $('.choose_list'),
+				var $choose_list = $('.search_link_goods'),
 					searchURL = $choose_list.attr('data-url');
 				var filters = {
 					'JSON' : {
@@ -988,7 +988,7 @@
 		search_link_goods : function() {
 			/* 查找商品 */
 			$('[data-toggle="searchGoods"]').on('click', function() {
-				var $choose_list = $('.choose_list'),
+				var $choose_list = $('.select_goods_parts'),
 					searchURL = $choose_list.attr('data-url');
 				var filters = {
 					'JSON' : {

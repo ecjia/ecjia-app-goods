@@ -34,16 +34,23 @@
 			<form class="form-horizontal" action='{url path="goods/admin/add_link_goods" args="goods_id={$smarty.get.goods_id}{if $code}&extension_code={$code}{/if}"}' method="post" name="theForm">
 				<div class="tab-content">
 					<fieldset>
-						<div class="control-group choose_list span12" data-url="{url path='goods/admin/get_goods_list'}">
+						<div class="control-group span12 search_link_goods" data-url="{url path='goods/admin/get_goods_list'}">
 							<div class="ecjiaf-cb">
-								<!-- <div class="f_l"> -->
+								<div class="f_l m_r5">
 									<select name="cat_id">
-										<option value="0">{lang key='system::system.all_category'}{$cat_list}</option>
+										<option value="0">{lang key='system::system.all_category'}</option>
+										<!-- {foreach from=$cat_list item=cat} -->
+										<option value="{$cat.cat_id}" {if $cat.cat_id == $smarty.get.cat_id}selected{/if} {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
+										<!-- {/foreach} -->
 									</select>
+								</div>
+								
+								<div class="f_l m_r5">
 									<select name="brand_id">
 										<option value="0">{lang key='system::system.all_brand'}{html_options options=$brand_list}</option>
 									</select>
-								<!-- </div> -->
+								</div>
+								
 								<input type="text" name="keyword" placeholder="{lang key='goods::goods.goods_name'}" />
 								<a class="btn" data-toggle="searchGoods"><!-- {lang key='system::system.button_search'} --></a>
 							</div>
