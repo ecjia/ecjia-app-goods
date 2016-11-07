@@ -434,6 +434,7 @@
 														</div>
 													</div>
 													<!-- {/if} -->
+													
 													<!-- 优惠价格 -->
 													<div class="control-group control-group-small">
 														<label class="w80 f_l t_r"><b>{lang key='goods::goods.volume_price'}：</b></label>
@@ -458,6 +459,7 @@
 															</div>
 															<!-- {/foreach} -->
 															<a class="m_l5 l_h30 add_volume_price" href="javascript:;">{lang key='goods::goods.add_promote_price'}</a>
+															<span class="help-block">购买数量达到优惠数量时享受的优惠价格</span>
 														</div>
 													</div>
 												</div>
