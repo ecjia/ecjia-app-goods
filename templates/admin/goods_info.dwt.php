@@ -303,9 +303,7 @@
 															<select class="w300" name="cat_id" >
 																<option value="0">{lang key='system::system.select_please'}</option>
 																<!-- {foreach from=$cat_list item=cat} -->
-																<option {if $goods.cat_id eq $cat.cat_id}selected="selected"{/if} value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>
-																<!-- {$cat.cat_name} -->
-																</option>
+																<option {if $goods.cat_id eq $cat.cat_id}selected="selected"{/if} value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
 																<!-- {/foreach} -->
 															</select>
 															<div class="f_error">

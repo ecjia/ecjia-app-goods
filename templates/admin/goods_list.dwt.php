@@ -108,32 +108,32 @@
 <!-- </div> -->
 
 <div class="row-fluid batch">
-	<div class="choose_list">
-		<div class="btn-group f_l m_r5">
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				<i class="fontello-icon-cog"></i>{lang key='goods::goods.batch_handle'}<span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu batch-move" data-url="{RC_Uri::url('goods/admin/batch')}">
-				<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=trash&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_trash_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_trash_goods'}" href="javascript:;"> <i class="fontello-icon-box"></i>{lang key='goods::goods.move_to_trash'}</a></li>
-				<li><a class="batch-sale-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=on_sale&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_on_sale_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_sale_goods'}" href="javascript:;"> <i class="fontello-icon-up-circled2"></i>{lang key='goods::goods.on_sale'}</a></li>
-				<li><a class="batch-notsale-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_on_sale&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_on_sale_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_sale_goods'}" href="javascript:;"> <i class="fontello-icon-down-circled2"></i>{lang key='goods::goods.not_on_sale'}</a></li>
-				<li><a class="batch-best-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_best_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_best_goods'}" href="javascript:;"> <i class="fontello-icon-star"></i>{lang key='goods::goods.best'}</a></li>
-				<li><a class="batch-notbest-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_best_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_best_goods'}" href="javascript:;"><i class="fontello-icon-star-empty"></i>{lang key='goods::goods.not_best'}</a></li>
-				<li><a class="batch-new-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_new_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_new_goods'}" href="javascript:;"> <i class="fontello-icon-flag"></i>{lang key='goods::goods.new'}</a></li>
-				<li><a class="batch-notnew-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_new_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_news_goods'}" href="javascript:;"> <i class="fontello-icon-flag-empty"></i>{lang key='goods::goods.not_new'}</a></li>
-				<li><a class="batch-hot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_hot_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_hot_goods'}" href="javascript:;"> <i class="fontello-icon-thumbs-up-alt"></i>{lang key='goods::goods.hot'}</a></li>
-				<li><a class="batch-nothot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_hot_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_hot_goods'}" href="javascript:;"> <i class="fontello-icon-thumbs-up"></i>{lang key='goods::goods.not_hot'}</a></li>
-				<li><a class="batch-move-btn"data-name="move_cat" data-move="data-operatetype" href="javascript:;"> <i class="fontello-icon-forward"></i>{lang key='goods::goods.move_to'}</a></li>
-				
-				<li><a class="batch-pass-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=pass&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要审核通过选中的商品吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class="fontello-icon-ok-circled"></i>审核通过</a></li>
-				<li><a class="batch-notpass-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_pass&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要不审核通过选中的商品吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class="fontello-icon-cancel-circled"></i>审核未通过</a></li>
-				<li><a class="batch-notaudited-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_audited&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要将选中的商品设为未审核吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class="fontello-icon-help-circled"></i>设为未审核</a></li>
-				<li><a class="batch-notcheck-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_check&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要将选中的商品设为无需审核吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class=" fontello-icon-gittip"></i>无需审核</a></li>
-			</ul>
-		</div>
+	<div class="btn-group f_l m_r5">
+		<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			<i class="fontello-icon-cog"></i>{lang key='goods::goods.batch_handle'}<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu batch-move" data-url="{RC_Uri::url('goods/admin/batch')}">
+			<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=trash&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_trash_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_trash_goods'}" href="javascript:;"> <i class="fontello-icon-box"></i>{lang key='goods::goods.move_to_trash'}</a></li>
+			<li><a class="batch-sale-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=on_sale&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_on_sale_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_sale_goods'}" href="javascript:;"> <i class="fontello-icon-up-circled2"></i>{lang key='goods::goods.on_sale'}</a></li>
+			<li><a class="batch-notsale-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_on_sale&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_on_sale_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_sale_goods'}" href="javascript:;"> <i class="fontello-icon-down-circled2"></i>{lang key='goods::goods.not_on_sale'}</a></li>
+			<li><a class="batch-best-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_best_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_best_goods'}" href="javascript:;"> <i class="fontello-icon-star"></i>{lang key='goods::goods.best'}</a></li>
+			<li><a class="batch-notbest-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_best_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_best_goods'}" href="javascript:;"><i class="fontello-icon-star-empty"></i>{lang key='goods::goods.not_best'}</a></li>
+			<li><a class="batch-new-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_new_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_new_goods'}" href="javascript:;"> <i class="fontello-icon-flag"></i>{lang key='goods::goods.new'}</a></li>
+			<li><a class="batch-notnew-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_new_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_news_goods'}" href="javascript:;"> <i class="fontello-icon-flag-empty"></i>{lang key='goods::goods.not_new'}</a></li>
+			<li><a class="batch-hot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_hot_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_hot_goods'}" href="javascript:;"> <i class="fontello-icon-thumbs-up-alt"></i>{lang key='goods::goods.hot'}</a></li>
+			<li><a class="batch-nothot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{lang key='goods::goods.batch_not_hot_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_not_hot_goods'}" href="javascript:;"> <i class="fontello-icon-thumbs-up"></i>{lang key='goods::goods.not_hot'}</a></li>
+			<li><a class="batch-move-btn"data-name="move_cat" data-move="data-operatetype" href="javascript:;"> <i class="fontello-icon-forward"></i>{lang key='goods::goods.move_to'}</a></li>
+			
+			<li><a class="batch-pass-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=pass&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要审核通过选中的商品吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class="fontello-icon-ok-circled"></i>审核通过</a></li>
+			<li><a class="batch-notpass-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_pass&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要不审核通过选中的商品吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class="fontello-icon-cancel-circled"></i>审核未通过</a></li>
+			<li><a class="batch-notaudited-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_audited&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要将选中的商品设为未审核吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class="fontello-icon-help-circled"></i>设为未审核</a></li>
+			<li><a class="batch-notcheck-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_check&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="您确定要将选中的商品设为无需审核吗？" data-noSelectMsg="请选择需要修改审核状态的商品" href="javascript:;"> <i class=" fontello-icon-gittip"></i>无需审核</a></li>
+		</ul>
+	</div>
 
-		<form class="form-inline" action="{RC_Uri::url('goods/admin/init')}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filterForm">
-			<div class="f_l">
+	<form class="form-inline" action="{RC_Uri::url('goods/admin/init')}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filterForm">
+		<div class="screen f_l">
+			<div class="f_l m_r5">
 				<select class="w150" name="review_status">
 					<option value="0">请选择审核状态</option>
 					<option value="1" {if $filter.review_status eq 1}selected{/if}>未审核</option>
@@ -141,41 +141,50 @@
 					<option value="3" {if $filter.review_status eq 3}selected{/if}>已审核</option>
 					<option value="5" {if $filter.review_status eq 5}selected{/if}>无需审核</option>
 				</select>
-				
+			</div>
+			
+			<div class="f_l m_r5">
 				<select class="w150" name="store_id">
 					<option value="0">请选择商家</option>
 					<!-- {foreach from=$store_list item=val} -->
 					<option value="{$val.store_id}" {if $filter.store_id eq $val.store_id}selected{/if}>{$val.merchants_name}</option>
 					<!-- {/foreach} -->
 				</select>
-				<button class="btn filter-btn" type="button">{lang key='goods::goods.filter'}</button>
 			</div>
-			
-			<div class="screen f_r">
-				<!-- 分类 -->
+			<button class="btn filter-btn" type="button">{lang key='goods::goods.filter'}</button>
+		</div>
+		
+		<div class="screen f_r">
+			<!-- 分类 -->
+			<div class="f_l m_r5">
 				<select class="w150" name="cat_id">
 					<option value="0">{lang key='goods::goods.goods_cat'}</option>
 					<!-- {$cat_list} -->
 				</select>
-				<!-- 品牌 -->
+			</div>
+			<!-- 品牌 -->
+			<div class="f_l m_r5">
 				<select class="no_search w120" name="brand_id">
 					<option value="0">{lang key='goods::goods.goods_brand'}</option>
 					<!-- {foreach from=$brand_list item=list key=key} -->
 					<option value="{$key}" {if $key == $smarty.get.brand_id}selected{/if}>{$list}</option>
 					<!-- {/foreach} -->
 				</select>
-				<!-- 推荐 -->
+			</div>
+			<!-- 推荐 -->
+			<div class="f_l m_r5">
 				<select class="w100" name="intro_type">
 					<option value="0">{lang key='goods::goods.intro_type'}</option>
 					<!-- {foreach from=$intro_list item=list key=key} -->
 					<option value="{$key}" {if $key == $smarty.get.intro_type}selected{/if}>{$list}</option>
 					<!-- {/foreach} -->
 				</select>
-				<button class="btn screen-btn" type="button">{lang key='goods::goods.filter'}</button>
 			</div>
-		</form>
-	</div>
+			<button class="btn screen-btn" type="button">{lang key='goods::goods.filter'}</button>
+		</div>
+	</form>
 </div>
+
 <div class="row-fluid list-page">
 	<div class="span12">
 		<table class="table table-striped smpl_tbl table_vam table-hide-edit" id="smpl_tbl" data-uniform="uniform">
