@@ -13,7 +13,7 @@ class goods_admin_purview_api extends Component_Event_Api {
         	array('action_name' => RC_Lang::get('goods::goods.goods_update'), 'action_code' => 'goods_update', 'relevance'   => ''),
         	array('action_name' => RC_Lang::get('goods::goods.goods_delete'),'action_code' => 'goods_delete', 'relevance'   => ''),
         		
-            array('action_name' => RC_Lang::get('goods::goods.category_manage'), 'action_code' => 'category_update', 'relevance'   => ''),
+            array('action_name' => RC_Lang::get('goods::goods.category_manage'), 'action_code' => 'category_manage', 'relevance'   => ''),
         	array('action_name' => RC_Lang::get('goods::goods.category_update'), 'action_code' => 'category_update', 'relevance'   => ''),
             array('action_name' => RC_Lang::get('goods::goods.category_move'), 'action_code' => 'category_move', 'relevance'   => ''),
         	array('action_name' => RC_Lang::get('goods::goods.category_delete'), 'action_code' => 'category_delete', 'relevance'   => ''),

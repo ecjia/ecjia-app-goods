@@ -48,7 +48,7 @@ class admin_category extends ecjia_admin {
 	 * 商品分类列表
 	 */
 	public function init() {
-	    $this->admin_priv('cat_manage', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('category_manage', ecjia::MSGTYPE_JSON);
 
 		$cat_list = cat_list(0, 0, false);
 		ecjia_screen::get_current_screen()->remove_last_nav_here();
