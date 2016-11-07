@@ -69,7 +69,7 @@ class search_module extends api_front implements api_interface {
 //             $is_active = ecjia_app::is_active('ecjia.mobilebuy');
             $seller_list = array();
             foreach ($result['seller_list'] as $row) {
-                $field = 'count(*) as count, SUM(comment_rank) as comment_rank';
+//                 $field = 'count(*) as count, SUM(comment_rank) as comment_rank';
 //                 $comment = $db_comment->field($field)->where(array('store_id' => $row['id'], 'parent_id' => 0, 'status' => 1))->find();
 
                 $favourable_result = $db_favourable->where(array('store_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
@@ -135,7 +135,7 @@ class search_module extends api_front implements api_interface {
                         $saving_price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_shop_price'] - $val['unformatted_promote_price'] : (($val['unformatted_market_price'] > 0 && $val['unformatted_market_price'] > $val['unformatted_shop_price']) ? $val['unformatted_market_price'] - $val['unformatted_shop_price'] : 0);
 
                         $mobilebuy_price = $object_id = 0;
-                        if (!is_ecjia_error($result_mobilebuy) && $is_active) {
+                        /* if (!is_ecjia_error($result_mobilebuy) && $is_active) {
                             $mobilebuy = $mobilebuy_db->find(array(
                                     'goods_id'     => $val['goods_id'],
                                     'start_time' => array('elt' => RC_Time::gmtime()),
@@ -152,7 +152,7 @@ class search_module extends api_front implements api_interface {
                                     $saving_price       = ($val['unformatted_shop_price'] - $mobilebuy_price) > 0 ? $val['unformatted_shop_price'] - $mobilebuy_price : 0;
                                 }
                             }
-                        }
+                        } */
 
                         $goods_list[] = array(
                                 'goods_id'                  => $val['goods_id'],
@@ -175,28 +175,32 @@ class search_module extends api_front implements api_interface {
                 if ($goods_result['page']->total_records >= $max_goods) {
                     array_unshift($seller_list, array(
                         'id'                    => $row['id'],
-                        'seller_name'           => $row['merchants_name'],
-                        'seller_category'       => $row['shop_cat_name'],
+                        'seller_name'           => $row['seller_name'],
+                        'seller_category'       => $row['seller_category'],
                         'seller_logo'           => $row['shop_logo'],
                         'seller_goods'          => $goods_list,
-                        'follower'              => $row['follower'],
-                        'is_follower'           => $row['is_follower'],
-                        'goods_count'           => $goods_result['page']->total_records,
-                        'comment'               => $comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
-                        'favourable_list'       => $favourable_list,
-                    ));
-                } else {
-                    $seller_list[] = array(
-                        'id'                    => $row['id'],
-                        'seller_name'           => $row['merchants_name'],
-                        'seller_category'       => $row['shop_cat_name'],
-                        'seller_logo'           => $row['shop_logo'],
-                        'seller_goods'          => $goods_list,
+                        'manage_mode'		    => $row['manage_mode'],
                         'follower'              => $row['follower'],
                         'is_follower'           => $row['is_follower'],
                         'goods_count'           => $goods_result['page']->total_records,
                         'comment'               => '100%',//$comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
                         'favourable_list'       => $favourable_list,
+                        'location'              => $row['location'],
+                    ));
+                } else {
+                    $seller_list[] = array(
+                        'id'                    => $row['id'],
+                        'seller_name'           => $row['seller_name'],
+                        'seller_category'       => $row['seller_category'],
+                        'seller_logo'           => $row['shop_logo'],
+                        'seller_goods'          => $goods_list,
+                        'manage_mode'		    => $row['manage_mode'],
+                        'follower'              => $row['follower'],
+                        'is_follower'           => $row['is_follower'],
+                        'goods_count'           => $goods_result['page']->total_records,
+                        'comment'               => '100%',//$comment['count'] > 0 ? round($comment['comment_rank']/($comment['count']*5)*100).'%' : '100%',
+                        'favourable_list'       => $favourable_list,
+                        'location'              => $row['location'],
                     );
                 }
             }
