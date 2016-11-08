@@ -104,9 +104,7 @@ class admin extends ecjia_admin {
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表" target="_blank">'. RC_Lang::get('goods::goods.about_goods_list') .'</a>') . '</p>'
 		);
 
-		$this->assign('cat_list', cat_list(0, $cat_id, false));//筛选分类
-		$this->assign('move_cat_list', cat_list(0, $cat_id));//转移分类
-		
+		$this->assign('cat_list', cat_list(0, $cat_id, false));
 		$this->assign('brand_list', get_brand_list());
 		$this->assign('intro_list', goods::intro_list());
 

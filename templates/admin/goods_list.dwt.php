@@ -18,7 +18,9 @@
 			<div>
 				<select class="noselect w200" size="15" name="target_cat">
 					<option value="0">{lang key='goods::goods.goods_cat'}</option>
-					<!-- {$move_cat_list} -->
+					<!-- {foreach from=$cat_list item=cat} -->
+					<option value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
+					<!-- {/foreach} -->
 				</select>
 			</div>
 			<div>
