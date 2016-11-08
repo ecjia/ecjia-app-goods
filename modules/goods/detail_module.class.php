@@ -363,7 +363,7 @@ class detail_module extends api_front implements api_interface {
         	$share_link = ecjia_api::$controller->fetch_string(ecjia::config('mobile_share_link'));
         	$data['share_link']	= $share_link;
         }
-        
+
         return $data;
     }
 }
