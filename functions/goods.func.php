@@ -497,9 +497,9 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	);
 
 	$where = array('g.goods_id' => $goods_id, 'g.is_delete' => 0);
-	if (ecjia::config('review_goods')) {
-		$where['g.review_status'] = array('gt' => 2);
-	}
+	
+	$where['g.review_status'] = array('gt' => 2);
+	
     $row = $db_goods->field($field)->group('g.goods_id')->find($where);
 
 	$count = RC_DB::table('store_franchisee')->where('shop_close', '0')->where('store_id', $row['store_id'])->count();

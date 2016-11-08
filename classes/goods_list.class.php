@@ -117,9 +117,9 @@ class goods_list {
 		    $where[] = "merchant_cat_id IN (" . $children_cat.")";
 		}
 
-        if (ecjia::config('review_goods')) {
-    		$where['g.review_status'] = array('gt' => 2);
-    	}
+        
+    	$where['g.review_status'] = array('gt' => 2);
+    	
 		if (!empty($children)) {
 			$where[] = "(". $children ." OR ".goods_category::get_extension_goods($children).")";
 		}

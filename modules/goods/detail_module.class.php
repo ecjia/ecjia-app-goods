@@ -169,18 +169,6 @@ class detail_module extends api_front implements api_interface {
        			$price = $mobilebuy_price > $price ? $price : $mobilebuy_price;
        			$activity_type = $mobilebuy_price > $price ? $activity_type : 'MOBILEBUY_GOODS';
 			}
-//         		if (!empty($groupbuy)) {
-//         			$ext_info = unserialize($groupbuy['ext_info']);
-//         			$price_ladder = $ext_info['price_ladder'];
-//         			$groupbuy_price  = $price_ladder[0]['price'];
-//         			if ($groupbuy_price < $price) {
-//         				$start_time = $groupbuy['start_time'];
-//         				$end_time = $groupbuy['end_time'];
-//         			}
-//         			$price = $groupbuy_price > $price ? $price : $groupbuy_price;
-//         			$activity_type = $groupbuy_price > $price ? $activity_type : 'GROUPBUY_GOODS';
-//         			$object_id = $groupbuy['act_id'];
-//         		}
 
         }
 
@@ -215,6 +203,7 @@ class detail_module extends api_front implements api_interface {
         		'intro'		=> 'hot',
        			'page'		=> 1,
        			'size'		=> 8,
+        		'store_id'	=> $goods['store_id'],
        			'location'	=> $location,
        	);
 
@@ -223,36 +212,12 @@ class detail_module extends api_front implements api_interface {
 
         $data['related_goods'] = array();
 		if (!empty($result['list'])) {
-			$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
-			/* 手机专享*/
-	        $result_mobilebuy = ecjia_app::validate_application('mobilebuy');
-			$is_active = ecjia_app::is_active('ecjia.mobilebuy');
 			foreach ($result['list'] as $val) {
 				/* 判断是否有促销价格*/
 				$price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_promote_price'] : $val['unformatted_shop_price'];
 				$activity_type = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
 				 /* 计算节约价格*/
 				$saving_price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_shop_price'] - $val['unformatted_promote_price'] : (($val['unformatted_market_price'] > 0 && $val['unformatted_market_price'] > $val['unformatted_shop_price']) ? $val['unformatted_market_price'] - $val['unformatted_shop_price'] : 0);
-
-				$mobilebuy_price = $object_id = 0;
-				if (!is_ecjia_error($result_mobilebuy) && $is_active) {
-					$mobilebuy = $mobilebuy_db->find(array(
-						'goods_id'	 => $val['goods_id'],
-						'start_time' => array('elt' => RC_Time::gmtime()),
-						'end_time'	 => array('egt' => RC_Time::gmtime()),
-						'act_type'	 => GAT_MOBILE_BUY,
-					));
-					if (!empty($mobilebuy)) {
-						$ext_info = unserialize($mobilebuy['ext_info']);
-						$mobilebuy_price = $ext_info['price'];
-						if ($mobilebuy_price < $price) {
-							$val['promote_price'] = price_format($mobilebuy_price);
-				        	$object_id		= $mobilebuy['act_id'];
-				        	$activity_type	= 'MOBILEBUY_GOODS';
-			    			$saving_price = ($val['unformatted_shop_price'] - $mobilebuy_price) > 0 ? $val['unformatted_shop_price'] - $mobilebuy_price : 0;
-			    		}
-					}
-				}
 
 				$data['related_goods'][] = array(
 						'goods_id'		=> $val['goods_id'],
@@ -266,34 +231,19 @@ class detail_module extends api_front implements api_interface {
 								'small'	=> $val['goods_thumb']
 						),
 						'activity_type' => $activity_type,
-						'object_id'		=> $object_id,
+						'object_id'		=> 0,
 						'saving_price'	=>	$saving_price,
 						'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
 				);
 			}
 		}
-//         } else {
-//         	$data['related_goods'] = array();
-//         }
 
         //多店铺的内容
         $data['seller_id'] = $goods['store_id'];
         if ($goods['store_id'] > 0) {
         	$seller_where = array();
         	$seller_where['ssi.status'] = 1; // 店铺开启状态
-//         	$seller_where['msi.merchants_audit'] = 1;
-//         	$seller_where['msi.user_id'] = $data['seller_id'];
         	$seller_where['ssi.store_id'] = $goods['store_id'];
-
-        	// $msi_dbview = RC_Model::model('merchants_shop_information_viewmodel', 'seller');
-        	// $ssi_dbview = RC_Model::model('seller/seller_shopinfo_viewmodel');
-            //
-        	// $field ='ssi.*, ssi.id as seller_id, ssi.shop_name as seller_name, sc.cat_name, count(cs.seller_id) as follower, SUM(IF(cs.user_id = '.$_SESSION['user_id'].',1,0)) as is_follower';
-			// $info = $ssi_dbview->join(array('store_category', 'collect_store'))
-			// 		        	->field($field)
-			// 		        	->where($seller_where)
-			// 		        	->find();
-
             $db_view = RC_Model::model('goods/store_franchisee_viewmodel');
             $field = 'sf.*, sc.cat_name';
             $info = $db_view->field($field)->where(array('sf.status' => 1, 'sf.store_id' => $goods['store_id']))->find();
@@ -324,10 +274,6 @@ class detail_module extends api_front implements api_interface {
         	$cs_db = RC_Model::model('store/collect_store_model');
         	$follower_count = $cs_db->where(array('store_id' => $data['seller_id']))->count();
 
-//         	$db_goods_view = RC_Model::model('goods/comment_viewmodel');
-
-//         	$field = 'count(*) as count, SUM(IF(comment_rank>3,1,0)) as comment_rank, SUM(IF(comment_server>3,1,0)) as comment_server, SUM(IF(comment_delivery>3,1,0)) as comment_delivery';
-//         	$comment = $db_goods_view->join(array('goods'))->field($field)->where(array('g.store_id' => $goods['store_id'], 'parent_id' => 0, 'status' => 1))->find();
 
 
         	$data['merchant_info'] = array(
