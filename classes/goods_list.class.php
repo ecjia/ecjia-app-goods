@@ -163,6 +163,28 @@ class goods_list {
 
 			}
 		}
+		
+		if (isset($filter['store_intro']) && !empty($filter['store_intro'])) {
+			switch ($filter['store_intro']) {
+				case 'best':
+					$where['g.store_best'] = 1;
+					break;
+				case 'new':
+					$where['g.store_new'] = 1;
+					break;
+				case 'hot':
+					$where['g.store_hot'] = 1;
+					break;
+				case 'promotion':
+					$time    = RC_Time::gmtime();
+					$where['g.promote_price']		= array('gt' => 0);
+					$where['g.promote_start_date']	= array('elt' => $time);
+					$where['g.promote_end_date']	= array('egt' => $time);
+					break;
+				default:
+		
+			}
+		}
 
 		/* 店铺条件*/
 		if (isset($filter['store_id']) && !empty($filter['store_id'])) {
