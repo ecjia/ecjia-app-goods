@@ -45,7 +45,7 @@ class list_module extends api_front implements api_interface {
 		$cache_id = sprintf('%X', crc32($goods_category  .'-' . $_SESSION['user_rank']. '-' .
 				$keywords . '-'. $geohash_code));
 
-		$cache_key = 'seller_list_'.$cache_id;
+		$cache_key = 'goods_seller_list_'.$cache_id;
 		$store_data = RC_Cache::app_cache_get($cache_key, 'store');
 
 // 		$store_id_group = RC_Api::api('store', 'neighbors_store_id', array('geohash' => $geohash_code));
