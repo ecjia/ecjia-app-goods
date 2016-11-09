@@ -58,7 +58,8 @@ class goods_info {
 			//$db = RC_Model::model('goods/goods_attr_model');
 			//$price = $db->in(array('goods_attr_id' => $spec))->sum('`attr_price`|attr_price');
 			$db = RC_DB::table('goods_attr');
-			$price = $db->whereIn('goods_attr_id', $spec)->select(RC_DB::raw('sum(attr_price) as attr_price'))->get();
+			$rs = $db->whereIn('goods_attr_id', $spec)->select(RC_DB::raw('sum(attr_price) as attr_price'))->get();
+			$price = $rs['attr_price'];
 		} else {
 			$price = 0;
 		}
