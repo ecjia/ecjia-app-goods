@@ -8,10 +8,10 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class list_module extends api_front implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 		$goods_category		= $this->requestData('category_id', 0);
-		
+
 		$keywords	 = $this->requestData('keywords');
 		$location	 = $this->requestData('location', array());
-		
+
 		/*经纬度为空判断*/
 		if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
 			$seller_list = array();
@@ -29,7 +29,7 @@ class list_module extends api_front implements api_interface {
 		/* 获取数量 */
 		$size = $this->requestData('pagination.count', 15);
 		$page = $this->requestData('pagination.page', 1);
-		
+
 		$options = array(
 // 				'seller_category'	=> $seller_categroy,
 				'goods_category'	=> $goods_category,
@@ -41,15 +41,15 @@ class list_module extends api_front implements api_interface {
 				'sort'			=> array('sort_order' => 'asc'),
 				'limit'			=> 'all'
 		);
-		
+
 		$cache_id = sprintf('%X', crc32($goods_category  .'-' . $_SESSION['user_rank']. '-' .
 				$keywords . '-'. $geohash_code));
-		
+
 		$cache_key = 'seller_list_'.$cache_id;
 		$store_data = RC_Cache::app_cache_get($cache_key, 'store');
-		
+
 // 		$store_id_group = RC_Api::api('store', 'neighbors_store_id', array('geohash' => $geohash_code));
-		
+
 		//TODO ::增加店铺缓存
 		if (!$store_data) {
 			$store_data = RC_Api::api('store', 'store_list', $options);
@@ -59,12 +59,12 @@ class list_module extends api_front implements api_interface {
 		$seller_list = array();
 		if (!empty($store_data['seller_list'])) {
 			$collect_store_id = RC_DB::table('collect_store')->where('user_id', $_SESSION['user_id'])->lists('store_id');
-			
+
 			$db_favourable = RC_Model::model('favourable/favourable_activity_model');
 			/* 手机专享*/
 			foreach ($store_data['seller_list'] as $key => $row) {
 				$favourable_list = array();
-				
+
 				//TODO ::增加优惠活动缓存
 				$cache_favourable_key = 'favourable_list_store_'. $row['id'];
 				$favourable_list = RC_Cache::app_cache_get($cache_favourable_key, 'favourable');
@@ -110,21 +110,21 @@ class list_module extends api_front implements api_interface {
 					}
 					RC_Cache::app_cache_set($cache_favourable_key, $favourable_list, 'favourable', 10080);
 				}
-				
+
 				$goods_list = array();
 				//TODO ::增加商品缓存
 				$store_goods_cache_key = sprintf('%X', crc32('goods_list_store_' . $row['id'] . '_' . $goods_category . '_'. $keywords));
 				$goods_store_data = RC_Cache::app_cache_get($store_goods_cache_key, 'goods');
-				
+
 				if (!$goods_store_data) {
 					$goods_options = array('store_id' => $row['id'], 'cat_id' => $goods_category, 'keywords' => $keywords, 'page' => 1, 'size' => 10);
 					/* 如有查询添加，不限制分页*/
 					if (!empty($goods_category) || !empty($keywords)) {
 						$goods_options['size'] = $goods_options['page'] = 0;
 					}
-					
+
 					$goods_result = RC_Api::api('goods', 'goods_list', $goods_options);
-					
+
 					if (!empty($goods_result['list'])) {
 						foreach ($goods_result['list'] as $val) {
 							/* 判断是否有促销价格*/
@@ -132,7 +132,7 @@ class list_module extends api_front implements api_interface {
 							$activity_type = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
 							/* 计算节约价格*/
 							$saving_price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_shop_price'] - $val['unformatted_promote_price'] : (($val['unformatted_market_price'] > 0 && $val['unformatted_market_price'] > $val['unformatted_shop_price']) ? $val['unformatted_market_price'] - $val['unformatted_shop_price'] : 0);
-	
+
 							$goods_list[] = array(
 									'goods_id'		=> $val['goods_id'],
 									'name'			=> $val['name'],
@@ -152,15 +152,15 @@ class list_module extends api_front implements api_interface {
 						}
 					}
 					$goods_store_data = array('goods_list' => $goods_list, 'count' => $goods_result['page']->total_records);
-					
+
 					RC_Cache::app_cache_set($store_goods_cache_key, $goods_store_data, 'goods', 10080);
 				}
-				
+
 				$distance = getDistance($location['latitude'], $location['longitude'], $row['location']['latitude'], $row['location']['longitude']);
-				
+
 				$distance_list[]	= $distance;
 				$sort_order[]	 	= $row['sort_order'];
-				
+
 				$seller_list[] = array(
 						'id'				=> $row['id'],
 						'seller_name'		=> $row['seller_name'],
@@ -173,11 +173,12 @@ class list_module extends api_front implements api_interface {
 						'goods_count'       => $goods_store_data['count'],
 						'favourable_list'	=> $favourable_list,
 						'distance'			=> $distance,
+						'label_trade_time'	=> $row['label_trade_time'],
 				);
 			}
 			array_multisort($distance_list, SORT_ASC, $sort_order, SORT_ASC, $seller_list);
 		}
-		
+
 		$seller_list = array_slice($seller_list, ($page-1)*$size, $size);
 		$page = array(
 				'total'	=> $store_data['page']->total_records,
