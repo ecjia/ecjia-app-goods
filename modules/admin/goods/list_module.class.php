@@ -66,11 +66,9 @@ class list_module extends api_admin implements api_interface {
 			RC_Loader::load_app_func('category', 'goods');
 			RC_Loader::load_app_func('goods', 'goods');
 			RC_Loader::load_app_func('common', 'goods');
-			// $children = get_children($category_id);
-			// $where[] = "(".$children ." OR ".get_extension_goods($children).")";
-            $children = 'merchant_cat_id ' . db_create_in (array_unique(array_merge(array($category_id), array_keys(cat_list($category_id, 0, false )))));
-			$where[] = $children;
-
+			$children = get_children($category_id);
+            $merchant_cat_id = 'merchant_cat_id ' . db_create_in (array_unique(array_merge(array($category_id), array_keys(cat_list($category_id, 0, false )))));
+			$where[] = "(".$children ." OR ".get_extension_goods($children) ." OR ". $merchant_cat_id .")";
 		}
 		if ( !empty($keywords)) {
 			$where[] = "( goods_name like '%".$keywords."%' or goods_sn like '%".$keywords."%' )";
