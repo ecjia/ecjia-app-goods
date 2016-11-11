@@ -320,7 +320,6 @@ class goods_list {
 				$arr[$key]['unformatted_market_price'] = $row['market_price'];
 			}
 		}
-		_dump($arr, 1);
 		return array('list' => $arr, 'page' => $page_row);
 	}
 
