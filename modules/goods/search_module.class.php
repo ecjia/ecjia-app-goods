@@ -218,7 +218,7 @@ class search_module extends api_front implements api_interface {
         } else {
             $options = array(
                     'keywords'    => $keywords,
-                    'sort'        => array('sort_order' => 'ASC', 'goods_id' => 'DESC'),
+                    'sort'        => array('g.sort_order' => 'ASC', 'goods_id' => 'DESC'),
                     'page'        => $page,
                     'size'        => $size,
                     'location'    => $location,
