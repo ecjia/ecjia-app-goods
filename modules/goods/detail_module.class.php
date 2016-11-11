@@ -428,7 +428,7 @@ function get_package_goods_list($goods_id) {
                 foreach ($goods_attr_array as $_attr) {
                     $goods_attr[] = $_goods_attr[$_attr];
                 }
-                $goods_res[$key]['goods_attr_str'] = sprintf($format, implode('，', $goods_attr));
+                $goods_res[$key]['goods_attr_str'] = sprintf($format, implode(',', $goods_attr));
             }
         }
         $res[$tempkey]['goods_list'] = $goods_res;
