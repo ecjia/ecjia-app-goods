@@ -92,7 +92,7 @@ class goods_list {
 		    'is_alone_sale' => 1,
 		    'is_delete'		=> 0,
 		);
-		
+
 		if (isset($filter['cat_id']) && !empty($filter['cat_id'])) {
 			$cache_key = 'category_'.$filter['cat_id'];
 			$children = RC_Cache::app_cache_get($cache_key, 'goods');
@@ -113,13 +113,13 @@ class goods_list {
 		            $children_cat .= ",'".$cat['cat_id']."'";
 		        }
 		    }
-		    
+
 		    $where[] = "merchant_cat_id IN (" . $children_cat.")";
 		}
 
-        
+
     	$where['g.review_status'] = array('gt' => 2);
-    	
+
 		if (!empty($children)) {
 			$where[] = "(". $children ." OR ".goods_category::get_extension_goods($children).")";
 		}
@@ -163,7 +163,7 @@ class goods_list {
 
 			}
 		}
-		
+
 		if (isset($filter['store_intro']) && !empty($filter['store_intro'])) {
 			switch ($filter['store_intro']) {
 				case 'best':
@@ -182,7 +182,7 @@ class goods_list {
 					$where['g.promote_end_date']	= array('egt' => $time);
 					break;
 				default:
-		
+
 			}
 		}
 
@@ -237,9 +237,9 @@ class goods_list {
 			$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
 			$limit = $page_row->limit();
 		}
-		
+
 		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($limit)->select();
-		
+
 		$arr = array();
 		if (!empty($data)) {
 			RC_Loader::load_app_func('goods', 'goods');
@@ -277,6 +277,7 @@ class goods_list {
 				$arr[$key]['goods_brief'] 	= $row['goods_brief'];
 				$arr[$key]['store_id']		= $row['store_id'];
 				$arr[$key]['store_name']	= RC_Model::model('goods/store_franchisee_model')->get_store_name_by_id($row['store_id']);
+				$arr[$key]['manage_mode']	= RC_DB::table('store_franchisee')->where('store_id', $row['store_id'])->pluck('manage_mode');
 				/* 增加商品样式*/
 				$arr[$key]['goods_style_name'] = add_style($row['goods_name'], $row['goods_name_style']);
 				$arr[$key]['market_price']	= $row['market_price'] > 0 ? price_format($row['market_price']) : 0;
@@ -298,6 +299,7 @@ class goods_list {
 				$arr[$key]['unformatted_market_price'] = $row['market_price'];
 			}
 		}
+
 		return array('list' => $arr, 'page' => $page_row);
 	}
 
