@@ -13,6 +13,7 @@
 			app.goods_list.filter();
 			app.goods_list.batch_move_cat();
 			app.goods_list.review_static();
+			app.goods_list.toggle_on_sale();
 		},
 		review_static : function(){
 			$('.review_static').each(function(){
@@ -169,6 +170,32 @@
 				var target_cat = $(this).val();
 				$("a[name=move_cat_ture]").attr("data-url",bath_url+'&target_cat='+target_cat);
 			});
+		},
+		
+		toggle_on_sale : function() {
+			$('[data-trigger="toggle_on_sale"]').on('click', function(e){
+				e.preventDefault();
+				var $this   = $(this);
+				var url     = $this.attr('data-url');
+				var id      = $this.attr('data-id');
+				var val     = $this.hasClass('fontello-icon-cancel') ? 1 : 0;
+				var type    = $this.attr('data-type') ? $this.attr('data-type') : "POST";
+				var pjaxurl = $this.attr('refresh-url');
+
+				var option  = {obj : $this, url : url, id : id, val : val, type : type};
+				$.ajax({
+					url: option.url,
+					data: {id : option.id , val : option.val},
+					type: option.type,
+					dataType: "json",
+					success: function(data){
+						data.content ? option.obj.removeClass('fontello-icon-cancel').addClass('fontello-icon-ok') : option.obj.removeClass('fontello-icon-ok').addClass('fontello-icon-cancel');
+						ecjia.pjax(pjaxurl, function () {
+							ecjia.admin.showmessage(data);
+						})
+					}
+				});
+			})
 		}
 	}
 

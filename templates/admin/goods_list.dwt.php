@@ -101,8 +101,8 @@
 
 	<form class="f_r form-inline" action='{RC_Uri::url("goods/admin/init")}{if $smarty.get.type}&type={$smarty.get.type}{/if}' method="post" name="searchForm">
 		<!-- 关键字 -->
-		<input type="text" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{lang key='goods::goods.enter_merchant_keywords'}" size="15" />
-		<input type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{lang key='goods::goods.enter_goods_keywords'}" size="15" />
+		<input class="w180" type="text" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{lang key='goods::goods.enter_merchant_keywords'}" size="15" />
+		<input class="w180" type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{lang key='goods::goods.enter_goods_keywords'}" size="15" />
 		<button class="btn" type="submit">{lang key='system::system.button_search'}</button>
 	</form>
 </ul>
@@ -266,7 +266,17 @@
 						</span> 
 					</td>
 					<td align="center">
-						<i class="{if $goods.is_on_sale}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_on_sale')}" data-id="{$goods.goods_id}"></i>
+						<i class="{if $goods.is_on_sale}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goods/admin/toggle_on_sale')}" refresh-url="{RC_Uri::url('goods/admin/init')}
+							{if $filter.type}&type={$filter.type}{/if}
+							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
+							{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
+							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
+							{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
+							{if $filter.keywords}&keywords={$filter.keywords}{/if}
+							{if $filter.review_status}&review_status={$filter.review_status}{/if}
+							{if $filter.store_id}&store_id={$filter.store_id}{/if}
+							" data-id="{$goods.goods_id}">
+						</i>
 					</td>
 					<td align="center">
 						<i class="{if $goods.is_best}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_best')}" data-id="{$goods.goods_id}"></i>
