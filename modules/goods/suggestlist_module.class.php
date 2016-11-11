@@ -54,16 +54,16 @@ class suggestlist_module extends api_front implements api_interface {
 	    			$order_by = array('goods_id' => 'desc');
 	    			break;
 	    		case 'shop_price_desc' :
-	    			$order_by = array('shop_price' => 'desc', 'sort_order' => 'asc');
+	    			$order_by = array('shop_price' => 'desc', 'g.sort_order' => 'asc');
 	    			break;
 	    		case 'shop_price_asc' :
-	    			$order_by = array('shop_price' => 'asc', 'sort_order' => 'asc');
+	    			$order_by = array('shop_price' => 'asc', 'g.sort_order' => 'asc');
 	    			break;
 	    		case 'last_update' :
 	    			$order_by = array('last_update' => 'desc');
 	    			break;
 	    		default :
-	    			$order_by = array('sort_order' => 'asc', 'goods_id' => 'desc');
+	    			$order_by = array('g.sort_order' => 'asc', 'goods_id' => 'desc');
 	    			break;
 	    	}
 

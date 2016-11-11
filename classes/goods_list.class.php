@@ -86,7 +86,26 @@ class goods_list {
 		RC_Loader::load_app_class('goods_category', 'goods', false);
 		// $dbview = RC_Loader::load_app_model('goods_member_viewmodel', 'goods');
 		$dbview = RC_Model::model('goods/goods_member_viewmodel');
-
+		$dbview->view = array(
+				'store_franchisee' => array(
+						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+						'alias' => 'sf',
+						//'field' => "sf.merchants_name,sf.manage_mode",
+						'on' 	=> "g.store_id = sf.store_id"
+				),
+				'member_price' => array(
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias' => 'mp',
+				//'field' => "g.goods_id, g.goods_name, g.store_id, g.goods_name_style, g.market_price, g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price, IFNULL(mp.user_price, g.shop_price * ".intval($_SESSION['discount']).") AS shop_price, g.promote_price, g.goods_type, g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb, g.original_img, g.goods_img",
+				'on' 	=> "mp.goods_id = g.goods_id and mp.user_rank = '".$_SESSION['user_rank']."'"
+				)
+		);
+		$field = "g.goods_id, g.goods_name, g.store_id, g.goods_name_style, g.market_price,
+				  g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price, 
+				  IFNULL(mp.user_price, g.shop_price * ".intval($_SESSION['discount']).") AS shop_price, 
+				  g.promote_price, g.goods_type, g.promote_start_date, g.promote_end_date,
+				  g.goods_brief, g.goods_thumb, g.original_img, g.goods_img,
+				  sf.merchants_name,sf.manage_mode";
 		$where = array(
 		    'is_on_sale'	=> 1,
 		    'is_alone_sale' => 1,
@@ -237,8 +256,8 @@ class goods_list {
 			$page_row = new ecjia_page($count, $filter['size'], 6, '', $filter['page']);
 			$limit = $page_row->limit();
 		}
-
-		$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($limit)->select();
+		//$data = $dbview->join('member_price')->where($where)->order($filter['sort'])->limit($limit)->select();
+		$data = $dbview->join(array('member_price', 'store_franchisee'))->field($field)->where($where)->order($filter['sort'])->limit($limit)->select();
 
 		$arr = array();
 		if (!empty($data)) {
@@ -276,8 +295,10 @@ class goods_list {
 				$arr[$key]['name']			= $row['goods_name'];
 				$arr[$key]['goods_brief'] 	= $row['goods_brief'];
 				$arr[$key]['store_id']		= $row['store_id'];
-				$arr[$key]['store_name']	= RC_Model::model('goods/store_franchisee_model')->get_store_name_by_id($row['store_id']);
-				$arr[$key]['manage_mode']	= RC_DB::table('store_franchisee')->where('store_id', $row['store_id'])->pluck('manage_mode');
+				//$arr[$key]['store_name']	= RC_Model::model('goods/store_franchisee_model')->get_store_name_by_id($row['store_id']);
+				//$arr[$key]['manage_mode']	= RC_DB::table('store_franchisee')->where('store_id', $row['store_id'])->pluck('manage_mode');
+				$arr[$key]['store_name']	= $row['merchants_name'];
+				$arr[$key]['manage_mode']	= $row['manage_mode'];
 				/* 增加商品样式*/
 				$arr[$key]['goods_style_name'] = add_style($row['goods_name'], $row['goods_name_style']);
 				$arr[$key]['market_price']	= $row['market_price'] > 0 ? price_format($row['market_price']) : 0;
@@ -299,7 +320,7 @@ class goods_list {
 				$arr[$key]['unformatted_market_price'] = $row['market_price'];
 			}
 		}
-
+		_dump($arr, 1);
 		return array('list' => $arr, 'page' => $page_row);
 	}
 
