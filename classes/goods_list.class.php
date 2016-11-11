@@ -277,7 +277,7 @@ class goods_list {
 				$arr[$key]['goods_brief'] 	= $row['goods_brief'];
 				$arr[$key]['store_id']		= $row['store_id'];
 				$arr[$key]['store_name']	= RC_Model::model('goods/store_franchisee_model')->get_store_name_by_id($row['store_id']);
-				$arr[$key]['manage_mode']	= RC_Model::model('goods/store_franchisee_model')->where('store_id', $row['store_id'])->pluck('manage_mode');
+				$arr[$key]['manage_mode']	= RC_DB::table('store_franchisee')->where('store_id', $row['store_id'])->pluck('manage_mode');
 				/* 增加商品样式*/
 				$arr[$key]['goods_style_name'] = add_style($row['goods_name'], $row['goods_name_style']);
 				$arr[$key]['market_price']	= $row['market_price'] > 0 ? price_format($row['market_price']) : 0;
@@ -299,6 +299,7 @@ class goods_list {
 				$arr[$key]['unformatted_market_price'] = $row['market_price'];
 			}
 		}
+
 		return array('list' => $arr, 'page' => $page_row);
 	}
 
