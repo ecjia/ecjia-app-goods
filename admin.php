@@ -956,7 +956,6 @@ class admin extends ecjia_admin {
 	public function toggle_on_sale() {
 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 
-		$pjaxurl = RC_Uri::url('goods/admin/init');
 		$goods_id = intval($_POST['id']);
 		$on_sale = intval($_POST['val']);
 
@@ -966,7 +965,7 @@ class admin extends ecjia_admin {
 		);
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 		
-		$this->showmessage(RC_Lang::get('goods::goods.toggle_on_sale'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl, 'content' => $on_sale));
+		$this->showmessage(RC_Lang::get('goods::goods.toggle_on_sale'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $on_sale));
 	}
 
 	/**
