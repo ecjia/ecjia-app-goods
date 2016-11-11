@@ -20,7 +20,7 @@ class product_search_module extends api_admin implements api_interface {
     	$size = $this->requestData('pagination.count', 15);
     	$page = $this->requestData('pagination.page', 1);
 
-		$device		= $this->requestData['device'];
+		$device		  = $this->device;
     	$device_code = $device['code'];
 
 		$db_goods = RC_Model::model('goods/goods_viewmodel');
