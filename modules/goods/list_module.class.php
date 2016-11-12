@@ -29,13 +29,13 @@ class list_module extends api_front implements api_interface {
         /* 排序*/
         $sort_by = !empty($filter['sort_by']) ? $filter['sort_by'] : '';
         if ($sort_by == 'is_hot') {
-            $order_sort = array('is_hot' => 'DESC', 'sort_order' => 'ASC', 'goods_id' => 'DESC');
+            $order_sort = array('is_hot' => 'DESC', 'g.sort_order' => 'ASC', 'goods_id' => 'DESC');
         } elseif ($sort_by == 'price_desc') {
-            $order_sort = array('org_price' => 'DESC', 'sort_order' => 'ASC', 'goods_id' => 'DESC');
+            $order_sort = array('org_price' => 'DESC', 'g.sort_order' => 'ASC', 'goods_id' => 'DESC');
         } elseif ($sort_by == 'price_asc') {
-            $order_sort = array('org_price' => 'ASC', 'sort_order' => 'ASC', 'goods_id' => 'DESC');
+            $order_sort = array('org_price' => 'ASC', 'g.sort_order' => 'ASC', 'goods_id' => 'DESC');
         } elseif ($sort_by == 'is_new') {
-            $order_sort = array('is_new' => 'DESC', 'sort_order' => 'ASC', 'goods_id' => 'DESC');
+            $order_sort = array('is_new' => 'DESC', 'g.sort_order' => 'ASC', 'goods_id' => 'DESC');
         } else {
             $order_sort = array('goods_id' => 'DESC');
         }
