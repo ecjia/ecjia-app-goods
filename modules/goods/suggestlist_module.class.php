@@ -11,10 +11,10 @@ class suggestlist_module extends api_front implements api_interface {
     	$this->authSession();
 
     	$location = $this->requestData('location', array());
-// 		$location = array(
-// 				'latitude'	=> '31.235450744628906',
-// 				'longitude' => '121.41641998291016',
-// 		);
+		// $location = array(
+		// 		'latitude'	=> '31.235450744628906',
+		// 		'longitude' => '121.41641998291016',
+		// );
     	/*经纬度为空判断*/
     	if (!is_array($location) || empty($location['longitude']) || empty($location['latitude'])) {
     		$data = array();
@@ -121,6 +121,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    					'market_price'	=> $val['market_price'],
 	    					'shop_price'	=> $val['shop_price'],
 	    					'promote_price'	=> $val['promote_price'],
+	    					'manage_mode'	=> $val['manage_mode'],
     	    			    'unformatted_promote_price' => $val['unformatted_promote_price'],
     	    			    'promote_start_date' => $val['promote_start_date'],
     	    			    'promote_end_date' => $val['promote_end_date'],
