@@ -199,18 +199,18 @@
 					</th>
 					<th class="w80">{lang key='goods::goods.thumb'}</th>
 					<th class="w100" data-toggle="sortby" data-sortby="goods_id">{lang key='goods::goods.goods_name'}</th>
-					<th class="w150">{lang key='goods::goods.business_name'}</th>
-					<th class="w100">{lang key='goods::goods.check_goods'}</th>
-					<th class="w100" data-toggle="sortby" data-sortby="goods_sn">{lang key='goods::goods.goods_sn'}</th>
+					<th class="w130">{lang key='goods::goods.business_name'}</th>
+					<th class="w80">{lang key='goods::goods.check_goods'}</th>
+					<th class="w80" data-toggle="sortby" data-sortby="goods_sn">{lang key='goods::goods.goods_sn'}</th>
 					<th class="w70" data-toggle="sortby" data-sortby="shop_price">{lang key='goods::goods.shop_price'}</th>
-					<th class="w50"> {lang key='goods::goods.is_on_sale'} </th>
+					<th class="w35"> {lang key='goods::goods.is_on_sale'} </th>
 					<th class="w35"> {lang key='goods::goods.is_best'} </th>
 					<th class="w35"> {lang key='goods::goods.is_new'} </th>
 					<th class="w35"> {lang key='goods::goods.is_hot'} </th>
 					<!-- {if $use_storage} -->
-					<th class="w70" data-toggle="sortby" data-sortby="goods_number"> {lang key='goods::goods.goods_number'} </th>
+					<th class="w50" data-toggle="sortby" data-sortby="goods_number"> {lang key='goods::goods.goods_number'} </th>
 					<!-- {/if} --> 
-					<th class="w70" data-toggle="sortby" data-sortby="sort_order">排序</th>
+					<th class="w35" data-toggle="sortby" data-sortby="sort_order">排序</th>
 				</tr>
 			</thead>
 			<tbody>
