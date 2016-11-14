@@ -209,7 +209,7 @@
 			</div>
 		</div>
 		{/if}
-		<div class="t_c">{$goods.goods_desc}</div>
+		<div class="t_c clear">{$goods.goods_desc}</div>
 	</div>
 </div>
 <!-- {/block} -->
