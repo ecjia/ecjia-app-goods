@@ -35,12 +35,12 @@ class goods_get_goods_list_api extends Component_Event_Api {
 		$db = RC_Model::model('goods/goods_model');
 		RC_Loader::load_app_func('category', 'goods');
 		$time = RC_Time::gmtime();
-	    $type_id = !empty($_POST['type_id']) ? intval($_POST['type_id']) : 0;
-		$store_id = RC_DB::table('bonus_type')->select('store_id')->where('type_id', $type_id)->pluck();
-	
+
 		$where = array();
 		$where['is_delete'] = (isset($filter['is_delete']) && $filter['is_delete'] == '1') ? 1 : 0;
-		$where['store_id'] = $store_id;
+		if (!empty($filter['store_id'])) {
+		    $where['store_id'] = $filter['store_id'];
+		}
 		if (isset($filter['real_goods']) && $filter['real_goods'] > -1) {
 			$where['is_real'] = intval($filter['real_goods']);
 		}
