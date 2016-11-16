@@ -29,6 +29,10 @@ class suggestlist_module extends api_front implements api_interface {
 	        $geohash = RC_Loader::load_app_class('geohash', 'store');
 	        $geohash_code = $geohash->encode($location['latitude'] , $location['longitude']);
 	        $geohash_code = substr($geohash_code, 0, 5);
+	        $store_id_group = RC_Api::api('store', 'neighbors_store_id', array('geohash' => $geohash_code));
+	        if (empty($options['store_id_group'])) {
+	            $store_id_group = RC_Api::api('store', 'neighbors_store_id', array('geohash' => substr($geohash_code, 0, 4)));
+	        }
     	}
     	RC_Loader::load_app_func('common', 'goods');
     	$action_type = $this->requestData('action_type', '');
@@ -73,6 +77,7 @@ class suggestlist_module extends api_front implements api_interface {
 	    			'page'		=> $page,
 	    			'size'		=> $size,
 	    			'location'	=> $location,
+	    	        'store_id'  => $store_id_group,
 	    	);
 	    	$result = RC_Api::api('goods', 'goods_list', $options);
 	    	$data['pager'] = array(
