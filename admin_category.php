@@ -407,8 +407,11 @@ class admin_category extends ecjia_admin {
 		$category_db = RC_Model::model('goods/orm_category_model');
 		$cache_key = sprintf('%X', crc32('category-'. $cat['parent_id']));
 		$category_db->delete_cache_item($cache_key);
-		$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
-		$category_db->delete_cache_item($cache_key);
+		if ($cat['parent_id'] != $info['parent_id']) {
+			$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
+			$category_db->delete_cache_item($cache_key);
+		}
+		
 		
 		$this->showmessage(RC_Lang::get('goods::category.catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
 	}
