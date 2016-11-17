@@ -64,53 +64,13 @@ class list_module extends api_front implements api_interface {
 			/* 手机专享*/
 			foreach ($store_data['seller_list'] as $key => $row) {
 				$favourable_list = array();
-
+				
 				//TODO ::增加优惠活动缓存
-				$cache_favourable_key = 'favourable_list_store_'. $row['id'];
-				$favourable_list = RC_Cache::app_cache_get($cache_favourable_key, 'favourable');
-				if (!$favourable_list) {
-					$favourable_result = $db_favourable->where(array('store_id' => $row['id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
-					if (!empty($favourable_result)) {
-						foreach ($favourable_result as $val) {
-							if ($val['act_range'] == '0') {
-								$favourable_list[] = array(
-										'name' => $val['act_name'],
-										'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-										'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-								);
-							} else {
-								$act_range_ext = explode(',', $val['act_range_ext']);
-								switch ($val['act_range']) {
-									case 1 :
-										$favourable_list[] = array(
-										'name' => $val['act_name'],
-										'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-										'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-										);
-										break;
-									case 2 :
-										$favourable_list[] = array(
-										'name' => $val['act_name'],
-										'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-										'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-										);
-										break;
-									case 3 :
-										$favourable_list[] = array(
-										'name' => $val['act_name'],
-										'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-										'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
-										);
-										break;
-									default:
-										break;
-								}
-							}
-						}
-					}
-					RC_Cache::app_cache_set($cache_favourable_key, $favourable_list, 'favourable', 10080);
-				}
-
+				$store_options = array(
+						'store_id' => $row['id']
+				);
+				$favourable_list = RC_Api::api('favourable', 'store_favourable_list', $store_options);
+				
 				$goods_list = array();
 				//TODO ::增加商品缓存
 				$store_goods_cache_key = sprintf('%X', crc32('goods_list_store_' . $row['id'] . '_' . $goods_category . '_'. $keywords));
