@@ -268,29 +268,24 @@ class goods_category {
     	$three_arr = array ();
     	$category_db = RC_Model::model('goods/orm_category_model');
     	$cache_key = sprintf('%X', crc32('category-'. $tree_id));
-    	$three_arr = $category_db->get_cache_item($cache_key);
-    	if (empty($three_arr)) {
-    		$count = $db_category->where(array('parent_id' => $tree_id, 'is_show' => 1))->count();
-    		if ($count > 0 || $tree_id == 0) {
-    		
-    			$res = $db_category->field('cat_id, cat_name, parent_id, is_show, category_img')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
-    		
-    			foreach ( $res as $row ) {
-    				if ($row ['is_show'])  {
-    					$three_arr [$row ['cat_id']] ['id']		= $row ['cat_id'];
-    					$three_arr [$row ['cat_id']] ['name']	= $row ['cat_name'];
-// 						$three_arr [$row ['cat_id']] ['url']	= build_uri ( 'category', array (
+    	$res = $category_db->get_cache_item($cache_key);
+    	if (empty($res)) {
+    		$res = $db_category->field('cat_id, cat_name, parent_id, is_show, category_img')->where(array('parent_id' => $tree_id, 'is_show' => 1))->order(array('sort_order' => 'asc', 'cat_id' => 'asc'))->select();
+    		$category_db->set_cache_item($cache_key, $res);
+    	}
+		
+		if (!empty($res)) {
+			foreach ( $res as $row ) {
+				$three_arr [$row ['cat_id']] ['id']		= $row ['cat_id'];
+				$three_arr [$row ['cat_id']] ['name']	= $row ['cat_name'];
+//				$three_arr [$row ['cat_id']] ['url']	= build_uri ( 'category', array (
 // 																	'cid' => $row ['cat_id']
-// 																	), $row ['cat_name'] );
-    					if (isset ( $row ['cat_id'] ) != NULL) {
-    						$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
-    					}
-    					$three_arr [$row['cat_id']]['img'] = empty($row['category_img']) ? '' : RC_Upload::upload_url($row['category_img']);
-    				}
-    				$category_db->set_cache_item($cache_key, $three_arr);
+// 														), $row ['cat_name'] );
+    			if (isset ( $row ['cat_id'] ) != NULL) {
+    				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
     			}
+    			$three_arr [$row['cat_id']]['img'] = empty($row['category_img']) ? '' : RC_Upload::upload_url($row['category_img']);
     		}
-    		
     	}
     	
     	return $three_arr;
