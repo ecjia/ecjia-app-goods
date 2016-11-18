@@ -87,6 +87,7 @@ class admin extends ecjia_admin {
 	* 商品列表
 	*/
 	public function init() {
+		
 	    $this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
 	    
 		$cat_id = empty($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
@@ -644,6 +645,16 @@ class admin extends ecjia_admin {
 		krsort($link);
 		$link = array_combine($key_array, $link);
 
+		/* 释放app缓存*/
+		$goods_db = RC_Model::model('goods/orm_goods_model');
+		$goods_cache_array = $goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$goods_db->delete_cache_item($val);
+			}
+			$goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
+		
 		$this->showmessage(RC_Lang::get('goods::goods.edit_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'pjaxurl' => RC_Uri::url('goods/admin/edit', array('goods_id' => $goods_id))));
 }
 
@@ -806,7 +817,15 @@ class admin extends ecjia_admin {
 		} else {
 			$pjaxurl = RC_Uri::url('goods/admin/init' ,'is_on_sale='.$is_on_sale.$page);
 		}
-
+		/* 释放app缓存*/
+		$goods_db = RC_Model::model('goods/orm_goods_model');
+		$goods_cache_array = $goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$goods_db->delete_cache_item($val);
+			}
+			$goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
 		$this->showmessage(RC_Lang::get('goods::goods.batch_handle_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 	}
 
@@ -907,7 +926,15 @@ class admin extends ecjia_admin {
 		} else {
 // 			$this->db_goods->where(array('goods_id' => $goods_id))->update($data);
 			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-			
+			/* 释放app缓存*/
+			$goods_db = RC_Model::model('goods/orm_goods_model');
+			$goods_cache_array = $goods_db->get_cache_item('goods_list_cache_key_array');
+			if (!empty($goods_cache_array)) {
+				foreach ($goods_cache_array as $val) {
+					$goods_db->delete_cache_item($val);
+				}
+				$goods_db->delete_cache_item('goods_list_cache_key_array');
+			}
 			$this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin/init'), 'content' => number_format($goods_price, 2, '.', '')));
 		}
 	}
