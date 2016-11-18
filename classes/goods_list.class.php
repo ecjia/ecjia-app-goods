@@ -277,7 +277,7 @@ class goods_list {
 			}
 		}
 		
-		$goods_db = RC_Model::model('mobile/orm_goods_model');
+		$goods_db = RC_Model::model('goods/orm_goods_model');
 		/* 储存商品列表缓存key*/
 		$fomated_cache_key = $goods_db->create_cache_key_array($cache_key, 2880);
 		
