@@ -10,8 +10,9 @@ class detail_module extends api_front implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
     	$this->authSession();
         //如果用户登录获取其session
-
+		
         $goods_id = $this->requestData('goods_id', 0);
+        
         if ($goods_id <= 0) {
         	return new ecjia_error('does not exist', '不存在的信息');
         }
@@ -22,9 +23,18 @@ class detail_module extends api_front implements api_interface {
         /* 获得商品的信息 */
         RC_Loader::load_app_func('goods','goods');
         RC_Loader::load_app_func('category','goods');
+		
+        /*增加商品基本信息缓存*/
+        $cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+        $cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+        $orm_goods_db = RC_Model::model('goods/orm_goods_model');
+        $goods = $orm_goods_db->get_cache_item($cache_basic_info_id);
 
-        $goods = get_goods_info($goods_id);
-
+        if (empty($goods)) {
+        	$goods = get_goods_info($goods_id);
+        	$orm_goods_db->set_cache_item($cache_basic_info_id);
+        }
+      
         if ($goods === false) {
             /* 如果没有找到任何记录则跳回到首页 */
            return new ecjia_error('does not exist', '不存在的信息');
@@ -48,9 +58,17 @@ class detail_module extends api_front implements api_interface {
                     $goods['bonus_money'] = price_format($goods['bonus_money']);
                 }
             }
-
-            $properties = get_goods_properties($goods_id); // 获得商品的规格和属性
-
+			
+            /*增加商品的规格和属性缓存*/
+            $cache_goods_properties_key = 'goods_properties_'.$goods_id;
+            $cache_goods_properties_id = sprintf('%X', crc32($cache_goods_properties_key));
+            $goods_type_db = RC_Model::model('goods/orm_goods_type_model');
+            $properties = $goods_type_db->get_cache_item($cache_goods_properties_id);
+            if (empty($properties)) {
+            	$properties = get_goods_properties($goods_id); // 获得商品的规格和属性
+            	$goods_type_db->set_cache_item($cache_goods_properties_id);
+            }
+            
             // 获取关联礼包
 //             $package_goods_list = get_package_goods_list($goods['goods_id']);
 //             $volume_price_list = get_volume_price_list($goods['goods_id'], '1');// 商品优惠价格区间
@@ -61,15 +79,39 @@ class detail_module extends api_front implements api_interface {
         $db_goods->inc('click_count','goods_id='.$goods_id,1);
 
         $data = $goods;
-
-        $data['rank_prices']     = !empty($shop_price) ? get_user_rank_prices($goods_id, $shop_price) : 0;
-        $data['pictures']        = EM_get_goods_gallery($goods_id);
+         
+		/*给指定商品的各会员等级对应价格增加缓存*/
+        $cache_goods_user_rank_prices_key = 'goods_user_rank_prices_'.$goods_id. '-' . $shop_price;
+        $cache_user_rank_prices_id = sprintf('%X', crc32($cache_goods_user_rank_prices_key));
+        $orm_member_price_db = RC_Model::model('goods/orm_member_price_model');
+        $user_rank_prices = $orm_member_price_db->get_cache_item($cache_user_rank_prices_id);
+        if (empty($user_rank_prices)) {
+        	$user_rank_prices = get_user_rank_prices($goods_id, $shop_price);
+        	$orm_member_price_db->set_cache_item($cache_goods_properties_id);      	
+        }
+        
+        /*给商品的相册增加缓存*/
+        $cache_goods_gallery_key = 'goods_gallery_'.$goods_id;
+        $cache_goods_gallery_id = sprintf('%X', crc32($cache_goods_gallery_key));
+        $orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
+        $goods_gallery = $orm_goods_gallery_db->get_cache_item($cache_goods_gallery_id);
+        if (empty($goods_gallery)) {
+        	$goods_gallery = EM_get_goods_gallery($goods_id);
+        	$orm_goods_gallery_db->set_cache_item($cache_goods_gallery_id);
+        }
+        
+        $data['rank_prices']     = !empty($shop_price) ? $user_rank_prices : 0;
+        $data['pictures']        = $goods_gallery;
         $data['properties']      = $properties['pro'];
         $data['specification']   = $properties['spe'];
         $data['collected']       = 0;
 
         $db_favourable = RC_Model::model('favourable/favourable_activity_model');
-        $favourable_result = $db_favourable->where(array('store_id' => $goods['store_id'], 'start_time' => array('elt' => RC_Time::gmtime()), 'end_time' => array('egt' => RC_Time::gmtime()), 'act_type' => array('neq' => 0)))->select();
+       	/*增加优惠活动缓存*/
+		$store_options = array(
+				'store_id' => $goods['store_id']
+		);
+		$favourable_result = RC_Api::api('favourable', 'store_favourable_list', $store_options);
         $favourable_list = array();
         if (empty($rec_type)) {
         	if (!empty($favourable_result)) {

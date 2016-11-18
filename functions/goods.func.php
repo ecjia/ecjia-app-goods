@@ -604,9 +604,6 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 		$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
 	}
 
-	$db_goods = RC_Model::model('goods/goods_model');
-	$model_attr = $db_goods->where(array('goods_id' => $goods_id))->get_field('model_attr');
-
 	$field = 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price';
 	/* 获得商品的规格 */
 	$db_good_attr->view = array (
@@ -616,39 +613,8 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 			'on'       => 'a.attr_id = ga.attr_id'
 		)
 	);
-	if ($model_attr == 1) {
-		$db_good_attr->view = array (
-			'attribute' => array (
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'a',
-				'on'       => 'a.attr_id = ga.attr_id'
-			),
-			'warehouse_attr' => array (
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'wap',
-				'on'       => "ga.goods_attr_id = wap.goods_attr_id AND wap.warehouse_id = '$warehouse_id'"
-			)
-		);
-		$field .= ", wap.attr_price as warehouse_attr_price";
-	} elseif ($model_attr == 2) {
-		$db_good_attr->view = array (
-			'attribute' => array (
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'a',
-				'on'       => 'a.attr_id = ga.attr_id'
-			),
-			'warehouse_area_attr' => array (
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'waa',
-				'on'       => "ga.goods_attr_id = waa.goods_attr_id AND area_id = '$area_id'"
-			)
-		);
-	}
 
 	$res = $db_good_attr->field($field)->where(array('ga.goods_id' => $goods_id))->order(array('a.sort_order' => 'asc','ga.attr_price' => 'asc','ga.goods_attr_id' => 'asc'))->select();
-
-
-
 
 	$arr ['pro'] = array (); // 属性
 	$arr ['spe'] = array (); // 规格
@@ -664,13 +630,7 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 				$arr ['pro'] [$group] [$row ['attr_id']] ['name'] = $row ['attr_name'];
 				$arr ['pro'] [$group] [$row ['attr_id']] ['value'] = $row ['attr_value'];
 			} else {
-				if ($model_attr == 1) {
-					$attr_price = $row['warehouse_attr_price'];
-				} elseif ($model_attr == 2) {
-					$attr_price = $row['area_attr_price'];
-				} else {
-					$attr_price = $row['attr_price'];
-				}
+				$attr_price = $row['attr_price'];
 
 				$arr ['spe'] [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
 				$arr ['spe'] [$row ['attr_id']] ['name'] = $row ['attr_name'];

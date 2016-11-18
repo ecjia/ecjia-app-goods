@@ -20,6 +20,7 @@ class admin extends ecjia_admin {
 	private $db_category;
 	private $db_term_meta;
 	private $db_term_relationship;
+	private $orm_goods_db;
 
 	public function __construct() {
 		parent::__construct();
@@ -38,6 +39,8 @@ class admin extends ecjia_admin {
 		$this->db_category 			= RC_Model::model('goods/category_model');
 		$this->db_term_relationship = RC_Model::model('goods/term_relationship_model');
 		$this->db_term_meta 		= RC_Loader::load_sys_model('term_meta_model');
+		
+		$this->orm_goods_db = RC_Model::model('goods/orm_goods_model');
 		
 		RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/goods_list.js', __FILE__), array('ecjia-utils', 'smoke', 'jquery-validate', 'jquery-form', 'bootstrap-placeholder', 'jquery-wookmark', 'jquery-imagesloaded', 'jquery-colorbox'));
 		RC_Script::enqueue_script('jquery-dropper', RC_Uri::admin_url('/statics/lib/dropper-upload/jquery.fs.dropper.js'), array(), false, true);
@@ -584,6 +587,11 @@ class admin extends ecjia_admin {
 		/* 处理会员价格 */
 		if (isset($_POST['user_rank']) && isset($_POST['user_price'])) {
 		  	handle_member_price($goods_id, $_POST['user_rank'], $_POST['user_price']);
+		  	/*释放指定商品不同会员等级价格缓存*/
+		  	$cache_goods_user_rank_prices_key = 'goods_user_rank_prices_'.$goods_id. '-' . $shop_price;
+		  	$cache_user_rank_prices_id = sprintf('%X', crc32($cache_goods_user_rank_prices_key));
+		  	$orm_member_price_db = RC_Model::model('goods/orm_member_price_model');
+		  	$orm_member_price_db->delete_cache_item($cache_user_rank_prices_id);
 		}
 
 		/* 处理优惠价格 */
@@ -646,14 +654,17 @@ class admin extends ecjia_admin {
 		$link = array_combine($key_array, $link);
 
 		/* 释放app缓存*/
-		$goods_db = RC_Model::model('goods/orm_goods_model');
-		$goods_cache_array = $goods_db->get_cache_item('goods_list_cache_key_array');
+		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
 		if (!empty($goods_cache_array)) {
 			foreach ($goods_cache_array as $val) {
-				$goods_db->delete_cache_item($val);
+				$this->orm_goods_db->delete_cache_item($val);
 			}
-			$goods_db->delete_cache_item('goods_list_cache_key_array');
+			$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
 		}
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
 		
 		$this->showmessage(RC_Lang::get('goods::goods.edit_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'pjaxurl' => RC_Uri::url('goods/admin/edit', array('goods_id' => $goods_id))));
 }
@@ -818,14 +829,22 @@ class admin extends ecjia_admin {
 			$pjaxurl = RC_Uri::url('goods/admin/init' ,'is_on_sale='.$is_on_sale.$page);
 		}
 		/* 释放app缓存*/
-		$goods_db = RC_Model::model('goods/orm_goods_model');
-		$goods_cache_array = $goods_db->get_cache_item('goods_list_cache_key_array');
+		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
 		if (!empty($goods_cache_array)) {
 			foreach ($goods_cache_array as $val) {
-				$goods_db->delete_cache_item($val);
+				$this->orm_goods_db->delete_cache_item($val);
 			}
-			$goods_db->delete_cache_item('goods_list_cache_key_array');
+			$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
 		}
+		/*释放商品基本信息缓存*/
+		if (!empty($goods_id)) {
+			foreach ($goods_id as $v) {
+				$cache_goods_basic_info_key = 'goods_basic_info_'.$v;
+				$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+				$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
+			}
+		}
+		
 		$this->showmessage(RC_Lang::get('goods::goods.batch_handle_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 	}
 
@@ -840,6 +859,19 @@ class admin extends ecjia_admin {
         if (!empty($goods_name)) {
 //         	$this->db_goods->where(array('goods_id' => $goods_id))->update(array('goods_name' => $goods_name, 'last_update' => RC_Time::gmtime()));
         	RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('goods_name' => $goods_name, 'last_update' => RC_Time::gmtime()));
+        	/* 释放app缓存*/
+        	$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
+        	if (!empty($goods_cache_array)) {
+        		foreach ($goods_cache_array as $val) {
+        			$this->orm_goods_db->delete_cache_item($val);
+        		}
+        		$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+        	}
+        	/*释放商品基本信息缓存*/
+        	$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+        	$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+        	$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
+        	
         	$this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => stripslashes($goods_name)));
         } else {
         	$this->showmessage(RC_Lang::get('goods::goods.goods_name_null'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -876,6 +908,18 @@ class admin extends ecjia_admin {
 		}
 // 		$this->db_goods->where(array('goods_id' => $goods_id))->update(array('goods_sn' => $goods_sn, 'last_update' => RC_Time::gmtime()));
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('goods_sn' => $goods_sn, 'last_update' => RC_Time::gmtime()));
+		/* 释放app缓存*/
+		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$this->orm_goods_db->delete_cache_item($val);
+			}
+			$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
 		
 		$this->showmessage(RC_Lang::get('goods::goods.edit_ok'),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => stripslashes($goods_sn)));
 	}
@@ -935,6 +979,10 @@ class admin extends ecjia_admin {
 				}
 				$goods_db->delete_cache_item('goods_list_cache_key_array');
 			}
+			/*释放商品基本信息缓存*/
+			$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+			$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+			$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
 			$this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin/init'), 'content' => number_format($goods_price, 2, '.', '')));
 		}
 	}
@@ -974,6 +1022,19 @@ class admin extends ecjia_admin {
 		}
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 		
+		/* 释放app缓存*/
+		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$this->orm_goods_db->delete_cache_item($val);
+			}
+			$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
+		
 		$this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $goods_num));
 	}
 
@@ -991,6 +1052,18 @@ class admin extends ecjia_admin {
 			'last_update' => RC_Time::gmtime()
 		);
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+		/* 释放app缓存*/
+		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$this->orm_goods_db->delete_cache_item($val);
+			}
+			$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
 		
 		$this->showmessage(RC_Lang::get('goods::goods.toggle_on_sale'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $on_sale));
 	}
@@ -1057,7 +1130,19 @@ class admin extends ecjia_admin {
     	$goods_name = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('goods_name');
 
     	RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('is_delete' => 1));
-    		
+    	/* 释放app缓存*/
+    	$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
+    	if (!empty($goods_cache_array)) {
+    		foreach ($goods_cache_array as $val) {
+    			$this->orm_goods_db->delete_cache_item($val);
+    		}
+    		$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+    	}
+    	/*释放商品基本信息缓存*/
+    	$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+    	$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+    	$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
+    	
     	ecjia_admin::admin_log(addslashes($goods_name), 'trash', 'goods');
     	$this->showmessage(RC_Lang::get('goods::goods.trash_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
@@ -1075,7 +1160,20 @@ class admin extends ecjia_admin {
 		);
 		$goods_name = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('goods_name');
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-
+		
+		/* 释放app缓存*/
+		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$this->orm_goods_db->delete_cache_item($val);
+			}
+			$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
+		
 		ecjia_admin::admin_log(addslashes($goods_name), 'restore', 'goods'); // 记录日志
 		$this->showmessage(RC_Lang::get('goods::goods.restore_goods_ok'),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
@@ -1508,6 +1606,10 @@ class admin extends ecjia_admin {
 		  	'last_update'	=> RC_Time::gmtime(),
 		);
 		$this->db_goods->join(null)->where(array('goods_id' => $_REQUEST['goods_id']))->update($data);
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
 
 		/* 记录日志 */
 		ecjia_admin::admin_log($goods['goods_name'], 'edit', 'goods');
@@ -1676,6 +1778,14 @@ class admin extends ecjia_admin {
 				}
 			}
 			$this->db_goods_attr->batch_insert($data_insert);
+			/*释放商品基本信息缓存*/
+			$cache_goods_properties_key = 'goods_properties_'.$goods_id;
+            $cache_goods_properties_id = sprintf('%X', crc32($cache_goods_properties_key));
+            $goods_type_db = RC_Model::model('goods/orm_goods_type_model');
+            $properties = $goods_type_db->get_cache_item($cache_goods_properties_id);
+			$goods_type_db->delete_cache_item($cache_goods_properties_id);
+			
+			
 			$pjaxurl = RC_Uri::url('goods/admin/edit_goods_attr', array('goods_id' => $goods_id));
 			$this->showmessage(RC_Lang::get('goods::goods.edit_attr_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 		}
@@ -1862,6 +1972,20 @@ class admin extends ecjia_admin {
 			$this->db_link_goods->batch_insert($data);
 		}
 		$goods_name = $this->db_goods->where(array('goods_id'=>$goods_id))->get_field('goods_name');
+		
+		/* 释放app缓存*/
+		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$this->orm_goods_db->delete_cache_item($val);
+			}
+			$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$this->orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+		
 		ecjia_admin::admin_log('增加关联商品，被设置的商品名称是'.$goods_name, 'setup', 'goods');
 		
 

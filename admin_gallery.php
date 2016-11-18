@@ -139,6 +139,11 @@ class admin_gallery extends ecjia_admin {
         }
         $goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
         $goods_image->update_gallery();
+        /*释放商品相册缓存*/
+        $cache_goods_gallery_key = 'goods_gallery_'.$goods_id;
+        $cache_goods_gallery_id = sprintf('%X', crc32($cache_goods_gallery_key));
+        $orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
+        $orm_goods_gallery_db->delete_cache_item($cache_goods_gallery_id);
         
         $arr['goods_id'] = $goods_id;
         if (!empty($code)) {
@@ -176,6 +181,7 @@ class admin_gallery extends ecjia_admin {
 
 		/* 删除数据 */
 		RC_DB::table('goods_gallery')->where('img_id', $img_id)->delete();
+				
 		$this->showmessage(RC_Lang::get('goods::goods.drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
