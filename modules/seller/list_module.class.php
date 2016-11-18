@@ -57,10 +57,49 @@ class list_module extends api_front implements api_interface {
 			$collect_store_id = RC_DB::table('collect_store')->where('user_id', $_SESSION['user_id'])->lists('store_id');
 
 			foreach ($store_data['seller_list'] as $key => $row) {
+				/*释放优惠活动缓存*/
 				$store_options = array(
 						'store_id' => $row['id']
 				);
-				$favourable_list = RC_Api::api('favourable', 'store_favourable_list', $store_options);
+				$favourable_result = RC_Api::api('favourable', 'store_favourable_list', $store_options);
+				if (!empty($favourable_result)) {
+					foreach ($favourable_result as $val) {
+						if ($val['act_range'] == '0') {
+							$favourable_list[] = array(
+									'name' => $val['act_name'],
+									'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+									'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+							);
+						} else {
+							$act_range_ext = explode(',', $val['act_range_ext']);
+							switch ($val['act_range']) {
+								case 1 :
+									$favourable_list[] = array(
+									'name' => $val['act_name'],
+									'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+									'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+									);
+									break;
+								case 2 :
+									$favourable_list[] = array(
+									'name' => $val['act_name'],
+									'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+									'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+									);
+									break;
+								case 3 :
+									$favourable_list[] = array(
+									'name' => $val['act_name'],
+									'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+									'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+									);
+									break;
+								default:
+									break;
+							}
+						}
+					}
+				}
 				
 				$goods_options = array('store_id' => $row['id'], 'cat_id' => $goods_category, 'keywords' => $keywords, 'page' => 1, 'size' => 10);
 				/* 如有查询添加，不限制分页*/
