@@ -179,6 +179,8 @@ class admin_category extends ecjia_admin {
 			$category_db = RC_Model::model('goods/orm_category_model');
 			$cache_key = sprintf('%X', crc32('category-'. $cat['parent_id']));
 			$category_db->delete_cache_item($cache_key);
+			$cache_key = sprintf('%X', crc32('category-children-'.$cat['parent_id']));
+			$category_db->delete_cache_item($cache_key);
 			
 			$this->showmessage(RC_Lang::get('goods::category.catadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link,'max_id' => $insert_id));
 		}
@@ -407,8 +409,12 @@ class admin_category extends ecjia_admin {
 		$category_db = RC_Model::model('goods/orm_category_model');
 		$cache_key = sprintf('%X', crc32('category-'. $cat['parent_id']));
 		$category_db->delete_cache_item($cache_key);
+		$cache_key = sprintf('%X', crc32('category-children-'.$cat['parent_id']));
+		$category_db->delete_cache_item($cache_key);
 		if ($cat['parent_id'] != $info['parent_id']) {
 			$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
+			$category_db->delete_cache_item($cache_key);
+			$cache_key = sprintf('%X', crc32('category-children-'.$info['parent_id']));
 			$category_db->delete_cache_item($cache_key);
 		}
 		
@@ -547,12 +553,15 @@ class admin_category extends ecjia_admin {
 		$info = RC_DB::table('category')->where('cat_id', $id)->first();
 		
 		$name = $info['cat_name'];
-		/* 释放app缓存 */
-		$category_db = RC_Model::model('goods/orm_category_model');
-		$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
 		
-		$category_db->delete_cache_item($cache_key);
 		if (cat_update($id, array('is_show' => $val))) {
+			/* 释放app缓存 */
+			$category_db = RC_Model::model('goods/orm_category_model');
+			$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
+			$category_db->delete_cache_item($cache_key);
+			
+			$cache_key = sprintf('%X', crc32('category-children-'.$info['parent_id']));
+			$category_db->delete_cache_item($cache_key);
 			$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		} else {
 			$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -594,6 +603,9 @@ class admin_category extends ecjia_admin {
 			/* 释放app缓存 */
 			$category_db = RC_Model::model('goods/orm_category_model');
 			$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
+			$category_db->delete_cache_item($cache_key);
+			
+			$cache_key = sprintf('%X', crc32('category-children-'.$info['parent_id']));
 			$category_db->delete_cache_item($cache_key);
 			
 			$this->showmessage(RC_Lang::get('goods::category.catdrop_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
