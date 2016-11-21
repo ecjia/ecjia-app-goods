@@ -53,7 +53,7 @@
 					<p>
 						<a href="javascript:;" title="{lang key='goods::goods.cancel'}" data-toggle="sort-cancel" style="display:none;"><i class="fontello-icon-cancel"></i></a>
 						<a href="javascript:;" title="{lang key='goods::goods.save'}" data-toggle="sort-ok" data-imgid="{$img.img_id}" data-saveurl="{url path='goods/admin_gallery/update_image_desc'}" style="display:none;"><i class="fontello-icon-ok"></i></a>
-						<a class="ajaxremove" data-imgid="{$img.img_id}" data-toggle="ajaxremove" data-msg="{lang key='goods::goods.drop_photo_confirm'}" href='{url path="goods/admin_gallery/drop_image" args="img_id={$img.img_id}"}' title="{lang key='system::system.remove'}"><i class="icon-trash"></i></a>
+						<a class="ajaxremove" data-imgid="{$img.img_id}" data-toggle="ajaxremove" data-msg="{lang key='goods::goods.drop_photo_confirm'}" href='{url path="goods/admin_gallery/drop_image" args="img_id={$img.img_id}&goods_id={$smarty.get.goods_id}"}' title="{lang key='system::system.remove'}"><i class="icon-trash"></i></a>
 						<a class="move-mod-head" href="javascript:void(0)" title="{lang key='goods::goods.move'}"><i class="icon-move"></i></a>
 						<a href="javascript:;" title="{lang key='system::system.edit'}" data-toggle="edit"><i class="icon-pencil"></i></a>
 						<span class="edit_title">{if $img.img_desc}{$img.img_desc}{else}{lang key='goods::goods.no_title'}{/if}</span>

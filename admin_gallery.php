@@ -163,6 +163,7 @@ class admin_gallery extends ecjia_admin {
 	public function drop_image() {
 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 		$img_id = empty($_GET['img_id']) ? 0 : intval($_GET['img_id']);
+		$goods_id = empty($_GET['goods_id']) ? 0 : intval($_GET['goods_id']);
 		
 		/* 删除图片文件 */
 		$row = RC_DB::table('goods_gallery')->select('img_url', 'thumb_url', 'img_original')->where('img_id', $img_id)->first();
@@ -181,6 +182,12 @@ class admin_gallery extends ecjia_admin {
 
 		/* 删除数据 */
 		RC_DB::table('goods_gallery')->where('img_id', $img_id)->delete();
+		
+		/*释放商品相册缓存*/
+		$cache_goods_gallery_key = 'goods_gallery_'.$goods_id;
+		$cache_goods_gallery_id = sprintf('%X', crc32($cache_goods_gallery_key));
+		$orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
+		$orm_goods_gallery_db->delete_cache_item($cache_goods_gallery_id);
 				
 		$this->showmessage(RC_Lang::get('goods::goods.drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
@@ -194,6 +201,14 @@ class admin_gallery extends ecjia_admin {
 		$val = $_GET['val'];
 		
 		RC_DB::table('goods_gallery')->where('img_id', $img_id)->update(array('img_desc' => $val));
+		
+		/*释放商品相册缓存*/
+		$goods_id = RC_DB::table('goods_gallery')->where('img_id', $img_id)->pluck('goods_id');
+		$cache_goods_gallery_key = 'goods_gallery_'.$goods_id;
+		$cache_goods_gallery_id = sprintf('%X', crc32($cache_goods_gallery_key));
+		$orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
+		$orm_goods_gallery_db->delete_cache_item($cache_goods_gallery_id);
+		
 		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
@@ -212,6 +227,12 @@ class admin_gallery extends ecjia_admin {
 			$i++;
 			$data = array('img_original' => $v['img_original']);
 			RC_DB::table('goods_gallery')->where('img_id', $v['img_id'])->update($data);
+			/*释放商品相册缓存*/
+			$goods_id = RC_DB::table('goods_gallery')->where('img_id', $v['img_id'])->pluck('goods_id');
+			$cache_goods_gallery_key = 'goods_gallery_'.$goods_id;
+			$cache_goods_gallery_id = sprintf('%X', crc32($cache_goods_gallery_key));
+			$orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
+			$orm_goods_gallery_db->delete_cache_item($cache_goods_gallery_id);
 		}
 		$this->showmessage(RC_Lang::get('goods::goods.save_sort_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}

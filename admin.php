@@ -1606,10 +1606,6 @@ class admin extends ecjia_admin {
 		  	'last_update'	=> RC_Time::gmtime(),
 		);
 		$this->db_goods->join(null)->where(array('goods_id' => $_REQUEST['goods_id']))->update($data);
-		/*释放商品基本信息缓存*/
-		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
-		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
-		$this->orm_goods_db->delete_cache_item($cache_basic_info_id);
 
 		/* 记录日志 */
 		ecjia_admin::admin_log($goods['goods_name'], 'edit', 'goods');
@@ -1778,7 +1774,7 @@ class admin extends ecjia_admin {
 				}
 			}
 			$this->db_goods_attr->batch_insert($data_insert);
-			/*释放商品基本信息缓存*/
+			/*释放商品的规格和属性缓存*/
 			$cache_goods_properties_key = 'goods_properties_'.$goods_id;
             $cache_goods_properties_id = sprintf('%X', crc32($cache_goods_properties_key));
             $goods_type_db = RC_Model::model('goods/orm_goods_type_model');
