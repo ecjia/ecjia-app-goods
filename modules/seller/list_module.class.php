@@ -57,6 +57,7 @@ class list_module extends api_front implements api_interface {
 			$collect_store_id = RC_DB::table('collect_store')->where('user_id', $_SESSION['user_id'])->lists('store_id');
 
 			foreach ($store_data['seller_list'] as $key => $row) {
+				$favourable_list = array();
 				/*释放优惠活动缓存*/
 				$store_options = array(
 						'store_id' => $row['id']
