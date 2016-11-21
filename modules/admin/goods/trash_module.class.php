@@ -32,6 +32,19 @@ class trash_module extends api_admin implements api_interface {
 		}
 		$db_goods->where($where)->update($data);
 
+		$orm_goods_db = RC_Model::model('goods/orm_goods_model');
+		/* 释放app缓存*/
+		$goods_cache_array = $orm_goods_db->get_cache_item('goods_list_cache_key_array');
+		if (!empty($goods_cache_array)) {
+			foreach ($goods_cache_array as $val) {
+				$orm_goods_db->delete_cache_item($val);
+			}
+			$orm_goods_db->delete_cache_item('goods_list_cache_key_array');
+		}
+		/*释放商品基本信息缓存*/
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$id;
+		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
+		$orm_goods_db->delete_cache_item($cache_basic_info_id);
 		$goods_name = $db_goods->where(array('goods_id' => $id))->get_field('goods_name');
 		ecjia_admin::admin_log(addslashes($goods_name), 'trash', 'goods'); // 记录日志
 		return array();
