@@ -42,7 +42,7 @@ class trash_module extends api_admin implements api_interface {
 			$orm_goods_db->delete_cache_item('goods_list_cache_key_array');
 		}
 		/*释放商品基本信息缓存*/
-		$cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
+		$cache_goods_basic_info_key = 'goods_basic_info_'.$id;
 		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
 		$orm_goods_db->delete_cache_item($cache_basic_info_id);
 		$goods_name = $db_goods->where(array('goods_id' => $id))->get_field('goods_name');
