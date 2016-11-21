@@ -58,7 +58,7 @@ class list_module extends api_front implements api_interface {
 
 			foreach ($store_data['seller_list'] as $key => $row) {
 				$favourable_list = array();
-				/*释放优惠活动缓存*/
+				/*增加优惠活动缓存*/
 				$store_options = array(
 						'store_id' => $row['id']
 				);
