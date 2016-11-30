@@ -178,14 +178,16 @@ class goods_list {
 			$cache_key .= '-max-' . $filter['max'];
 		}
 
-		if (!empty(self::$keywords_where['keywords'])) {
+		if (isset(self::$keywords_where['keywords']) && !empty(self::$keywords_where['keywords']) && isset($filter['keywords']) && empty($filter['keywords'])) {
 			$where[] = self::$keywords_where['keywords'];
+			$cache_key .= '-keywords-' . $filter['keywords'];
 		}
 
-		if (!empty(self::$keywords_where['tag_where'])) {
-			$where[] = 'or';
-			$where['g.goods_id'] = self::$keywords_where['tag_where'];
-		}
+// 		if (isset(self::$keywords_where['tag_where']) && !empty(self::$keywords_where['tag_where']) && isset($filter['keywords']) && empty($filter['keywords'])) {
+// 			$where[] = 'or';
+// 			$where['g.goods_id'] = self::$keywords_where['tag_where'];
+// 			$cache_key .= '-tagkeywords-' . $filter['keywords'];
+// 		}
 
 		if (!empty($filter['intro'])) {
 			if (in_array($filter['intro'], array('best', 'new', 'hot', 'promotion'))) {
