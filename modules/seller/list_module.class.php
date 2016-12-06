@@ -167,10 +167,12 @@ class list_module extends api_front implements api_interface {
 		
 
 		$seller_list = array_slice($seller_list, ($page-1)*$size, $size);
+		
+		
 		$page = array(
 				'total'	=> $store_data['page']->total_records,
 				'count'	=> $store_data['page']->total_records,
-				'more'	=> $store_data['page']->total_pages <= $page ? 0 : 1,
+				'more'	=> $store_data['page']->total_records - $page * $size >= 0 ? 1 : 0,
 		);
 
 		return array('data' => $seller_list, 'pager' => $page);
