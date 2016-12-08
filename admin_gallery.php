@@ -121,7 +121,7 @@ class admin_gallery extends ecjia_admin {
         $goods_id = intval($_GET['goods_id']);
 
         if (empty($goods_id)) {
-            $this->showmessage(RC_Lang::get('goods::goods.parameter_missing'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            return $this->showmessage(RC_Lang::get('goods::goods.parameter_missing'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
 
         $upload = RC_Upload::uploader('image', array('save_path' => './images', 'auto_sub_dirs' => true));
@@ -130,12 +130,12 @@ class admin_gallery extends ecjia_admin {
         });
         
         if (!$upload->check_upload_file($_FILES['img_url'])) {
-            $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
 
         $image_info = $upload->upload($_FILES['img_url']);
         if (empty($image_info)) {
-            $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
         $goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
         $goods_image->update_gallery();
@@ -154,7 +154,7 @@ class admin_gallery extends ecjia_admin {
         	$arr['step'] = 'add_goods_gallery';
         }
         $url = RC_Uri::url('goods/admin_gallery/init', $arr);
-        $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $url));
+        return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $url));
     }
 
 	/**
@@ -189,7 +189,7 @@ class admin_gallery extends ecjia_admin {
 		$orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
 		$orm_goods_gallery_db->delete_cache_item($cache_goods_gallery_id);
 				
-		$this->showmessage(RC_Lang::get('goods::goods.drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		return $this->showmessage(RC_Lang::get('goods::goods.drop_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
 	/**
@@ -209,7 +209,7 @@ class admin_gallery extends ecjia_admin {
 		$orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
 		$orm_goods_gallery_db->delete_cache_item($cache_goods_gallery_id);
 		
-		$this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		return $this->showmessage(RC_Lang::get('goods::goods.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
 	/**
@@ -234,7 +234,7 @@ class admin_gallery extends ecjia_admin {
 			$orm_goods_gallery_db = RC_Model::model('goods/orm_goods_gallery_model');
 			$orm_goods_gallery_db->delete_cache_item($cache_goods_gallery_id);
 		}
-		$this->showmessage(RC_Lang::get('goods::goods.save_sort_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		return $this->showmessage(RC_Lang::get('goods::goods.save_sort_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 }
 

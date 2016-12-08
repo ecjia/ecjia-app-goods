@@ -115,11 +115,11 @@ class admin_category extends ecjia_admin {
 		$cat['filter_attr']  = !empty($_POST['filter_attr'])  ? implode(',', array_unique(array_diff($_POST['filter_attr'], array(0)))) : 0;
 
 		if (cat_exists($cat['cat_name'], $cat['parent_id'])) {
-		    $this->showmessage(RC_Lang::get('goods::category.catname_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		    return $this->showmessage(RC_Lang::get('goods::category.catname_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
 		if ($cat['grade'] > 10 || $cat['grade'] < 0) {
-			$this->showmessage(RC_Lang::get('goods::category.grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::category.grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
 		/* 上传分类图片 */
@@ -127,7 +127,7 @@ class admin_category extends ecjia_admin {
 		if (isset($_FILES['cat_img']) && $upload->check_upload_file($_FILES['cat_img'])) {
 			$image_info = $upload->upload($_FILES['cat_img']);
 			if (empty($image_info)) {
-				$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
 			$cat['category_img'] = $upload->get_position($image_info);
 		}
@@ -182,7 +182,7 @@ class admin_category extends ecjia_admin {
 			$cache_key = sprintf('%X', crc32('category-children-'.$cat['parent_id']));
 			$category_db->delete_cache_item($cache_key);
 			
-			$this->showmessage(RC_Lang::get('goods::category.catadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link,'max_id' => $insert_id));
+			return $this->showmessage(RC_Lang::get('goods::category.catadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link,'max_id' => $insert_id));
 		}
 	}
 
@@ -259,7 +259,7 @@ class admin_category extends ecjia_admin {
 
 	public function choose_goods_type() {
 		$attr_list = get_attr_list();
-		$this->showmessage('', ecjia::MSGSTAT_SUCCESS | ecjia::MSGTYPE_JSON, array('attr_list' => $attr_list));
+		return $this->showmessage('', ecjia::MSGSTAT_SUCCESS | ecjia::MSGTYPE_JSON, array('attr_list' => $attr_list));
 	}
 
 	public function add_category() {
@@ -267,7 +267,7 @@ class admin_category extends ecjia_admin {
 		$category 	= empty($_REQUEST['cat']) 		? '' 	: trim($_REQUEST['cat']);
 		
 		if (cat_exists($category, $parent_id)) {
-			$this->showmessage(RC_Lang::get('goods::category.catname_exist'));
+			return $this->showmessage(RC_Lang::get('goods::category.catname_exist'));
 		} else {
 			$data = array(
 				'cat_name' 	=> $category,
@@ -278,7 +278,7 @@ class admin_category extends ecjia_admin {
 			$category_id = RC_DB::table('category')->insertGetId($data);
 			
 			$arr = array("parent_id" => $parent_id, "id" => $category_id, "cat" => $category);
-			$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $arr));
+			return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $arr));
 		}
 	}
 
@@ -306,7 +306,7 @@ class admin_category extends ecjia_admin {
 		if ($cat['cat_name'] != $old_cat_name) {
 			if (cat_exists($cat['cat_name'], $cat['parent_id'], $cat_id)) {
 				$link[] = array('text' => RC_Lang::get('system::system.go_back'), 'href' => 'javascript:history.back(-1)');
-				$this->showmessage(RC_Lang::get('goods::category.catname_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('links' => $link));
+				return $this->showmessage(RC_Lang::get('goods::category.catname_exist'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('links' => $link));
 			}
 		}
 
@@ -315,13 +315,13 @@ class admin_category extends ecjia_admin {
 		if (in_array($cat['parent_id'], $children)) {
 			/* 选定的父类是当前分类或当前分类的下级分类 */
 			$link[] = array('text' => RC_Lang::get('system::system.go_back'), 'href' => 'javascript:history.back(-1)');
-			$this->showmessage(RC_Lang::get('goods::category.is_leaf_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('links' => $link));
+			return $this->showmessage(RC_Lang::get('goods::category.is_leaf_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('links' => $link));
 		}
 
 		if ($cat['grade'] > 10 || $cat['grade'] < 0) {
 			/* 价格区间数超过范围 */
 			$link[] = array('text' => RC_Lang::get('system::system.go_back'), 'href' => 'javascript:history.back(-1)');
-			$this->showmessage(RC_Lang::get('goods::category.grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('links' => $link));
+			return $this->showmessage(RC_Lang::get('goods::category.grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('links' => $link));
 		}
 		
 		/* 更新分类图片 */
@@ -330,7 +330,7 @@ class admin_category extends ecjia_admin {
 		if (isset($_FILES['cat_img']) && $upload->check_upload_file($_FILES['cat_img'])) {
 			$image_info = $upload->upload($_FILES['cat_img']);
 			if (empty($image_info)) {
-				$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
 			$cat['category_img'] = $upload->get_position($image_info);
 			$logo = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('category_img');
@@ -419,7 +419,7 @@ class admin_category extends ecjia_admin {
 		}
 		
 		
-		$this->showmessage(RC_Lang::get('goods::category.catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
+		return $this->showmessage(RC_Lang::get('goods::category.catedit_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
 	}
 
 	/**
@@ -461,7 +461,7 @@ class admin_category extends ecjia_admin {
 
 		/* 商品分类不允许为空 */
 		if ($cat_id == 0 || $target_cat_id == 0) {
-			$this->showmessage(RC_Lang::get('goods::category.cat_move_empty'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::category.cat_move_empty'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		/* 更新商品分类 */
 		$data = array('cat_id' => $target_cat_id);
@@ -479,7 +479,7 @@ class admin_category extends ecjia_admin {
 		RC_DB::table('goods')->where('cat_id', $cat_id)->update($data);
 		
 		RC_Cache::app_cache_delete('admin_category_list', 'goods');
-		$this->showmessage(RC_Lang::get('goods::category.move_cat_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		return $this->showmessage(RC_Lang::get('goods::category.move_cat_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
 	/**
@@ -498,9 +498,9 @@ class admin_category extends ecjia_admin {
 			$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
 			$category_db->delete_cache_item($cache_key);
 			
-			$this->showmessage(RC_Lang::get('goods::category.sort_edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/init')));
+			return $this->showmessage(RC_Lang::get('goods::category.sort_edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/init')));
 		} else {
-			$this->showmessage(RC_Lang::get('goods::category.sort_edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::category.sort_edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
@@ -514,9 +514,9 @@ class admin_category extends ecjia_admin {
 		$val = $_POST['value'];
 		
 		if (cat_update($id, array('measure_unit' => $val))) {
-			$this->showmessage(RC_Lang::get('goods::category.number_edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
+			return $this->showmessage(RC_Lang::get('goods::category.number_edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		} else {
-			$this->showmessage(RC_Lang::get('goods::category.number_edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::category.number_edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
@@ -531,13 +531,13 @@ class admin_category extends ecjia_admin {
 
 		if ($val > 10 || $val < 0) {
 			/* 价格区间数超过范围 */
-			$this->showmessage(RC_Lang::get('goods::category.grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::category.grade_error'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
 		if (cat_update($id, array('grade' => $val))) {
-			$this->showmessage(RC_Lang::get('goods::category.grade_edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
+			return $this->showmessage(RC_Lang::get('goods::category.grade_edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		} else {
-			$this->showmessage(RC_Lang::get('goods::category.grade_edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::category.grade_edit_fail'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
@@ -562,9 +562,9 @@ class admin_category extends ecjia_admin {
 			
 			$cache_key = sprintf('%X', crc32('category-children-'.$info['parent_id']));
 			$category_db->delete_cache_item($cache_key);
-			$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
+			return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		} else {
-			$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
@@ -608,9 +608,9 @@ class admin_category extends ecjia_admin {
 			$cache_key = sprintf('%X', crc32('category-children-'.$info['parent_id']));
 			$category_db->delete_cache_item($cache_key);
 			
-			$this->showmessage(RC_Lang::get('goods::category.catdrop_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+			return $this->showmessage(RC_Lang::get('goods::category.catdrop_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 		} else {
-			$this->showmessage($cat_name .' '. RC_Lang::get('goods::category.cat_isleaf'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage($cat_name .' '. RC_Lang::get('goods::category.cat_isleaf'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
@@ -637,7 +637,7 @@ class admin_category extends ecjia_admin {
 		$cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
 		$category_db->delete_cache_item($cache_key);
 		
-		$this->showmessage(RC_Lang::get('goods::category.drop_cat_img_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
+		return $this->showmessage(RC_Lang::get('goods::category.drop_cat_img_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
 	}
 }
 

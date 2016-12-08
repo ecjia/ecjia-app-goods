@@ -91,13 +91,13 @@ class admin_brand extends ecjia_admin {
 		$is_show 	= isset($_REQUEST['is_show']) 	? intval($_REQUEST['is_show'])					: 0;
 		
 		if (empty($brand_name)) {
-			$this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$goods_brand = new goods_brand();
 		$is_only = $goods_brand->brand_count(array('brand_name' => $brand_name));
 		
 		if ($is_only != 0) {
-			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($_POST['brand_name'])),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($_POST['brand_name'])),ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
 		$brand_logo	= '';
@@ -108,7 +108,7 @@ class admin_brand extends ecjia_admin {
     		if (!empty($info)) {
     			$brand_logo = $info['savepath'] . '/' . $info['savename'];
     		} else {
-    			$this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+    			return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
     		}
 	   }
 
@@ -129,7 +129,7 @@ class admin_brand extends ecjia_admin {
     	$link[1]['href'] = RC_Uri::url('goods/admin_brand/add');
     	
     	ecjia_admin::admin_log($brand_name, 'add', 'brand');
-    	$this->showmessage(RC_Lang::get('goods::brand.brandadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', "id=$brand_id"), 'links' => $link, 'max_id' => $brand_id));
+    	return $this->showmessage(RC_Lang::get('goods::brand.brandadd_succed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', "id=$brand_id"), 'links' => $link, 'max_id' => $brand_id));
     }
 
 	/**
@@ -191,7 +191,7 @@ class admin_brand extends ecjia_admin {
 		$is_show 	= isset($_REQUEST['is_show']) 	? intval($_REQUEST['is_show'])					: 0;
 	    
 	    if (empty($brand_name)) {
-	    	$this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	    	return $this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	    }
 	    
 	    $goods_brand = new goods_brand();
@@ -199,7 +199,7 @@ class admin_brand extends ecjia_admin {
 		/*检查品牌名是否相同*/
 		$is_only = $goods_brand->brand_count(array('brand_name' => $brand_name, 'brand_id' => array('neq' => $id)));
 		if ($is_only != 0){
-			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($brand_name)), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), stripslashes($brand_name)), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
 		$old_logo = $goods_brand->brand_field($id, 'brand_logo');
@@ -239,7 +239,7 @@ class admin_brand extends ecjia_admin {
 		$goods_brand->update_brand($id, $data);
 		
 		ecjia_admin::admin_log($brand_name, 'edit', 'brand');
-		$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_succed'), $brand_name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', array('id' => $id))));
+		return $this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_succed'), $brand_name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', array('id' => $id))));
     }
 
 	/**
@@ -252,7 +252,7 @@ class admin_brand extends ecjia_admin {
 		$name   = trim($_POST['value']);
 		
 		if (empty($name)) {
-			$this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(RC_Lang::get('goods::brand.no_brand_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
 		$goods_brand = new goods_brand();
@@ -260,13 +260,13 @@ class admin_brand extends ecjia_admin {
 		/* 检查名称是否重复 */
 		$is_only = $goods_brand->brand_count(array('brand_name' => $name, 'brand_id' => array('neq' => $id)));
 		if ($is_only != 0) {
-			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(sprintf(RC_Lang::get('goods::brand.brandname_exist'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} else {
 			$data = array('brand_id' => $id, 'brand_name' => $name);
 			$goods_brand->update_brand($id, $data);
 			
 			ecjia_admin::admin_log($name,'edit', 'brand');
-			$this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_succed'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content'=> stripslashes($name)));
+			return $this->showmessage(sprintf(RC_Lang::get('goods::brand.brandedit_succed'), $name), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content'=> stripslashes($name)));
 		}
 	}
 	
@@ -286,7 +286,7 @@ class admin_brand extends ecjia_admin {
 		$goods_brand->update_brand($id, $data);
 		
 		ecjia_admin::admin_log($brand_name, 'edit', 'brand');
-		$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/init', array('content'=> $order))));
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/init', array('content'=> $order))));
 	}
 	
 	/**
@@ -302,7 +302,7 @@ class admin_brand extends ecjia_admin {
 		$goods_brand = new goods_brand();
 		$goods_brand->update_brand($id, $data);
 		
-		$this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 	}
 
 	/**
@@ -330,7 +330,7 @@ class admin_brand extends ecjia_admin {
 		RC_DB::table('goods')->where('brand_id', $id)->update($data);
 		
 		ecjia_admin::admin_log($brand_info['brand_name'], 'remove', 'brand');
-		$this->showmessage(RC_Lang::get('goods::brand.drop_succeed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+		return $this->showmessage(RC_Lang::get('goods::brand.drop_succeed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 	
 	/**
@@ -351,7 +351,7 @@ class admin_brand extends ecjia_admin {
 		$data = array('brand_logo' => '');
 		$goods_brand->update_brand($brand_id, $data);
 		
-		$this->showmessage(RC_Lang::get('goods::brand.drop_succeed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', array('id' => $brand_id))));
+		return $this->showmessage(RC_Lang::get('goods::brand.drop_succeed'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_brand/edit', array('id' => $brand_id))));
 	}
 	
 	/**
