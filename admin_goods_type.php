@@ -198,7 +198,7 @@ class admin_goods_type extends ecjia_admin {
 			}
 			return $this->showmessage(RC_Lang::get('goods::goods_type.remove_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 		} else {
-			return $this->showmessage(RC_Lang::get('goods::goods_type.remove_failed'),  ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => RC_Lang::lang('remove_failed')));
+			return $this->showmessage(RC_Lang::get('goods::goods_type.remove_failed'),  ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => RC_Lang::get('goods::goods_type.remove_failed')));
 		}
 	}
 

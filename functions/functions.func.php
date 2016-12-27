@@ -29,9 +29,9 @@ function add_link($extension_code = '') {
 		$args['extension_code'] = $extension_code;
 	}
 	if ($extension_code == 'virtual_card') {
-		$text = RC_Lang::lang('51_virtual_card_add');
+		$text = RC_Lang::get('system::system.51_virtual_card_add');
 	} else {
-		$text = RC_Lang::lang('02_goods_add');
+		$text = RC_Lang::get('system::system.02_goods_add');
 	}
 	return array(
 		'href' => RC_Uri::url($pathinfo, $args),
@@ -115,9 +115,9 @@ function list_link($extension_code = '') {
 		$args['extension_code'] = $extension_code;
 	}
 	if ($extension_code == 'virtual_card') {
-		$text = RC_Lang::lang('50_virtual_card_list');
+		$text = RC_Lang::get('system::system.50_virtual_card_list');
 	} else {
-		$text = RC_Lang::lang('01_goods_list');
+		$text = RC_Lang::get('system::system.01_goods_list');
 	}
 
 	return array(
