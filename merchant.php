@@ -183,6 +183,7 @@ class merchant extends ecjia_merchant {
 
 		$cat_name = RC_DB::table('category')->where('cat_id', $goods['cat_id'])->pluck('cat_name');
 		$brand_name = RC_DB::table('brand')->where('brand_id', $goods['brand_id'])->pluck('brand_name');
+		$merchant_cat_name = RC_DB::table('merchants_category')->where('cat_id', $goods['merchant_cat_id'])->pluck('cat_name');
 
 		if (!file_exists(RC_Upload::upload_path($goods['goods_thumb'])) || empty($goods['goods_thumb'])) {
 			$goods['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
@@ -229,10 +230,11 @@ class merchant extends ecjia_merchant {
 		
 		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
 		/* 取得分类、品牌 */
-		$this->assign('goods_cat_list', get_merchant_cat_list());
+		$this->assign('goods_cat_list', merchant_cat_list());
 		$this->assign('brand_list', get_brand_list());
 		$this->assign('goods', $goods);
 		$this->assign('cat_name', $cat_name);
+		$this->assign('merchant_cat_name', $merchant_cat_name);
 		$this->assign('brand_name', $brand_name);
 		
 		$this->display('preview.dwt');

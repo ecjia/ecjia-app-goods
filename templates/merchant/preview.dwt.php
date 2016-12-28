@@ -121,6 +121,13 @@
 											    </dd>
 											</dl>
 											<dl class="tb-amount tm-clear">
+											    <dt class="tb-metatit">店铺分类</dt>
+											    <dd id="J_Amount">
+											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$merchant_cat_name}</em>
+											        <span id="J_StockTips"></span>
+											    </dd>
+											</dl>
+											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">添加时间</dt>
 											    <dd id="J_Amount">
 											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.add_time}</em>
