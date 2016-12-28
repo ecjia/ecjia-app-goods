@@ -249,8 +249,11 @@ function update_goods($goods_id, $field, $value) {
 			'last_update' 	=> RC_Time::gmtime()
 		);
 // 		$db->in(array('goods_id' => $goods_id))->update($data);
-		RC_DB::table('goods')->whereIn('goods_id', $goods_id)->update($data);
-		
+		$db_goods = RC_DB::table('goods')->whereIn('goods_id', $goods_id);
+		if (!empty($_SESSION['store_id'])) {
+			$db_goods->where('store_id', $_SESSION['store_id']);
+		}
+		$db_goods->update($data);
 	} else {
 		return false;
 	}
@@ -264,27 +267,10 @@ function update_goods($goods_id, $field, $value) {
 * @return void
 */
 function delete_goods($goods_id) {
-	RC_Loader::load_app_func('common', 'goods');
-	
-	$db_goods 			= RC_Model::model('goods/goods_model');
-	$db_products 		= RC_Model::model('goods/products_model');
-	$db_goods_gallery 	= RC_Model::model('goods/goods_gallery_model');
-	$db_collect_goods 	= RC_Model::model('goods/collect_goods_model');
-	$db_goods_article 	= RC_Model::model('goods/goods_article_model');
-	$db_goods_attr 		= RC_Model::model('goods/goods_attr_model');
-	$db_goods_cat 		= RC_Model::model('goods/goods_cat_model');
-	$db_member 			= RC_Model::model('goods/member_price_model');
-	$db_group 			= RC_Model::model('goods/group_goods_model');
-	$db_link_goods 		= RC_Model::model('goods/link_goods_model');
-// 	$db_tag 			= RC_Model::model('goods/tag_model');
-	$db_comment 		= RC_Model::model('comment/comment_model');
-// 	$db_virtual_card 	= RC_Model::model('goods/virtual_card_model');
-	
 	if (empty($goods_id)) {
 		return;
 	}
 	
-// 	$data = $db_goods->field('goods_thumb, goods_img, original_img')->in(array('goods_id' => $goods_id))->select();
 	$data = RC_DB::table('goods')->select('goods_thumb', 'goods_img', 'original_img')->whereIn('goods_id', $goods_id)->get();
 	
 	if (!empty($data)) {
@@ -303,16 +289,18 @@ function delete_goods($goods_id) {
 	}
 
 	/* 删除商品 */
-// 	$db_goods->in(array('goods_id' => $goods_id))->delete();
-	RC_DB::table('goods')->whereIn('goods_id', $goods_id)->delete();
+	$db_goods = RC_DB::table('goods')->whereIn('goods_id', $goods_id);
+	if (!empty($_SESSION['store_id'])) {
+		$db_goods->where('store_id', $_SESSION['store_id']);
+	}
+	$db_goods->delete();
 
 	/* 删除商品的货品记录 */
-// 	$db_products->in(array('goods_id' => $goods_id))->delete();
 	RC_DB::table('products')->whereIn('goods_id', $goods_id)->delete();
 
 	/* 删除商品相册的图片文件 */
-	$data = $db_goods_gallery->field('img_url, thumb_url, img_original')->in(array('goods_id' => $goods_id))->select();
-	RC_DB::table('goods_gallery')->select('img_url', 'thumb_url', 'img_original')->whereIn('goods_id', $goods_id)->get();
+// 	$data = $db_goods_gallery->field('img_url, thumb_url, img_original')->in(array('goods_id' => $goods_id))->select();
+	$data = RC_DB::table('goods_gallery')->select('img_url', 'thumb_url', 'img_original')->whereIn('goods_id', $goods_id)->get();
 
 	if (!empty($data)) {
 		$disk = RC_Filesystem::disk();
@@ -330,22 +318,9 @@ function delete_goods($goods_id) {
 		}
 	}
 	/* 删除商品相册 */
-// 	$db_goods_gallery->in(array('goods_id' => $goods_id))->delete();
 	RC_DB::table('goods_gallery')->whereIn('goods_id', $goods_id)->delete();
 	
 	/* 删除相关表记录 */
-// 	$db_collect_goods->in(array('goods_id' => $goods_id))->delete();
-// 	$db_goods_article->in(array('goods_id' => $goods_id))->delete();
-// 	$db_goods_attr->in(array('goods_id' => $goods_id))->delete();
-// 	$db_goods_cat->in(array('goods_id' => $goods_id))->delete();
-// 	$db_member->in(array('goods_id' => $goods_id))->delete();
-// 	$db_group->in(array('parent_id' => $goods_id))->delete();
-// 	$db_group->in(array('goods_id' => $goods_id))->delete();
-// 	$db_link_goods->in(array('goods_id' => $goods_id))->delete();
-// 	$db_link_goods->in(array('link_goods_id' => $goods_id))->delete();
-// 	$db_tag->in(array('goods_id' => $goods_id))->delete();
-// 	$db_comment->where(array('comment_type' => 0))->in(array('id_value' => $goods_id))->delete();
-	
 	RC_DB::table('collect_goods')->whereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('goods_article')->whereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('goods_attr')->whereIn('goods_id', $goods_id)->delete();
@@ -353,15 +328,7 @@ function delete_goods($goods_id) {
 	RC_DB::table('member_price')->whereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('group_goods')->whereIn('parent_id', $goods_id)->orWhereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('link_goods')->whereIn('goods_id', $goods_id)->orWhereIn('link_goods_id', $goods_id)->delete();
-// 	RC_DB::table('tag')->whereIn('goods_id', $goods_id)->delete();
 	RC_DB::table('comment')->where('comment_type', 0)->whereIn('id_value', $goods_id)->delete();
-	
-	/* 删除相应虚拟商品记录 */
-// 	$query = $db_virtual_card->in(array('goods_id' => $goods_id))->delete();
-
-// 	if (!$query && $db_goods->errno() != 1146) {
-// 		die ($db_goods->error());
-// 	}
 }
 
 /**
@@ -453,7 +420,10 @@ function get_attr_list($cat_id, $goods_id = 0) {
 			'on' 	=> "v.attr_id = a.attr_id AND v.goods_id = '$goods_id'"
 		)
 	);
-	$row = $dbview->where('a.cat_id = "' . intval($cat_id) . '"')->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.attr_price' => 'asc', 'v.goods_attr_id' => 'asc'))->select();
+	$row = $dbview
+		->where('a.cat_id = "' . intval($cat_id) . '"')
+		->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.attr_price' => 'asc', 'v.goods_attr_id' => 'asc'))
+		->select();
 	return $row;
 }
 
@@ -514,6 +484,52 @@ function build_attr_html($cat_id, $goods_id = 0) {
 			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::lang('spec_price') . '</span>' . ' <input type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" />' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
 			if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
 				$html .= ($spec != $val ['attr_id']) ? "<a class='m_l5' href='javascript:;' data-toggle='clone-obj' data-parent='.control-group'><i class='fontello-icon-plus'></i></a>" : "<a class='m_l5' href='javascript:;' data-trigger='toggleSpec'><i class='fontello-icon-minus'></i></a>";
+				$spec = $val ['attr_id'];
+			}
+			$html .= '</div></div>';
+		}
+	}
+	$html .= '';
+	return $html;
+}
+
+/**
+ * 根据商家属性数组创建属性的表单
+ *
+ * @access public
+ * @param int $cat_id
+ *            分类编号
+ * @param int $goods_id
+ *            商品编号
+ * @return string
+ */
+function build_merchant_attr_html($cat_id, $goods_id = 0) {
+	$attr = get_attr_list($cat_id, $goods_id);
+	$html = '';
+	$spec = 0;
+
+	if (!empty($attr)) {
+		foreach ($attr as $key => $val) {
+			$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
+			$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+			if ($val ['attr_input_type'] == 0) {
+				$html .= '<div class="col-lg-6 p_l0"><input class="form-control" name="attr_value_list[]" type="text" value="' . htmlspecialchars($val ['attr_value']) . '" size="40" /></div> ';
+			} elseif ($val ['attr_input_type'] == 2) {
+				$html .= '<div class="col-lg-6 p_l0"><textarea class="form-control" name="attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea></div>';
+			} else {
+				$html .= '<div class="col-lg-6 p_l0"><select class="form-control" name="attr_value_list[]" autocomplete="off">';
+				$html .= '<option value="">' . RC_Lang::get('goods::goods_batch.select_please') . '</option>';
+				$attr_values = explode("\n", $val ['attr_values']);
+				foreach ($attr_values as $opt) {
+					$opt = trim(htmlspecialchars($opt));
+
+					$html .= ($val ['attr_value'] != $opt) ? '<option value="' . $opt . '">' . $opt . '</option>' : '<option value="' . $opt . '" selected="selected">' . $opt . '</option>';
+				}
+				$html .= '</select></div>';
+			}
+			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::lang('spec_price') . '</span>' . ' <div class="col-lg-5 p_l0"><input class="form-control" type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" /></div>' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
+			if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
+				$html .= ($spec != $val ['attr_id']) ? "<a class='m_l5 l_h30' href='javascript:;' data-toggle='clone-obj' data-parent='.form-group'><i class='fa fa-plus'></i></a>" : "<a class='m_l5 l_h30' href='javascript:;' data-trigger='toggleSpec'><i class='fa fa-times'></i></a>";
 				$spec = $val ['attr_id'];
 			}
 			$html .= '</div></div>';

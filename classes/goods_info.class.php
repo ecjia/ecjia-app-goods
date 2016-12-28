@@ -84,7 +84,7 @@ class goods_info {
 	public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array())
 	{
 		$db_goodsview = RC_Model::model('goods/goods_viewmodel');
-		$dbview = RC_DB::table('goods as g')->leftJoin('member_price as mp', RC_DB::raw('g.goods_id'), '=', RC_DB::raw('mp.goods_id'));
+// 		$dbview = RC_DB::table('goods as g')->leftJoin('member_price as mp', RC_DB::raw('g.goods_id'), '=', RC_DB::raw('mp.goods_id'));
 		RC_Loader::load_app_func ('goods', 'goods');
 		$final_price	= 0; // 商品最终购买价格
 		$volume_price	= 0; // 商品优惠价格

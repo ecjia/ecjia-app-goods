@@ -55,13 +55,13 @@ return array(
 	'catremove_succed' 	=> '商品分类转移成功！',
 	'move_cat_success' 	=> '转移商品分类已成功完成！',
 	
-	'cat_move_desc' 	=> '什么是转移商品分类?',
+	'cat_move_desc' 	=> '什么是转移商品分类？',
 	'select_source_cat' => '选择要转移的分类',
 	'select_target_cat' => '选择目标分类',
 	'source_cat' 		=> '从此分类',
 	'target_cat' 		=> '转移到',
 	'start_move_cat' 	=> '开始转移',
-	'cat_move_notic' 	=> '在添加商品或者在商品管理中,如果需要对商品的分类进行变更,那么你可以通过此功能,正确管理你的商品分类。',
+	'cat_move_notic' 	=> '在添加商品或者在商品管理中，如果需要对商品的分类进行变更，那么你可以通过此功能，正确管理你的商品分类。',
 	'cat_move_empty' 	=> '你没有正确选择商品分类！',
 	
 	'sel_goods_type' 	=> '请选择商品类型',

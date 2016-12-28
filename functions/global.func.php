@@ -869,6 +869,149 @@ function calculate_goods_num($cat_list, $cat_id) {
 	}
 	return $goods_num;
 }
+
+/**
+ * 获得商家指定品牌下的推荐和促销商品
+ *
+ * @access  private
+ * @param   string  $type
+ * @param   integer $brand
+ * @return  array
+ */
+function merchant_brand_recommend_goods($type, $brand, $cat = 0) {
+	$db = RC_Model::model('goods/goods_auto_viewmodel');
+
+	static $result = NULL;
+	$time = RC_Time::gmtime();
+
+	if ($result === NULL) {
+		if ($cat > 0) {
+			$cat_where = "AND " . merchant_get_children($cat);
+		} else {
+			$cat_where = '';
+		}
+
+		$db->view =array(
+				'brand' => array(
+						'type' => 	Component_Model_View::TYPE_LEFT_JOIN,
+						'alias' => 'b',
+						'field' => "g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price, g.promote_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price,promote_start_date, promote_end_date, g.goods_brief, g.goods_thumb, goods_img,b.brand_name, g.is_best, g.is_new, g.is_hot, g.is_promote",
+						'on' 	=> 'b.brand_id = g.brand_id '
+				),
+				'member_price'	=> array(
+						'type'	=>	Component_Model_View::TYPE_LEFT_JOIN,
+						'alias' => 'mp',
+						'on' 	=> 'mp.goods_id = g.goods_id and mp.user_rank = '.$_SESSION['user_rank'].''
+				)
+		);
+		$result = $db->where('g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = "'.$brand.'" and (g.is_best = 1 OR (g.is_promote = 1 AND promote_start_date <= "'.$time.'" and promote_end_date >= "'.$time.'"))'.$cat_where)->order(array('g.sort_order'=>'asc','g.last_update'=>'desc'))->select();
+	}
+
+	/* 取得每一项的数量限制 */
+	$num = 0;
+	$type2lib = array('best'=>'recommend_best', 'new'=>'recommend_new', 'hot'=>'recommend_hot', 'promote'=>'recommend_promotion');
+	$num = get_library_number($type2lib[$type]);
+
+	$idx = 0;
+	$goods = array();
+	foreach ($result AS $row) {
+		if ($idx >= $num) {
+			break;
+		}
+
+		if (($type == 'best' && $row['is_best'] == 1) || ($type == 'promote' && $row['is_promote'] == 1 && $row['promote_start_date'] <= $time && $row['promote_end_date'] >= $time)) {
+			if ($row['promote_price'] > 0) {
+				$promote_price = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
+				$goods[$idx]['promote_price'] = $promote_price > 0 ? price_format($promote_price) : '';
+			} else {
+				$goods[$idx]['promote_price'] = '';
+			}
+
+			$goods[$idx]['id']           = $row['goods_id'];
+			$goods[$idx]['name']         = $row['goods_name'];
+			$goods[$idx]['brief']        = $row['goods_brief'];
+			$goods[$idx]['brand_name']   = $row['brand_name'];
+			$goods[$idx]['short_style_name']   = $GLOBALS['_CFG']['goods_name_length'] > 0 ?
+			RC_String::sub_str($row['goods_name'], $GLOBALS['_CFG']['goods_name_length']) : $row['goods_name'];
+			$goods[$idx]['market_price'] = price_format($row['market_price']);
+			$goods[$idx]['shop_price']   = price_format($row['shop_price']);
+			$goods[$idx]['thumb']        = get_image_path($row['goods_id'], $row['goods_thumb'], true);
+			$goods[$idx]['goods_img']    = get_image_path($row['goods_id'], $row['goods_img']);
+			$goods[$idx]['url']          = build_uri('goods', array('gid' => $row['goods_id']), $row['goods_name']);
+
+			$idx++;
+		}
+	}
+
+	return $goods;
+}
+
+/**
+ * 获得商家指定的品牌下的商品总数
+ *
+ * @access  private
+ * @param   integer     $brand_id
+ * @param   integer     $cate
+ * @return  integer
+ */
+function merchant_goods_count_by_brand($brand_id, $cate = 0) {
+	$db = RC_Model::model('goods/goods_member_viewmodel');
+	if ($cate > 0) {
+		$query = $db->join(null)->where('brand_id = '.$brand_id.' AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND '. merchant_get_children($cate).'')->count();
+	}
+	$query = $db->join(null)->where(array('brand_id' => $brand_id, 'g.is_on_sale' => 1, 'g.is_alone_sale' => 1, 'g.is_delete' => 0))->count();
+	return $query;
+}
+
+/**
+ * 获得商家品牌下的商品
+ *
+ * @access  private
+ * @param   integer  $brand_id
+ * @return  array
+ */
+function merchant_brand_get_goods($brand_id, $cate, $size, $page, $sort, $order) {
+	$dbview = RC_Model::model('goods/goods_member_viewmodel');
+	$cate_where = ($cate > 0) ? 'AND ' . merchant_get_children($cate) : '';
+
+	/* 获得商品列表 */
+	$dbview->view =array(
+			'member_price' 	=> array(
+					'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+					'alias' => 'mp',
+					'field' => "g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_price,IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, g.promote_price,g.promote_start_date, g.promote_end_date, g.goods_brief, g.goods_thumb , g.goods_img",
+					'on' 	=> 'mp.goods_id = g.goods_id and mp.user_rank = '.$_SESSION['user_rank'].''
+			)
+	);
+	$data = $dbview->where('g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = '.$brand_id.$cate_where.'')->order(array($sort => $order))->limit(($page - 1) * $size,$size)->select();
+
+	$arr = array();
+	if(!empty($data)) {
+		foreach ($data as $row) {
+			if ($row['promote_price'] > 0) {
+				$promote_price = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
+			} else {
+				$promote_price = 0;
+			}
+
+			$arr[$row['goods_id']]['goods_id']      = $row['goods_id'];
+			if($GLOBALS['display'] == 'grid') {
+				$arr[$row['goods_id']]['goods_name']       = $GLOBALS['_CFG']['goods_name_length'] > 0 ? RC_String::sub_str($row['goods_name'], $GLOBALS['_CFG']['goods_name_length']) : $row['goods_name'];
+			} else {
+				$arr[$row['goods_id']]['goods_name']       = $row['goods_name'];
+			}
+			$arr[$row['goods_id']]['market_price']  = price_format($row['market_price']);
+			$arr[$row['goods_id']]['shop_price']    = price_format($row['shop_price']);
+			$arr[$row['goods_id']]['promote_price'] = ($promote_price > 0) ? price_format($promote_price) : '';
+			$arr[$row['goods_id']]['goods_brief']   = $row['goods_brief'];
+			$arr[$row['goods_id']]['goods_thumb']   = get_image_path($row['goods_id'], $row['goods_thumb'], true);
+			$arr[$row['goods_id']]['goods_img']     = get_image_path($row['goods_id'], $row['goods_img']);
+			$arr[$row['goods_id']]['url']           = build_uri('goods', array('gid' => $row['goods_id']), $row['goods_name']);
+		}
+	}
+	return $arr;
+}
+
 /*------------------------------------------------------ */
 //-- 所有分类及品牌的方法结束
 /*------------------------------------------------------ */

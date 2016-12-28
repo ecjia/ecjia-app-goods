@@ -135,6 +135,56 @@ function get_top10($cats = '') {
 }
 
 /**
+ * 调用商家当前分类的销售排行榜
+ *
+ * @access public
+ * @param string $cats
+ *        	查询的分类
+ * @return array
+ */
+function get_merchant_top10($cats = '') {
+	$db_goods = RC_Model::model('goods/goods_model');
+	$cats = merchant_get_children ( $cats );
+	$where = ! empty ( $cats ) ? "AND ($cats OR " . get_extension_goods ( $cats ) . ") " : '';
+	/* 排行统计的时间 */
+	switch (ecjia::config ( 'top10_time' )) {
+		case 1 : // 一年
+			$top10_time = "AND o.order_sn >= '" . date( 'Ymd', RC_Time::gmtime () - 365 * 86400 ) . "'";
+			break;
+		case 2 : // 半年
+			$top10_time = "AND o.order_sn >= '" . date( 'Ymd', RC_Time::gmtime () - 180 * 86400 ) . "'";
+			break;
+		case 3 : // 三个月
+			$top10_time = "AND o.order_sn >= '" . date( 'Ymd', RC_Time::gmtime () - 90 * 86400 ) . "'";
+			break;
+		case 4 : // 一个月
+			$top10_time = "AND o.order_sn >= '" . date( 'Ymd', RC_Time::gmtime () - 30 * 86400 ) . "'";
+			break;
+		default :
+			$top10_time = '';
+	}
+
+	$sql = 'SELECT g.goods_id, g.goods_name, g.shop_price, g.goods_thumb, SUM(og.goods_number) as goods_number ' . 'FROM ecs_goods AS g, ' . 'ecs_order_info AS o, ' . 'ecs_order_goods AS og ' . "WHERE g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 $where $top10_time ";
+	// 判断是否启用库存，库存数量是否大于0
+	if (ecjia::config ( 'use_storage' ) == 1) {
+		$sql .= " AND g.goods_number > 0 ";
+	}
+	$sql .= ' AND og.order_id = o.order_id AND og.goods_id = g.goods_id ' . "AND (o.order_status = '" . OS_CONFIRMED . "' OR o.order_status = '" . OS_SPLITED . "') " . "AND (o.pay_status = '" . PS_PAYED . "' OR o.pay_status = '" . PS_PAYING . "') " . "AND (o.shipping_status = '" . SS_SHIPPED . "' OR o.shipping_status = '" . SS_RECEIVED . "') " . 'GROUP BY g.goods_id ORDER BY goods_number DESC, g.goods_id DESC LIMIT ' . ecjia::config ( 'top_number' );
+
+	$arr = $db_goods->query ( $sql );
+
+
+	for($i = 0, $count = count ( $arr ); $i < $count; $i ++) {
+		$arr [$i] ['short_name'] = ecjia::config ( 'goods_name_length' ) > 0 ? RC_String::sub_str ( $arr [$i] ['goods_name'], ecjia::config ( 'goods_name_length' ) ) : $arr [$i] ['goods_name'];
+		$arr [$i] ['url'] = build_uri ( 'goods', array('gid' => $arr[$i] ['goods_id']), $arr [$i] ['goods_name'] );
+		$arr [$i] ['thumb'] = get_image_path ( $arr [$i] ['goods_id'], $arr [$i] ['goods_thumb'], true );
+		$arr [$i] ['price'] = price_format ( $arr [$i] ['shop_price'] );
+	}
+
+	return $arr;
+}
+
+/**
  * 获得推荐商品
  *
  * @access public
@@ -498,8 +548,13 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 
 	$where = array('g.goods_id' => $goods_id, 'g.is_delete' => 0);
 	
-	$where['g.review_status'] = array('gt' => 2);
-	
+	if (!empty($_SESSION['store_id'])) {
+		if (ecjia::config('review_goods')) {
+			$where['g.review_status'] = array('gt' => 2);
+		}
+	} else {
+		$where['g.review_status'] = array('gt' => 2);
+	}
     $row = $db_goods->field($field)->group('g.goods_id')->find($where);
 
 	$count = RC_DB::table('store_franchisee')->where('shop_close', '0')->where('store_id', $row['store_id'])->count();
@@ -1438,29 +1493,6 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
  * @return  array
  */
 function get_goods_type() {
-// 	$dbview = RC_Model::model('goods/goods_type_viewmodel');
-// 	$db_goods_type = RC_Model::model('goods/goods_type_model');
-
-// 	$dbview->view = array(
-// 		'attribute' => array(
-// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias' => 'a',
-// 			'field' => 'gt.*,count(a.cat_id)|attr_count',
-// 			'on'    => 'a.cat_id = gt.cat_id'
-// 		),
-// // 		'merchants_shop_information' => array(
-// // 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-// // 			'alias' => 'ms',
-// // 			'on'    => 'ms.user_id = gt.user_id'
-// // 		),
-// 		'seller_shopinfo' => array(
-// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias' => 'ssi',
-// 			'on'    => 'ssi.id = gt.seller_id'
-// 		),
-// 	);
-// 	$count = $db_goods_type->count();
-
 	$filter['merchant_keywords']= !empty($_GET['merchant_keywords'])	? trim($_GET['merchant_keywords']) 	: '';
 	$filter['keywords'] 		= !empty($_GET['keywords']) 			? trim($_GET['keywords']) 			: '';
 
@@ -1503,7 +1535,6 @@ function get_goods_type() {
 		foreach ($goods_type_list AS $key=>$val) {
 			$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
 			$goods_type_list[$key]['shop_name']  = $val['store_id'] == 0 ? '' : $val['merchants_name'];
-			//$goods_type_list[$key]['merchants_name'] = $val['store_id'] == 0 ? '' : $val['merchants_name'];后期增加
 		}
 	}
 	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
@@ -1588,6 +1619,121 @@ function update_attribute_group($cat_id, $old_group, $new_group) {
 	);
 // 	$db_goods_type->where(array('cat_id' => $cat_id, 'attr_group' => $old_group))->update($data);
 	RC_DB::table('goods_type')->where('cat_id', $cat_id)->where('attr_group', $old_group)->update($data);
+}
+
+/**
+ * 获得商家所有商品类型
+ *
+ * @access  public
+ * @return  array
+ */
+function get_merchant_goods_type() {
+	$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
+
+	$_SESSION['store_id'] = !empty($_SESSION['store_id']) ? $_SESSION['store_id'] : 0;
+
+	$db_goods_type = RC_DB::table('goods_type as gt')->leftJoin('store_franchisee as s', RC_DB::raw('s.store_id'), '=', RC_DB::raw('gt.store_id'))
+	->where(RC_DB::raw('gt.store_id'), $_SESSION['store_id']);
+
+	if (!empty($filter['keywords'])) {
+		$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
+	}
+
+	$filter_count = $db_goods_type
+	->select(RC_DB::raw('count(*) as count'), RC_DB::raw('SUM(IF(gt.store_id > 0, 1, 0)) as merchant'))
+	->first();
+
+	$filter['count'] 	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
+	$filter['merchant'] = $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
+
+	$filter['type'] = isset($_GET['type']) ? $_GET['type'] : '';
+	if (!empty($filter['type'])) {
+		$db_goods_type->where(RC_DB::raw('gt.store_id'), '>', 0);
+	}
+
+	$count = $db_goods_type->count();
+	$page = new ecjia_merchant_page($count, 15, 5);
+
+	$field = 'gt.*, count(a.cat_id) as attr_count, s.merchants_name';
+	$goods_type_list = $db_goods_type
+	->leftJoin('attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+	->selectRaw($field)
+	->groupBy(RC_DB::Raw('gt.cat_id'))
+	->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
+	->take(15)
+	->skip($page->start_id-1)
+	->get();
+
+	if (!empty($goods_type_list)) {
+		foreach ($goods_type_list AS $key=>$val) {
+			$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
+			$goods_type_list[$key]['shop_name'] = $val['store_id'] == 0 ? '' : $val['merchants_name'];
+		}
+	}
+	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
+}
+
+/**
+ * 获取商家属性列表
+ *
+ * @return  array
+ */
+function get_merchant_attr_list() {
+	// 	$dbview  = RC_Model::model('goods/attribute_goods_viewmodel');
+	$db_attribute = RC_DB::table('attribute as a');
+	/* 查询条件 */
+	$filter = array();
+	$filter['cat_id'] 		= empty($_REQUEST['cat_id']) 		? 0 			: intval($_REQUEST['cat_id']);
+	$filter['sort_by'] 		= empty($_REQUEST['sort_by']) 		? 'sort_order' 	: trim($_REQUEST['sort_by']);
+	$filter['sort_order']	= empty($_REQUEST['sort_order']) 	? 'asc' 		: trim($_REQUEST['sort_order']);
+
+	$where = (!empty($filter['cat_id'])) ? " a.cat_id = '".$filter['cat_id']."' " : '';
+	if (!empty($filter['cat_id'])) {
+		$db_attribute->whereRaw($where);
+	}
+	// 	$count = $dbview->join(null)->where($where)->count();
+	$count = $db_attribute->count('attr_id');
+	$page = new ecjia_merchant_page($count, 15, 5);
+
+	/* 查询 */
+	// 	$dbview->view =array(
+	// 		'goods_type' => array(
+	// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+	// 			'alias' => 't',
+	// 			'field' => 'a.*, t.cat_name',
+	// 			'on'    => 'a.cat_id = t.cat_id'
+	// 		)
+	// 	);
+	// 	$row = $dbview->join('goods_type')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
+
+	$row = $db_attribute
+	->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))
+	->selectRaw('a.*, t.cat_name')
+	->orderby($filter['sort_by'], $filter['sort_order'])
+	->take(15)->skip($page->start_id-1)->get();
+
+	if (!empty($row)) {
+		foreach ($row AS $key => $val) {
+			$row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
+			$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
+		}
+	}
+	return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
+}
+
+
+/**
+ * 获得商家指定的商品类型的详情
+ *
+ * @param   integer     $cat_id 分类ID
+ *
+ * @return  array
+ */
+function get_merchant_goods_type_info($cat_id) {
+	// 	$db_goods_type = RC_Model::model('goods/goods_type_model');
+	// 	return $db_goods_type->find(array('cat_id' => $cat_id));
+
+	return RC_DB::table('goods_type')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
 }
 
 // end

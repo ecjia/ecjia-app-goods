@@ -524,6 +524,9 @@ return array(
 	'check_goods'				=> '审核',
 	'enter_merchant_keywords' 	=> '请输入商家关键字',
 	'merchant'					=> '商家',
+	'label_best'				=> '精品：',
+	'label_new'					=> '新品：',
+	'label_hot'					=> '热销：',
 );
 
 // end

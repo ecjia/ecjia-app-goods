@@ -12,6 +12,9 @@ function assign_adminlog_content() {
 	ecjia_admin_log::instance()->add_object('goods_booking', '缺货登记');
     ecjia_admin_log::instance()->add_object('brands', '品牌');
     ecjia_admin_log::instance()->add_object('link_goods', '关联商品');
+    
+    ecjia_admin_log::instance()->add_action('move', '转移');
+    ecjia_admin_log::instance()->add_object('category_goods', '分类商品');
 }
 
 /*------------------------------------------------------ */
@@ -38,6 +41,30 @@ function add_link($extension_code = '') {
 		'text' => $text
 	);
 }
+
+/**
+ * 添加商家链接
+ * @param   string $extension_code 虚拟商品扩展代码，实体商品为空
+ * @return  array('href' => $href, 'text' => $text)
+ */
+function add_merchant_link($extension_code = '') {
+	$pathinfo = 'goods/merchant/add';
+	$args = array();
+	if (!empty($extension_code)) {
+		$args['extension_code'] = $extension_code;
+	}
+	if ($extension_code == 'virtual_card') {
+		$text = RC_Lang::get('system::system.51_virtual_card_add');
+	} else {
+		$text = RC_Lang::get('system::system.02_goods_add');
+	}
+	return array(
+			'href' => RC_Uri::url($pathinfo, $args),
+			'text' => $text
+	);
+}
+
+
 
 /**
 * 检查图片网址是否合法
@@ -126,6 +153,30 @@ function list_link($extension_code = '') {
 	);
 }
 
+/**
+ * 列表链接
+ * @param   bool $is_add 是否添加（插入）
+ * @param   string $extension_code 虚拟商品扩展代码，实体商品为空
+ * @return  array('href' => $href, 'text' => $text)
+ */
+function list_merchant_link($extension_code = '') {
+	$pathinfo = 'goods/merchant/init';
+	$args = array();
+	if (!empty($extension_code)) {
+		$args['extension_code'] = $extension_code;
+	}
+	if ($extension_code == 'virtual_card') {
+		$text = RC_Lang::get('system::system.50_virtual_card_list');
+	} else {
+		$text = RC_Lang::get('system::system.01_goods_list');
+	}
+
+	return array(
+			'href' => RC_Uri::url($pathinfo, $args),
+			'text' => $text
+	);
+}
+
 /*------------------------------------------------------ */
 /*-- admin_brand.php品牌管理控制器调用方法 ----------------------*/
 /*------------------------------------------------------ */
@@ -180,10 +231,18 @@ function get_merchants_brandlist() {
  * @return  mix
  */
 function get_cat_info($cat_id) {
-// 	$db = RC_Model::model('goods/category_model');
-// 	return $db->find(array('cat_id' => $cat_id));
-	
 	return RC_DB::table('category')->where('cat_id', $cat_id)->first();
+}
+
+/**
+ * 获得商家商品分类的所有信息
+ *
+ * @param   integer     $cat_id     指定的分类ID
+ *
+ * @return  mix
+ */
+function get_merchant_cat_info($cat_id) {
+	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
 }
 
 /**
@@ -195,14 +254,26 @@ function get_cat_info($cat_id) {
  * @return  mix
  */
 function cat_update($cat_id, $args) {
-// 	$db = RC_Model::model('goods/category_model');
 	if (empty($args) || empty($cat_id)) {
 		return false;
 	}
-// 	return $db->where(array('cat_id' => $cat_id))->update($args);
 	return RC_DB::table('category')->where('cat_id', $cat_id)->update($args);
 }
 
+/**
+ * 添加商家商品分类
+ *
+ * @param   integer $cat_id
+ * @param   array   $args
+ *
+ * @return  mix
+ */
+function merchant_cat_update($cat_id, $args) {
+	if (empty($args) || empty($cat_id)) {
+		return false;
+	}
+	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->update($args);
+}
 
 /**
  * 获取属性列表
@@ -307,7 +378,22 @@ function get_goods_list($filter) {
 }
 
 /**
- * 获得商品类型的列表
+ * 取得商家商品列表：用于把商品添加到组合、关联类、赠品类
+ * @param   object  $filters    过滤条件
+ */
+function get_merchant_goods_list($filter) {
+	$db = RC_Model::model('goods/goods_auto_viewmodel');
+	$filter = (object)$filter;
+	$filter->keyword = $filter->keyword;
+	//TODO 过滤条件为对象获取方式，后期换回数组
+	$where = get_merchant_where_sql($filter); // 取得过滤条件
+	/* 取得数据 */
+	$row = $db->join(null)->field('goods_id, goods_name, shop_price')->where($where)->limit(50)->select();
+	return $row;
+}
+
+/**
+ * 获得店铺商品类型的列表
  *
  * @access  public
  * @param   integer     $selected   选定的类型编号
@@ -323,6 +409,32 @@ function goods_type_list($selected, $store_id = 0) {
 	}
 	$data = $db_goods_type->get();
 	
+	$opt = '';
+	if (!empty($data)) {
+		foreach ($data as $row){
+			$opt .= "<option value='$row[cat_id]'";
+			$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+			$opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+		}
+	}
+	return $opt;
+}
+
+/**
+ * 获得是否启用的商品类型列表
+ *
+ * @access  public
+ * @param   integer     $selected   选定的类型编号
+ * @return  string
+ */
+function goods_enable_type_list($selected, $enabled = false) {
+	$db_goods_type = RC_DB::table('goods_type');
+
+	if ($enabled) {
+		$db_goods_type->where('enabled', 1);
+	}
+	$data = $db_goods_type->select('cat_id', 'cat_name')->where('store_id', $_SESSION['store_id'])->get();
+
 	$opt = '';
 	if (!empty($data)) {
 		foreach ($data as $row){
@@ -384,6 +496,35 @@ function get_where_sql($filter) {
 	$where .= isset($filter->in_ids) ? ' AND goods_id ' . db_create_in($filter->in_ids) : '';
 	$where .= isset($filter->exclude) ? ' AND goods_id NOT ' . db_create_in($filter->exclude) : '';
 	$where .= isset($filter->stock_warning) ? ' AND goods_number <= warn_number' : '';
+	return $where;
+}
+
+/**
+ * 生成商家过滤条件：用于 get_goodslist 和 get_goods_list
+ * @param   object  $filter
+ * @return  string
+ */
+function get_merchant_where_sql($filter) {
+	$time = date('Y-m-d');
+
+	$where  = isset($filter->is_delete) && $filter->is_delete == '1' ?
+	' is_delete = 1 ' : ' is_delete = 0 ';
+	$where .= (isset($filter->real_goods) && ($filter->real_goods > -1)) ? ' AND is_real = ' . intval($filter->real_goods) : '';
+	$where .= isset($filter->cat_id) && $filter->cat_id > 0 ? ' AND ' . merchant_get_children($filter->cat_id) : '';
+	$where .= isset($filter->brand_id) && $filter->brand_id > 0 ? " AND brand_id = '" . $filter->brand_id . "'" : '';
+	$where .= isset($filter->intro_type) && $filter->intro_type != '0' ? ' AND ' . $filter->intro_type . " = '1'" : '';
+	$where .= isset($filter->intro_type) && $filter->intro_type == 'is_promote' ?
+	" AND promote_start_date <= '$time' AND promote_end_date >= '$time' " : '';
+	$where .= isset($filter->keyword) && trim($filter->keyword) != '' ?
+	" AND (goods_name LIKE '%" . mysql_like_quote($filter->keyword) . "%' OR goods_sn LIKE '%" . mysql_like_quote($filter->keyword) . "%' OR goods_id LIKE '%" . mysql_like_quote($filter->keyword) . "%') " : '';
+	$where .= isset($filter->suppliers_id) && trim($filter->suppliers_id) != '' ?
+	" AND (suppliers_id = '" . $filter->suppliers_id . "') " : '';
+
+	$where .= isset($filter->in_ids) ? ' AND goods_id ' . db_create_in($filter->in_ids) : '';
+	$where .= isset($filter->exclude) ? ' AND goods_id NOT ' . db_create_in($filter->exclude) : '';
+	$where .= isset($filter->stock_warning) ? ' AND goods_number <= warn_number' : '';
+	/*商家条件*/
+	$where .= isset($filter->store_id) ? ' AND store_id = '.intval($filter->store_id) : '';
 	return $where;
 }
 
@@ -471,3 +612,61 @@ function get_booking_info($id) {
 
 	return $res;
 }
+
+/**
+ * 获取指定分类的str 例：分类1,分类2,分类3
+ */
+function get_cat_str($cat_id = 0) {
+	if (empty($cat_id)) {
+		return '';
+	}
+	$cat_info = RC_DB::table('category')->where('cat_id', $cat_id)->select('parent_id', 'cat_name')->first();
+	$str = $cat_info['cat_name'];
+
+	if (!empty($cat_info['parent_id'])) {
+		$html_tmp = get_cat_str($cat_info['parent_id']);
+		if (!empty($html_tmp)) {
+			$str .= ','.$html_tmp;
+		}
+	}
+	return $str;
+}
+
+/**
+ * 获取指定分类的html 例：分类1>>分类2>>分类3
+ */
+function get_cat_html($str) {
+	$cat_list = explode(',', $str);
+
+	$html = '';
+	foreach (array_reverse($cat_list) as $k => $v) {
+		if ($k == 0) {
+			$html .= $v;
+		} else {
+			$html .= '>>'.$v;
+		}
+	}
+	return $html;
+}
+
+/**
+ * 获取审核状态
+ */
+function get_review_status() {
+	$review_status = 1;
+	if (ecjia::config('review_goods') == 0) {
+		$review_status = 5;
+	} else {
+		if (isset($_SESSION['store_id']) && $_SESSION['store_id'] > 0) {
+			$shop_review_goods = RC_DB::table('merchants_config')->where('store_id', $_SESSION['store_id'])->where('code', 'shop_review_goods')->pluck('value');
+			if ($shop_review_goods == 0) {
+				$review_status = 5;
+			}
+		} else {
+			$review_status = 5;
+		}
+	}
+	return $review_status;
+}
+
+//end
