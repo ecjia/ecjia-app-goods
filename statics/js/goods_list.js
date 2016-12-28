@@ -601,38 +601,40 @@
 			    if (browse.indexOf("microsoft") > -1) e.style.filter = 'alpha(opacity=' + n + ')';
 			    else e.style.opacity = n/100;
 			}
-			$('goleft').style.cursor = 'pointer';
-			$('goright').style.cursor = 'pointer';
-			$('mainphoto').onmouseover = function() {setOpacity(this, maxOpa);}
-			$('goleft').onmouseover = function() {this.src = images_url + '/goleft2.gif'; MyMar=setInterval(goleft, speed);}
-			$('goleft').onmouseout = function() {this.src = images_url + '/goleft.gif'; clearInterval(MyMar);}
-			$('goright').onmouseover = function() {this.src = images_url + '/goright2.gif'; MyMar=setInterval(goright,speed);}
-			$('goright').onmouseout = function() {this.src = images_url + '/goright.gif'; clearInterval(MyMar);}
-			window.onload = function() {
-			    var rHtml = '';
-			    var p = $('showArea').getElementsByTagName('img');
-			    for (var i=0; i<p.length; i++) {
-			        w += parseInt(p[i].getAttribute('width')) + spa;
-			        setOpacity(p[i], minOpa);
-			        p[i].onmouseover = function() {
-			            setOpacity(this, maxOpa);
-			            $('mainphoto').src = this.getAttribute('rel');
-			            $('mainphoto').setAttribute('name', this.getAttribute('name'));
-			            setOpacity($('mainphoto'), maxOpa);
-			        }
-			        p[i].onmouseout = function() {
-			            setOpacity(this, minOpa);
-			        }
-			        rHtml += '<img src="' + p[i].getAttribute('rel') + '" width="0" height="0" alt="" />';
-			    }
-			    $('showArea').style.width = parseInt(w) + 'px';
-			    var rLoad = document.createElement("div");
-			    $('photos').appendChild(rLoad);
-			    rLoad.style.width = "1px";
-			    rLoad.style.height = "1px";
-			    rLoad.style.overflow = "hidden";
-			    rLoad.innerHTML = rHtml;
-			};
+			if ($('goleft') != null) {
+				$('goleft').style.cursor = 'pointer';
+				$('goright').style.cursor = 'pointer';
+				$('mainphoto').onmouseover = function() {setOpacity(this, maxOpa);}
+				$('goleft').onmouseover = function() {this.src = images_url + '/goleft2.gif'; MyMar=setInterval(goleft, speed);}
+				$('goleft').onmouseout = function() {this.src = images_url + '/goleft.gif'; clearInterval(MyMar);}
+				$('goright').onmouseover = function() {this.src = images_url + '/goright2.gif'; MyMar=setInterval(goright,speed);}
+				$('goright').onmouseout = function() {this.src = images_url + '/goright.gif'; clearInterval(MyMar);}
+				window.onload = function() {
+				    var rHtml = '';
+				    var p = $('showArea').getElementsByTagName('img');
+				    for (var i=0; i<p.length; i++) {
+				        w += parseInt(p[i].getAttribute('width')) + spa;
+				        setOpacity(p[i], minOpa);
+				        p[i].onmouseover = function() {
+				            setOpacity(this, maxOpa);
+				            $('mainphoto').src = this.getAttribute('rel');
+				            $('mainphoto').setAttribute('name', this.getAttribute('name'));
+				            setOpacity($('mainphoto'), maxOpa);
+				        }
+				        p[i].onmouseout = function() {
+				            setOpacity(this, minOpa);
+				        }
+				        rHtml += '<img src="' + p[i].getAttribute('rel') + '" width="0" height="0" alt="" />';
+				    }
+				    $('showArea').style.width = parseInt(w) + 'px';
+				    var rLoad = document.createElement("div");
+				    $('photos').appendChild(rLoad);
+				    rLoad.style.width = "1px";
+				    rLoad.style.height = "1px";
+				    rLoad.style.overflow = "hidden";
+				    rLoad.innerHTML = rHtml;
+				};
+			}
 		},
 
 		goods_search : function() {

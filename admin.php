@@ -230,6 +230,7 @@ class admin extends ecjia_admin {
 		
 		$images_url = RC_App::apps_url('statics/images', __FILE__);
 		$this->assign('images_url', $images_url);
+		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
 		
 		/* 取得分类、品牌 */
 		$this->assign('goods_cat_list', cat_list());
