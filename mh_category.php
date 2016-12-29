@@ -9,7 +9,7 @@ class mh_category extends ecjia_merchant {
 		parent::__construct();
 		
 		RC_Loader::load_app_func('goods');
-		RC_Loader::load_app_func('category');
+		RC_Loader::load_app_func('merchant');
 		RC_Loader::load_app_func('common');
 		RC_Loader::load_app_func('functions');
 		assign_adminlog_content();
@@ -184,7 +184,7 @@ class mh_category extends ecjia_merchant {
 		}
 
 		/* 判断上级目录是否合法 */
-		$children = array_keys(cat_list($cat_id, 0, false));     // 获得当前分类的所有下级分类
+		$children = array_keys(merchant_cat_list($cat_id, 0, false));     // 获得当前分类的所有下级分类
 		if (in_array($cat['parent_id'], $children)) {
 			/* 选定的父类是当前分类或当前分类的下级分类 */
 			$link[] = array('text' => RC_Lang::get('system::system.go_back'), 'href' => 'javascript:history.back(-1)');

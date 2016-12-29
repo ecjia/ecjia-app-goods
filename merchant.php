@@ -83,7 +83,7 @@ class merchant extends ecjia_merchant {
 		RC_Loader::load_app_func('functions');
 		RC_Loader::load_app_func('common');
 		RC_Loader::load_app_func('system_goods');
-		RC_Loader::load_app_func('category');
+		RC_Loader::load_app_func('merchant');
 
 		$goods_list_jslang = array(
 			'user_rank_list'	=> get_user_rank_list(),
@@ -2525,7 +2525,7 @@ class merchant extends ecjia_merchant {
 		$cat_id = $this->db_category->category_manage($cat);
 		ecjia_merchant::admin_log($cat['cat_name'], 'add', 'category');
 	
-		$cat_select = merchant_cat_listmerchant_cat_list(0, $cat_id, true);
+		$cat_select = merchant_cat_list(0, $cat_id, true);
 		$cat_list = merchant_cat_list(0, $cat_id, false);
 	
 		$arr = array();
