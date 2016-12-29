@@ -1,5 +1,6 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 添加管理员操作对象
  * 
@@ -11,95 +12,35 @@ function assign_adminlog_content() {
     ecjia_admin_log::instance()->add_action('batch_end',	    '批量下架');
 }
 
-/*------------------------------------------------------ */
-/*-- TODO API和商品使用到的方法---------------------------------*/
-/*------------------------------------------------------ */
 /**
-* 获得分类下的商品
-*
-* @access  public
-* @param   string  $children
-* @return  array
-*/
-function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $sort, $order) {
-	/* 获得商品列表 */
-	$dbview = RC_Model::model('goods/goods_member_viewmodel');
-// 	$display = $GLOBALS['display'];//TODO:列表布局，暂且注释
-	$display = '';
-	$where = array(
-			'g.is_on_sale' => 1,
-			'g.is_alone_sale' => 1,
-			'g.is_delete' => 0,
-			"(".$children ." OR ".get_extension_goods($children).")",
-	);
-	if(ecjia::config('review_goods') == 1){
-		$where['g.review_status'] = array('gt' => 2);
-	}
-	if ($brand > 0) {
-		$where['g.brand_id'] = $brand;
-	}
-	if ($min > 0) {
-		$where[] = "g.shop_price >= $min";
-	}
-	if ($max > 0) {
-		$where[] = "g.shop_price <= $max ";
-	}
-	if (!empty($ext)) {
-		array_push($where, $ext);
-	}
-	$limit = ($page - 1) * $size;
-	/* 获得商品列表 */
-	$data = $dbview->join('member_price')->where($where)->order(array($sort => $order))->limit(($page - 1) * $size, $size)->select();
+ * 获取分类属性列表
+ *
+ * @access  public
+ * @param
+ *
+ * @return void
+ */
+function get_category_attr_list() {
+	$arr = RC_DB::table('attribute as a')
+		->leftJoin('goods_type as gt', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+		->selectRaw('a.attr_id')
+		->where(RC_DB::raw('gt.enabled'), 1)
+		->orderBy(RC_DB::raw('a.cat_id'), 'asc')
+		->orderBy(RC_DB::raw('a.sort_order'), 'asc')
+		->get();
 
-	$arr = array();
-	if (! empty($data)) {
-		foreach ($data as $row) {
-			if ($row['promote_price'] > 0) {
-				$promote_price = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
-			} else {
-				$promote_price = 0;
+	$list = array();
+	if (!empty($arr)) {
+		foreach ($arr as $val) {
+			if (isset($val['cat_id'])) {
+				$list[$val['cat_id']][] = array($val['attr_id'] => $val['attr_name']);
 			}
-			/* 处理商品水印图片 */
-			$watermark_img = '';
-			if ($promote_price != 0) {
-				$watermark_img = "watermark_promote_small";
-			} elseif ($row['is_new'] != 0) {
-				$watermark_img = "watermark_new_small";
-			} elseif ($row['is_best'] != 0) {
-				$watermark_img = "watermark_best_small";
-			} elseif ($row['is_hot'] != 0) {
-				$watermark_img = 'watermark_hot_small';
-			}
-
-			if ($watermark_img != '') {
-				$arr[$row['goods_id']]['watermark_img'] = $watermark_img;
-			}
-
-			$arr[$row['goods_id']]['goods_id'] = $row['goods_id'];
-			if ($display == 'grid') {
-				$arr[$row['goods_id']]['goods_name'] = ecjia::config('goods_name_length') > 0 ? RC_String::sub_str($row['goods_name'], ecjia::config('goods_name_length')) : $row['goods_name'];
-			} else {
-				$arr[$row['goods_id']]['goods_name'] = $row['goods_name'];
-			}
-			$arr[$row['goods_id']]['name'] = $row['goods_name'];
-			$arr[$row['goods_id']]['goods_brief'] = $row['goods_brief'];
-			$arr[$row['goods_id']]['goods_style_name'] = add_style($row['goods_name'], $row['goods_name_style']);
-			$arr[$row['goods_id']]['market_price'] = price_format($row['market_price']);
-			$arr[$row['goods_id']]['shop_price'] = price_format($row['shop_price']);
-			$arr[$row['goods_id']]['type'] = $row['goods_type'];
-			$arr[$row['goods_id']]['promote_price'] = ($promote_price > 0) ? price_format($promote_price) : '';
-			$arr[$row['goods_id']]['goods_thumb'] = get_image_path($row['goods_id'], $row['goods_thumb'], true);
-			$arr[$row['goods_id']]['original_img'] = get_image_path($row['goods_id'], $row['original_img'], true);
-			$arr[$row['goods_id']]['goods_img'] = get_image_path($row['goods_id'], $row['goods_img']);
-			$arr[$row['goods_id']]['url'] = build_uri('goods', array('gid' => $row['goods_id']), $row['goods_name']);
-			
-			/* 增加返回原始未格式价格  will.chen*/
-			$arr[$row['goods_id']]['unformatted_shop_price'] = $row['shop_price'];
-			$arr[$row['goods_id']]['unformatted_promote_price'] = $promote_price;
 		}
 	}
-	return $arr;
+	return $list;
 }
+
+
 /*------------------------------------------------------ */
 /*-- TODO API使用到的方法------------------------------------*/
 /*------------------------------------------------------ */

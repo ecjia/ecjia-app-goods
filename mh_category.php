@@ -69,7 +69,6 @@ class mh_category extends ecjia_merchant {
 	public function add() {
 	    $this->admin_priv('merchant_category_update', ecjia::MSGTYPE_JSON);
 
-// 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.add_goods_cat')));
 		
 		$this->assign('ur_here', RC_Lang::get('goods::category.add_goods_cat'));

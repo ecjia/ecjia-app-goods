@@ -306,4 +306,54 @@ function cat_update($cat_id, $args) {
 	return RC_DB::table('category')->where('cat_id', $cat_id)->update($args);
 }
 
+/**
+ * 插入首页推荐扩展分类
+ *
+ * @access  public
+ * @param   array   $recommend_type 推荐类型
+ * @param   integer $cat_id     分类ID
+ *
+ * @return void
+ */
+function insert_cat_recommend($recommend_type, $cat_id) {
+	/* 检查分类是否为首页推荐 */
+	if (!empty($recommend_type)) {
+		/* 取得之前的分类 */
+		$recommend_res = RC_DB::table('cat_recommend')->select('recommend_type')->where('cat_id', $cat_id)->get();
+
+		if (empty($recommend_res)) {
+			foreach($recommend_type as $data) {
+				$data = intval($data);
+				$query = array(
+					'cat_id' 			=> $cat_id,
+					'recommend_type' 	=> $data
+				);
+				RC_DB::table('cat_recommend')->insert($query);
+			}
+		} else {
+			$old_data = array();
+			foreach ($recommend_res as $data) {
+				$old_data[] = $data['recommend_type'];
+			}
+			$delete_array = array_diff($old_data, $recommend_type);
+			if (!empty($delete_array)) {
+				RC_DB::table('cat_recommend')->where('cat_id', $cat_id)->whereIn('recommend_type', $delete_array)->delete();
+			}
+			$insert_array = array_diff($recommend_type, $old_data);
+			if (!empty($insert_array)) {
+				foreach($insert_array as $data) {
+					$data = intval($data);
+					$query = array(
+							'cat_id'          => $cat_id,
+							'recommend_type'  => $data
+					);
+					RC_DB::table('cat_recommend')->insert($query);
+				}
+			}
+		}
+	} else {
+		RC_DB::table('cat_recommend')->where('cat_id', $cat_id)->delete();
+	}
+}
+
 // end
