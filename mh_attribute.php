@@ -10,6 +10,7 @@ class mh_attribute extends ecjia_merchant {
 
 		RC_Loader::load_app_func('goods');
 		RC_Loader::load_app_func('global');
+		RC_Loader::load_app_func('merchant');
 		
 		RC_Script::enqueue_script('jquery-form');
 		RC_Script::enqueue_script('smoke');

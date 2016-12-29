@@ -83,6 +83,7 @@ class merchant extends ecjia_merchant {
 		RC_Loader::load_app_func('common');
 		RC_Loader::load_app_func('merchant');
 		RC_Loader::load_app_func('global');
+		RC_Loader::load_app_func('category');
 
 		$goods_list_jslang = array(
 			'user_rank_list'	=> get_user_rank_list(),
