@@ -5,29 +5,15 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * 
  */
 function assign_adminlog_content() {
-    ecjia_admin_log::instance()->add_object('virtual_card',		'虚拟卡');
-    ecjia_admin_log::instance()->add_object('encryption',		'加密串');
-    ecjia_admin_log::instance()->add_object('merchant_brand',	'商家片品牌');
-    ecjia_admin_log::instance()->add_object('goods_booking',	'缺货登记');
-    ecjia_admin_log::instance()->add_action('batch_setup',	    '批量设置');
-    ecjia_admin_log::instance()->add_action('batch_add',	    '批量添加');
+    ecjia_admin_log::instance()->add_object('category_goods', 	'分类商品');
+    ecjia_admin_log::instance()->add_action('move', 			'转移');
+    ecjia_admin_log::instance()->add_action('batch_start',	    '批量上架');
+    ecjia_admin_log::instance()->add_action('batch_end',	    '批量下架');
 }
 
 /*------------------------------------------------------ */
 /*-- TODO API和商品使用到的方法---------------------------------*/
 /*------------------------------------------------------ */
-/**
-* 获得分类的信息
-*
-* @param   integer $cat_id
-*
-* @return  void
-*/
-function get_cat_info($cat_id) {
-	$db = RC_Model::model('goods/category_model');
-	return $db->field('cat_name, keywords, cat_desc, style, grade, filter_attr, parent_id')->find(array('cat_id' => $cat_id));
-}
-
 /**
 * 获得分类下的商品
 *

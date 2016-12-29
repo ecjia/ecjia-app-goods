@@ -163,3 +163,31 @@ function merchant_get_children($cat = 0) {
 	RC_Loader::load_app_func('common', 'goods');
 	return 'g.merchant_cat_id ' . db_create_in (array_unique(array_merge(array($cat), array_keys(merchant_cat_list($cat, 0, false )))));
 }
+
+/**
+ * 获得商家商品分类的所有信息
+ *
+ * @param   integer     $cat_id     指定的分类ID
+ *
+ * @return  mix
+ */
+function get_merchant_cat_info($cat_id) {
+	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
+}
+
+/**
+ * 添加商家商品分类
+ *
+ * @param   integer $cat_id
+ * @param   array   $args
+ *
+ * @return  mix
+ */
+function merchant_cat_update($cat_id, $args) {
+	if (empty($args) || empty($cat_id)) {
+		return false;
+	}
+	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->update($args);
+}
+
+//end

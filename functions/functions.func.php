@@ -1,22 +1,6 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
 
-/**
- * 添加管理员操作对象
- *
- */
-function assign_adminlog_content() {
-	ecjia_admin_log::instance()->add_object('virtual_card', '虚拟卡');
-	ecjia_admin_log::instance()->add_object('encryption', '加密串');
-	ecjia_admin_log::instance()->add_object('merchant_brand', '商家品牌');
-	ecjia_admin_log::instance()->add_object('goods_booking', '缺货登记');
-    ecjia_admin_log::instance()->add_object('brands', '品牌');
-    ecjia_admin_log::instance()->add_object('link_goods', '关联商品');
-    
-    ecjia_admin_log::instance()->add_action('move', '转移');
-    ecjia_admin_log::instance()->add_object('category_goods', '分类商品');
-}
-
 /*------------------------------------------------------ */
 /*-- admin.php控制器调用方法----------------------------------*/
 /*------------------------------------------------------ */
@@ -222,58 +206,6 @@ function get_merchants_brandlist() {
 /*------------------------------------------------------------- */
 /*-- admin_category.php品牌分类管理控制器调用方法 ------------------------*/
 /*------------------------------------------------------------- */
-
-/**
- * 获得商品分类的所有信息
- *
- * @param   integer     $cat_id     指定的分类ID
- *
- * @return  mix
- */
-function get_cat_info($cat_id) {
-	return RC_DB::table('category')->where('cat_id', $cat_id)->first();
-}
-
-/**
- * 获得商家商品分类的所有信息
- *
- * @param   integer     $cat_id     指定的分类ID
- *
- * @return  mix
- */
-function get_merchant_cat_info($cat_id) {
-	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
-}
-
-/**
- * 添加商品分类
- *
- * @param   integer $cat_id
- * @param   array   $args
- *
- * @return  mix
- */
-function cat_update($cat_id, $args) {
-	if (empty($args) || empty($cat_id)) {
-		return false;
-	}
-	return RC_DB::table('category')->where('cat_id', $cat_id)->update($args);
-}
-
-/**
- * 添加商家商品分类
- *
- * @param   integer $cat_id
- * @param   array   $args
- *
- * @return  mix
- */
-function merchant_cat_update($cat_id, $args) {
-	if (empty($args) || empty($cat_id)) {
-		return false;
-	}
-	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->update($args);
-}
 
 /**
  * 获取属性列表

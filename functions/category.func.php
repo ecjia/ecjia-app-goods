@@ -280,4 +280,30 @@ function get_children($cat = 0) {
 	return 'g.cat_id ' . db_create_in (array_unique(array_merge(array($cat), array_keys(cat_list($cat, 0, false )))));
 }
 
+/**
+ * 获得商品分类的所有信息
+ *
+ * @param   integer     $cat_id     指定的分类ID
+ *
+ * @return  mix
+ */
+function get_cat_info($cat_id) {
+	return RC_DB::table('category')->where('cat_id', $cat_id)->first();
+}
+
+/**
+ * 添加商品分类
+ *
+ * @param   integer $cat_id
+ * @param   array   $args
+ *
+ * @return  mix
+ */
+function cat_update($cat_id, $args) {
+	if (empty($args) || empty($cat_id)) {
+		return false;
+	}
+	return RC_DB::table('category')->where('cat_id', $cat_id)->update($args);
+}
+
 // end
