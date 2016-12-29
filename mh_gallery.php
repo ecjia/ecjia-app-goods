@@ -45,6 +45,7 @@ class mh_gallery extends ecjia_merchant {
         );
         RC_Script::localize_script('goods_list', 'admin_goodsList_lang', $goods_list_jslang );
         ecjia_merchant_screen::get_current_screen()->set_parentage('goods', 'goods/mh_gallery.php');
+        ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_manage'), RC_Uri::url('goods/merchant/init')));
 	}
     
     /**

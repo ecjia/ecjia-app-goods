@@ -99,6 +99,7 @@ class merchant extends ecjia_merchant {
 		$this->tags[ROUTE_A]['active'] = 1;
 		
 		ecjia_merchant_screen::get_current_screen()->set_parentage('goods', 'goods/merchant.php');
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_manage'), RC_Uri::url('goods/merchant/init')));
 	}
 
 	/**
@@ -246,7 +247,6 @@ class merchant extends ecjia_merchant {
 	public function trash()	{
         $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品管理', RC_Uri::url('goods/merchant/init')));
 	    ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_recycle')));
 	    ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
 		    'id'		=> 'overview',
@@ -299,7 +299,7 @@ class merchant extends ecjia_merchant {
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:添加商品" target="_blank">'. RC_Lang::get('goods::goods.about_add_goods') .'</a>') . '</p>'
 		);
 		
-		$cat_id 	= !empty($_GET['cat_id']) 		? intval($_GET['cat_id']) 			: 0;
+		$cat_id 	= !empty($_GET['cat_id']) 		? intval($_GET['cat_id']) 		: 0;
 		$brand_id  	= !empty($_POST['brand_id']) 	? intval($_POST['brand_id']) 	: 0;
 		
 		//所属平台分类
@@ -1544,7 +1544,10 @@ class merchant extends ecjia_merchant {
 		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/merchant/init')));
-
+		$ur_here = RC_Lang::get('goods::goods.edit_product');
+		$this->assign('ur_here', $ur_here);
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
+		
 		$goods_id = intval($_GET['goods_id']);
         $db_goods = RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id']);
         
@@ -1586,10 +1589,6 @@ class merchant extends ecjia_merchant {
 		$this->assign('product_list', 		$product['product']);
 		$this->assign('goods_id', 			$goods_id);
 		$this->assign('form_action', 		RC_Uri::url('goods/merchant/product_add_execute'));
-		
-		$ur_here = RC_Lang::get('goods::goods.edit_product');
-		$this->assign('ur_here', $ur_here);
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => RC_Lang::get('system::system.01_goods_list')));
 		
 		$this->display('product_info.dwt');
