@@ -161,7 +161,6 @@ class admin_category extends ecjia_admin {
 
             //分类证件 start
             $dt_list = isset($_POST['document_title'])? $_POST['document_title'] : array();
-//             get_documentTitle_insert_update($dt_list, $cat_id);
             
             //分类证件 end
             RC_Cache::app_cache_delete('cat_pid_releate', 'goods');
@@ -356,8 +355,6 @@ class admin_category extends ecjia_admin {
     	//分类证件 start
        	$dt_list = isset($_POST['document_title']) ? $_POST['document_title'] : array();
      	$dt_id = isset($_POST['dt_id'])? $_POST['dt_id'] : array();
-            
-// 		get_documentTitle_insert_update($dt_list, $cat_id, $dt_id);
       	//分类证件 end
 
 		if ($cat['show_in_nav'] != $info['show_in_nav']) {
