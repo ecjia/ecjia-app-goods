@@ -45,7 +45,7 @@
 							<div class="form-inline row goods_list" data-url="{url path='goods/merchant/get_goods_list'}">
 								<div class="pull-left">
 									<div class="form-group">
-										<select class="form-control" name="cat_id">
+										<select class="w130" name="cat_id">
 											<option value="0">{lang key='system::system.all_category'}</option>
 											<!-- {foreach from=$cat_list item=cat} -->
 											<option value="{$cat.cat_id}" {if $cat.cat_id == $smarty.get.cat_id}selected{/if} {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
