@@ -67,10 +67,10 @@ class admin extends ecjia_admin {
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
 		RC_Loader::load_app_class('goods_imageutils', 'goods', false);
 
-		RC_Loader::load_app_func('functions');
 		RC_Loader::load_app_func('common');
-		RC_Loader::load_app_func('system_goods');
 		RC_Loader::load_app_func('category');
+		RC_Loader::load_app_func('global');
+		RC_Loader::load_app_func('goods');
 
 		$goods_list_jslang = array(
 			'user_rank_list'	=> get_user_rank_list(),
@@ -167,7 +167,7 @@ class admin extends ecjia_admin {
 		}
 		
 		//商品属性
-		$attr_list = get_attr_list($goods['goods_type'], $goods_id);
+		$attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
 		$this->assign('attr_list', $attr_list);
 		
 		//平台分类
@@ -1649,7 +1649,7 @@ class admin extends ecjia_admin {
 			$goods = array('goods_type' => 0); 	// 商品类型
 		}
 		/* 获取所有属性列表 */
-		$attr_list = get_attr_list($goods['goods_type'], $goods_id);
+		$attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
 		$specifications = get_goods_type_specifications();
 
 		if (isset($specifications[$goods['goods_type']])) {
@@ -1892,9 +1892,8 @@ class admin extends ecjia_admin {
 	 */
 	public function get_goods_list() {
 	    $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
-	    
 		$filter = $_GET['JSON'];
-		$arr = get_goods_list($filter);
+		$arr = RC_Api::api('goods', 'get_goods_list', $filter);
 		$opt = array();
 		if (!empty($arr)) {
 			foreach ($arr AS $key => $val) {

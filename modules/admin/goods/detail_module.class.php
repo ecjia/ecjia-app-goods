@@ -86,7 +86,7 @@ class detail_module extends api_admin implements api_interface {
 					'integral'					=> $row['integral'],
 			);
 
-			RC_Loader::load_app_func('system_goods', 'goods');
+			RC_Loader::load_app_func('global', 'goods');
 			RC_Loader::load_app_func('common', 'goods');
 
 			$goods_detail['user_rank'] = array();

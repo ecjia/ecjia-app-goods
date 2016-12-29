@@ -190,4 +190,187 @@ function merchant_cat_update($cat_id, $args) {
 	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->update($args);
 }
 
+/**
+ * 添加商家链接
+ * @param   string $extension_code 虚拟商品扩展代码，实体商品为空
+ * @return  array('href' => $href, 'text' => $text)
+ */
+function add_merchant_link($extension_code = '') {
+	$pathinfo = 'goods/merchant/add';
+	$args = array();
+	if (!empty($extension_code)) {
+		$args['extension_code'] = $extension_code;
+	}
+	if ($extension_code == 'virtual_card') {
+		$text = RC_Lang::get('system::system.51_virtual_card_add');
+	} else {
+		$text = RC_Lang::get('system::system.02_goods_add');
+	}
+	return array(
+			'href' => RC_Uri::url($pathinfo, $args),
+			'text' => $text
+	);
+}
+
+/**
+ * 获得商家指定的商品类型的详情
+ *
+ * @param   integer     $cat_id 分类ID
+ *
+ * @return  array
+ */
+function get_merchant_goods_type_info($cat_id) {
+	return RC_DB::table('goods_type')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
+}
+
+/**
+ * 列表链接
+ * @param   bool $is_add 是否添加（插入）
+ * @param   string $extension_code 虚拟商品扩展代码，实体商品为空
+ * @return  array('href' => $href, 'text' => $text)
+ */
+function list_merchant_link($extension_code = '') {
+	$pathinfo = 'goods/merchant/init';
+	$args = array();
+	if (!empty($extension_code)) {
+		$args['extension_code'] = $extension_code;
+	}
+	if ($extension_code == 'virtual_card') {
+		$text = RC_Lang::get('system::system.50_virtual_card_list');
+	} else {
+		$text = RC_Lang::get('system::system.01_goods_list');
+	}
+
+	return array(
+		'href' => RC_Uri::url($pathinfo, $args),
+		'text' => $text
+	);
+}
+
+/**
+ * 获取商家品牌列表
+ * @access  public
+ * @return  array
+ */
+function get_merchants_brandlist() {
+	$dbview = RC_Model::model('goods/merchants_shop_brand_viewmodel');
+	$db = RC_Model::model('goods/brand_model');
+
+	$keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
+	$where = array();
+	if ($keywords) {
+		$where[] = "ssi.shop_name LIKE '%" . mysql_like_quote($keywords) . "%'";
+	}
+	$count = $dbview->where($where)->count();
+
+	$page = new ecjia_page ($count, 10, 5);
+	$field = 'mb.*, ssi.shop_name';
+
+	$data = $dbview->field($field)->where($where)->order('sort_order asc')->limit($page->limit())->select();
+
+	if (!empty($data)) {
+		foreach ($data as $key => $val) {
+			$data[$key]['shop_name'] = $val['shop_name'];
+			$logo_url = RC_Upload::upload_url($val['brandLogo']);
+			if (empty($val['brandLogo'])) {
+				$logo_url = RC_Uri::admin_url('statics/images/nopic.png');
+				$data[$key]['brandLogo'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
+			} else {
+				$logo_url = file_exists(RC_Upload::upload_path($val['brandLogo'])) ? $logo_url : RC_Uri::admin_url('statics/images/nopic.png');
+				$data[$key]['brandLogo'] = "<img src='" . $logo_url . "' style='width:100px;height:100px;' />";
+			}
+		}
+	}
+	return $data;
+}
+
+/**
+ * 取得商家商品列表：用于把商品添加到组合、关联类、赠品类
+ * @param   object  $filters    过滤条件
+ */
+function get_merchant_goods_list($filter) {
+	$db = RC_Model::model('goods/goods_auto_viewmodel');
+	$filter = (object)$filter;
+	$filter->keyword = $filter->keyword;
+	//TODO 过滤条件为对象获取方式，后期换回数组
+	$where = get_merchant_where_sql($filter); // 取得过滤条件
+	/* 取得数据 */
+	$row = $db->join(null)->field('goods_id, goods_name, shop_price')->where($where)->limit(50)->select();
+	return $row;
+}
+
+/**
+ * 生成商家过滤条件：用于 get_goodslist 和 get_goods_list
+ * @param   object  $filter
+ * @return  string
+ */
+function get_merchant_where_sql($filter) {
+	$time = date('Y-m-d');
+
+	$where  = isset($filter->is_delete) && $filter->is_delete == '1' ?
+	' is_delete = 1 ' : ' is_delete = 0 ';
+	$where .= (isset($filter->real_goods) && ($filter->real_goods > -1)) ? ' AND is_real = ' . intval($filter->real_goods) : '';
+	$where .= isset($filter->cat_id) && $filter->cat_id > 0 ? ' AND ' . merchant_get_children($filter->cat_id) : '';
+	$where .= isset($filter->brand_id) && $filter->brand_id > 0 ? " AND brand_id = '" . $filter->brand_id . "'" : '';
+	$where .= isset($filter->intro_type) && $filter->intro_type != '0' ? ' AND ' . $filter->intro_type . " = '1'" : '';
+	$where .= isset($filter->intro_type) && $filter->intro_type == 'is_promote' ?
+	" AND promote_start_date <= '$time' AND promote_end_date >= '$time' " : '';
+	$where .= isset($filter->keyword) && trim($filter->keyword) != '' ?
+	" AND (goods_name LIKE '%" . mysql_like_quote($filter->keyword) . "%' OR goods_sn LIKE '%" . mysql_like_quote($filter->keyword) . "%' OR goods_id LIKE '%" . mysql_like_quote($filter->keyword) . "%') " : '';
+	$where .= isset($filter->suppliers_id) && trim($filter->suppliers_id) != '' ?
+	" AND (suppliers_id = '" . $filter->suppliers_id . "') " : '';
+
+	$where .= isset($filter->in_ids) ? ' AND goods_id ' . db_create_in($filter->in_ids) : '';
+	$where .= isset($filter->exclude) ? ' AND goods_id NOT ' . db_create_in($filter->exclude) : '';
+	$where .= isset($filter->stock_warning) ? ' AND goods_number <= warn_number' : '';
+	/*商家条件*/
+	$where .= isset($filter->store_id) ? ' AND store_id = '.intval($filter->store_id) : '';
+	return $where;
+}
+
+/**
+ * 获得是否启用的商品类型列表
+ *
+ * @access  public
+ * @param   integer     $selected   选定的类型编号
+ * @return  string
+ */
+function goods_enable_type_list($selected, $enabled = false) {
+	$db_goods_type = RC_DB::table('goods_type');
+
+	if ($enabled) {
+		$db_goods_type->where('enabled', 1);
+	}
+	$data = $db_goods_type->select('cat_id', 'cat_name')->where('store_id', $_SESSION['store_id'])->get();
+
+	$opt = '';
+	if (!empty($data)) {
+		foreach ($data as $row){
+			$opt .= "<option value='$row[cat_id]'";
+			$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+			$opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+		}
+	}
+	return $opt;
+}
+
+/**
+ * 获取审核状态
+ */
+function get_review_status() {
+	$review_status = 1;
+	if (ecjia::config('review_goods') == 0) {
+		$review_status = 5;
+	} else {
+		if (isset($_SESSION['store_id']) && $_SESSION['store_id'] > 0) {
+			$shop_review_goods = RC_DB::table('merchants_config')->where('store_id', $_SESSION['store_id'])->where('code', 'shop_review_goods')->pluck('value');
+			if ($shop_review_goods == 0) {
+				$review_status = 5;
+			}
+		} else {
+			$review_status = 5;
+		}
+	}
+	return $review_status;
+}
 //end

@@ -9,7 +9,7 @@ class admin_attribute extends ecjia_admin {
 		parent::__construct();
 
 		RC_Loader::load_app_func('goods');
-		RC_Loader::load_app_func('functions');
+		RC_Loader::load_app_func('global');
 		
 		RC_Script::enqueue_script('jquery-validate');
 		RC_Script::enqueue_script('jquery-form');

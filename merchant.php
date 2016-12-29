@@ -80,10 +80,9 @@ class merchant extends ecjia_merchant {
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
 		RC_Loader::load_app_class('goods_imageutils', 'goods', false);
 
-		RC_Loader::load_app_func('functions');
 		RC_Loader::load_app_func('common');
-		RC_Loader::load_app_func('system_goods');
 		RC_Loader::load_app_func('merchant');
+		RC_Loader::load_app_func('global');
 
 		$goods_list_jslang = array(
 			'user_rank_list'	=> get_user_rank_list(),
@@ -225,7 +224,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('goods_photo_list', $goods_photo_list);
 		
 		//商品属性
-		$attr_list = get_attr_list($goods['goods_type'], $goods_id);
+		$attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
 		$this->assign('attr_list', $attr_list);
 		
 		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
@@ -1999,7 +1998,7 @@ class merchant extends ecjia_merchant {
 			$goods = array('goods_type' => 0); 	// 商品类型
 		}
 		/* 获取所有属性列表 */
-		$attr_list = get_attr_list($goods['goods_type'], $goods_id);
+		$attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
 		$specifications = get_goods_type_specifications();
 
 		if (isset($specifications[$goods['goods_type']])) {

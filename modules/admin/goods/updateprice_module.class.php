@@ -47,8 +47,7 @@ class updateprice_module extends api_admin implements api_interface {
 
     	$db_goods = RC_Model::model('goods/goods_model');
 
-    	RC_Loader::load_app_func('system_goods', 'goods');
-    	RC_Loader::load_app_func('functions', 'goods');
+    	RC_Loader::load_app_func('global', 'goods');
 
     	$volume_number = array();
     	$volume_price  = array();

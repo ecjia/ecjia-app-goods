@@ -1,7 +1,7 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
 
-// ======================================== 废弃方法整理 start ======================================== //
+// ======================================== 未使用的方法整理 start ======================================== //
 
 function get_user_category($options, $shopMain_category, $ru_id = 0, $admin_type = 0) {
 	$db_merchants_category = RC_Model::model('seller/merchants_category_model');
@@ -469,4 +469,515 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
 	return $arr;
 }
 
-// ======================================== 废弃方法整理 end ======================================== //
+/**
+ * 获得某个分类下
+ *
+ * @access public
+ * @param int $cat
+ * @return array
+ */
+function get_brands($cat = 0, $app = 'brand') {
+	$db = RC_Model::model ('goods/brand_viewmodel');
+	// 	TODO:暂api用，不考虑调用模版配置文件
+	//  	$template = basename (PHP_SELF);
+	//  	$template = substr ($template, 0, strrpos ( $template, '.' ));
+
+	//  	static $static_page_libs = null;
+	//  	if ($static_page_libs == null) {
+	//  		$static_page_libs = $page_libs;
+	//  	}
+
+	$children[] = ($cat > 0) ? get_children ( $cat ) : '';
+	$db->view = array (
+		'goods' => array(
+			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias' => 'g',
+			'field' => "b.brand_id, b.brand_name, b.brand_logo, b.brand_desc, COUNT(*) AS goods_num, IF(b.brand_logo > '', '1', '0') AS tag ",
+			'on'   	=> 'g.brand_id = b.brand_id'
+		),
+	);
+	$where['is_show'] = 1;
+	$where['g.is_on_sale'] = 1;
+	$where['g.is_alone_sale'] = 1;
+	$where['g.is_delete'] = 0;
+	array_merge($where,$children);
+	// 	TODO:暂api用，不考虑调用模版配置文件
+	//  	if (isset ( $static_page_libs [$template] ['/library/brands.lbi'] )) {
+	//  		$num = get_library_number ( "brands" );
+	//  		$sql .= " LIMIT $num ";
+	//  	}
+	$row = $db->join('goods')->where($where)->group('b.brand_id')->having('goods_num > 0')->order(array('tag'=>'desc','b.sort_order'=>'asc'))->limit(3)->select();
+
+	if (! empty ( $row )) {
+		foreach ( $row as $key => $val ) {
+			$row [$key] ['url'] = build_uri ( $app, array (
+					'cid' => $cat,
+					'bid' => $val ['brand_id']
+			), $val ['brand_name'] );
+			$row [$key] ['brand_desc'] = htmlspecialchars ( $val ['brand_desc'], ENT_QUOTES );
+		}
+	}
+	return $row;
+}
+
+/**
+ * 获取指定 id snatch 活动的结果
+ *
+ * @access public
+ * @param int $id
+ *        	snatch_id
+ *
+ * @return array array(user_name, bie_price, bid_time, num)
+ *         num通常为1，如果为2表示有2个用户取到最小值，但结果只返回最早出价用户。
+ */
+function get_snatch_result($id) {
+	// 加载数据模型
+	$dbview = RC_Model::model ('snatch/sys_snatch_log_viewmodel');
+	$db_goods_activity = RC_Model::model ('goods/goods_activity_model');
+	$db_order_info = RC_Model::model('orders/order_info_model');
+
+	$rec = $dbview->join('users')->group('lg.bid_price')->order(array('num' => 'asc','lg.bid_price' => 'asc','lg.bid_time' => 'asc'))->find(array('lg.snatch_id' => $id));
+	if ($rec) {
+		$rec ['bid_time'] = RC_Time::local_date (ecjia::config('time_format'), $rec ['bid_time'] );
+		$rec ['formated_bid_price'] = price_format ( $rec ['bid_price'], false );
+		/* 活动信息 */
+		$row = $db_goods_activity->where(array('act_id' => $id, 'act_type' => GAT_SNATCH))->get_field('ext_info');
+		$info = unserialize ( $row ['ext_info'] );
+
+		if (! empty ( $info ['max_price'] )) {
+			$rec ['buy_price'] = ($rec ['bid_price'] > $info ['max_price']) ? $info ['max_price'] : $rec ['bid_price'];
+		} else {
+			$rec ['buy_price'] = $rec ['bid_price'];
+		}
+
+		/* 检查订单 */
+		$rec ['order_count'] = $db_order_info->in(array('order_status' => array(OS_CONFIRMED,OS_UNCONFIRMED)))->where(array('extension_code' => snatch, 'extension_id' => $id))->count();
+	}
+	return $rec;
+}
+
+/**
+ * 所有的促销活动信息
+ *
+ * @access public
+ * @return array
+ */
+function get_promotion_info($goods_id = '') {
+	$db_goods_activity = RC_Model::model('goods/goods_activity_model');
+	$db_goods = RC_Model::model('goods/goods_model');
+
+	$snatch = array ();
+	$group = array ();
+	$auction = array ();
+	$package = array ();
+	$favourable = array ();
+
+	$gmtime = RC_Time::gmtime ();
+
+	$where = "is_finished=0 AND start_time <= " . $gmtime . " AND end_time >= " . $gmtime;
+	if (! empty ( $goods_id )) {
+		$where .= " AND goods_id = '$goods_id'";
+	}
+
+	$res = $db_goods_activity->field('act_id, act_name, act_type, start_time, end_time')->where($where)->select();
+
+	if (!empty($res)) {
+		foreach ($res as $data) {
+			switch ($data ['act_type']) {
+				case GAT_SNATCH : // 夺宝奇兵
+					$snatch [$data ['act_id']] ['act_name'] = $data ['act_name'];
+					$snatch [$data ['act_id']] ['url'] = build_uri ('snatch', array (
+							'sid' => $data ['act_id']
+					) );
+					$snatch [$data ['act_id']] ['time'] = sprintf(RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$snatch [$data ['act_id']] ['sort'] = $data ['start_time'];
+					$snatch [$data ['act_id']] ['type'] = 'snatch';
+					break;
+
+				case GAT_GROUP_BUY : // 团购
+					$group [$data ['act_id']] ['act_name'] = $data ['act_name'];
+					$group [$data ['act_id']] ['url'] = build_uri ( 'group_buy', array (
+							'gbid' => $data ['act_id']
+					) );
+					$group [$data ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$group [$data ['act_id']] ['sort'] = $data ['start_time'];
+					$group [$data ['act_id']] ['type'] = 'group_buy';
+					break;
+
+				case GAT_AUCTION : // 拍卖
+					$auction [$data ['act_id']] ['act_name'] = $data ['act_name'];
+					$auction [$data ['act_id']] ['url'] = build_uri ( 'auction', array (
+							'auid' => $data ['act_id']
+					) );
+					$auction [$data ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$auction [$data ['act_id']] ['sort'] = $data ['start_time'];
+					$auction [$data ['act_id']] ['type'] = 'auction';
+					break;
+
+				case GAT_PACKAGE : // 礼包
+					$package [$data ['act_id']] ['act_name'] = $data ['act_name'];
+					$package [$data ['act_id']] ['url'] = 'package.php#' . $data ['act_id'];
+					$package [$data ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$package [$data ['act_id']] ['sort'] = $data ['start_time'];
+					$package [$data ['act_id']] ['type'] = 'package';
+					break;
+			}
+		}
+	}
+	$user_rank = ',' . $_SESSION ['user_rank'] . ',';
+	$favourable = array ();
+
+	$where = " start_time <= '$gmtime' AND end_time >= '$gmtime'";
+	if (! empty ( $goods_id )) {
+
+		$where .= " AND CONCAT(',', user_rank, ',') LIKE '%" . $user_rank . "%'";
+	}
+
+	if (empty ( $goods_id )) {
+		if (!empty($res)) {
+			foreach ( $res as $rows ) {
+				$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
+				$favourable [$rows ['act_id']] ['url'] = 'activity.php';
+				$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+				$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
+				$favourable [$rows ['act_id']] ['type'] = 'favourable';
+			}
+		}
+	} else {
+		$row = $db_goods->field('cat_id, brand_id')->find(array('goods_id' => $goods_id));
+		$category_id = $row ['cat_id'];
+		$brand_id = $row ['brand_id'];
+
+		foreach ( $res as $rows ) {
+			if ($rows ['act_range'] == FAR_ALL) {
+				$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
+				$favourable [$rows ['act_id']] ['url'] = 'activity.php';
+				$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+				$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
+				$favourable [$rows ['act_id']] ['type'] = 'favourable';
+			} elseif ($rows ['act_range'] == FAR_CATEGORY) {
+				/* 找出分类id的子分类id */
+				$id_list = array ();
+				$raw_id_list = explode ( ',', $rows ['act_range_ext'] );
+				foreach ( $raw_id_list as $id ) {
+					$id_list = array_merge ( $id_list, array_keys ( cat_list ( $id, 0, false ) ) );
+				}
+				$ids = join ( ',', array_unique ( $id_list ) );
+
+				if (strpos ( ',' . $ids . ',', ',' . $category_id . ',' ) !== false) {
+					$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
+					$favourable [$rows ['act_id']] ['url'] = 'activity.php';
+					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+					$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
+					$favourable [$rows ['act_id']] ['type'] = 'favourable';
+				}
+			} elseif ($rows ['act_range'] == FAR_BRAND) {
+				if (strpos ( ',' . $rows ['act_range_ext'] . ',', ',' . $brand_id . ',' ) !== false) {
+					$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
+					$favourable [$rows ['act_id']] ['url'] = 'activity.php';
+					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+					$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
+					$favourable [$rows ['act_id']] ['type'] = 'favourable';
+				}
+			} elseif ($rows ['act_range'] == FAR_GOODS) {
+				if (strpos ( ',' . $rows ['act_range_ext'] . ',', ',' . $goods_id . ',' ) !== false) {
+					$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
+					$favourable [$rows ['act_id']] ['url'] = 'activity.php';
+					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+					$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
+					$favourable [$rows ['act_id']] ['type'] = 'favourable';
+				}
+			}
+		}
+	}
+
+	$sort_time = array ();
+	$arr = array_merge ( $snatch, $group, $auction, $package, $favourable );
+	foreach ( $arr as $key => $value ) {
+		$sort_time [] = $value ['sort'];
+	}
+	array_multisort ( $sort_time, SORT_NUMERIC, SORT_DESC, $arr );
+
+	return $arr;
+}
+
+/**
+ * 页面上调用的js文件
+ *
+ * @access public
+ * @param string $files
+ * @return void
+ */
+function smarty_insert_scripts($args) {
+	static $scripts = array ();
+
+	$arr = explode ( ',', str_replace ( ' ', '', $args ['files'] ) );
+
+	$str = '';
+	foreach ( $arr as $val ) {
+		if (in_array ( $val, $scripts ) == false) {
+			$scripts [] = $val;
+			if ($val {0} == '.') {
+				$str .= '<script type="text/javascript" src="' . $val . '"></script>';
+			} else {
+				$str .= '<script type="text/javascript" src="js/' . $val . '"></script>';
+			}
+		}
+	}
+	return $str;
+}
+
+/**
+ * 获取指定id package 的信息
+ *
+ * @access public
+ * @param int $id
+ *        	package_id
+ *
+ * @return array array(package_id, package_name, goods_id,start_time, end_time, min_price, integral)
+ */
+function get_package_info($id) {
+	$db = RC_Model::model('goods/goods_activity_model');
+	$dbview = RC_Model::model('goods/sys_package_goods_viewmodel');
+
+	$id = is_numeric ( $id ) ? intval ( $id ) : 0;
+	$now = RC_Time::gmtime ();
+
+	$package = $db->field ( 'act_id|id,  act_name|package_name, goods_id , goods_name, start_time, end_time, act_desc, ext_info' )->find ( array ('act_id' => $id,'act_type' => GAT_PACKAGE) );
+	/* 将时间转成可阅读格式 */
+	if ($package ['start_time'] <= $now && $package ['end_time'] >= $now) {
+		$package ['is_on_sale'] = "1";
+	} else {
+		$package ['is_on_sale'] = "0";
+	}
+	$package ['start_time'] = RC_Time::local_date ( 'Y-m-d H:i', $package ['start_time'] );
+	$package ['end_time'] = RC_Time::local_date ( 'Y-m-d H:i', $package ['end_time'] );
+	$row = unserialize ( $package ['ext_info'] );
+	unset ( $package ['ext_info'] );
+	if ($row) {
+		foreach ( $row as $key => $val ) {
+			$package [$key] = $val;
+		}
+	}
+
+	$goods_res = $dbview->join ( array ('goods','member_price') )->where ( 'pg.package_id = ' . $id . '' )->order ( array ('pg.package_id' => 'asc','pg.goods_id' => 'asc') )->select ();
+
+	$market_price = 0;
+	$real_goods_count = 0;
+	$virtual_goods_count = 0;
+
+	foreach ( $goods_res as $key => $val ) {
+		$goods_res [$key] ['goods_thumb'] = get_image_path ( $val ['goods_id'], $val ['goods_thumb'], true );
+		$goods_res [$key] ['market_price_format'] = price_format ( $val ['market_price'] );
+		$goods_res [$key] ['rank_price_format'] = price_format ( $val ['rank_price'] );
+		$market_price += $val ['market_price'] * $val ['goods_number'];
+		/* 统计实体商品和虚拟商品的个数 */
+		if ($val ['is_real']) {
+			$real_goods_count ++;
+		} else {
+			$virtual_goods_count ++;
+		}
+	}
+
+	if ($real_goods_count > 0) {
+		$package ['is_real'] = 1;
+	} else {
+		$package ['is_real'] = 0;
+	}
+
+	$package ['goods_list'] = $goods_res;
+	$package ['market_package'] = $market_price;
+	$package ['market_package_format'] = price_format ( $market_price );
+	$package ['package_price_format'] = price_format ( $package ['package_price'] );
+
+	return $package;
+}
+
+/**
+ * 取商品的货品列表
+ *
+ * @param mixed $goods_id
+ *        	单个商品id；多个商品id数组；以逗号分隔商品id字符串
+ * @param string $conditions
+ *        	sql条件
+ *
+ * @return array
+ */
+function get_good_products($goods_id, $conditions = '') {
+	$db_products = RC_Model::model('goods/products_model');
+	$db_goods_attr = RC_Model::model('goods/goods_attr_model');
+	if (empty ( $goods_id )) {
+		return array ();
+	}
+
+	switch (gettype ( $goods_id )) {
+		case 'integer' :
+			$_goods_id = "goods_id = '" . intval ( $goods_id ) . "'";
+			break;
+		case 'string' :
+		case 'array' :
+			$_goods_id = db_create_in ( $goods_id, 'goods_id' );
+			break;
+	}
+
+	/* 取货品 */
+	$result_products = $db_products->where($_goods_id . $conditions )->select();
+
+	/* 取商品属性 */
+	$result_goods_attr = $db_goods_attr->field ( 'goods_attr_id, attr_value' )->where ( $_goods_id )->select ();
+
+	$_goods_attr = array ();
+	foreach ( $result_goods_attr as $value ) {
+		$_goods_attr [$value ['goods_attr_id']] = $value ['attr_value'];
+	}
+
+	/* 过滤货品 */
+	foreach ( $result_products as $key => $value ) {
+		$goods_attr_array = explode ( '|', $value ['goods_attr'] );
+		if (is_array ( $goods_attr_array )) {
+			$goods_attr = array ();
+			foreach ( $goods_attr_array as $_attr ) {
+				$goods_attr [] = $_goods_attr [$_attr];
+			}
+			$goods_attr_str = implode ( '，', $goods_attr );
+		}
+
+		$result_products [$key] ['goods_attr_str'] = $goods_attr_str;
+	}
+
+	return $result_products;
+}
+/**
+ * 取商品的下拉框Select列表
+ *
+ * @param int $goods_id
+ *        	商品id
+ *
+ * @return array
+ */
+function get_good_products_select($goods_id) {
+	$return_array = array ();
+	$products = get_good_products ( $goods_id );
+	if (empty ( $products )) {
+		return $return_array;
+	}
+	foreach ( $products as $value ) {
+		$return_array [$value ['product_id']] = $value ['goods_attr_str'];
+	}
+
+	return $return_array;
+}
+
+/**
+ * 取商品的规格列表
+ *
+ * @param int $goods_id
+ *        	商品id
+ * @param string $conditions
+ *        	sql条件
+ *
+ * @return array
+ */
+function get_specifications_list($goods_id, $conditions = '') {
+	// 加载数据库
+	$dbview = RC_Model::model('goods/sys_goods_attribute_viewmodel');
+	$result = $dbview->join ('attribute')->where('ga.goods_id = ' . $goods_id . '' . $conditions )->select();
+	$return_array = array ();
+	foreach ( $result as $value ) {
+		$return_array [$value ['goods_attr_id']] = $value;
+	}
+	return $return_array;
+}
+
+/**
+ * 保存某商品的关联商品
+ *
+ * @param int $goods_id
+ * @return void
+ */
+function handle_link_goods($goods_id) {
+	$db = RC_Model::model('goods/link_goods_model');
+	$data1 = array(
+			'goods_id' => $goods_id
+	);
+	$data2 = array(
+			'link_goods_id' => $goods_id
+	);
+	$db->where(array('goods_id' => 0, 'admin_id' => $_SESSION [admin_id]))->update($data1);
+	$db->where(array('link_goods_id' => 0, 'admin_id' => $_SESSION [admin_id]))->update($data2);
+}
+
+/**
+ * 保存某商品的配件
+ *
+ * @param int $goods_id
+ * @return void
+ */
+function handle_group_goods($goods_id) {
+	$db = RC_Model::model('goods/group_goods_model');
+	$data = array('parent_id' => $goods_id);
+	$db->where(array('parent_id' => 0, 'admin_id' => $_SESSION [admin_id]))->update($data);
+}
+
+/**
+ * 保存某商品的关联文章
+ *
+ * @param int $goods_id
+ * @return void
+ */
+function handle_goods_article($goods_id) {
+	$db = RC_Model::model('goods/goods_article_model');
+	$data = array(
+			'goods_id' => $goods_id
+	);
+	$db->where(array('goods_id' => 0, 'admin_id' => $_SESSION [admin_id]))->update($data);
+}
+
+/**
+ * 检测商品是否有货品
+ *
+ * @access public
+ * @param
+ *            s integer $goods_id 商品id
+ * @param
+ *            s string $conditions sql条件，AND语句开头
+ * @return string number -1，错误；1，存在；0，不存在
+ */
+function check_goods_product_exist($goods_id, $conditions = '') {
+	$db = RC_Model::model('goods/products_model');
+	if (empty ($goods_id)) {
+		return -1;
+	}
+	$result = $db->field('goods_id')->find('goods_id = ' . $goods_id . $conditions . '');
+	if (empty($result)) {
+		return 0;
+	}
+	return 1;
+}
+
+/**
+ * 检查单个商品是否存在规格
+ *
+ * @param int $goods_id
+ *            商品id
+ * @return bool true，存在；false，不存在
+ */
+function check_goods_specifications_exist($goods_id) {
+	$dbview = RC_Model::model('goods/attribute_goods_viewmodel');
+	$goods_id = intval($goods_id);
+	$dbview->view = array(
+			'goods' => array(
+					'type'	=> Component_Model_View::TYPE_LEFT_JOIN,
+					'alias'	=> 'g',
+					'on' 	=> 'a.cat_id = g.goods_type'
+			)
+	);
+	$count = $dbview->where(array('g.goods_id' => $goods_id))->count('a.attr_id');
+	if ($count > 0) {
+		return true; // 存在
+	} else {
+		return false; // 不存在
+	}
+}
+
+// ======================================== 未使用的方法整理 end ======================================== //

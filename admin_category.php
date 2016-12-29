@@ -18,7 +18,6 @@ class admin_category extends ecjia_admin {
 		RC_Loader::load_app_func('goods');
 		RC_Loader::load_app_func('category');
 		RC_Loader::load_app_func('common');
-		RC_Loader::load_app_func('functions');
 		RC_Loader::load_app_func('global');
 		
 		$this->db_category 	= RC_Model::model('goods/category_model');
