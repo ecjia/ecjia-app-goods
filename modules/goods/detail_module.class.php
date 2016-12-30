@@ -21,8 +21,8 @@ class detail_module extends api_front implements api_interface {
         $object_id = $this->requestData('object_id');
 
         /* 获得商品的信息 */
-        RC_Loader::load_app_func('goods','goods');
-        RC_Loader::load_app_func('category','goods');
+        RC_Loader::load_app_func('admin_goods', 'goods');
+        RC_Loader::load_app_func('admin_category', 'goods');
 		
         /*增加商品基本信息缓存*/
         $cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;

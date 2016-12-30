@@ -8,9 +8,8 @@ class mh_category extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();
 		
-		RC_Loader::load_app_func('goods');
-		RC_Loader::load_app_func('merchant');
-		RC_Loader::load_app_func('common');
+		RC_Loader::load_app_func('admin_goods');
+		RC_Loader::load_app_func('merchant_goods');
 		RC_Loader::load_app_func('global');
 		assign_adminlog_content();
 		

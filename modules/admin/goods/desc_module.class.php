@@ -16,7 +16,7 @@ class desc_module extends api_admin implements api_interface {
         /* 获得商品的信息 */
     	$goods_id = $this->requestData('goods_id', 0);
 
-		RC_Loader::load_app_func('goods','goods');
+		RC_Loader::load_app_func('admin_goods', 'goods');
         $goods = get_goods_info($goods_id);
 
         if ($goods === false) {

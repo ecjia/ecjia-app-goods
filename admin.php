@@ -67,10 +67,9 @@ class admin extends ecjia_admin {
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
 		RC_Loader::load_app_class('goods_imageutils', 'goods', false);
 
-		RC_Loader::load_app_func('common');
-		RC_Loader::load_app_func('category');
+		RC_Loader::load_app_func('admin_category');
 		RC_Loader::load_app_func('global');
-		RC_Loader::load_app_func('goods');
+		RC_Loader::load_app_func('admin_goods');
 
 		$goods_list_jslang = array(
 			'user_rank_list'	=> get_user_rank_list(),

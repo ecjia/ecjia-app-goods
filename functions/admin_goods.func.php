@@ -188,7 +188,7 @@ function get_merchant_top10($cats = '') {
  */
 function get_recommend_goods($type = '', $cats = '') {
 	$dbview = RC_Model::model('goods/goods_auto_viewmodel');
-	RC_Loader::load_app_func('common', 'goods');
+	RC_Loader::load_app_func('global', 'goods');
 	if (! in_array($type, array('best','new','hot'))) {
 		return array ();
 	}
@@ -502,7 +502,7 @@ function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min =
  */
 function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	$db_goods = RC_Model::model('goods/goods_auto_viewmodel');
-	RC_Loader::load_app_func('common', 'goods');
+	RC_Loader::load_app_func('global', 'goods');
 	$time = RC_Time::gmtime();
 
 	$field = "g.*,  g.model_price, g.model_attr, ".
@@ -758,7 +758,7 @@ function get_goods_gallery($goods_id) {
 	$db = RC_Model::model('goods/goods_gallery_model');
 	$row = $db->field('img_id, img_url, thumb_url, img_desc')->where(array('goods_id' => $goods_id))->limit(ecjia::config ('goods_gallery_number'))->select();
 	/* 格式化相册图片路径 */
-	RC_Loader::load_app_func('common', 'goods');
+	RC_Loader::load_app_func('global', 'goods');
 	foreach ( $row as $key => $gallery_img ) {
 		$row [$key] ['img_url'] = get_image_path ( $goods_id, $gallery_img ['img_url'], false, 'gallery' );
 		$row [$key] ['thumb_url'] = get_image_path ( $goods_id, $gallery_img ['thumb_url'], true, 'gallery' );
@@ -1260,7 +1260,7 @@ function goods_info($goods_id) {
 		->first();
 
 	if (! empty ( $row )) {
-		RC_Loader::load_app_func('common', 'goods');
+		RC_Loader::load_app_func('global', 'goods');
 		/* 修正重量显示 */
 		$row ['goods_weight'] = (intval ( $row ['goods_weight'] ) > 0) ? $row ['goods_weight'] . RC_Lang::lang ( 'kilogram' ) : ($row ['goods_weight'] * 1000) . RC_Lang::lang ( 'gram' );
 		/* 修正图片 */
@@ -1420,12 +1420,8 @@ function get_goods_fittings($goods_list = array()) {
  * @return array
  */
 function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $area_id=0) {
-// 	$db_goods = RC_Model::model('goods/goods_model');
-// 	$model_attr = $db_goods->where(array('goods_id' => $goods_id))->get_field('model_attr');
-
 	$model_attr = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('model_attr');
 
-// 	$db = RC_Model::model('goods/products_model');
 	$return_array = array ();
 
 	if (empty ( $spec_goods_attr_id ) || ! is_array ( $spec_goods_attr_id ) || empty ( $goods_id )) {
@@ -1435,25 +1431,7 @@ function get_products_info($goods_id, $spec_goods_attr_id, $warehouse_id=0, $are
 
 	if (isset ( $goods_attr_array ['sort'] )) {
 		$goods_attr = implode ( '|', $goods_attr_array ['sort'] );
-
-// 		if ($model_attr == 1) {
-// 			$db_products_warehouse = RC_Model::model('warehouse/products_warehouse_model');
-// 			$return_array = $db->find(array (
-// 				'goods_id' => $goods_id,
-// 				'goods_attr' => $goods_attr,
-// 				'warehouse_id' => $warehouse_id
-// 			));
-// 		} elseif ($model_attr == 2) {
-// 			$db_products_area = RC_Model::model('warehouse/products_area_model');
-// 			$return_array = $db->find(array (
-// 				'goods_id' => $goods_id,
-// 				'goods_attr' => $goods_attr,
-// 				'area_id'	=> $area_id
-// 			));
-// 		} else {
-// 			$return_array = $db->find(array('goods_id' => $goods_id, 'goods_attr' => $goods_attr));
-			$return_array = RC_DB::table('products')->where('goods_id', $goods_id)->where('goods_attr', $goods_attr)->first();
-// 		}
+		$return_array = RC_DB::table('products')->where('goods_id', $goods_id)->where('goods_attr', $goods_attr)->first();
 	}
 	return $return_array;
 }

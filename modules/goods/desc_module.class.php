@@ -12,7 +12,7 @@ class desc_module extends api_front implements api_interface {
      	$this->authSession();
     	$goods_id = $this->requestData('goods_id', 0);
     	
-		RC_Loader::load_app_func('goods','goods');
+		RC_Loader::load_app_func('admin_goods', 'goods');
 		if ($goods_id < 1) {
 		    return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
 		}

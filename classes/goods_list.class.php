@@ -302,7 +302,7 @@ class goods_list {
 			
 			$arr = array();
 			if (!empty($data)) {
-				RC_Loader::load_app_func('goods', 'goods');
+				RC_Loader::load_app_func('admin_goods', 'goods');
 				foreach ($data as $key => $row) {
 					if ($row['promote_price'] > 0) {
 						$promote_price = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);

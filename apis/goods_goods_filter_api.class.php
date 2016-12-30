@@ -97,12 +97,6 @@ class goods_goods_filter_api extends Component_Event_Api {
 				if (!empty($temp_name)) {
 					$all_attr_list[$key]['filter_attr_name'] = $temp_name;
 
-// 					$sql = "SELECT a.attr_id, MIN(a.goods_attr_id ) AS goods_id, a.attr_value AS attr_value FROM " . $ecs->table('goods_attr') . " AS a, " . $ecs->table('goods') .
-// 					" AS g" .
-// 					" WHERE ($children OR " . get_extension_goods($children) . ') AND g.goods_id = a.goods_id AND g.is_delete = 0 AND g.is_on_sale = 1 AND g.is_alone_sale = 1 '.
-// 					" AND a.attr_id='$value' ".
-// 					" GROUP BY a.attr_value";
-
 					$field = 'a.attr_id, MIN(a.goods_attr_id ) AS goods_id, a.attr_value AS attr_value';
 
 					$attr_list = $db_goods_view->join('goods_attr')->field($field)->where($where)->group('a.attr_value')->select();
@@ -113,12 +107,6 @@ class goods_goods_filter_api extends Component_Event_Api {
 					for ($i = 0; $i < count($cat_filter_attr); $i++) {
 						$temp_arrt_url_arr[$i] = !empty($filter_attr[$i]) ? $filter_attr[$i] : 0;
 					}
-
-
-
-// 					$all_attr_list[$key]['attr_list'][0]['attr_value'] = __('全部');
-// 					$all_attr_list[$key]['attr_list'][0]['url'] = build_uri('category', array('cid'=>$cat_id, 'bid'=>$brand, 'price_min'=>$price_min, 'price_max'=>$price_max, 'filter_attr'=>$temp_arrt_url), $cat['cat_name']);
-// 					$all_attr_list[$key]['attr_list'][0]['selected'] = empty($filter_attr[$key]) ? 1 : 0;
 
 					foreach ($attr_list as $k => $v) {
 // 						$temp_key = $k + 1;
@@ -192,18 +180,7 @@ class goods_goods_filter_api extends Component_Event_Api {
 												'selected'	 => empty($options['brand']) ? 1 : 0,
 			));
 		}
-
-
 		return $brands_filter;
-
-		/*
-		$sql = "SELECT b.brand_id, b.brand_name, COUNT(*) AS goods_num ".
-				"FROM " . $GLOBALS['ecs']->table('brand') . "AS b, ".
-				$GLOBALS['ecs']->table('goods') . " AS g LEFT JOIN ". $GLOBALS['ecs']->table('goods_cat') . " AS gc ON g.goods_id = gc.goods_id " .
-				"WHERE g.brand_id = b.brand_id AND ($children OR " . 'gc.cat_id ' . db_create_in(array_unique(array_merge(array($cat_id), array_keys(cat_list($cat_id, 0, false))))) . ") AND b.is_show = 1 " .
-				" AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 ".
-				"GROUP BY b.brand_id HAVING goods_num > 0 ORDER BY b.sort_order, b.brand_id ASC";
-		*/
 	}
 
 	/**
@@ -313,9 +290,6 @@ class goods_goods_filter_api extends Component_Event_Api {
 			return $price_grade;
 		}
 	}
-
-
-
 }
 
 // end

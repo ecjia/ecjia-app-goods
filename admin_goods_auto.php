@@ -10,7 +10,6 @@ class admin_goods_auto extends ecjia_admin {
 	public function __construct() {
 		parent::__construct();
 		
-		RC_Loader::load_app_func('common', 'goods');
 		RC_Loader::load_app_func('global');
 		assign_adminlog_content();
 		

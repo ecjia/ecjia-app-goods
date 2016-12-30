@@ -63,9 +63,9 @@ class list_module extends api_admin implements api_interface {
 			$where['goods_number'] = 0;
 		}
 		if (!empty($category_id)) {
-			RC_Loader::load_app_func('category', 'goods');
-			RC_Loader::load_app_func('goods', 'goods');
-			RC_Loader::load_app_func('common', 'goods');
+			RC_Loader::load_app_func('admin_category', 'goods');
+			RC_Loader::load_app_func('admin_goods', 'goods');
+			RC_Loader::load_app_func('global', 'goods');
 			$children = get_children($category_id);
             $merchant_cat_id = 'merchant_cat_id ' . db_create_in (array_unique(array_merge(array($category_id), array_keys(cat_list($category_id, 0, false )))));
 			$where[] = "(".$children ." OR ".get_extension_goods($children) ." OR ". $merchant_cat_id .")";
@@ -86,7 +86,7 @@ class list_module extends api_admin implements api_interface {
 
 		$goods_list = array();
 		if (!empty($data)) {
-			RC_Loader::load_app_func('goods', 'goods');
+			RC_Loader::load_app_func('admin_goods', 'goods');
 			RC_Loader::load_sys_func('global');
 			foreach ($data as $key => $val) {
 				if ($val['promote_price'] > 0) {

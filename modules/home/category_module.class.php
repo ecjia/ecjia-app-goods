@@ -9,8 +9,8 @@ class category_module extends api_front implements api_interface {
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 		$this->authSession();
 
-        RC_Loader::load_app_func('goods', 'goods');
-        RC_Loader::load_app_func('category', 'goods');
+        RC_Loader::load_app_func('admin_goods', 'goods');
+        RC_Loader::load_app_func('admin_category', 'goods');
         RC_Loader::load_app_func('global', 'api');
 
         $categoryGoods = array();

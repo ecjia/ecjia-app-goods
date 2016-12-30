@@ -37,7 +37,7 @@ function merchant_cat_exists($cat_name, $parent_cat, $exclude = 0) {
  */
 function merchant_cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
 	// 加载方法
-	RC_Loader::load_app_func('category', 'goods');
+	RC_Loader::load_app_func('admin_category', 'goods');
 	static $res = NULL;
 	if ($res === NULL) {
 		$data = false;
@@ -160,7 +160,7 @@ function merchant_cat_list($cat_id = 0, $selected = 0, $re_type = true, $level =
  * @return string
  */
 function merchant_get_children($cat = 0) {
-	RC_Loader::load_app_func('common', 'goods');
+	RC_Loader::load_app_func('global', 'goods');
 	return 'g.merchant_cat_id ' . db_create_in (array_unique(array_merge(array($cat), array_keys(merchant_cat_list($cat, 0, false )))));
 }
 

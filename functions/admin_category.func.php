@@ -32,7 +32,7 @@ function cat_exists($cat_name, $parent_cat, $exclude = 0) {
  */
 function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
 	// 加载方法
-	RC_Loader::load_app_func('common', 'goods');
+	RC_Loader::load_app_func('global', 'goods');
 
 	static $res = NULL;
 	if ($res === NULL) {
@@ -276,7 +276,7 @@ function cat_options($spec_cat_id, $arr) {
  * @return string
  */
 function get_children($cat = 0) {
-	RC_Loader::load_app_func('common', 'goods');
+	RC_Loader::load_app_func('global', 'goods');
 	return 'g.cat_id ' . db_create_in (array_unique(array_merge(array($cat), array_keys(cat_list($cat, 0, false )))));
 }
 

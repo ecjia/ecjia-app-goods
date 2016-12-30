@@ -109,7 +109,7 @@ class goods_category {
      */
     public static function cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0, $is_show_all = true) {
     	// 加载方法
-    	RC_Loader::load_app_func('common', 'goods');
+    	RC_Loader::load_app_func('global', 'goods');
     	$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
     	$db_category = RC_Loader::load_app_model('category_viewmodel', 'goods');
     	$db_goods_catview = RC_Loader::load_app_model('goods_cat_viewmodel', 'goods');

@@ -34,7 +34,7 @@ class goods_goods_info_api extends Component_Event_Api {
 	 */
 	private function get_goods_info($goods_id) {
 		$db_goods = RC_Model::model('goods/goods_viewmodel');
-		RC_Loader::load_app_func('common', 'goods');
+		RC_Loader::load_app_func('global', 'goods');
 		$time = RC_Time::gmtime ();
 		$db_goods->view = array (
 			'category' => array(
