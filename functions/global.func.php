@@ -1170,16 +1170,6 @@ function get_merchant_goods_info_nav($goods_id=0, $extension_code='') {
 	);
 }
 
-// TODO://方法重定义冲突
-// /**
-//  * 取得会员等级列表
-//  *
-//  * @return array 会员等级列表
-//  */
-// function get_user_rank_list() { 
-// 	return RC_DB::table('user_rank')->orderBy('min_points', 'asc')->get();
-// }
-
 /**
  * 取得某商品的会员价格列表
  *
