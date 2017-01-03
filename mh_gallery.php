@@ -37,6 +37,7 @@ class mh_gallery extends ecjia_merchant {
         RC_Loader::load_app_func('admin_category');
         RC_Loader::load_app_func('global');
         
+        RC_Loader::load_app_func('admin_user', 'user');
         $goods_list_jslang = array(
         	'user_rank_list'	=> get_user_rank_list(),
         	'marketPriceRate'	=> ecjia::config('market_price_rate'),
