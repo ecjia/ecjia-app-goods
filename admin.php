@@ -682,16 +682,11 @@ class admin extends ecjia_admin {
 		} else {
 			$this->admin_priv('goods_manage'); // 检查权限
 		}
-		if (empty($_SESSION['ru_id'])) {
-			$arr['review_status'] = $_POST['value'];
-			$id = intval($_POST['pk']);
-// 			$this->db_goods->where(array('goods_id' => $id))->update($arr);
-			RC_DB::table('goods')->where('goods_id', $id)->update($arr);
-			
-			return $this->showmessage(__('成功切换审核状态'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
-		} else {
-			return $this->showmessage(__('请进入入驻商后台进行操作'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+		
+		$arr['review_status'] = intval($_POST['value']);
+		$id = intval($_POST['pk']);
+		RC_DB::table('goods')->where('goods_id', $id)->update($arr);
+		return $this->showmessage(__('成功切换审核状态'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
 	/**
