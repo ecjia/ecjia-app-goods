@@ -82,9 +82,6 @@ class mh_gallery extends ecjia_merchant {
         
         $img_list_sort = $img_list_id = array();
         $no_picture = RC_Uri::admin_url('statics/images/nopic.png');
-//         if (substr($no_picture, 0, 1) == '.') {
-//         	$no_picture = str_replace('../', '', $no_picture);
-//         }
 
          /* 格式化相册图片路径 */
         if (!empty($img_list)) {

@@ -36,7 +36,6 @@ class goods_list {
 			$keywords = '(';
 			$goods_ids = array();
 			if (!empty($arr)) {
-				// $db_tag = RC_Loader::load_app_model('tag_model', 'goods');
 				$db_keywords = RC_Model::model('goods/keywords_model');
 				foreach ($arr as $key => $val) {
 					if ($key > 0 && $key < count($arr) && count($arr) > 1) {
@@ -44,14 +43,6 @@ class goods_list {
 					}
 					$val = mysql_like_quote(trim($val));
 					$keywords .= "(goods_name LIKE '%$val%' OR goods_sn LIKE '%$val%' OR keywords LIKE '%$val%')";
-
-
-					// $res = $db_tag->field('DISTINCT goods_id')->where("tag_words LIKE '%$val%'")->select();
-					// if (! empty($res)) {
-					// 	foreach ($res as $row) {
-					// 		$goods_ids[] = $row['goods_id'];
-					// 	}
-					// }
 					//插入keywords表数据 will.chen
 					$count = $db_keywords->where(array('date' => RC_Time::local_date('Y-m-d'), 'keyword'=>addslashes(str_replace('%', '', $val))))->get_field('count');
 					if (!empty($count) && $count > 0) {
@@ -67,13 +58,8 @@ class goods_list {
 				}
 			}
 			$keywords .= ')';
-
-			// $goods_ids = array_unique($goods_ids);
-			// /* 标签查询*/
-			// $tag_where = $goods_ids;
 		}
 		self::$keywords_where['keywords']	= $keywords;
-		// self::$keywords_where['tag_where']	= $tag_where;
 		return true;
 	}
 
@@ -86,16 +72,16 @@ class goods_list {
 		RC_Loader::load_app_class('goods_category', 'goods', false);
 		$dbview = RC_Model::model('goods/goods_member_viewmodel');
 		$dbview->view = array(
-				'store_franchisee' => array(
-						'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-						'alias' => 'sf',
-						'on' 	=> "g.store_id = sf.store_id"
-				),
+			'store_franchisee' => array(
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias' => 'sf',
+				'on' 	=> "g.store_id = sf.store_id"
+			),
 				'member_price' => array(
 				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 				'alias' => 'mp',
 				'on' 	=> "mp.goods_id = g.goods_id and mp.user_rank = '".$_SESSION['user_rank']."'"
-				)
+			)
 		);
 		$field = "g.goods_id, g.goods_name, g.store_id, g.goods_name_style, g.market_price,
 				  g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price, 
@@ -142,11 +128,12 @@ class goods_list {
 		}
 		
 		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
-		    $merchant_cat_list = RC_DB::table('merchants_category')->selectRaw('cat_id')
-																    ->where('parent_id', $filter['merchant_cat_id'])
-																    ->where('store_id', $filter['store_id'])
-																    ->where('is_show', 1)
-																    ->get();
+		    $merchant_cat_list = RC_DB::table('merchants_category')
+		    	->selectRaw('cat_id')
+			    ->where('parent_id', $filter['merchant_cat_id'])
+			    ->where('store_id', $filter['store_id'])
+			    ->where('is_show', 1)
+			    ->get();
 		    $children_cat = "'".$filter['merchant_cat_id']."'";
 		    if ($merchant_cat_list) {
 		        foreach ($merchant_cat_list as $cat) {
@@ -182,12 +169,6 @@ class goods_list {
 			$where[] = self::$keywords_where['keywords'];
 			$cache_key .= '-keywords-' . $filter['keywords'];
 		}
-		
-// 		if (isset(self::$keywords_where['tag_where']) && !empty(self::$keywords_where['tag_where']) && isset($filter['keywords']) && empty($filter['keywords'])) {
-// 			$where[] = 'or';
-// 			$where['g.goods_id'] = self::$keywords_where['tag_where'];
-// 			$cache_key .= '-tagkeywords-' . $filter['keywords'];
-// 		}
 
 		if (!empty($filter['intro'])) {
 			if (in_array($filter['intro'], array('best', 'new', 'hot', 'promotion'))) {
@@ -309,23 +290,6 @@ class goods_list {
 					} else {
 						$promote_price = 0;
 					}
-					// 				/* 处理商品水印图片 */
-					// 				$watermark_img = '';
-					// 				if ($promote_price != 0) {
-					// 					$watermark_img = "watermark_promote_small";
-					// 				} elseif ($row['is_new'] != 0) {
-					// 					$watermark_img = "watermark_new_small";
-					// 				} elseif ($row['is_best'] != 0) {
-					// 					$watermark_img = "watermark_best_small";
-					// 				} elseif ($row['is_hot'] != 0) {
-					// 					$watermark_img = 'watermark_hot_small';
-					// 				}
-			
-					// 				if ($watermark_img != '') {
-					// 					$arr[$row['goods_id']]['watermark_img'] = $watermark_img;
-					// 				}
-			
-			
 					if ($filter['display'] == 'grid') {
 						$arr[$key]['goods_name'] = ecjia::config('goods_name_length') > 0 ? RC_String::sub_str($row['goods_name'], ecjia::config('goods_name_length')) : $row['goods_name'];
 					} else {
@@ -336,8 +300,6 @@ class goods_list {
 					$arr[$key]['name']			= $row['goods_name'];
 					$arr[$key]['goods_brief'] 	= $row['goods_brief'];
 					$arr[$key]['store_id']		= $row['store_id'];
-					//$arr[$key]['store_name']	= RC_Model::model('goods/store_franchisee_model')->get_store_name_by_id($row['store_id']);
-					//$arr[$key]['manage_mode']	= RC_DB::table('store_franchisee')->where('store_id', $row['store_id'])->pluck('manage_mode');
 					$arr[$key]['store_name']	= $row['merchants_name'];
 					$arr[$key]['manage_mode']	= $row['manage_mode'];
 					/* 增加商品样式*/

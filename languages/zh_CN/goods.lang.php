@@ -527,6 +527,7 @@ return array(
 	'label_best'				=> '精品：',
 	'label_new'					=> '新品：',
 	'label_hot'					=> '热销：',
+	'basic_info'				=> '基本信息',
 );
 
 // end

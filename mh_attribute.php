@@ -264,7 +264,7 @@ class mh_attribute extends ecjia_merchant {
 	 * 编辑属性名称
 	 */
 	public function edit_attr_name() {
-// 		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
 	
 		$id = intval($_POST['pk']);
 		$val = trim($_POST['value']);

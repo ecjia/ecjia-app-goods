@@ -6,7 +6,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *
  */
 class goods_get_goods_list_api extends Component_Event_Api {
-	
     /**
      * @param  $options['keyword'] 关键字
      *         $options['cat_id'] 分类id
@@ -21,9 +20,7 @@ class goods_get_goods_list_api extends Component_Event_Api {
 	        && !isset($options['brand_id']))) {
 	        return new ecjia_error('invalid_parameter', '参数无效');
 	    }
-
 	   	$row = $this->get_goods_list($options);
-	    
 	    return $row;
 	}
 	
@@ -76,12 +73,6 @@ class goods_get_goods_list_api extends Component_Event_Api {
 		/* 取得数据 */
 		$row = $db->field('goods_id, goods_name, shop_price')->where($where)->limit(50)->select();
 		return $row;
-		
-
-		// 		$filter = (object)$filter;
-		// 		$filter->keyword = $filter->keyword;
-		// 		//TODO 过滤条件为对象获取方式，后期换回数组
-		// 		$where = get_where_sql($filter); // 取得过滤条件
 	}
 }
 

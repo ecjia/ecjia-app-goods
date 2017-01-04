@@ -26,13 +26,8 @@ class goods_info {
 		$goods_attr_array = self::sort_goods_attr_id_array ( $spec_goods_attr_id );
 
 		if (isset ( $goods_attr_array ['sort'] )) {
-			//$db = RC_Model::model('goods/products_model');
 			$db = RC_DB::table('products');
 			$goods_attr = implode ( '|', $goods_attr_array ['sort'] );
-			//$return_array = $db->find ( array (
-			//		'goods_id' => $goods_id,
-			//		'goods_attr' => $goods_attr
-			//));
 			$return_array = $db->where('goods_id', $goods_id)->where('goods_attr', $goods_attr)->first();
 		}
 		return $return_array;
@@ -55,8 +50,6 @@ class goods_info {
 			} else {
 				$spec = addslashes ( $spec );
 			}
-			//$db = RC_Model::model('goods/goods_attr_model');
-			//$price = $db->in(array('goods_attr_id' => $spec))->sum('`attr_price`|attr_price');
 			$db = RC_DB::table('goods_attr');
 			$rs = $db->whereIn('goods_attr_id', $spec)->select(RC_DB::raw('sum(attr_price) as attr_price'))->get();
 			$price = $rs['attr_price'];
@@ -84,7 +77,6 @@ class goods_info {
 	public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array())
 	{
 		$db_goodsview = RC_Model::model('goods/goods_viewmodel');
-// 		$dbview = RC_DB::table('goods as g')->leftJoin('member_price as mp', RC_DB::raw('g.goods_id'), '=', RC_DB::raw('mp.goods_id'));
 		RC_Loader::load_app_func ('goods', 'goods');
 		$final_price	= 0; // 商品最终购买价格
 		$volume_price	= 0; // 商品优惠价格
@@ -104,11 +96,6 @@ class goods_info {
 		$field = "g.promote_price, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . intval($_SESSION['discount']) . "') AS shop_price";
 		// 取得商品促销价格列表
 		$goods = $db_goodsview->join(array('member_price'))->field($field)->where(array('g.goods_id' => $goods_id, 'g.is_delete' => 0))->find();
-		// $goods = $dbview
-		// 			->selectRaw($field)
-		// 			->where(RC_DB::raw('g.goods_id'), '=', $goods_id)
-		// 			->where(RC_DB::raw('g.is_delete'), '<>', 0)
-		// 			->first();
 
 		/* 计算商品的促销价格 */
 		if ($goods ['promote_price'] > 0) {
@@ -137,21 +124,14 @@ class goods_info {
 			$final_price = $user_price;
 		}
 		/* 手机专享*/
-		//$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
 		$mobilebuy_db = RC_DB::table('goods_activity');
 		$mobilebuy_ext_info = array('price' => 0);
-		//$mobilebuy = $mobilebuy_db->find(array(
-		//		'goods_id'	 => $goods_id,
-		//		'start_time' => array('elt' => RC_Time::gmtime()),
-		//		'end_time'	 => array('egt' => RC_Time::gmtime()),
-		//		'act_type'	 => GAT_MOBILE_BUY,
-		//));
 		$mobilebuy = $mobilebuy_db
-					->where('goods_id', $goods_id)
-					->where('start_time', '<=', RC_Time::gmtime())
-					->where('end_time', '>=', RC_Time::gmtime())
-					->where('act_type', '=', GAT_MOBILE_BUY)
-					->first();
+			->where('goods_id', $goods_id)
+			->where('start_time', '<=', RC_Time::gmtime())
+			->where('end_time', '>=', RC_Time::gmtime())
+			->where('act_type', '=', GAT_MOBILE_BUY)
+			->first();
 
 		if (!empty($mobilebuy)) {
 			$mobilebuy_ext_info = unserialize($mobilebuy['ext_info']);
@@ -165,7 +145,6 @@ class goods_info {
 				$final_price += $spec_price;
 			}
 		}
-
 		// 返回商品最终购买价格
 		return $final_price;
 	}
@@ -181,18 +160,16 @@ class goods_info {
 	 * @return 优惠价格列表
 	 */
 	public static function get_volume_price_list($goods_id, $price_type = '1') {
-		//$db = RC_Model::model('goods/volume_price_model');
 		$db = RC_DB::table('volume_price');
 		$volume_price = array ();
 		$temp_index = '0';
 
-		//$res = $db->field ('`volume_number` , `volume_price`')->where(array('goods_id' => $goods_id, 'price_type' => $price_type))->order (array('volume_number' => 'asc'))->select();
 		$res = $db
-				->select(RC_DB::raw('volume_number, volume_price'))
-				->where('goods_id', $goods_id)
-				->where('price_type', $price_type)
-				->orderBy('volume_number', 'asc')
-				->get();
+			->select(RC_DB::raw('volume_number, volume_price'))
+			->where('goods_id', $goods_id)
+			->where('price_type', $price_type)
+			->orderBy('volume_number', 'asc')
+			->get();
 		if (! empty ( $res )) {
 			foreach ( $res as $k => $v ) {
 				$volume_price [$temp_index] = array ();
@@ -216,18 +193,9 @@ class goods_info {
 		$attr   = '';
 		if (!empty($arr)) {
 			$fmt = "%s:%s[%s] \n";
-			//$dbview = RC_Model::model('goods/goods_attr_viewmodel');
-			//$dbview->view =array(
-			//		'attribute' => array(
-			//				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-			//			 'alias' 	=> 'a',
-			//			 'field' 	=> 'a.attr_name, ga.attr_value, ga.attr_price',
-			//			 'on' 		=> 'a.attr_id = ga.attr_id'
-			//		)
-			//);
 			$dbview = RC_DB::table('goods_attr as ga')
 					->leftjoin('attribute as a', RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'));
-			//$data = $dbview->in(array('ga.goods_attr_id'=> $arr))->select();
+
 			$data = $dbview->whereIn(RC_DB::raw('ga.goods_attr_id'), $arr)->get();
 			if(!empty($data)) {
 				foreach ($data as $row) {
@@ -251,7 +219,6 @@ class goods_info {
 	 * @return string
 	 */
 	public static function is_spec($goods_attr_id_array, $sort = 'asc') {
-		//$dbview = RC_Model::model('goods/sys_attribute_viewmodel');
 		$dbview = RC_DB::table('attribute as a')
 					->leftJoin('goods_attr as v', RC_DB::raw('v.attr_id'), '=', RC_DB::raw('a.attr_id'));
 		$dbview->where(RC_DB::raw('a.attr_type'), '=', 1);
@@ -260,7 +227,6 @@ class goods_info {
 		}
 
 		// 重新排序
-		//$row = $dbview->join ( 'goods_attr' )->in ( array ('v.goods_attr_id' => $goods_attr_id_array) )->order ( array ('a.attr_id' => $sort) )->select ();
 		$row = $dbview
 				->whereIn(RC_DB::raw('v.goods_attr_id'), $goods_attr_id_array)
 				->orderBy(RC_DB::raw('a.attr_id'), $sort)
@@ -319,7 +285,6 @@ class goods_info {
 	 * @return string
 	 */
 	private function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
-		//$dbview = RC_Model::model('goods/sys_attribute_viewmodel');
 		$dbview = RC_DB::table('attribute as a')
 		->leftJoin('goods_attr as v', RC_DB::raw('v.attr_id'), '=', RC_DB::raw('a.attr_id'));
 		$dbview->where(RC_DB::raw('a.attr_type'), '=', 1);
@@ -328,7 +293,6 @@ class goods_info {
 		}
 
 		// 重新排序
-		//$row = $dbview->join('goods_attr')->in(array('v.goods_attr_id' => $goods_attr_id_array))->order(array('a.attr_id' => $sort))->select();
 		$row = $dbview
 				->whereIn(RC_DB::raw('v.goods_attr_id'), $goods_attr_id_array)
 				->orderBy(RC_DB::raw('a.attr_id'), $sort)
@@ -343,10 +307,6 @@ class goods_info {
 		}
 		return $return_arr;
 	}
-
-
-
-
 }
 
 // end

@@ -27,9 +27,9 @@ class product_search_module extends api_admin implements api_interface {
 
 		$db_goods->view = array(
 			'products' => array(
-					'type'		=> Component_Model_View::TYPE_LEFT_JOIN,
-					'alias'		=> 'p',
-					'on'		=> 'g.goods_sn=p.product_sn'
+				'type'		=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'		=> 'p',
+				'on'		=> 'g.goods_sn=p.product_sn'
 			)
 		);
 

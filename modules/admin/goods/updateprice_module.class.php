@@ -72,16 +72,16 @@ class updateprice_module extends api_admin implements api_interface {
 		}
 
     	$data = array(
-    			'shop_price'			=> $shop_price,
-    			'market_price'			=> $market_price,
-    			'promote_price'			=> $promote_price,
-    			'promote_start_date' 	=> $promote_start_date,
-    			'promote_end_date'		=> $promote_end_date,
-    			'give_integral'			=> $give_integral,
-    			'rank_integral'			=> $rank_integral,
-    			'integral'				=> $integral,
-    			'is_promote'			=> $is_promote,
-    			'last_update'			=> RC_Time::gmtime()
+    		'shop_price'			=> $shop_price,
+    		'market_price'			=> $market_price,
+    		'promote_price'			=> $promote_price,
+    		'promote_start_date' 	=> $promote_start_date,
+    		'promote_end_date'		=> $promote_end_date,
+    		'give_integral'			=> $give_integral,
+    		'rank_integral'			=> $rank_integral,
+    		'integral'				=> $integral,
+    		'is_promote'			=> $is_promote,
+    		'last_update'			=> RC_Time::gmtime()
     	);
     	$count = $db_goods->where(array('goods_id' => $goods_id))->update($data);
     	if ($count>0) {
@@ -111,3 +111,5 @@ class updateprice_module extends api_admin implements api_interface {
     	}
     }
 }
+
+//end

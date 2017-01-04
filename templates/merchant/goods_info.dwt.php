@@ -255,26 +255,6 @@
 					 			</div>
 							</div>
 								
-							<!-- 
-							<div class="panel-group">
-					            <div class="panel panel-info">
-					                <div class="panel-heading">
-					                    <a data-toggle="collapse" data-parent="#accordionTwo" href="#collapseFive" class="collapsed">
-					                        <h4 class="panel-title">{lang key='goods::goods.brand'}</h4>
-					                    </a>
-					                </div>
-					                <div id="collapseFive" class="panel-collapse collapse in">
-				              			<div class="panel-body">
-	                                        <label>{lang key='goods::goods.select_goods_brand'}</label>
-											<select class="col-lg-5 form-control" name="brand_id">
-												<option value="0">{lang key='system::system.select_please'}{html_options options=$brand_list selected=$goods.brand_id}</option>
-											</select>
-	                                    </div>
-			              			</div>
-				        		</div>
-			        		</div>
-			        		-->
-	
 			        		<div class="panel-group">
 				        		<div class="panel panel-info">
 					                <div class="panel-heading">

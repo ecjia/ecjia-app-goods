@@ -1624,20 +1624,8 @@ function get_merchant_attr_list() {
 	if (!empty($filter['cat_id'])) {
 		$db_attribute->whereRaw($where);
 	}
-	// 	$count = $dbview->join(null)->where($where)->count();
 	$count = $db_attribute->count('attr_id');
 	$page = new ecjia_merchant_page($count, 15, 5);
-
-	/* 查询 */
-	// 	$dbview->view =array(
-	// 		'goods_type' => array(
-	// 			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-	// 			'alias' => 't',
-	// 			'field' => 'a.*, t.cat_name',
-	// 			'on'    => 'a.cat_id = t.cat_id'
-	// 		)
-	// 	);
-	// 	$row = $dbview->join('goods_type')->where($where)->order(array($filter['sort_by'] => $filter['sort_order']))->limit($page->limit())->select();
 
 	$row = $db_attribute
 	->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))

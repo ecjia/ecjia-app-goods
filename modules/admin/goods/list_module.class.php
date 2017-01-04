@@ -95,39 +95,36 @@ class list_module extends api_admin implements api_interface {
 					$promote_price = 0;
 				}
 				$goods_list[] = array(
-						'goods_id'	=> $val['goods_id'],
-						'name'		=> $val['goods_name'],
-						'goods_sn'	=> $val['goods_sn'],
-						'market_price'	=> price_format($val['market_price'] , false),
-						'shop_price'	=> price_format($val['shop_price'] , false),
-						'promote_price'	=> $promote_price > 0 ? price_format($promote_price , false) : $promote_price,
-						'clicks'		=> intval($val['click_count']),
-						'stock'			=> (ecjia::config('use_storage') == 1) ? $val['goods_number'] : '',
-						'goods_weight'	=> $val['goods_weight']  = (intval($val['goods_weight']) > 0) ?
-											$val['goods_weight'] . __('千克') :
-											($val['goods_weight'] * 1000) . __('克'),
-						'is_best'		=> $val['is_best'] == 1 ? true : false,
-						'is_new'		=> $val['is_new'] == 1 ? true : false,
-						'is_hot'		=> $val['is_hot'] == 1 ? true : false,
-						'is_shipping'	=> $val['is_shipping'] == 1 ? true : false,
-						'last_updatetime' => RC_Time::local_date(ecjia::config('time_format'), $val['last_update']),
-						'img' => array(
-								'thumb'	=> !empty($val['goods_img']) ? RC_Upload::upload_url($val['goods_img']) : '',
-								'url'	=> !empty($val['original_img']) ? RC_Upload::upload_url($val['original_img']) : '',
-								'small'	=> !empty($val['goods_thumb']) ? RC_Upload::upload_url($val['goods_thumb']) : '',
-						)
+					'goods_id'			=> $val['goods_id'],
+					'name'				=> $val['goods_name'],
+					'goods_sn'			=> $val['goods_sn'],
+					'market_price'		=> price_format($val['market_price'] , false),
+					'shop_price'		=> price_format($val['shop_price'] , false),
+					'promote_price'		=> $promote_price > 0 ? price_format($promote_price , false) : $promote_price,
+					'clicks'			=> intval($val['click_count']),
+					'stock'				=> (ecjia::config('use_storage') == 1) ? $val['goods_number'] : '',
+					'goods_weight'		=> $val['goods_weight']  = (intval($val['goods_weight']) > 0) ? $val['goods_weight'] . __('千克') : ($val['goods_weight'] * 1000) . __('克'),
+					'is_best'			=> $val['is_best'] == 1 ? true : false,
+					'is_new'			=> $val['is_new'] == 1 ? true : false,
+					'is_hot'			=> $val['is_hot'] == 1 ? true : false,
+					'is_shipping'		=> $val['is_shipping'] == 1 ? true : false,
+					'last_updatetime' 	=> RC_Time::local_date(ecjia::config('time_format'), $val['last_update']),
+					'img' => array(
+						'thumb'	=> !empty($val['goods_img']) ? RC_Upload::upload_url($val['goods_img']) : '',
+						'url'	=> !empty($val['original_img']) ? RC_Upload::upload_url($val['original_img']) : '',
+						'small'	=> !empty($val['goods_thumb']) ? RC_Upload::upload_url($val['goods_thumb']) : '',
+					)
 				);
 			}
 		}
 
 		$pager = array(
-				'total' => $page_row->total_records,
-				'count' => $page_row->total_records,
-				'more'	=> $page_row->total_pages <= $page ? 0 : 1,
+			'total' => $page_row->total_records,
+			'count' => $page_row->total_records,
+			'more'	=> $page_row->total_pages <= $page ? 0 : 1,
 		);
 		return array('data' => $goods_list, 'pager' => $pager);
 	}
 }
-
 
 // end

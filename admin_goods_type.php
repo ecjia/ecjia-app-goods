@@ -94,12 +94,10 @@ class admin_goods_type extends ecjia_admin {
 		$goods_type['attr_group']	= RC_String::sub_str($_POST['attr_group'], 255);
 		$goods_type['enabled']		= intval($_POST['enabled']);
 		
-// 		$count = $this->db_goods_type->where(array('cat_name' => $goods_type['cat_name']))->count();
 		$count = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->count();
 		if ($count > 0 ){
 			return $this->showmessage(RC_Lang::get('goods::goods_type.repeat_type_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} else {
-// 			$cat_id = $this->db_goods_type->insert($goods_type);
 			$cat_id = RC_DB::table('goods_type')->insertGetId($goods_type);
 			if ($cat_id) {
 				$links = array(array('href' => RC_Uri::url('goods/admin_goods_type/init'), 'text' => RC_Lang::get('goods::goods_type.back_list')), array('href' => RC_Uri::url('goods/admin_goods_type/add'), 'text' => RC_Lang::get('goods::goods_type.continue_add')));
@@ -149,12 +147,10 @@ class admin_goods_type extends ecjia_admin {
 		$goods_type['enabled']		= intval($_POST['enabled']);
 		$cat_id						= intval($_POST['cat_id']);
 		$old_groups					= get_attr_groups($cat_id);
-// 		$count 						= $this->db_goods_type->where(array('cat_name' => $goods_type['cat_name'], 'cat_id' => array('neq' => $cat_id)))->count();
 		
 		$count = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->where('cat_id', '!=', $cat_id)->count();
 
 		if (empty($count)) {
-// 			if ($this->db_goods_type->where(array('cat_id' => $cat_id))->update($goods_type)) {
 			RC_DB::table('goods_type')->where('cat_id', $cat_id)->update($goods_type);
 			/* 对比原来的分组 */
 			$new_groups = explode("\n", str_replace("\r", '', $goods_type['attr_group']));  // 新的分组

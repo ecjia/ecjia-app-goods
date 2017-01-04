@@ -199,7 +199,6 @@ class admin_category extends ecjia_admin {
 		if ($cat_info['filter_attr']) {
 			$filter_attr = explode(",", $cat_info['filter_attr']);  //把多个筛选属性放到数组中
 			foreach ($filter_attr AS $k => $v) {
-// 				$attr_cat_id = $this->db_attribute->where(array('attr_id' => intval($v)))->get_field('cat_id');
 				$attr_cat_id = RC_DB::table('attribute')->where('attr_id', intval($v))->pluck('cat_id');
 
 				$filter_attr_list[$k]['goods_type_list'] = goods_type_list($attr_cat_id);  //取得每个属性的商品类型
@@ -220,13 +219,6 @@ class admin_category extends ecjia_admin {
 			$attr_cat_id = 0;
 		}
 
-        //类目资质
-//         $db_merchants_documenttitle = RC_Model::model('goods/merchants_documenttitle_model');
-//         $title_list = $db_merchants_documenttitle->field('dt_id, dt_title')->where(array('cat_id' => $cat_id))->order(array('dt_id' => 'asc'))->select();
-
-//         $title_list = RC_DB::table('merchants_documenttitle')->select('dt_id', 'dt_title')->where('cat_id', $cat_id)->orderBy('dt_id', 'asc')->get();
-//         $this->assign('title_list', $title_list);
-
 		/* 模板赋值 */
 		$this->assign('attr_list', $attr_list); // 取得商品属性
 		$this->assign('attr_cat_id', $attr_cat_id);
@@ -235,7 +227,6 @@ class admin_category extends ecjia_admin {
 		$this->assign('ur_here',RC_Lang::get('goods::category.category_edit'));
 		$this->assign('action_link', array('text' => RC_Lang::get('goods::category.goods_category'), 'href' => RC_Uri::url('goods/admin_category/init')));
 
-// 		$res = $this->db_cat->field('recommend_type')->where(array('cat_id' => $cat_id))->select();
 		$res = RC_DB::table('cat_recommend')->select('recommend_type')->where('cat_id', $cat_id)->get();
 		if (!empty($res)) {
 			$cat_recommend = array();
@@ -272,7 +263,6 @@ class admin_category extends ecjia_admin {
 				'parent_id'	=> $parent_id,
 				'is_show' 	=> '1',
 			);
-// 			$category_id = $this->db_category->insert($data);
 			$category_id = RC_DB::table('category')->insertGetId($data);
 			
 			$arr = array("parent_id" => $parent_id, "id" => $category_id, "cat" => $category);
@@ -462,16 +452,9 @@ class admin_category extends ecjia_admin {
 		/* 更新商品分类 */
 		$data = array('cat_id' => $target_cat_id);
 		
-// 		$goods_id = $this->db_goods->field('goods_id')->where(array('cat_id' => $cat_id))->select();
-// 		$goods_ids = implode(',', array_column($goods_id, 'goods_id'));
-		
-// 		$new_cat_name = $this->db_category->where(array('cat_id' => $target_cat_id))->get_field('cat_name');
-// 		$old_cat_name = $this->db_category->where(array('cat_id' => $cat_id))->get_field('cat_name');
-		
 		$new_cat_name = RC_DB::table('category')->where('cat_id', $target_cat_id)->pluck('cat_name');
 		$old_cat_name = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('cat_name');
 		
-// 		$this->db_goods->where(array('cat_id' => $cat_id))->update($data);
 		RC_DB::table('goods')->where('cat_id', $cat_id)->update($data);
 		
 		RC_Cache::app_cache_delete('admin_category_list', 'goods');
@@ -571,9 +554,6 @@ class admin_category extends ecjia_admin {
     	$this->admin_priv('category_delete', ecjia::MSGTYPE_JSON);
 		
 		$cat_id = intval($_GET['id']);
-// 		$cat_name = $this->db_category->where(array('cat_id' => $cat_id))->get_field('cat_name');
-// 		$cat_count = $this->db_category->where(array('parent_id' => $cat_id))->count();
-// 		$goods_count = $this->db_goods->where(array('cat_id' => $cat_id))->count();
 		
 		$info = RC_DB::table('category')->where('cat_id', $cat_id)->first();
 		$cat_name = $info['cat_name'];
@@ -581,17 +561,14 @@ class admin_category extends ecjia_admin {
 		$goods_count = RC_DB::table('goods')->where('cat_id', $cat_id)->count();
 
 		if ($cat_count == 0 && $goods_count == 0) {
-// 			$old_logo = $this->db_category->where(array('cat_id' => $cat_id))->get_field('style');
 			$old_logo = $info['category_img'];
 			
 			if (!empty($old_logo)) {
 				$disk = RC_Filesystem::disk();
 				$disk->delete(RC_Upload::upload_path() . $old_logo);
 			}
-// 			$this->db_category->where(array('cat_id' => $cat_id))->delete();
 			RC_DB::table('category')->where('cat_id', $cat_id)->delete();
 			
-// 			$this->db_nav->nav_delete(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'));
 			RC_DB::table('nav')->where('ctype', 'c')->where('cid', $cat_id)->where('type', 'middle')->delete();
 			
 			ecjia_admin::admin_log($cat_name, 'remove', 'category');
@@ -617,7 +594,6 @@ class admin_category extends ecjia_admin {
 		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
 		
 		$cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
-// 		$term_meta_info = $this->db_term_meta->term_meta_find(array('object_id' => $cat_id, 'meta_key' => 'category_img'));
 		
 		$info = RC_DB::table('category')->where('cat_id', $cat_id)->first();
 		$logo = $info['category_img'];

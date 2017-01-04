@@ -6,7 +6,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *
  */
 class goods_seller_goods_category_api extends Component_Event_Api {
-
     /**
      * @param  $options['keyword'] 关键字
      *         $options['cat_id'] 分类id
@@ -300,8 +299,6 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 			return $spec_cat_id_array;
 		}
 	}
-
-
 }
 
 // end

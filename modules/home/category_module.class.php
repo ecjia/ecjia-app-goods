@@ -33,33 +33,33 @@ class category_module extends api_front implements api_interface {
                 		$goods = array_slice($goods, 0, 2);
                 	}
                 	$ngoods[] = array(
-                			'id' => 0,
-                			'name' => '',
-                			'market_price' => 0,
-                			'shop_price' => 0,
-                			'promote_price' => 0,
-                			'brief' => '',
-                			'img' => array(
-                					'thumb' => API_DATA('PHOTO', $val['img']),
-                					'url' 	=> API_DATA('PHOTO', $val['img']),
-                					'small' => API_DATA('PHOTO', $val['img'])
-                			)
+                		'id' 			=> 0,
+                		'name' 			=> '',
+                		'market_price' 	=> 0,
+                		'shop_price' 	=> 0,
+                		'promote_price' => 0,
+                		'brief' 		=> '',
+                		'img' => array(
+                			'thumb' => API_DATA('PHOTO', $val['img']),
+                			'url' 	=> API_DATA('PHOTO', $val['img']),
+                			'small' => API_DATA('PHOTO', $val['img'])
+                		)
                 	);
                 }
                 if (! empty($goods))
                     $mobilebuy_db = RC_Model::model('goods/goods_activity_model');
                     foreach ($goods as $k => $v) {
 	                	$groupbuy = $mobilebuy_db->find(array(
-	                			'goods_id'	 => $v['id'],
-	                			'start_time' => array('elt' => RC_Time::gmtime()),
-	                			'end_time'	 => array('egt' => RC_Time::gmtime()),
-	                			'act_type'	 => GAT_GROUP_BUY,
+                			'goods_id'	 => $v['id'],
+                			'start_time' => array('elt' => RC_Time::gmtime()),
+                			'end_time'	 => array('egt' => RC_Time::gmtime()),
+                			'act_type'	 => GAT_GROUP_BUY,
 	                	));
 	                	$mobilebuy = $mobilebuy_db->find(array(
-	                			'goods_id'	 => $v['id'],
-	                			'start_time' => array('elt' => RC_Time::gmtime()),
-	                			'end_time'	 => array('egt' => RC_Time::gmtime()),
-	                			'act_type'	 => GAT_MOBILE_BUY,
+                			'goods_id'	 => $v['id'],
+                			'start_time' => array('elt' => RC_Time::gmtime()),
+                			'end_time'	 => array('egt' => RC_Time::gmtime()),
+                			'act_type'	 => GAT_MOBILE_BUY,
 	                	));
 	                	/* 判断是否有促销价格*/
 	                	$price = ($v['unformatted_shop_price'] > $v['unformatted_promote_price'] && $v['unformatted_promote_price'] > 0) ? $v['unformatted_promote_price'] : $v['unformatted_shop_price'];
@@ -84,15 +84,15 @@ class category_module extends api_front implements api_interface {
 	                	$saving_price = ($v['unformatted_shop_price'] - $price) > 0 ? $v['unformatted_shop_price'] - $price : 0;
 
                         $ngoods[] = array(
-                            'id' => $v['id'],
-                            'name' => $v['name'],
-                            'market_price' => $v['market_price'],
-                            'shop_price' => $v['shop_price'],
+                            'id' 			=> $v['id'],
+                            'name' 			=> $v['name'],
+                            'market_price' 	=> $v['market_price'],
+                            'shop_price' 	=> $v['shop_price'],
                             'promote_price' => ($price < $v['unformatted_shop_price'] && $price > 0) ? price_format($price) : '',
-                            'brief' => $v['brief'],
+                            'brief' 		=> $v['brief'],
                             'img' => array(
                                 'thumb' => API_DATA('PHOTO', $v['goods_img']),
-                                'url' => API_DATA('PHOTO', $v['original_img']),
+                                'url' 	=> API_DATA('PHOTO', $v['original_img']),
                                 'small' => API_DATA('PHOTO', $v['thumb'])
                             ),
                         	'activity_type' => $activity_type,
@@ -114,8 +114,7 @@ class category_module extends api_front implements api_interface {
     }
 }
 
-function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min = 0, $max = 0, $ext = '')
-{
+function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min = 0, $max = 0, $ext = '') {
 	$where = array();
     $brand > 0 ? $where['g.brand_id'] = $brand : ''; // " AND g.brand_id = '$brand'" : '';
 
@@ -170,11 +169,12 @@ function EM_get_category_recommend_goods($type = '', $cats = '', $brand = 0, $mi
 
 
     $dbview = RC_Model::model('goods/goods_brand_member_viewmodel');
-    $res = $dbview->join(array('brand', 'member_price'))
-					->where($where)
-					->order($order)
-					->limit($num)
-					->select();
+    $res = $dbview
+    	->join(array('brand', 'member_price'))
+		->where($where)
+		->order($order)
+		->limit($num)
+		->select();
 
     $idx = 0;
     $goods = array();
