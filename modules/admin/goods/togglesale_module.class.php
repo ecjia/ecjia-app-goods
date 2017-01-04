@@ -38,9 +38,16 @@ class togglesale_module extends api_admin implements api_interface {
 
 		$goods_name = $db_goods->where(array('goods_id' => $id))->get_field('goods_name');
 		if ($on_sale == '1') {
-			ecjia_admin::admin_log('上架商品，'.$goods_name, 'setup', 'goods');
+			$log_text = '上架商品';
 		} else {
-			ecjia_admin::admin_log('下架商品，'.$goods_name, 'setup', 'goods');
+			$log_text = '下架商品';
+		}
+		$log_text .= '，' . $goods_name .'【来源掌柜】';
+		
+		if ($_SESSION['store_id'] > 0) {
+		    ecjia_merchant::admin_log($log_text, 'setup', 'goods');
+		} else {
+		    ecjia_admin::admin_log($log_text, 'setup', 'goods');
 		}
 		$orm_goods_db = RC_Model::model('goods/orm_goods_model');
 		/* 释放app缓存*/

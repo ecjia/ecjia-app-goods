@@ -100,7 +100,12 @@ class updateprice_module extends api_admin implements api_interface {
     		$orm_goods_db->delete_cache_item($cache_basic_info_id);
     		
     		$goods_name = $db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
-    		ecjia_admin::admin_log($goods_name, 'edit', 'goods');
+    		if ($_SESSION['store_id'] > 0) {
+    		    ecjia_merchant::admin_log($goods_name.'【来源掌柜】', 'edit', 'goods');
+    		} else {
+    		    ecjia_admin::admin_log($goods_name.'【来源掌柜】', 'edit', 'goods');
+    		}
+    		
     		return array();
     	}
     }
