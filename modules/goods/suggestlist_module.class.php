@@ -24,9 +24,9 @@ class suggestlist_module extends api_front implements api_interface {
     		$data = array();
     		$data['list'] = array();
     		$data['pager'] = array(
-    				"total" => '0',
-    				"count" => '0',
-    				"more"	=> '0'
+    			"total" => '0',
+    			"count" => '0',
+    			"more"	=> '0'
     		);
     		return array('data' => $data['list'], 'pager' => $data['pager']);
     	} else {
@@ -58,18 +58,18 @@ class suggestlist_module extends api_front implements api_interface {
 		}
 
 		$options = array(
-				'intro'		=> $action_type,
-				'sort'		=> $order_by,
-				'page'		=> $page,
-				'size'		=> $size,
-				'geohash'	=> $geohash_code,
-// 				'store_id'  => $store_id_group,
+			'intro'		=> $action_type,
+			'sort'		=> $order_by,
+			'page'		=> $page,
+			'size'		=> $size,
+			'geohash'	=> $geohash_code,
+// 			'store_id'  => $store_id_group,
 		);
 		$result = RC_Api::api('goods', 'goods_list', $options);
 		$data['pager'] = array(
-						"total"	=> $result['page']->total_records,
-						"count"	=> $result['page']->total_records,
-						"more"	=> $result['page']->total_pages <= $page ? 0 : 1,
+			"total"	=> $result['page']->total_records,
+			"count"	=> $result['page']->total_records,
+			"more"	=> $result['page']->total_pages <= $page ? 0 : 1,
 		);
 		$data['list'] = array();
 
@@ -84,34 +84,32 @@ class suggestlist_module extends api_front implements api_interface {
 				$mobilebuy_price = $object_id = 0;
 	    			
 				$data['list'][] = array(
-							'goods_id'		=> $val['goods_id'],
-							'id'			=> $val['goods_id'],
-							'name'			=> $val['name'],
-							'market_price'	=> $val['market_price'],
-							'shop_price'	=> $val['shop_price'],
-							'promote_price'	=> $val['promote_price'],
-							'manage_mode'	=> $val['manage_mode'],
-							'unformatted_promote_price' => $val['unformatted_promote_price'],
-							'promote_start_date'	=> $val['promote_start_date'],
-							'promote_end_date'		=> $val['promote_end_date'],
-							'img' => array(
-									'thumb'	=> $val['goods_img'],
-									'url'	=> $val['original_img'],
-									'small'	=> $val['goods_thumb']
-							),
-							'activity_type' => $activity_type,
-							'object_id'		=> $object_id,
-							'saving_price'	=>	$saving_price,
-							'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-							'seller_id'		=> $val['store_id'],
-							'seller_name'	=> $val['store_name'],
+					'goods_id'		=> $val['goods_id'],
+					'id'			=> $val['goods_id'],
+					'name'			=> $val['name'],
+					'market_price'	=> $val['market_price'],
+					'shop_price'	=> $val['shop_price'],
+					'promote_price'	=> $val['promote_price'],
+					'manage_mode'	=> $val['manage_mode'],
+					'unformatted_promote_price' => $val['unformatted_promote_price'],
+					'promote_start_date'		=> $val['promote_start_date'],
+					'promote_end_date'			=> $val['promote_end_date'],
+					'img' => array(
+						'thumb'	=> $val['goods_img'],
+						'url'	=> $val['original_img'],
+						'small'	=> $val['goods_thumb']
+					),
+					'activity_type' => $activity_type,
+					'object_id'		=> $object_id,
+					'saving_price'	=>	$saving_price,
+					'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
+					'seller_id'		=> $val['store_id'],
+					'seller_name'	=> $val['store_name'],
 				);
 			}
 		}
-       	
 		return array('data' => $data['list'], 'pager' => $data['pager']);
     }
 }
-
 
 // end

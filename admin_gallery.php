@@ -22,12 +22,9 @@ class admin_gallery extends ecjia_admin {
         RC_Style::enqueue_style('jquery-colorbox');
         RC_Script::enqueue_script('jquery-chosen');
         RC_Style::enqueue_style('chosen');
-//         RC_Script::enqueue_script('replenish_list', RC_App::apps_url('statics/js/replenish_list.js', __FILE__), array());
-//         RC_Script::enqueue_script('batch_card_add', RC_App::apps_url('statics/js/batch_card_add.js', __FILE__), array());
         
         RC_Style::enqueue_style('goods-colorpicker-style', RC_Uri::admin_url() . '/statics/lib/colorpicker/css/colorpicker.css');
         RC_Script::enqueue_script('goods-colorpicker-script', RC_Uri::admin_url('/statics/lib/colorpicker/bootstrap-colorpicker.js'), array());
-//         RC_Script::enqueue_script('article-tinymce-script', RC_Uri::vendor_url() . '/tinymce/tinymce.min.js', array(), false, true);
         RC_Script::enqueue_script('bootstrap-editable-script', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/js/bootstrap-editable.min.js', array(), false, true);
         RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css');
         RC_Script::enqueue_script('jquery-uniform');
@@ -75,9 +72,6 @@ class admin_gallery extends ecjia_admin {
         
         $img_list_sort = $img_list_id = array();
       	$no_picture = RC_Uri::admin_url('statics/images/nopic.png');
-//         if (substr($no_picture, 0, 1) == '.') {
-//         	$no_picture = str_replace('../', '', $no_picture);
-//         }
 
          /* 格式化相册图片路径 */
         if (!empty($img_list)) {

@@ -255,7 +255,6 @@
 							<!--{if $goods.review_status eq 5}-->无需审核<!-- {/if} -->
 						</span>
 					</td>
-					
 					<td>
 						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_sn')}" data-name="goods_edit_goods_sn" data-pk="{$goods.goods_id}" data-title="请输入商品货号">
 							{$goods.goods_sn} 

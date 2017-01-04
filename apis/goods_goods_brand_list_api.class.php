@@ -6,16 +6,13 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *
  */
 class goods_goods_brand_list_api extends Component_Event_Api {
-
     /**
      * @param  $options['keyword'] 关键字
      *
      * @return array
      */
 	public function call(&$options) {
-
 	   	$row = $this->brandlist($options);
-
 	    return $row;
 	}
 
@@ -45,7 +42,6 @@ class goods_goods_brand_list_api extends Component_Event_Api {
 				foreach ($result as $key => $rows) {
 					if (empty($rows['brand_logo'])) {
 						$rows['brand_logo'] = '';
-
 					} else {
 						if ((strpos($rows['brand_logo'], 'http://') === false) && (strpos($rows['brand_logo'], 'https://') === false)) {
 							$logo_url = RC_Upload::upload_url($rows['brand_logo']);
@@ -55,18 +51,14 @@ class goods_goods_brand_list_api extends Component_Event_Api {
 							$rows['brand_logo_html'] = "<img src='" . $rows['brand_logo'] . "' style='width:100px;height:100px;' />";
 						}
 					}
-
-
 					$site_url   = empty($rows['site_url']) ? 'N/A' : '<a href="'.$rows['site_url'].'" target="_brank">'.$rows['site_url'].'</a>';
 					$rows['site_url']   = $site_url;
 					$arr[] = $rows;
 				}
 			}
 		} else {
-			// $db = RC_Model::model('goods/merchants_shop_brand_viewmodel');
             $db = RC_Model::model('goods/brand_model');
 			/* 分页大小 */
-			// $where = array('user_id' => $_SESSION['store_id']);
             $brand = RC_DB::table('goods')->where('store_id', $_SESSION['store_id'])->selectRaw('distinct brand_id')->get();
             $brand = array_column($brand,'brand_id');
 
@@ -107,7 +99,6 @@ class goods_goods_brand_list_api extends Component_Event_Api {
 				}
 			}
 		}
-
 		return array('brand' => $arr, 'page' => $page);
 	}
 }

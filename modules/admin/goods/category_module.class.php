@@ -19,10 +19,10 @@ class category_module extends api_admin implements api_interface {
     	if (!empty($data)) {
     		foreach ($data as $key=>$value) {
     			$outdata[]=array(
-    					'cat_id' 	=>$value['cat_id'],
-    					'cat_name'	=>$value['cat_name'],
-    					'parent_id'	=>$value['parent_id'],
-    					'level'		=>$value['level']
+    				'cat_id' 	=>$value['cat_id'],
+    				'cat_name'	=>$value['cat_name'],
+    				'parent_id'	=>$value['parent_id'],
+    				'level'		=>$value['level']
     			);
     		}
     	}

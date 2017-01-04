@@ -40,7 +40,7 @@
 									<select name="cat_id">
 										<option value="0">{lang key='system::system.all_category'}</option>
 										<!-- {foreach from=$cat_list item=cat} -->
-										<option value="{$cat.cat_id}" {if $cat.cat_id == $smarty.get.cat_id}selected{/if} {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
+										<option value="{$cat.cat_id}" {if $cat.cat_id eq $smarty.get.cat_id}selected{/if} {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
 										<!-- {/foreach} -->
 									</select>
 								</div>

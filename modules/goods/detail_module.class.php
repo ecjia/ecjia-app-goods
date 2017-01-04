@@ -128,27 +128,27 @@ class detail_module extends api_front implements api_interface {
         					case 1 :
         						if (in_array($goods['cat_id'], $act_range_ext)) {
         							$favourable_list[] = array(
-        									'name' => $val['act_name'],
-        									'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-        									'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+        								'name' => $val['act_name'],
+        								'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+        								'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
         							);
         						}
         						break;
         					case 2 :
         						if (in_array($goods['brand_id'], $act_range_ext)) {
         							$favourable_list[] = array(
-        									'name' => $val['act_name'],
-        									'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-        									'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+        								'name' => $val['act_name'],
+        								'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+        								'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
         							);
         						}
         						break;
         					case 3 :
         						if (in_array($goods['goods_id'], $act_range_ext)) {
         							$favourable_list[] = array(
-        									'name' => $val['act_name'],
-        									'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
-        									'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
+        								'name' => $val['act_name'],
+        								'type' => $val['act_type'] == '1' ? 'price_reduction' : 'price_discount',
+        								'type_label' => $val['act_type'] == '1' ? __('满减') : __('满折'),
         							);
         						}
         						break;
@@ -156,7 +156,6 @@ class detail_module extends api_front implements api_interface {
         						break;
         				}
         			}
-
         		}
         	}
         }
@@ -184,16 +183,16 @@ class detail_module extends api_front implements api_interface {
         } else {
         	$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
         	$groupbuy = $mobilebuy_db->find(array(
-        			'goods_id'	 => $data['id'],
-        			'start_time' => array('elt' => RC_Time::gmtime()),
-        			'end_time'	 => array('egt' => RC_Time::gmtime()),
-        			'act_type'	 => GAT_GROUP_BUY,
+        		'goods_id'	 => $data['id'],
+        		'start_time' => array('elt' => RC_Time::gmtime()),
+        		'end_time'	 => array('egt' => RC_Time::gmtime()),
+        		'act_type'	 => GAT_GROUP_BUY,
         	));
         	$mobilebuy = $mobilebuy_db->find(array(
-        			'goods_id'	 => $data['id'],
-        			'start_time' => array('elt' => RC_Time::gmtime()),
-        			'end_time'	 => array('egt' => RC_Time::gmtime()),
-        			'act_type'	 => GAT_MOBILE_BUY,
+        		'goods_id'	 => $data['id'],
+        		'start_time' => array('elt' => RC_Time::gmtime()),
+        		'end_time'	 => array('egt' => RC_Time::gmtime()),
+        		'act_type'	 => GAT_MOBILE_BUY,
         	));
         	/* 判断是否有促销价格*/
         	$price = ($data['unformatted_shop_price'] > $goods['promote_price_org'] && $goods['promote_price_org'] > 0) ? $goods['promote_price_org'] : $data['unformatted_shop_price'];
@@ -241,12 +240,12 @@ class detail_module extends api_front implements api_interface {
 
         $location = $this->requestData('location', array());
         $options = array(
-       			'cat_id'	=> $data['cat_id'],
-        		'intro'		=> 'hot',
-       			'page'		=> 1,
-       			'size'		=> 8,
-        		'store_id'	=> $goods['store_id'],
-       			'location'	=> $location,
+       		'cat_id'	=> $data['cat_id'],
+        	'intro'		=> 'hot',
+       		'page'		=> 1,
+       		'size'		=> 8,
+        	'store_id'	=> $goods['store_id'],
+       		'location'	=> $location,
        	);
 
         //商品详情页猜你喜欢  api2.4功能
@@ -262,20 +261,20 @@ class detail_module extends api_front implements api_interface {
 				$saving_price = ($val['unformatted_shop_price'] > $val['unformatted_promote_price'] && $val['unformatted_promote_price'] > 0) ? $val['unformatted_shop_price'] - $val['unformatted_promote_price'] : (($val['unformatted_market_price'] > 0 && $val['unformatted_market_price'] > $val['unformatted_shop_price']) ? $val['unformatted_market_price'] - $val['unformatted_shop_price'] : 0);
 
 				$data['related_goods'][] = array(
-						'goods_id'		=> $val['goods_id'],
-						'name'			=> $val['name'],
-						'market_price'	=> $val['market_price'],
-						'shop_price'	=> $val['shop_price'],
-						'promote_price'	=> $val['promote_price'],
-						'img' => array(
-								'thumb'	=> $val['goods_img'],
-								'url'	=> $val['original_img'],
-								'small'	=> $val['goods_thumb']
-						),
-						'activity_type' => $activity_type,
-						'object_id'		=> 0,
-						'saving_price'	=>	$saving_price,
-						'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
+					'goods_id'		=> $val['goods_id'],
+					'name'			=> $val['name'],
+					'market_price'	=> $val['market_price'],
+					'shop_price'	=> $val['shop_price'],
+					'promote_price'	=> $val['promote_price'],
+					'img' => array(
+						'thumb'	=> $val['goods_img'],
+						'url'	=> $val['original_img'],
+						'small'	=> $val['goods_thumb']
+					),
+					'activity_type' 	=> $activity_type,
+					'object_id'			=> 0,
+					'saving_price'		=>	$saving_price,
+					'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
 				);
 			}
 		}
@@ -319,20 +318,20 @@ class detail_module extends api_front implements api_interface {
 
 
         	$data['merchant_info'] = array(
-        			'seller_id'			=> $info['store_id'],
-        			'seller_name'		=> $info['merchants_name'],
-        			'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
-        			'goods_count'		=> $goods_count,
-        	        'manage_mode'       => $info['manage_mode'],
-        			'follower'			=> $follower_count,
-        			'comment' 			=> array(
-        			    'comment_goods'		=> '100%',
-        			    'comment_server'	=> '100%',
-        			    'comment_delivery'	=> '100%',
-//         					'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
-//         					'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
-//         					'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
-        			)
+        		'seller_id'			=> $info['store_id'],
+        		'seller_name'		=> $info['merchants_name'],
+        		'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
+        		'goods_count'		=> $goods_count,
+        	   	'manage_mode'       => $info['manage_mode'],
+ 				'follower'			=> $follower_count,
+        		'comment' 			=> array(
+        			'comment_goods' 	=> '100%',
+        			'comment_server'	=> '100%',
+        			'comment_delivery'	=> '100%',
+// 					'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
+//         			'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
+//         			'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
+        		)
         	);
         }
         // $data['is_warehouse'] = null;
@@ -385,11 +384,11 @@ function EM_get_goods_gallery($goods_id) {
 function get_user_rank_prices($goods_id, $shop_price) {
     $dbview = RC_Model::model('user/user_rank_member_price_viewmodel');
     $dbview->view =array(
-    		'member_price' 	=> array(
-    				'type' 		=> Component_Model_View::TYPE_LEFT_JOIN,
-    				'alias' 	=> 'mp',
-    				'on' 		=> "mp.goods_id = '$goods_id' and mp.user_rank = r.rank_id "
-    		),
+    	'member_price' 	=> array(
+    		'type' 		=> Component_Model_View::TYPE_LEFT_JOIN,
+    		'alias' 	=> 'mp',
+    		'on' 		=> "mp.goods_id = '$goods_id' and mp.user_rank = r.rank_id "
+    	),
     );
 
     $res = $dbview->join(array('member_price'))->field("rank_id, IFNULL(mp.user_price, r.discount * $shop_price / 100) AS price, r.rank_name, r.discount")->where("r.show_price = 1 OR r.rank_id = '$_SESSION[user_rank]'")->select();
@@ -402,10 +401,8 @@ function get_user_rank_prices($goods_id, $shop_price) {
         	'unformatted_price' => number_format( $row['price'], 2, '.', '')
         );
     }
-
     return $arr;
 }
-
 
 /**
  * 取得跟商品关联的礼包列表
@@ -424,11 +421,12 @@ function get_package_goods_list($goods_id) {
 		'ga.end_time' => array('egt' => $now) ,
     	'pg.goods_id' => $goods_id
     );
-    $res = $dbview->join('package_goods')
-    			  ->where($where)
-    			  ->group('ga.act_id')
-    			  ->order(array('ga.act_id' => 'asc'))
-    			  ->select();
+    $res = $dbview
+    	->join('package_goods')
+    	->where($where)
+    	->group('ga.act_id')
+    	->order(array('ga.act_id' => 'asc'))
+    	->select();
 
     foreach ($res as $tempkey => $value) {
         $subtotal = 0;
@@ -440,10 +438,11 @@ function get_package_goods_list($goods_id) {
             }
         }
 
-        $goods_res = $dbview->join(array('goods','products','member_price'))
-        					->where(array('pg.package_id' => $value['act_id']))
-        					->order(array('pg.package_id' => 'asc', 'pg.goods_id' => 'asc'))
-        					->select();
+        $goods_res = $dbview
+        	->join(array('goods','products','member_price'))
+			->where(array('pg.package_id' => $value['act_id']))
+			->order(array('pg.package_id' => 'asc', 'pg.goods_id' => 'asc'))
+			->select();
 
         foreach ($goods_res as $key => $val) {
             $goods_id_array[] = $val['goods_id'];

@@ -45,8 +45,6 @@ class goods {
      * @return array
      */
     public static function goods_list($is_delete, $real_goods = 1, $conditions = '') {
-//     	$db = RC_Loader::load_app_model('goods_viewmodel', 'goods');
-        
         /* 过滤条件 */
         $param_str 	= '-' . $is_delete . '-' . $real_goods;
         $day 		= getdate();
@@ -287,8 +285,8 @@ class goods {
     	}
     
     	$db_goods = RC_DB::table('goods as g')
-    	->leftJoin('store_franchisee as s', RC_DB::raw('g.store_id'), '=', RC_DB::raw('s.store_id'))
-    	->where(RC_DB::raw('g.store_id'), $_SESSION['store_id']);
+    		->leftJoin('store_franchisee as s', RC_DB::raw('g.store_id'), '=', RC_DB::raw('s.store_id'))
+    		->where(RC_DB::raw('g.store_id'), $_SESSION['store_id']);
     
     	//筛选全部 已上架 未上架 商家
     	$filter_count = $db_goods
@@ -329,12 +327,12 @@ class goods {
     	$filter ['merchant'] 		= $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
     
     	$sql = $db_goods
-    	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.goods_thumb, g.is_on_sale, g.store_best, g.store_new, g.store_hot, g.store_sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name')
-    	->orderBy($filter ['sort_by'], $filter['sort_order'])
-    	->orderBy('goods_id', 'desc')
-    	->take(10)
-    	->skip($page->start_id-1)
-    	->get();
+	    	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.goods_thumb, g.is_on_sale, g.store_best, g.store_new, g.store_hot, g.store_sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name')
+	    	->orderBy($filter ['sort_by'], $filter['sort_order'])
+	    	->orderBy('goods_id', 'desc')
+	    	->take(10)
+	    	->skip($page->start_id-1)
+	    	->get();
     
     	$filter ['keyword'] = stripslashes($filter ['keyword']);
     	$filter ['count'] 	= $count;
@@ -351,10 +349,10 @@ class goods {
     	$row = $sql;
     
     	return array(
-    			'goods'		=> $row,
-    			'filter'	=> $filter,
-    			'page'		=> $page->show(2),
-    			'desc'		=> $page->page_desc()
+    		'goods'		=> $row,
+    		'filter'	=> $filter,
+    		'page'		=> $page->show(2),
+    		'desc'		=> $page->page_desc()
     	);
     }
 }

@@ -18,7 +18,7 @@ class goods_hooks {
 			$fields = "SUM(IF(goods_id>0,1,0)) as total,SUM(IF(is_new=1,1,0)) as new,SUM(IF(is_best=1,1,0)) as best,SUM(IF(is_hot=1,1,0)) as hot,SUM(IF(goods_number <= warn_number,1,0)) as warn_goods,SUM(IF(promote_price>0 and promote_start_date<=".$time." and promote_end_date>=".$time.",1,0)) as promote_goods";
 			$row = $db_goods ->field($fields)->where(array("is_delete"=>'0' , "is_real"=>'1'))->select();
 			
-			$goods['total'] 	= $row[0]['total'];
+			$goods['total'] 		= $row[0]['total'];
 			$goods['new_goods']		= $row[0]['new'];
 			$goods['new_goods_url'] = RC_Uri::url('goods/admin/init','intro_type=is_new');
 			$goods['best_goods']	= $row[0]['best'];

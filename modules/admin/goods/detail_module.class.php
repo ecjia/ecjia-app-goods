@@ -49,41 +49,40 @@ class detail_module extends api_admin implements api_interface {
 				$promote_price = 0;
 			}
 			$goods_detail = array(
-					'goods_id'	=> $row['goods_id'],
-					'name'		=> $row['goods_name'],
-					'goods_sn'	=> $row['goods_sn'],
-					'brand_name' 	=> $brand_name,
-					'category_name' => $category_name,
-					'market_price'	=> price_format($row['market_price'] , false),
-					'shop_price'	=> price_format($row['shop_price'] , false),
-					'promote_price'	=> $promote_price > 0 ? price_format($promote_price , false) : $promote_price,
-					'promote_start_date'	=> RC_Time::local_date('Y-m-d H:i:s', $row['promote_start_date']),
-					'promote_end_date'		=> RC_Time::local_date('Y-m-d H:i:s', $row['promote_end_date']),
-					'clicks'		=> intval($row['click_count']),
-					'stock'			=> (ecjia::config('use_storage') == 1) ? $row['goods_number'] : '',
-					'goods_weight'	=> $row['goods_weight']  = (intval($row['goods_weight']) > 0) ?
-										$row['goods_weight'] . __('千克') :
-										($row['goods_weight'] * 1000) . __('克'),
-					'is_promote'	=> $row['is_promote'] == 1 ? true : false,
-					'is_best'		=> $row['is_best'] == 1 ? true : false,
-					'is_new'		=> $row['is_new'] == 1 ? true : false,
-					'is_hot'		=> $row['is_hot'] == 1 ? true : false,
-					'is_shipping'	=> $row['is_shipping'] == 1 ? true : false,
-					'is_on_sale'	=> $row['is_on_sale'] == 1 ? true : false,
-					'is_alone_sale' => $row['is_alone_sale'] == 1 ? true : false,
-					'last_updatetime' => RC_Time::local_date(ecjia::config('time_format'), $row['last_update']),
-					'goods_desc' 	=> $goods_desc_url,
-					'img' => array(
-							'thumb'	=> !empty($row['goods_img']) ? RC_Upload::upload_url($row['goods_img']) : '',
-							'url'	=> !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : '',
-							'small'	=> !empty($row['goods_thumb']) ? RC_Upload::upload_url($row['goods_thumb']) : '',
-					),
-					'unformatted_shop_price'	=> $row['shop_price'],
-					'unformatted_market_price'	=> $row['market_price'],
-					'unformatted_promote_price'	=> $row['promote_price'],
-					'give_integral'				=> $row['give_integral'],
-					'rank_integral'				=> $row['rank_integral'],
-					'integral'					=> $row['integral'],
+				'goods_id'				=> $row['goods_id'],
+				'name'					=> $row['goods_name'],
+				'goods_sn'				=> $row['goods_sn'],
+				'brand_name' 			=> $brand_name,
+				'category_name' 		=> $category_name,
+				'market_price'			=> price_format($row['market_price'] , false),
+				'shop_price'			=> price_format($row['shop_price'] , false),
+				'promote_price'			=> $promote_price > 0 ? price_format($promote_price , false) : $promote_price,
+				'promote_start_date'	=> RC_Time::local_date('Y-m-d H:i:s', $row['promote_start_date']),
+				'promote_end_date'		=> RC_Time::local_date('Y-m-d H:i:s', $row['promote_end_date']),
+				'clicks'				=> intval($row['click_count']),
+				'stock'					=> (ecjia::config('use_storage') == 1) ? $row['goods_number'] : '',
+				'goods_weight'			=> $row['goods_weight']  = (intval($row['goods_weight']) > 0) ? $row['goods_weight'] . __('千克') : ($row['goods_weight'] * 1000) . __('克'),
+				'is_promote'			=> $row['is_promote'] == 1 ? true : false,
+				'is_best'				=> $row['is_best'] == 1 ? true : false,
+				'is_new'				=> $row['is_new'] == 1 ? true : false,
+				'is_hot'				=> $row['is_hot'] == 1 ? true : false,
+				'is_shipping'			=> $row['is_shipping'] == 1 ? true : false,
+				'is_on_sale'			=> $row['is_on_sale'] == 1 ? true : false,
+				'is_alone_sale'	 		=> $row['is_alone_sale'] == 1 ? true : false,
+				'last_updatetime' 		=> RC_Time::local_date(ecjia::config('time_format'), $row['last_update']),
+				'goods_desc' 			=> $goods_desc_url,
+				
+				'img' => array(
+					'thumb'	=> !empty($row['goods_img']) ? RC_Upload::upload_url($row['goods_img']) : '',
+					'url'	=> !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : '',
+					'small'	=> !empty($row['goods_thumb']) ? RC_Upload::upload_url($row['goods_thumb']) : '',
+				),
+				'unformatted_shop_price'	=> $row['shop_price'],
+				'unformatted_market_price'	=> $row['market_price'],
+				'unformatted_promote_price'	=> $row['promote_price'],
+				'give_integral'				=> $row['give_integral'],
+				'rank_integral'				=> $row['rank_integral'],
+				'integral'					=> $row['integral'],
 			);
 
 			RC_Loader::load_app_func('global', 'goods');
@@ -95,12 +94,12 @@ class detail_module extends api_admin implements api_interface {
 			$user_rank = get_rank_list();
 		    if(!empty($user_rank)){
 		    	foreach ($user_rank as $key=>$value){
-				    		$goods_detail['user_rank'][]=array(
-				    				'rank_id'	 => $value['rank_id'],
-				    				'rank_name'	 => $value['rank_name'],
-				    				'discount'	 => $value['discount'],
-				    			    'price'		 => !empty($discount_price[$value['rank_id']])?$discount_price[$value['rank_id']]:'-1',
-				    		);
+		    		$goods_detail['user_rank'][]=array(
+	    				'rank_id'	 => $value['rank_id'],
+	    				'rank_name'	 => $value['rank_name'],
+	    				'discount'	 => $value['discount'],
+	    			    'price'		 => !empty($discount_price[$value['rank_id']])?$discount_price[$value['rank_id']]:'-1',
+		    		);
 		    	}
 		    }
 		    $goods_detail['volume_number'] = array();
@@ -115,13 +114,11 @@ class detail_module extends api_admin implements api_interface {
 		    		);
 		    	}
 		    }
-
 			return $goods_detail;
 		}
-
 	}
-
 }
+
 /**
  * 判断某个商品是否正在特价促销期
  *

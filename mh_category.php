@@ -122,7 +122,6 @@ class mh_category extends ecjia_merchant {
 	 */
 	public function edit() {
 		$this->admin_priv('merchant_category_update', ecjia::MSGTYPE_JSON);
-// 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 
 		$cat_id = intval($_GET['cat_id']);
 		$cat_info = get_merchant_cat_info($cat_id);  // 查询分类信息数据
@@ -244,7 +243,6 @@ class mh_category extends ecjia_merchant {
 		$old_cat_name = RC_DB::table('merchants_category')->where('cat_id', $cat_id)->pluck('cat_name');
 		
 		RC_DB::table('goods')->where('merchant_cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->update($data);
-// 		RC_Cache::app_cache_delete('admin_category_list', 'goods');
 
 		ecjia_merchant::admin_log('从'.$old_cat_name.'转移到'.$new_cat_name, 'move', 'category_goods');
 		

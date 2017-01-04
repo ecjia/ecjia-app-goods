@@ -318,12 +318,12 @@ function warehouse_get_goods_properties($goods_id) {
 	/* 对属性进行重新排序和分组 */
 
 	$db_good_type->view = array (
-			'goods' => array (
-					'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-					'alias' => 'g',
-					'field' => 'attr_group',
-					'on' 	=> 'gt.cat_id = g.goods_type'
-			)
+		'goods' => array (
+			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+			'alias' => 'g',
+			'field' => 'attr_group',
+			'on' 	=> 'gt.cat_id = g.goods_type'
+		)
 	);
 
 	$grp = $db_good_type->find ( array (
@@ -336,12 +336,12 @@ function warehouse_get_goods_properties($goods_id) {
 
 	/* 获得商品的规格 */
 	$db_good_attr->view = array (
-			'attribute' => array (
-					'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-					'alias'    => 'a',
-					'field'    => 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price',
-					'on'       => 'a.attr_id = ga.attr_id'
-			)
+		'attribute' => array (
+			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
+			'alias'    => 'a',
+			'field'    => 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price',
+			'on'       => 'a.attr_id = ga.attr_id'
+		)
 	);
 
 	$res = $db_good_attr->where(array('ga.goods_id' => $goods_id))->order(array('a.sort_order' => 'asc','ga.attr_price' => 'asc','ga.goods_attr_id' => 'asc'))->select();
@@ -392,7 +392,6 @@ function warehouse_get_goods_properties($goods_id) {
 function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $sort, $order) {
 	/* 获得商品列表 */
 	$dbview = RC_Model::model('goods/goods_member_viewmodel');
-	// 	$display = $GLOBALS['display'];//TODO:列表布局，暂且注释
 	$display = '';
 	$where = array(
 			'g.is_on_sale' => 1,
@@ -478,15 +477,6 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
  */
 function get_brands($cat = 0, $app = 'brand') {
 	$db = RC_Model::model ('goods/brand_viewmodel');
-	// 	TODO:暂api用，不考虑调用模版配置文件
-	//  	$template = basename (PHP_SELF);
-	//  	$template = substr ($template, 0, strrpos ( $template, '.' ));
-
-	//  	static $static_page_libs = null;
-	//  	if ($static_page_libs == null) {
-	//  		$static_page_libs = $page_libs;
-	//  	}
-
 	$children[] = ($cat > 0) ? get_children ( $cat ) : '';
 	$db->view = array (
 		'goods' => array(
@@ -501,11 +491,6 @@ function get_brands($cat = 0, $app = 'brand') {
 	$where['g.is_alone_sale'] = 1;
 	$where['g.is_delete'] = 0;
 	array_merge($where,$children);
-	// 	TODO:暂api用，不考虑调用模版配置文件
-	//  	if (isset ( $static_page_libs [$template] ['/library/brands.lbi'] )) {
-	//  		$num = get_library_number ( "brands" );
-	//  		$sql .= " LIMIT $num ";
-	//  	}
 	$row = $db->join('goods')->where($where)->group('b.brand_id')->having('goods_num > 0')->order(array('tag'=>'desc','b.sort_order'=>'asc'))->limit(3)->select();
 
 	if (! empty ( $row )) {
@@ -966,11 +951,11 @@ function check_goods_specifications_exist($goods_id) {
 	$dbview = RC_Model::model('goods/attribute_goods_viewmodel');
 	$goods_id = intval($goods_id);
 	$dbview->view = array(
-			'goods' => array(
-					'type'	=> Component_Model_View::TYPE_LEFT_JOIN,
-					'alias'	=> 'g',
-					'on' 	=> 'a.cat_id = g.goods_type'
-			)
+		'goods' => array(
+			'type'	=> Component_Model_View::TYPE_LEFT_JOIN,
+			'alias'	=> 'g',
+			'on' 	=> 'a.cat_id = g.goods_type'
+		)
 	);
 	$count = $dbview->where(array('g.goods_id' => $goods_id))->count('a.attr_id');
 	if ($count > 0) {

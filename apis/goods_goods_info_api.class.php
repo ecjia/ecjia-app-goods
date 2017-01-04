@@ -6,7 +6,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *
  */
 class goods_goods_info_api extends Component_Event_Api {
-	
     /**
      * @param  $options['keyword'] 关键字
      *         $options['cat_id'] 分类id
@@ -19,9 +18,7 @@ class goods_goods_info_api extends Component_Event_Api {
 	        && !isset($options['id'])) {
 	        return new ecjia_error('invalid_parameter', '参数无效');
 	    }
-
 	   	$row = $this->get_goods_info($options['id']);
-	    
 	    return $row;
 	}
 	
@@ -35,37 +32,35 @@ class goods_goods_info_api extends Component_Event_Api {
 	private function get_goods_info($goods_id) {
 		$db_goods = RC_Model::model('goods/goods_viewmodel');
 		RC_Loader::load_app_func('global', 'goods');
-		$time = RC_Time::gmtime ();
+		$time = RC_Time::gmtime();
 		$db_goods->view = array (
 			'category' => array(
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'c',
-				'field'    => "g.*, c.measure_unit, b.brand_id, b.brand_name AS goods_brand, m.type_money AS bonus_money,IFNULL(AVG(r.comment_rank), 0) AS comment_rank,IFNULL(mp.user_price, g.shop_price * '".$_SESSION['discount']."') AS rank_price",
-				'on'       => 'g.cat_id = c.cat_id' 
-				),
+				'type'	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'	=> 'c',
+				'field'	=> "g.*, c.measure_unit, b.brand_id, b.brand_name AS goods_brand, m.type_money AS bonus_money,IFNULL(AVG(r.comment_rank), 0) AS comment_rank,IFNULL(mp.user_price, g.shop_price * '".$_SESSION['discount']."') AS rank_price",
+				'on'	=> 'g.cat_id = c.cat_id' 
+			),
 			'brand' => array(
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'b',
-				'on'       => 'g.brand_id = b.brand_id ' 
-				),
+				'type'	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'	=> 'b',
+				'on'	=> 'g.brand_id = b.brand_id ' 
+			),
 			'comment' => array(
-				'type' => Component_Model_View::TYPE_LEFT_JOIN,
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 				'alias' => 'r',
-				'on' => 'r.id_value = g.goods_id AND comment_type = 0 AND r.parent_id = 0 AND r.status = 1' 
-				),
+				'on' 	=> 'r.id_value = g.goods_id AND comment_type = 0 AND r.parent_id = 0 AND r.status = 1' 
+			),
 			'bonus_type' => array(
-				'type' => Component_Model_View::TYPE_LEFT_JOIN,
+				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
 				'alias' => 'm',
-				'on' => 'g.bonus_type_id = m.type_id AND m.send_start_date <= "' . $time . '" AND m.send_end_date >= "' . $time . '"' 
-				),
-			'member_price'   => array(
-				'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-				'alias'    => 'mp',
-				'on'       => 'mp.goods_id = g.goods_id AND mp.user_rank = "' . $_SESSION['user_rank'] . '"' 
-				) 
-			);
-	
-	
+				'on' 	=> 'g.bonus_type_id = m.type_id AND m.send_start_date <= "' . $time . '" AND m.send_end_date >= "' . $time . '"' 
+			),
+			'member_price' => array(
+				'type'	=> Component_Model_View::TYPE_LEFT_JOIN,
+				'alias'	=> 'mp',
+				'on'  	=> 'mp.goods_id = g.goods_id AND mp.user_rank = "' . $_SESSION['user_rank'] . '"' 
+			) 
+		);
 		$row = $db_goods->group('g.goods_id')->find(array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
 		
 		if ($row !== false) {
@@ -85,7 +80,6 @@ class goods_goods_info_api extends Component_Event_Api {
 			
 			/* 处理商品水印图片 */
 			$watermark_img = '';
-			
 			if ($promote_price != 0) {
 				$watermark_img = "watermark_promote";
 			} elseif ($row['is_new'] != 0) {
@@ -161,12 +155,10 @@ class goods_goods_info_api extends Component_Event_Api {
 				'alias' => 'g',
 				'field' => 'attr_group',
 				'on' 	=> 'gt.cat_id = g.goods_type' 
-				) 
-			);
+			) 
+		);
 		
-		$grp = $db_good_type->find ( array (
-			'g.goods_id' => $goods_id 
-			) );
+		$grp = $db_good_type->find(array('g.goods_id' => $goods_id));
 		$grp = $grp ['attr_group'];
 		if (! empty ( $grp )) {
 			$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
@@ -179,8 +171,8 @@ class goods_goods_info_api extends Component_Event_Api {
 				'alias'    => 'a',
 				'field'    => 'a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ga.goods_attr_id, ga.attr_value, ga.attr_price',
 				'on'       => 'a.attr_id = ga.attr_id' 
-				) 
-			);
+			) 
+		);
 		
 		$res = $db_good_attr->where(array('ga.goods_id' => $goods_id))->order(array('a.sort_order' => 'asc','ga.attr_price' => 'asc','ga.goods_attr_id' => 'asc'))->select();
 		$arr ['pro'] = array (); // 属性
@@ -227,15 +219,14 @@ class goods_goods_info_api extends Component_Event_Api {
 	private function get_user_rank_prices($goods_id, $shop_price) {
 	    $dbview = RC_Model::model('user/user_rank_member_price_viewmodel');
 	    $dbview->view =array(
-	    		'member_price' 	=> array(
-	    				'type' 		=> Component_Model_View::TYPE_LEFT_JOIN,
-	    				'alias' 	=> 'mp',
-	    				'on' 		=> "mp.goods_id = '$goods_id' and mp.user_rank = r.rank_id "
-	    		),
+    		'member_price' 	=> array(
+ 				'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+    			'alias' => 'mp',
+    			'on' 	=> "mp.goods_id = '$goods_id' and mp.user_rank = r.rank_id "
+    		),
 	    );
 	    
 	    $res = $dbview->join(array('member_price'))->field("rank_id, IFNULL(mp.user_price, r.discount * $shop_price / 100) AS price, r.rank_name, r.discount")->where("r.show_price = 1 OR r.rank_id = '$_SESSION[user_rank]'")->select();
-	    
 	    $arr = array();
 	    foreach ($res as $row) {
 	        $arr[$row['rank_id']] = array(
@@ -245,7 +236,6 @@ class goods_goods_info_api extends Component_Event_Api {
 	        	'unformatted_price' => number_format( $row['price'], 2, '.', '')
 	        );
 	    }
-	    
 	    return $arr;
 	}
 	
@@ -256,8 +246,7 @@ class goods_goods_info_api extends Component_Event_Api {
 	 * @param   integer     $goods_id
 	 * @return  array
 	 */
-	private function get_goods_gallery($goods_id)
-	{
+	private function get_goods_gallery($goods_id) {
 	    $db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
 	    $row = $db_goods_gallery->field('img_id, img_url, thumb_url, img_desc, img_original')->where(array('goods_id' => $goods_id))->limit(ecjia::config('goods_gallery_number'))->select();
 	    $img = array();

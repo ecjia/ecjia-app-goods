@@ -17,7 +17,6 @@ class goods_get_goods_category_api extends Component_Event_Api {
 	   	return $this->categorylist($cat_id, $selected, $re_type, $level, $is_show_all);
 	}
 	
-	
 	/**
 	 * 获得指定分类下的子分类的数组
 	 *

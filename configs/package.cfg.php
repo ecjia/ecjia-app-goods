@@ -1,10 +1,9 @@
 <?php
+defined('IN_ECJIA') or exit('No permission resources.');
 
 /**
  * 商品应用
  */
-defined('IN_ECJIA') or exit('No permission resources.');
-
 return array(
     'identifier'    => 'ecjia.goods',
     'directory'     => 'goods',

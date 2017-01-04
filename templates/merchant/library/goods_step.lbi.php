@@ -12,7 +12,7 @@
 			<li>
 				<div class="{if $step eq '2'}step-cur{elseif $step gt '2'}step-done{/if}">
 					<div class="step-no">{if $step lt '3'}2{/if}</div>
-					<div class="m_t5">基本信息</div>
+					<div class="m_t5">{lang key='goods::goods.basic_info'}</div>
 				</div>
 			</li>
 			<li>

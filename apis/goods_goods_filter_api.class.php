@@ -6,7 +6,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *
  */
 class goods_goods_filter_api extends Component_Event_Api {
-
 	private $children = '';
 	private $cat = array();
     /**
@@ -41,17 +40,13 @@ class goods_goods_filter_api extends Component_Event_Api {
 	    $attr_filter		= $this->attr_filter($options);
 
 	    $filter =  array(
-	    		'category_filter' => $category_filter,
-	    		'brands_filter' => $brands_filter,
-	    		'price_filter'	=> $price_filter,
-	    		'attr_filter'	=> $attr_filter,
+    		'category_filter' => $category_filter,
+    		'brands_filter' => $brands_filter,
+    		'price_filter'	=> $price_filter,
+    		'attr_filter'	=> $attr_filter,
 	    );
-
-
 	    return $filter;
 	}
-
-
 	/**
 	 * 属性筛选
 	 * @param   object  $filters    过滤条件
@@ -60,16 +55,16 @@ class goods_goods_filter_api extends Component_Event_Api {
 		$db_attribute_view = RC_Model::model('goods/attribute_viewmodel');
 		$db_goods_view = RC_Model::model ('goods/goods_viewmodel');
 		$db_attribute_view->view =array(
-				'goods_attr' => array(
-						'type'  => Component_Model_View::TYPE_INNER_JOIN,
-						'alias' => 'ga',
-						'on'    => 'ga.attr_id = a.attr_id'
-				),
-				'goods' => array (
-						'type' 	=> Component_Model_View::TYPE_INNER_JOIN,
-						'alias' => 'g',
-						'on' 	=> 'ga.goods_id = g.goods_id'
-				)
+			'goods_attr' => array(
+				'type'  => Component_Model_View::TYPE_INNER_JOIN,
+				'alias' => 'ga',
+				'on'    => 'ga.attr_id = a.attr_id'
+			),
+			'goods' => array (
+				'type' 	=> Component_Model_View::TYPE_INNER_JOIN,
+				'alias' => 'g',
+				'on' 	=> 'ga.goods_id = g.goods_id'
+			)
 		);
 
 		$cat = $this->cat;
@@ -87,27 +82,19 @@ class goods_goods_filter_api extends Component_Event_Api {
         	}
 			$where[] = '('.$this->children.' OR '.goods_category::get_extension_goods($this->children).')';
 			foreach ($cat_filter_attr AS $key => $value) {
-
 				$where['a.attr_id'] = $value;
-				$temp_name = $db_attribute_view->join(array('goods_attr', 'goods'))
-											->where($where)
-											->get_field('attr_name');
-
-
+				$temp_name = $db_attribute_view->join(array('goods_attr', 'goods'))->where($where)->get_field('attr_name');
 				if (!empty($temp_name)) {
 					$all_attr_list[$key]['filter_attr_name'] = $temp_name;
 
 					$field = 'a.attr_id, MIN(a.goods_attr_id ) AS goods_id, a.attr_value AS attr_value';
-
 					$attr_list = $db_goods_view->join('goods_attr')->field($field)->where($where)->group('a.attr_value')->select();
-
 					$temp_arrt_url_arr = array();
 
 					//获取当前url中已选择属性的值，并保留在数组中
 					for ($i = 0; $i < count($cat_filter_attr); $i++) {
 						$temp_arrt_url_arr[$i] = !empty($filter_attr[$i]) ? $filter_attr[$i] : 0;
 					}
-
 					foreach ($attr_list as $k => $v) {
 // 						$temp_key = $k + 1;
 						$temp_arrt_url_arr[$key] = $v['goods_id'];       //为url中代表当前筛选属性的位置变量赋值,并生成以‘.’分隔的筛选属性字符串
@@ -161,7 +148,6 @@ class goods_goods_filter_api extends Component_Event_Api {
 				->select();
 		if (!empty($brands_filter)) {
 			foreach ($brands_filter AS $key => $val) {
-
 				$brands_filter[$key]['url'] = build_uri('category', array('cid' => $options['cat_id'], 'bid' => $val['brand_id'], 'price_min'=> $options['price_min'], 'price_max'=> $options['price_max'], 'filter_attr' => $options['filter_attr_str']), $this->cat['cat_name']);
 
 				/* 判断品牌是否被选中 */
@@ -171,13 +157,12 @@ class goods_goods_filter_api extends Component_Event_Api {
 					$brands_filter[$key]['selected'] = 0;
 				}
 			}
-
 			//“全部”的信息生成
 			array_unshift($brands_filter, array(
-												'brand_id'	 => 0,
-												'brand_name' => __('全部'),
-												'url'		 => build_uri('category', array('cid' => $options['cat_id'], 'bid' => 0, 'price_min'=> $options['price_min'], 'price_max'=> $options['price_max'], 'filter_attr'=> $options['filter_attr_str']), $this->cat['cat_name']),
-												'selected'	 => empty($options['brand']) ? 1 : 0,
+				'brand_id'	 => 0,
+				'brand_name' => __('全部'),
+				'url'		 => build_uri('category', array('cid' => $options['cat_id'], 'bid' => 0, 'price_min'=> $options['price_min'], 'price_max'=> $options['price_max'], 'filter_attr'=> $options['filter_attr_str']), $this->cat['cat_name']),
+				'selected'	 => empty($options['brand']) ? 1 : 0,
 			));
 		}
 		return $brands_filter;
@@ -255,10 +240,10 @@ class goods_goods_filter_api extends Component_Event_Api {
 
 
         	$price_grade = $db_goods->join(null)
-        						->field('(FLOOR((g.shop_price - '.$row['min'].') / '.$dx.')) AS sn, COUNT(*) AS goods_num')
-        						->where($where)
-        						->group('sn')
-        						->select();
+				->field('(FLOOR((g.shop_price - '.$row['min'].') / '.$dx.')) AS sn, COUNT(*) AS goods_num')
+				->where($where)
+				->group('sn')
+				->select();
 
         	foreach ($price_grade as $key => $val) {
         		$price_grade[$key]['goods_num'] = $val['goods_num'];
@@ -280,13 +265,12 @@ class goods_goods_filter_api extends Component_Event_Api {
 
         	//“全部”的信息生成
         	array_unshift($price_grade, array(
-								        	'start'	 => 0,
-								        	'end'	 => 0,
-								        	'price_range' => __('全部'),
-								        	'url'		 => build_uri('category', array('cid'=>$options['cat_id'], 'bid'=> $options['brand_id'], 'price_min'=>0, 'price_max'=> 0, 'filter_attr' => $options['filter_attr_str']), $this->cat['cat_name']),
-								        	'selected'	 => empty($price_max) ? 1 : 0,
+	        	'start'	 => 0,
+	        	'end'	 => 0,
+	        	'price_range' => __('全部'),
+	        	'url'		 => build_uri('category', array('cid'=>$options['cat_id'], 'bid'=> $options['brand_id'], 'price_min'=>0, 'price_max'=> 0, 'filter_attr' => $options['filter_attr_str']), $this->cat['cat_name']),
+	        	'selected'	 => empty($price_max) ? 1 : 0,
         	));
-
 			return $price_grade;
 		}
 	}

@@ -3,10 +3,8 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA后台商品菜单API
  */
-class goods_admin_menu_api extends Component_Event_Api
-{
-	public function call(&$options)
-	{
+class goods_admin_menu_api extends Component_Event_Api {
+	public function call(&$options) {
 		$menus = ecjia_admin::make_admin_menu('02_cat_and_goods',RC_Lang::get('goods::goods.goods_manage'), '', 2);
 		$submenus = array(
 			ecjia_admin::make_admin_menu('01_goods_list', RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init'), 1)->add_purview(array('goods_manage')),

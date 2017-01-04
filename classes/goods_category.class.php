@@ -232,34 +232,10 @@ class goods_category {
     	 * 如果是取出底级分类上级分类，
     	 * 如果不是取当前分类及其下的子分类
     	 */
-    	
     	$get_child_tree = self::get_child_tree ($parent_id);
     	
     	$cat_arr = $get_child_tree;
     	return $cat_arr;
-    	
-//     	$count = $db_category->where(array('parent_id' => $parent_id, 'is_show' => 1))->count();
-//     	if ($count || $parent_id == 0) {
-//     		$db_category_view = RC_Loader::load_app_model ('category_viewmodel', 'goods');
-    		
-//     		/* 获取当前分类及其子分类 */
-//     		$res = $db_category_view->field('c.cat_id, c.cat_name, c.parent_id, c.is_show, c.category_img')->where(array('parent_id' => $parent_id, 'is_show' => 1))->order( array ('sort_order'=> 'asc', 'cat_id'=> 'asc'))->select();
-//     		foreach ( $res as $row ) {
-//     			if ($row ['is_show']) {
-//     				$cat_arr [$row ['cat_id']] ['id'] = $row ['cat_id'];
-//     				$cat_arr [$row ['cat_id']] ['name'] = $row ['cat_name'];
-//     				$cat_arr [$row ['cat_id']] ['img'] = empty($row['category_img']) ? '' : RC_Upload::upload_url($row['category_img']);
-// //     				$cat_arr [$row ['cat_id']] ['url'] = build_uri ( 'category', array ('cid' => $row ['cat_id']), $row ['cat_name'] );
-    
-//     				if (isset ( $row ['cat_id'] ) != NULL) {
-//     					$cat_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ($parent_id);
-//     				}
-//     			}
-//     		}
-//     	}
-//     	if (isset ( $cat_arr )) {
-//     		return $cat_arr;
-//     	}
     }
     
     private static function get_child_tree($tree_id = 0) {
@@ -278,9 +254,6 @@ class goods_category {
 			foreach ( $res as $row ) {
 				$three_arr [$row ['cat_id']] ['id']		= $row ['cat_id'];
 				$three_arr [$row ['cat_id']] ['name']	= $row ['cat_name'];
-//				$three_arr [$row ['cat_id']] ['url']	= build_uri ( 'category', array (
-// 																	'cid' => $row ['cat_id']
-// 														), $row ['cat_name'] );
     			if (isset ( $row ['cat_id'] ) != NULL) {
     				$three_arr [$row ['cat_id']] ['cat_id'] = self::get_child_tree ( $row ['cat_id'] );
     			}

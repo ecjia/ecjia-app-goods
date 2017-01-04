@@ -49,7 +49,6 @@ class admin extends ecjia_admin {
 		RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/product.js', __FILE__), array());
 		RC_Style::enqueue_style('goods-colorpicker-style', RC_Uri::admin_url() . '/statics/lib/colorpicker/css/colorpicker.css');
 		RC_Script::enqueue_script('goods-colorpicker-script', RC_Uri::admin_url('/statics/lib/colorpicker/bootstrap-colorpicker.js'), array());
-// 		RC_Script::enqueue_script('article-tinymce-script', RC_Uri::vendor_url() . '/tinymce/tinymce.min.js', array(), false, true);
 		RC_Script::enqueue_script('bootstrap-editable-script', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/js/bootstrap-editable.min.js', array(), false, true);
 		RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css');
 		RC_Script::enqueue_script('jquery-uniform');
@@ -60,7 +59,6 @@ class admin extends ecjia_admin {
 		RC_Script::enqueue_script('ecjia-region', RC_Uri::admin_url('statics/ecjia.js/ecjia.region.js'), array('jquery'), false, true);
 
 		RC_Script::localize_script('goods_list', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
-// 		RC_Script::localize_script('product', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
 		RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
 		
 		RC_Loader::load_app_class('goods', 'goods', false);
@@ -116,7 +114,6 @@ class admin extends ecjia_admin {
 		$use_storage = ecjia::config('use_storage');
 		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
 		
-		// $seller_id = empty($_GET['seller_id']) ? 0 : $_GET['seller_id'];
 		$goods_list = goods::goods_list(0, 1);
 
 		$this->assign('goods_list', $goods_list);
@@ -156,7 +153,6 @@ class admin extends ecjia_admin {
 		$this->assign('action_linkedit', array('text' => RC_Lang::get('goods::goods.goods_edit'), 'href' => RC_Uri::url('goods/admin/edit', array('goods_id' => $goods_id))));
 		$this->assign('action_link', array('text' => RC_Lang::get('goods::goods.goods_list'), 'href' => RC_Uri::url('goods/admin/init')));
 		
-// 		$goods = $this->db_goods->where("goods_id='".$goods_id."' or goods_sn='".$goods_id."'")->find();
 		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->orWhere('goods_sn', $goods_id)->first();
 
 		if (empty($goods)) {
@@ -179,14 +175,6 @@ class admin extends ecjia_admin {
 		
 		//商家名称
 		$merchants_name = RC_DB::table('store_franchisee')->where('store_id', $goods['store_id'])->pluck('merchants_name');
-
-// 		if (!file_exists(RC_Upload::upload_path($goods['goods_thumb'])) || empty($goods['goods_thumb'])) {
-// 			$goods['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
-// 			$goods['goods_img'] = RC_Uri::admin_url('statics/images/nopic.png');
-// 		} else {
-// 			$goods['goods_thumb'] = RC_Upload::upload_url($goods['goods_thumb']);
-// 			$goods['goods_img'] = RC_Upload::upload_url($goods['goods_img']);
-// 		}
 		
 		//添加和更新时间
 		if (!empty($goods['add_time'])) {
@@ -305,7 +293,6 @@ class admin extends ecjia_admin {
 		);
 		
 		/* 商品信息 */
-// 		$goods = $this->db_goods->goods_find(array('goods_id' => $_REQUEST['goods_id']));
 		$goods = RC_DB::table('goods')->where('goods_id', $_GET['goods_id'])->first();
 		if (empty($goods)) {
 			return $this->showmessage(RC_Lang::get('goods::goods.no_goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => RC_Lang::get('goods::goods.return_last_page'), 'href' => 'javascript:history.go(-1)'))));
@@ -390,31 +377,10 @@ class admin extends ecjia_admin {
 				}
 			}
 		}
-
-// 		$data_term_meta = $this->db_term_meta->field('meta_id, meta_key, meta_value')->where(array('object_id' => $goods['goods_id'], 'object_type' => 'ecjia.goods', 'object_group' => 'goods'))->select();
-// 		$term_meta_key_list = $this->db_term_meta->field('meta_key')->where(array('object_id' => $goods['goods_id'], 'object_type' => 'ecjia.goods', 'object_group'	=> 'goods'))->group('meta_key')->select();
-		
-		$data_term_meta = RC_DB::table('term_meta')
-			->select('meta_id', 'meta_key', 'meta_value')
-			->where('object_id', $goods['goods_id'])
-			->where('object_type', 'ecjia.goods')
-			->where('object_group', 'goods')
-			->get();
-
-		$term_meta_key_list = RC_DB::table('term_meta')
-			->select('meta_key')
-			->where('object_id', $goods['goods_id'])
-			->where('object_type', 'ecjia.goods')
-			->where('object_group', 'goods')
-			->groupBy('meta_key')
-			->get();
 		
 		//设置选中状态,并分配标签导航
 		$this->assign('action', 			ROUTE_A);
 		$this->assign('tags', 				$this->tags);
-		
-		$this->assign('data_term_meta', 	$data_term_meta);
-		$this->assign('term_meta_key_list', $term_meta_key_list);
 
 		$this->assign('goods', 				$goods);
 		$this->assign('goods_name_color', 	$goods_name_style[0]);
@@ -457,7 +423,6 @@ class admin extends ecjia_admin {
 
 		/* 检查货号是否重复 */
 		if (trim($_POST['goods_sn'])) {
-// 			$count = $this->db_goods->where(array('goods_sn' => $_POST['goods_sn'], 'is_delete' => 0, 'goods_id' => array('neq' => $goods_id)))->count();
 			$count = RC_DB::table('goods')->where('goods_sn', trim($_POST['goods_sn']))->where('is_delete', 0)->where('goods_id', '!=', $goods_id)->count();
 			if ($count > 0) {
 				return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -529,12 +494,12 @@ class admin extends ecjia_admin {
 		$goods_number 	= isset($_POST['goods_number']) 	? $_POST['goods_number'] 	: 0;
 		$warn_number 	= isset($_POST['warn_number']) 		? $_POST['warn_number'] 	: 0;
 		
-// 		$goods_type = isset($_POST['goods_type']) ? $_POST['goods_type'] : 0;
+// 		$goods_type 	= isset($_POST['goods_type']) 		? $_POST['goods_type'] 				: 0;
 		$give_integral	= isset($_POST['give_integral']) 	? intval($_POST['give_integral']) 	: '-1';
 		$rank_integral 	= isset($_POST['rank_integral']) 	? intval($_POST['rank_integral']) 	: '-1';
 		$suppliers_id 	= isset($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
-// 		$goods_name_style = $_POST['goods_name_color'] . '+' . $_POST['goods_name_style'];
+// 		$goods_name_style 	= $_POST['goods_name_color'] . '+' . $_POST['goods_name_style'];
 		$goods_name 		= htmlspecialchars($_POST['goods_name']);
 		$goods_name_style 	= htmlspecialchars($_POST['goods_name_color']);
 		
@@ -581,7 +546,6 @@ class admin extends ecjia_admin {
 		  	'is_shipping'		   		=> $is_shipping,
 		  	'last_update'		   		=> RC_Time::gmtime(),
 		);
-// 		$this->db_goods->goods_update(array('goods_id' => $goods_id), $data);
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 		/* 记录日志 */
 		ecjia_admin::admin_log($_POST['goods_name'], 'edit', 'goods');
@@ -700,7 +664,6 @@ class admin extends ecjia_admin {
 			return $this->showmessage(RC_Lang::get('goods::goods.pls_choose_operate'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		$goods_id = explode(',', $goods_id);
-// 		$data = $this->db_goods->field('goods_name')->in(array('goods_id' => $goods_id))->select();
 		$data = RC_DB::table('goods')->select('goods_name')->whereIn('goods_id', $goods_id)->get();
 		
 		if (isset($_GET['type'])) {
@@ -849,7 +812,6 @@ class admin extends ecjia_admin {
 		$goods_id = intval($_POST['pk']);
 		$goods_name = trim($_POST['value']);
         if (!empty($goods_name)) {
-//         	$this->db_goods->where(array('goods_id' => $goods_id))->update(array('goods_name' => $goods_name, 'last_update' => RC_Time::gmtime()));
         	RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('goods_name' => $goods_name, 'last_update' => RC_Time::gmtime()));
         	/* 释放app缓存*/
         	$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
@@ -886,19 +848,16 @@ class admin extends ecjia_admin {
 
 		/* 检查是否重复 */
 		if ($goods_sn) {
-// 			$count = $this->db_goods->is_only(array('goods_sn' => $goods_sn, 'goods_id' => array('neq' => $goods_id)));
 			$count = RC_DB::table('goods')->where('goods_sn', $goods_sn)->where('goods_id', '!=', $goods_id)->count();
 			if ($count > 0) {
 				return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
 		}
-// 		$query = $this->db_products->where(array('product_sn' => $goods_sn))->get_field('goods_id');
 		$query = RC_DB::table('products')->where('product_sn', $goods_sn)->pluck('goods_id');
 
 		if ($query > 0) {
 			return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-// 		$this->db_goods->where(array('goods_id' => $goods_id))->update(array('goods_sn' => $goods_sn, 'last_update' => RC_Time::gmtime()));
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('goods_sn' => $goods_sn, 'last_update' => RC_Time::gmtime()));
 		/* 释放app缓存*/
 		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
@@ -925,7 +884,6 @@ class admin extends ecjia_admin {
 		$goods_id = intval($_REQUEST['goods_id']);
 		$goods_sn = htmlspecialchars(trim($_REQUEST['goods_sn']));
 
-// 		$query_goods_sn = $this->db_goods->where(array('goods_sn' => $goods_sn,'goods_id' => array('neq' => $goods_id)))->get_field('goods_id');
 		$query_goods_sn = RC_DB::table('goods')->where('goods_sn', $goods_sn)->where('goods_id', '!=', $goods_id)->pluck('goods_id');
 		
 		if ($query_goods_sn) {
@@ -933,7 +891,6 @@ class admin extends ecjia_admin {
 		}
 		/* 检查是否重复 */
 		if (!empty($goods_sn)) {
-// 			$query = $this->db_products->products_field(array('product_sn' => $goods_sn), 'goods_id');
 			$query = RC_DB::table('products')->where('product_sn', $goods_sn)->pluck('goods_id');
 			if ($query) {
 				return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -960,7 +917,6 @@ class admin extends ecjia_admin {
 		if ($goods_price < 0 || $goods_price == 0 && $_POST['val'] != "$goods_price") {
 			return $this->showmessage(RC_Lang::get('goods::goods.shop_price_invalid'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} else {
-// 			$this->db_goods->where(array('goods_id' => $goods_id))->update($data);
 			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 			/* 释放app缓存*/
 			$goods_db = RC_Model::model('goods/orm_goods_model');
@@ -1118,7 +1074,6 @@ class admin extends ecjia_admin {
         $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 
     	$goods_id = intval($_GET['id']);
-//     	$goods_name = $this->db_goods->goods_field(array('goods_id' => $goods_id), 'goods_name');
     	$goods_name = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('goods_name');
 
     	RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('is_delete' => 1));
@@ -1205,17 +1160,10 @@ class admin extends ecjia_admin {
         
         $db_goods = RC_DB::table('goods')->where('goods_id', $goods_id);
 		// 过滤商品id
-//         $where = array('goods_id'  => $goods_id);
         if (isset($_SESSION['ru_id'])) {
         	$where['user_id'] = $_SESSION['ru_id'];
         	$db_goods->where('user_id', $_SESSION['ru_id']);
         }
-// 		$count = $this->db_goods->where($where)->count();
-// 		$count = $db_goods->count();
-// 		if (empty($count)){
-// 			return $this->showmessage(__('没有找到相对应的数据', ecjia::MSGTYPE_JSON | ecjia_admin::MSGSTAT_ERROR));
-// 		}
-
 		//获取商品的信息
 		$goods = $this->db_goods->field('goods_sn, goods_name, goods_type, shop_price')->find(array('goods_id' => $goods_id));
 		//获得商品已经添加的规格列表
@@ -1285,7 +1233,6 @@ class admin extends ecjia_admin {
 		    $insert = false;
 		}
 		/* 取出商品信息 */
-// 		$goods = $this->db_goods->goods_find(array('goods_id' => $product['goods_id']), 'goods_sn, goods_name, goods_type, shop_price');
 		$goods = RC_DB::table('goods')->where('goods_id', $product['goods_id'])->select('goods_sn', 'goods_name', 'goods_type', 'shop_price')->first();
 		
 		if (empty($goods)) {
@@ -1335,13 +1282,11 @@ class admin extends ecjia_admin {
     		        'product_sn' 		=> $value,
     		        'product_number' 	=> $product['product_number'][$key]
     		    );
-//     		    $product_id = $this->db_products->insert($data);
     		    $product_id = RC_DB::table('products')->insertGetId($data);
     		
     		    //货品号为空 自动补货品号
     		    if (empty($value)) {
     		        $data = array('product_sn' => $goods['goods_sn'] . "g_p" . $product_id);
-//     		        $this->db_products->products_update(array('product_id' => $product_id), $data);
     		        RC_DB::table('products')->where('product_id', $product_id)->update($data);
     		    }
     		
@@ -1386,7 +1331,6 @@ class admin extends ecjia_admin {
 		}
 
 		/* 取出商品信息 */
-// 		$goods = $this->db_goods->join(null)->field('goods_sn, goods_name, goods_type, shop_price')->find(array('goods_id' => $goods_id));
 		$goods = RC_DB::table('goods')->selectRaw('goods_sn, goods_name, goods_type, shop_price')->where('goods_id', $goods_id)->first();
 		
 		if (empty($goods)) {
@@ -1440,7 +1384,6 @@ class admin extends ecjia_admin {
 		$product_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
 		$product = get_product_info($product_id, 'product_number, goods_id');
 		
-// 		$result = $this->db_products->where(array('product_id' => $product_id))->delete();
 		$result = RC_DB::table('products')->where('product_id', $product_id)->delete();
 		if ($result) {
 			/* 修改商品库存 */
@@ -1491,7 +1434,7 @@ class admin extends ecjia_admin {
 
 		/* 修改货品库存 */
 		$data = array(
-				'product_number' => $product_number
+			'product_number' => $product_number
 		);
 		$result = $this->db_products->where(array('product_id' => $product_id))->update($data);
 		if ($result) {
