@@ -45,8 +45,7 @@ class togglesale_module extends api_admin implements api_interface {
 		$log_text .= '，' . $goods_name .'【来源掌柜】';
 		
 		if ($_SESSION['store_id'] > 0) {
-		    RC_Loader::load_app_class('ecjia_merchant', 'merchant');
-		    ecjia_merchant::admin_log($log_text, 'setup', 'goods');
+		    RC_Api::api('merchant', 'admin_log', array('text'=>$log_text, 'action'=>'setup', 'object'=>'goods'));
 		} else {
 		    ecjia_admin::admin_log($log_text, 'setup', 'goods');
 		}
