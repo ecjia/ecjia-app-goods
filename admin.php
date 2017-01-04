@@ -74,7 +74,7 @@ class admin extends ecjia_admin {
 		
 		RC_Loader::load_app_func('admin_user', 'user');
 		$goods_list_jslang = array(
-			'user_rank_list'	=> get_user_rank_list(),
+			'user_rank_list'	=> get_rank_list(),
 			'marketPriceRate'	=> ecjia::config('market_price_rate'),
 			'integralPercent'	=> ecjia::config('integral_percent'),
 		);
@@ -422,7 +422,7 @@ class admin extends ecjia_admin {
 		
 		$this->assign('brand_list', 		get_brand_list());
 		$this->assign('unit_list', 			goods::unit_list());
-		$this->assign('user_rank_list', 	get_user_rank_list());
+		$this->assign('user_rank_list', 	get_rank_list());
 		
 		$this->assign('weight_unit', 		$goods['goods_weight'] >= 1 ? '1' : '0.001');
 		$this->assign('cfg', 				ecjia::config());
