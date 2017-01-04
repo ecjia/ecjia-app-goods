@@ -215,3 +215,9 @@ border-radius:4px;
     z-index: 100;
     min-height: 600px;
 }
+.goods-promote{
+	border: 1px solid #c62626;
+    border-radius: 4px;
+    color: white;
+    background: #c62626;
+}

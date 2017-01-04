@@ -226,8 +226,9 @@
 					</td>
 					<td class="hide-edit-area {if $goods.is_promote}ecjiafc-red{/if}">
 						<span  class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_name')}" data-name="goods_edit_name" data-pk="{$goods.goods_id}" data-title="请输入商品名称"> 
-							{$goods.goods_name|escape:html} 
+							{$goods.goods_name|escape:html}
 						</span>
+						{if $goods.is_promote eq 1}<span class="goods-promote">促</span>{/if}
 						<br/>
 						<div class="edit-list">
 							<a class="data-pjax" href='{url path="goods/admin/edit" args="goods_id={$goods.goods_id}"}'>{lang key='system::system.edit'}</a>&nbsp;|&nbsp;
