@@ -776,12 +776,7 @@ class admin extends ecjia_admin {
 				/* 检查权限 */
 				$this->admin_priv('goods_delete');
 				delete_goods($goods_id);
-				/* 记录日志 */
-				if (!empty($data)) {
-					foreach ($data as $k => $v) {
-						ecjia_admin::admin_log($v['goods_name'], 'batch_remove', 'goods');
-					}
-				}
+				$action = 'batch_remove';
 			}
 			/* 审核通过 */
 			elseif ($_GET['type'] == 'pass') {
@@ -820,9 +815,9 @@ class admin extends ecjia_admin {
 		$is_on_sale = isset($_GET['is_on_sale']) ? $_GET['is_on_sale'] : '';
 		
 		if ($_GET['type'] == 'drop' || $_GET['type'] == 'restore') {
-			$pjaxurl = RC_Uri::url('goods/admin/trash' ,$page);
+			$pjaxurl = RC_Uri::url('goods/admin/trash', $page);
 		} else {
-			$pjaxurl = RC_Uri::url('goods/admin/init' ,'is_on_sale='.$is_on_sale.$page);
+			$pjaxurl = RC_Uri::url('goods/admin/init', 'is_on_sale='.$is_on_sale.$page);
 		}
 		/* 释放app缓存*/
 		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
