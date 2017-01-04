@@ -101,6 +101,7 @@ class updateprice_module extends api_admin implements api_interface {
     		
     		$goods_name = $db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
     		if ($_SESSION['store_id'] > 0) {
+    		    RC_Loader::load_app_class('ecjia_merchant', 'merchant');
     		    ecjia_merchant::admin_log($goods_name.'【来源掌柜】', 'edit', 'goods');
     		} else {
     		    ecjia_admin::admin_log($goods_name.'【来源掌柜】', 'edit', 'goods');

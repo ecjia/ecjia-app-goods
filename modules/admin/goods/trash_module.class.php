@@ -47,6 +47,7 @@ class trash_module extends api_admin implements api_interface {
 		$orm_goods_db->delete_cache_item($cache_basic_info_id);
 		$goods_name = $db_goods->where(array('goods_id' => $id))->get_field('goods_name');
 		if ($_SESSION['store_id'] > 0) {
+		    RC_Loader::load_app_class('ecjia_merchant', 'merchant');
 		    ecjia_merchant::admin_log(addslashes($goods_name).'【来源掌柜】', 'trash', 'goods'); // 记录日志
 		} else {
 		    ecjia_admin::admin_log(addslashes($goods_name).'【来源掌柜】', 'trash', 'goods'); // 记录日志
