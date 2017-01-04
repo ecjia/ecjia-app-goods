@@ -61,6 +61,7 @@ class admin extends ecjia_admin {
 
 		RC_Script::localize_script('goods_list', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
 // 		RC_Script::localize_script('product', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
+		RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
 		
 		RC_Loader::load_app_class('goods', 'goods', false);
 		RC_Loader::load_app_class('goods_image', 'goods', false);
