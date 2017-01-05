@@ -39,7 +39,8 @@ class list_module extends api_front implements api_interface {
 			'sort'			=> array('sort_order' => 'asc'),
 			'limit'			=> 'all'
 		);
-
+		
+		$store_data = RC_Api::api('store', 'store_list', $options);
 		$seller_list = array();
 		if (!empty($store_data['seller_list'])) {
 			$collect_store_id = RC_DB::table('collect_store')->where('user_id', $_SESSION['user_id'])->lists('store_id');
