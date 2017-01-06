@@ -1,16 +1,15 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 获取店铺商品商品分类
  * @author will.chen
- *
  */
 class goods_seller_goods_category_api extends Component_Event_Api {
     /**
      * @param  $options['keyword'] 关键字
      *         $options['cat_id'] 分类id
      *         $options['brand_id'] 品牌id
-     *
      * @return array
      */
 	public function call(&$options) {
@@ -36,7 +35,6 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 		}
 	    return $row;
 	}
-
 
 	/**
 	 * 获得指定分类下的子分类的数组

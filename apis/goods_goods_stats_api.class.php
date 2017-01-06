@@ -1,9 +1,9 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 商品统计
  * @author will.chen
- *
  */
 class goods_goods_stats_api extends Component_Event_Api {
 	public function call(&$options) {

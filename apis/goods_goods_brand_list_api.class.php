@@ -1,9 +1,9 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 商品品牌列表
  * @author will.chen
- *
  */
 class goods_goods_brand_list_api extends Component_Event_Api {
     /**

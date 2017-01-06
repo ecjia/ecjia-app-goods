@@ -1,4 +1,5 @@
 <?php
+defined('IN_ECJIA') or exit('No permission resources.');
 
 class seller_goods_cat {            
     /**
@@ -47,3 +48,5 @@ class seller_goods_cat {
     	}
     }
 }
+
+//end

@@ -4,10 +4,8 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * 图片处理类
  * @author royalwang
- *        
  */
-class goods_image
-{
+class goods_image {
 	private    $uploaded_info = array();
 	private    $uploaded_file_path;
 	

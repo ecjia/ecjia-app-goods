@@ -1,11 +1,11 @@
 <?php
+defined('IN_ECJIA') or exit('No permission resources.');
 
 /**
  * 商品品牌类
  * @author wu
  *
  */
-
 class goods_brand {
 	
 	/**

@@ -1,9 +1,9 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 后台搜索商品返回商品列表
  * @author will.chen
- *
  */
 class goods_get_goods_list_api extends Component_Event_Api {
     /**

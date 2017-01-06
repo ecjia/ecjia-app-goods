@@ -1,9 +1,9 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 获取所有商品分类
  * @author songqian
- *
  */
 class goods_get_goods_category_api extends Component_Event_Api {
 	

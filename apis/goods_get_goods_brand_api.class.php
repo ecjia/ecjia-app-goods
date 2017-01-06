@@ -1,9 +1,9 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 获取所有商品品牌
  * @author songqian
- *
  */
 class goods_get_goods_brand_api extends Component_Event_Api {
     public function call(&$options) {

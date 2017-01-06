@@ -1,16 +1,15 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 前台搜索商品返回商品列表
  * @author will.chen
- *
  */
 class goods_goods_list_api extends Component_Event_Api {
     /**
      * @param  $options['keyword'] 关键字
      *         $options['cat_id'] 分类id
      *         $options['brand_id'] 品牌id
-     *
      * @return array
      */
 	public function call(&$options) {

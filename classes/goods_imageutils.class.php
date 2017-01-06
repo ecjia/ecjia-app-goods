@@ -4,10 +4,8 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * 图片处理类
  * @author royalwang
- *        
  */
-class goods_imageutils
-{
+class goods_imageutils {
 
     /**
      * 创建图片文件目录

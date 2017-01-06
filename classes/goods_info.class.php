@@ -1,9 +1,9 @@
 <?php
+defined('IN_ECJIA') or exit('No permission resources.');
 
 /**
  * 商品信息
  * @author will.chen
- *
  */
 class goods_info {
 

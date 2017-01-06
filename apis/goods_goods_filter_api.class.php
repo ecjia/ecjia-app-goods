@@ -1,17 +1,15 @@
 <?php
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 商品列表筛选数据获取
  * @author will.chen
- *
  */
 class goods_goods_filter_api extends Component_Event_Api {
 	private $children = '';
 	private $cat = array();
     /**
      * @param  $options['cat_id'] 分类id
-     *
-     *
      * @return array
      */
 	public function call(&$options) {

@@ -8,8 +8,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 RC_Loader::load_app_class('goods_imageutils', 'goods', false);
 RC_Loader::load_app_class('goods_image_format', 'goods', false);
-class goods_image_data
-{
+class goods_image_data {
 	protected $file_path;
 
 	protected $auto_generate_thumb = true;

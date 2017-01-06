@@ -1,8 +1,9 @@
 <?php
+defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 商品操作类
  * @author royalwang
- *
  */
 class goods_method {
     
@@ -79,6 +80,5 @@ class goods_method {
         return $goods_attr_id;
     }
 }
-
 
 // end

@@ -5,11 +5,9 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * 图片处理类
  * @author royalwang
- *        
  */
 RC_Loader::load_app_class('goods_imageutils', 'goods', false);
-class goods_image_format
-{
+class goods_image_format {
     /**
      * 商品ID
      * @var integer
