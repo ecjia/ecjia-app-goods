@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-defined('IN_ECJIA') or exit('No permission resources.');
 use Royalcms\Component\Database\Eloquent\Model;
+defined('IN_ECJIA') or exit('No permission resources.');
 
 class orm_member_price_model extends Model {
 	protected $table = 'member_price';

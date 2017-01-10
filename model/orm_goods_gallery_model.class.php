@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-defined('IN_ECJIA') or exit('No permission resources.');
 use Royalcms\Component\Database\Eloquent\Model;
+defined('IN_ECJIA') or exit('No permission resources.');
 
 class orm_goods_gallery_model extends Model {
 	protected $table = 'goods_gallery';
