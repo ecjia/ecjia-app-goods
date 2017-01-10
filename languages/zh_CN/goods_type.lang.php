@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品类型管理程序语言项
  */
-
 return array(
 	'goods_type_list' 	=> '商品类型列表',
 	'edit_goods_type' 	=> '编辑商品类型',

@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品类型管理程序语言项
  */
-
 $LANG['goods_type_list'] = '商品类型列表';
 $LANG['edit_goods_type'] = '编辑商品类型';
 $LANG['attr_groups'] = '属性分组';

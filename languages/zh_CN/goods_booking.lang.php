@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 缺货登记语言包
 */
-
 return array(
 	'init'			=> '全部缺货登记信息',
 	'booking' 		=> '订购信息',

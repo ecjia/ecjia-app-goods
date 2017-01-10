@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 品牌管理语言项
  */
-
 $LANG['brand_name'] = '品牌名称';
 $LANG['site_url'] = '品牌网址';
 $LANG['brand_desc'] = '品牌描述';

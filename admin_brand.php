@@ -44,11 +44,11 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  *  ECJIA 管理中心品牌管理
  */
-defined('IN_ECJIA') or exit('No permission resources.');
-
 class admin_brand extends ecjia_admin {
 	
 	public function __construct() {

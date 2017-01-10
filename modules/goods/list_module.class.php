@@ -45,10 +45,10 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 商品分类列表及关键词搜索
  * @author royalwang
- *
  */
 class list_module extends api_front implements api_interface {
 

@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 品牌管理语言项
  */
-
 return array(
 	'goods_brand'	=> 'Goods Brand',
 	'brand_name' 	=> 'Brand',

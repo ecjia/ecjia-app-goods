@@ -45,10 +45,10 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 单个商品的信息
  * @author royalwang
- *
  */
 class detail_module extends api_front implements api_interface {
 

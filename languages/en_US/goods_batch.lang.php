@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品批量上传、修改语言文件
  */
-
 return array(
 	'select_method' => 'Product method:',
 	'by_cat' 		=> 'Basis product category, brand',

@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品分类管理语言文件
  */
-
 return array(
 	/* 商品分类字段信息 */
 	'goods_category'=> '商品分类',

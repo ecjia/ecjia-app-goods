@@ -44,11 +44,11 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * ECJIA 商品分类管理程序
  */
-defined('IN_ECJIA') or exit('No permission resources.');
-
 class admin_category extends ecjia_admin {
 	private $db_category;
 	private $db_attribute;

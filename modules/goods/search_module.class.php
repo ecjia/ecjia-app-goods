@@ -45,10 +45,10 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 商品店铺搜索
  * @author will.chen
- *
  */
 class search_module extends api_front implements api_interface {
 

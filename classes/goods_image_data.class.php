@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * 图片处理类
  * @author royalwang
- *        
  */
 RC_Loader::load_app_class('goods_imageutils', 'goods', false);
 RC_Loader::load_app_class('goods_image_format', 'goods', false);

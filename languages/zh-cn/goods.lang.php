@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 管理中心起始页语言文件
  */
-
 $LANG['edit_goods'] = '编辑商品信息';
 $LANG['copy_goods'] = '复制商品信息';
 $LANG['continue_add_goods'] = '继续添加新商品';

@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品类型管理语言文件
  */
-
 /* 列表 */
 $LANG['by_goods_type'] = '按商品类型显示：';
 $LANG['all_goods_type'] = '所有商品类型';

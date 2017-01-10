@@ -45,10 +45,10 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 商品推荐列表
  * @author royalwang
- *
  */
 class suggestlist_module extends api_front implements api_interface {
 

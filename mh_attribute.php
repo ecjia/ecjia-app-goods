@@ -44,11 +44,11 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * ECJIA 属性规格管理
  */
-defined('IN_ECJIA') or exit('No permission resources.');
-
 class mh_attribute extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();

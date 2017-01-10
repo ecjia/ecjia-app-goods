@@ -45,10 +45,10 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 某一分类的筛选
  * @author will.chen
- *
  */
 class filter_module extends api_front implements api_interface {
 	

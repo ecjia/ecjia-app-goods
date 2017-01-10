@@ -44,11 +44,11 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  *  ECJIA 商品相册管理
  */
-defined('IN_ECJIA') or exit('No permission resources.');
-
 class mh_gallery extends ecjia_merchant {
 
 	public function __construct() {

@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 管理中心起始页语言文件
  */
-
 return array(
 	'edit_goods' 			=> '编辑商品',
 	'copy_goods'		 	=> '复制商品',

@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品类型管理语言文件
  */
-
 return array(
 	/* List */
 	'by_goods_type' 	=> 'Display by product type:',

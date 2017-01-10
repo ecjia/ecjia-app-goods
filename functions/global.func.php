@@ -48,7 +48,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 
 /**
  * 添加管理员操作对象
- * 
  */
 function assign_adminlog_content() {
     ecjia_admin_log::instance()->add_object('category_goods', 	'分类商品');

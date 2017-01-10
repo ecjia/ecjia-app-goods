@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品分类管理语言文件
  */
-
 /* 商品分类字段信息 */
 $LANG['cat_id'] = '编号';
 $LANG['cat_name'] = '分类名称';

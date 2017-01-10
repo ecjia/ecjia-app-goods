@@ -44,11 +44,11 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * ECJIA 商品自动发布
  */
-defined('IN_ECJIA') or exit('No permission resources.');
-
 class admin_goods_auto extends ecjia_admin {
 	private $db_auto_manage;
 	private $db_goods;

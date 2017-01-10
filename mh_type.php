@@ -44,11 +44,11 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * ECJIA 商品类型管理程序
 */
-defined('IN_ECJIA') or exit('No permission resources.');
-
 class mh_type extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();

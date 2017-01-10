@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 商品批量上传、修改语言文件
  */
-
 $LANG['select_method'] = '选择商品的方式：';
 $LANG['by_cat'] = '根据商品分类、品牌';
 $LANG['by_sn'] = '根据商品货号';

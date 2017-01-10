@@ -49,7 +49,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 程序说明
  */
-
 return array(
 	'id' 			=> 'ID',
 	'starttime'	 	=> 'Time on shelves',

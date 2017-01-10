@@ -45,10 +45,10 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
  * 手机专享商品列表
  * @author will.chen
- *
  */
 class mobilebuygoods_module extends api_front implements api_interface {
 
