@@ -399,7 +399,7 @@ function warehouse_get_goods_properties($goods_id) {
 			$row ['attr_value'] = str_replace ( "\n", '<br />', $row ['attr_value'] );
 
 			if ($row ['attr_type'] == 0) {
-				$group = (isset ( $groups [$row ['attr_group']] )) ? $groups [$row ['attr_group']] : RC_Lang::lang ( 'goods_attr' );
+				$group = (isset ( $groups [$row ['attr_group']] )) ? $groups [$row ['attr_group']] : RC_Lang::get('goods::goods.goods_attr');
 
 				$arr ['pro'] [$group] [$row ['attr_id']] ['name'] = $row ['attr_name'];
 				$arr ['pro'] [$group] [$row ['attr_id']] ['value'] = $row ['attr_value'];
@@ -619,7 +619,7 @@ function get_promotion_info($goods_id = '') {
 					$snatch [$data ['act_id']] ['url'] = build_uri ('snatch', array (
 							'sid' => $data ['act_id']
 					) );
-					$snatch [$data ['act_id']] ['time'] = sprintf(RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$snatch [$data ['act_id']] ['time'] = sprintf(RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
 					$snatch [$data ['act_id']] ['sort'] = $data ['start_time'];
 					$snatch [$data ['act_id']] ['type'] = 'snatch';
 					break;
@@ -629,7 +629,7 @@ function get_promotion_info($goods_id = '') {
 					$group [$data ['act_id']] ['url'] = build_uri ( 'group_buy', array (
 							'gbid' => $data ['act_id']
 					) );
-					$group [$data ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$group [$data ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
 					$group [$data ['act_id']] ['sort'] = $data ['start_time'];
 					$group [$data ['act_id']] ['type'] = 'group_buy';
 					break;
@@ -639,7 +639,7 @@ function get_promotion_info($goods_id = '') {
 					$auction [$data ['act_id']] ['url'] = build_uri ( 'auction', array (
 							'auid' => $data ['act_id']
 					) );
-					$auction [$data ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$auction [$data ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
 					$auction [$data ['act_id']] ['sort'] = $data ['start_time'];
 					$auction [$data ['act_id']] ['type'] = 'auction';
 					break;
@@ -647,7 +647,7 @@ function get_promotion_info($goods_id = '') {
 				case GAT_PACKAGE : // 礼包
 					$package [$data ['act_id']] ['act_name'] = $data ['act_name'];
 					$package [$data ['act_id']] ['url'] = 'package.php#' . $data ['act_id'];
-					$package [$data ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
+					$package [$data ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $data ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $data ['end_time'] ) );
 					$package [$data ['act_id']] ['sort'] = $data ['start_time'];
 					$package [$data ['act_id']] ['type'] = 'package';
 					break;
@@ -668,7 +668,7 @@ function get_promotion_info($goods_id = '') {
 			foreach ( $res as $rows ) {
 				$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
 				$favourable [$rows ['act_id']] ['url'] = 'activity.php';
-				$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+				$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
 				$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
 				$favourable [$rows ['act_id']] ['type'] = 'favourable';
 			}
@@ -682,7 +682,7 @@ function get_promotion_info($goods_id = '') {
 			if ($rows ['act_range'] == FAR_ALL) {
 				$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
 				$favourable [$rows ['act_id']] ['url'] = 'activity.php';
-				$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+				$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
 				$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
 				$favourable [$rows ['act_id']] ['type'] = 'favourable';
 			} elseif ($rows ['act_range'] == FAR_CATEGORY) {
@@ -697,7 +697,7 @@ function get_promotion_info($goods_id = '') {
 				if (strpos ( ',' . $ids . ',', ',' . $category_id . ',' ) !== false) {
 					$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
 					$favourable [$rows ['act_id']] ['url'] = 'activity.php';
-					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
 					$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
 					$favourable [$rows ['act_id']] ['type'] = 'favourable';
 				}
@@ -705,7 +705,7 @@ function get_promotion_info($goods_id = '') {
 				if (strpos ( ',' . $rows ['act_range_ext'] . ',', ',' . $brand_id . ',' ) !== false) {
 					$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
 					$favourable [$rows ['act_id']] ['url'] = 'activity.php';
-					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
 					$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
 					$favourable [$rows ['act_id']] ['type'] = 'favourable';
 				}
@@ -713,7 +713,7 @@ function get_promotion_info($goods_id = '') {
 				if (strpos ( ',' . $rows ['act_range_ext'] . ',', ',' . $goods_id . ',' ) !== false) {
 					$favourable [$rows ['act_id']] ['act_name'] = $rows ['act_name'];
 					$favourable [$rows ['act_id']] ['url'] = 'activity.php';
-					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::lang ( 'promotion_time' ), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
+					$favourable [$rows ['act_id']] ['time'] = sprintf ( RC_Lang::get('goods::goods.promotion_time'), RC_Time::local_date ( 'Y-m-d', $rows ['start_time'] ), RC_Time::local_date ( 'Y-m-d', $rows ['end_time'] ) );
 					$favourable [$rows ['act_id']] ['sort'] = $rows ['start_time'];
 					$favourable [$rows ['act_id']] ['type'] = 'favourable';
 				}
