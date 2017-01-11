@@ -572,6 +572,19 @@ return array(
 	'label_new'					=> '新品：',
 	'label_hot'					=> '热销：',
 	'basic_info'				=> '基本信息',
+	'gram'						=> '克',
+	'kilogram'					=> '千克',
+	
+	'gbs' => array(
+		GBS_PRE_START 	=> '未开始',
+		GBS_UNDER_WAY 	=> '进行中',
+		GBS_FINISHED 	=> '结束未处理',
+		GBS_SUCCEED 	=> '成功结束',
+		GBS_FAIL 		=> '失败结束',
+	),
+	'select_please'		=> '请选择...',
+	'all_category'		=> '所有分类',
+	
 );
 
 // end

@@ -230,8 +230,8 @@ class seller_goods_category_model extends Component_Model_Model {
 	
 		if(!empty($row)) {
 			foreach ($row AS $key => $val) {
-				//$row[$key]['attr_input_type_desc'] = RC_Lang::lang("value_attr_input_type/$val[attr_input_type]");//暂时注释2016-07-08
-				$row[$key]['attr_values']      = str_replace("\n", ", ", $val['attr_values']);
+				// $row[$key]['attr_input_type_desc'] = RC_Lang::get("goods::goods.value_attr_input_type.".$val[attr_input_type]);//暂时注释2016-07-08
+				$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
 			}
 		}
 	

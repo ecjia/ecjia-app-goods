@@ -438,8 +438,8 @@ function brand_related_cat($brand) {
 	$db = RC_Model::model('goods/category_viewmodel');
 	$arr[] = array(
 		'cat_id' 	=> 0,
-		'cat_name'	=> RC_Lang::lang('all_category'),
-		'url'		=> build_uri('brand', array('bid' => $brand), RC_Lang::lang('all_category'))
+		'cat_name'	=> RC_Lang::get('goods::goods.all_category'),
+		'url'		=> build_uri('brand', array('bid' => $brand), RC_Lang::get('goods::goods.all_category'))
 	);
 	$data = $db->join('goods')->where(array('g.brand_id' => $brand))->group('g.cat_id')->select();
 	if(!empty($data)) {
@@ -1173,7 +1173,7 @@ function build_attr_html($cat_id, $goods_id = 0) {
 				$html .= '<textarea name="attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea>';
 			} else {
 				$html .= '<select name="attr_value_list[]" autocomplete="off">';
-				$html .= '<option value="">' . RC_Lang::lang('select_please') . '</option>';
+				$html .= '<option value="">' . RC_Lang::get('goods::goods.select_please') . '</option>';
 				$attr_values = explode("\n", $val ['attr_values']);
 				foreach ($attr_values as $opt) {
 					$opt = trim(htmlspecialchars($opt));
@@ -1182,7 +1182,7 @@ function build_attr_html($cat_id, $goods_id = 0) {
 				}
 				$html .= '</select> ';
 			}
-			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::lang('spec_price') . '</span>' . ' <input type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" />' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
+			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::get('goods::goods.spec_price') . '</span>' . ' <input type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" />' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
 			if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
 				$html .= ($spec != $val ['attr_id']) ? "<a class='m_l5' href='javascript:;' data-toggle='clone-obj' data-parent='.control-group'><i class='fontello-icon-plus'></i></a>" : "<a class='m_l5' href='javascript:;' data-trigger='toggleSpec'><i class='fontello-icon-minus'></i></a>";
 				$spec = $val ['attr_id'];
@@ -1228,7 +1228,7 @@ function build_merchant_attr_html($cat_id, $goods_id = 0) {
 				}
 				$html .= '</select></div>';
 			}
-			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::lang('spec_price') . '</span>' . ' <div class="col-lg-5 p_l0"><input class="form-control" type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" /></div>' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
+			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::get('goods::goods.spec_price') . '</span>' . ' <div class="col-lg-5 p_l0"><input class="form-control" type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" /></div>' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
 			if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
 				$html .= ($spec != $val ['attr_id']) ? "<a class='m_l5 l_h30' href='javascript:;' data-toggle='clone-obj' data-parent='.form-group'><i class='fa fa-plus'></i></a>" : "<a class='m_l5 l_h30' href='javascript:;' data-trigger='toggleSpec'><i class='fa fa-times'></i></a>";
 				$spec = $val ['attr_id'];
@@ -1820,10 +1820,10 @@ function formated_weight($weight) {
 	if ($weight > 0) {
 		if ($weight < 1) {
 			/* 小于1千克，用克表示 */
-			return intval($weight * 1000) . RC_Lang::lang('gram');
+			return intval($weight * 1000) . RC_Lang::get('goods::goods.gram');
 		} else {
 			/* 大于1千克，用千克表示 */
-			return $weight . RC_Lang::lang('kilogram');
+			return $weight . RC_Lang::get('goods::goods.kilogram');
 		}
 	} else {
 		return 0;

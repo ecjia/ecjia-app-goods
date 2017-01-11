@@ -1832,7 +1832,7 @@ class merchant extends ecjia_merchant {
        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
        
 		/* 定义返回 */
-		$link[] = array('href' => RC_Uri::url('goods/merchant/product_list', 'goods_id=' . $_POST['goods_id']), 'text' => RC_Lang::lang('item_list'));
+		$link[] = array('href' => RC_Uri::url('goods/merchant/product_list', 'goods_id=' . $_POST['goods_id']), 'text' => RC_Lang::get('goods::goods.product_list'));
 		/* 批量操作 - 批量删除 */
 		if ($_POST['type'] == 'drop') {
 	       //取得要操作的商品编号

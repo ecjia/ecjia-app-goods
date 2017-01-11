@@ -635,7 +635,7 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 		$row ['promote_price'] = price_format ( $promote_price );
 
 		/* 修正重量显示 */
-		$row ['goods_weight'] = (intval ( $row ['goods_weight'] ) > 0) ? $row ['goods_weight'] . RC_Lang::lang ( 'kilogram' ) : ($row ['goods_weight'] * 1000) . RC_Lang::lang ( 'gram' );
+		$row ['goods_weight'] = (intval ( $row ['goods_weight'] ) > 0) ? $row ['goods_weight'] . RC_Lang::get('goods::goods.kilogram') : ($row ['goods_weight'] * 1000) . RC_Lang::get('goods::goods.gram');
 
 		/* 修正上架时间显示 */
 		$row ['add_time'] = RC_Time::local_date ( ecjia::config ( 'date_format' ), $row ['add_time'] );
@@ -717,7 +717,7 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 			$row ['attr_value'] = str_replace ( "\n", '<br />', $row ['attr_value'] );
 
 			if ($row ['attr_type'] == 0) {
-				$group = (isset ( $groups [$row ['attr_group']] )) ? $groups [$row ['attr_group']] : RC_Lang::lang ( 'goods_attr' );
+				$group = (isset ( $groups [$row ['attr_group']] )) ? $groups [$row ['attr_group']] : RC_Lang::get('goods::goods.goods_attr');
 
 				$arr ['pro'] [$group] [$row ['attr_id']] ['name'] = $row ['attr_name'];
 				$arr ['pro'] [$group] [$row ['attr_id']] ['value'] = $row ['attr_value'];
@@ -757,7 +757,7 @@ function get_same_attribute_goods($attr) {
 	$lnk = array ();
 	if (!empty($attr)) {
 		foreach($attr['lnk'] as $key => $val) {
-			$lnk[$key]['title'] = sprintf(RC_Lang::lang('same_attrbiute_goods'),$val['name'],$val['value']);
+			$lnk[$key]['title'] = sprintf(RC_Lang::get('goods::goods.same_attrbiute_goods'),$val['name'],$val['value']);
 
 			/* 查找符合条件的商品 */
 			$db->view = array (
@@ -1107,8 +1107,8 @@ function group_buy_info($group_buy_id, $current_num = 0) {
 	/* 状态 */
 	$group_buy ['status'] = group_buy_status ( $group_buy );
 
-	if (RC_Lang::lang ( 'gbs/' . $group_buy ['status'] )) {
-		$group_buy ['status_desc'] = RC_Lang::lang ( 'gbs/' . $group_buy ['status'] );
+	if (RC_Lang::get('goods::goods.gbs.' . $group_buy ['status'])) {
+		$group_buy ['status_desc'] = RC_Lang::get('goods::goods.gbs.' . $group_buy ['status']);
 	}
 
 	$group_buy ['start_time'] = $group_buy ['formated_start_date'];
@@ -1308,7 +1308,7 @@ function goods_info($goods_id) {
 	if (! empty ( $row )) {
 		RC_Loader::load_app_func('global', 'goods');
 		/* 修正重量显示 */
-		$row ['goods_weight'] = (intval ( $row ['goods_weight'] ) > 0) ? $row ['goods_weight'] . RC_Lang::lang ( 'kilogram' ) : ($row ['goods_weight'] * 1000) . RC_Lang::lang ( 'gram' );
+		$row ['goods_weight'] = (intval ( $row ['goods_weight'] ) > 0) ? $row ['goods_weight'] . RC_Lang::get('goods::goods.kilogram') : ($row ['goods_weight'] * 1000) . RC_Lang::get('goods::goods.gram');
 		/* 修正图片 */
 		$row ['goods_img'] = get_image_path ( $goods_id, $row ['goods_img'] );
 	}
@@ -1388,7 +1388,7 @@ function get_goods_attr($goods_id) {
 	if (! empty ( $data )) {
 		foreach ( $data as $attr ) {
 			if (defined ( 'IN_ADMIN' )) {
-				$attr ['goods_attr_list'] = array (0 => RC_Lang::lang ( 'select_please' ) );
+				$attr ['goods_attr_list'] = array (0 => RC_Lang::get('goods::goods.select_please'));
 			} else {
 				$attr ['goods_attr_list'] = array ();
 			}
