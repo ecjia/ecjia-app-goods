@@ -4,7 +4,8 @@
 	app.goods_auto = {
 		init: function() {
 			$(".date").datepicker({
-				format: "yyyy-mm-dd"
+				format: "yyyy-mm-dd",
+				container : '.main_content',
 			});
 			app.goods_auto.search();
 

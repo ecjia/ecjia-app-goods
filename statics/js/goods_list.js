@@ -222,7 +222,8 @@
 	app.goods_info = { /* 添加编辑页 */
 		init: function() {
 			$(".date").datepicker({
-				format: "yyyy-mm-dd"
+				format: "yyyy-mm-dd",
+				container : '.main_content',
 			});
 			$("#color").colorpicker();
 
