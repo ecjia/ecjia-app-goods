@@ -114,6 +114,7 @@ return array(
 	'merchant_keywords'	=> '请输入商家名称关键字',
 	'goods_type_keywords' => '请输入商品类型关键字',
 	'search'			=> '搜索',
+	'self'				=> '自营',
 );
 
 // end

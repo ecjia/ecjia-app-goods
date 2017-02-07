@@ -20,9 +20,9 @@
 	<span class="badge badge-info">{$filter.count_goods_num}</span>
 	</a>
 	</li>
-	<li class="{if $filter.type eq 'merchant'}active{/if}">
-	<a class="data-pjax" href='{url path="goods/admin/trash" args="type=merchant{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}"}'>{lang key='goods::goods.merchant'}
-	<span class="badge badge-info">{$filter.merchant}</span>
+	<li class="{if $filter.type eq 'self'}active{/if}">
+	<a class="data-pjax" href='{url path="goods/admin/trash" args="type=self{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}"}'>{lang key='goods::goods.self'}
+	<span class="badge badge-info">{$filter.self}</span>
 	</a>
 	</li>
 </ul>

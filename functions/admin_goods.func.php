@@ -1503,15 +1503,15 @@ function get_goods_type() {
 	}
 
 	$filter_count = $db_goods_type
-		->select(RC_DB::raw('count(*) as count'), RC_DB::raw('SUM(IF(gt.store_id > 0, 1, 0)) as merchant'))
+		->select(RC_DB::raw('count(*) as count'), RC_DB::raw('SUM(IF(s.manage_mode = "self", 1, 0)) as self'))
 		->first();
 
-	$filter['count'] 	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
-	$filter['merchant'] = $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
+	$filter['count']	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
+	$filter['self'] 	= $filter_count['self'] > 0 ? $filter_count['self'] : 0;
 
 	$filter['type'] = isset($_GET['type']) ? $_GET['type'] : '';
 	if (!empty($filter['type'])) {
-		$db_goods_type->where(RC_DB::raw('gt.store_id'), '>', 0);
+		$db_goods_type->where(RC_DB::raw('s.manage_mode'), 'self');
 	}
 
 	$count = $db_goods_type->count();

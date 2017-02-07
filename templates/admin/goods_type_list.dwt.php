@@ -16,7 +16,7 @@
 </div>
 <ul class="nav nav-pills">
 	<li class="{if $filter.type eq ''}active{/if}"><a class="data-pjax" href='{url path="goods/admin_goods_type/init" args="{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}"}'>{lang key='goods::goods_type.all'} <span class="badge badge-info">{$filter.count}</span></a></li>
-	<li class="{if $filter.type eq 'merchant'}active{/if}"><a class="data-pjax" href='{url path="goods/admin_goods_type/init" args="type=merchant{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}"}'>{lang key='goods::goods_type.merchants'}<span class="badge badge-info">{$filter.merchant}</span></a></li>
+	<li class="{if $filter.type eq 'self'}active{/if}"><a class="data-pjax" href='{url path="goods/admin_goods_type/init" args="type=self{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}{if $filter.keywords}&keywords={$filter.keywords}{/if}"}'>{lang key='goods::goods_type.self'}<span class="badge badge-info">{$filter.self}</span></a></li>
 	<li class="ecjiaf-fn">
 	<form name="searchForm" method="post" action="{$form_search}{if $filter.type}&type={$filter.type}{/if}">
 		<div class="f_r form-inline">
