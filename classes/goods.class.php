@@ -184,7 +184,7 @@ class goods {
        			RC_DB::raw('SUM(IF(is_on_sale = 1, 1, 0)) as count_on_sale'), 
        			RC_DB::raw('SUM(IF(is_on_sale = 0, 1, 0)) as count_not_sale'),
        			RC_DB::raw('SUM(IF(is_on_sale = 0, 1, 0)) as count_not_sale'),
-       			RC_DB::raw('SUM(IF(g.store_id > 0, 1, 0)) as merchant'))
+       			RC_DB::raw('SUM(IF(s.manage_mode = "self", 1, 0)) as self'))
        		->whereRaw('is_delete = ' . $is_delete . '' . $where)
         	->first();
 
@@ -193,8 +193,8 @@ class goods {
         	$is_on_sale = $filter ['type'];
             $filter ['type'] == 2 && $is_on_sale = 0;
             $where .= " AND (is_on_sale='" . $is_on_sale . "')";
-        } elseif ($filter['type'] == 'merchant') {
-        	$where .= " AND g.store_id > 0";
+        } elseif ($filter['type'] == 'self') {
+        	$where .= " AND s.manage_mode = 'self'";
         }
         
         /* 供货商 */
@@ -212,7 +212,7 @@ class goods {
         $filter ['count_goods_num'] = $filter_count['count_goods_num'] > 0 ? $filter_count['count_goods_num'] : 0;
         $filter ['count_on_sale'] 	= $filter_count['count_on_sale'] > 0 ? $filter_count['count_on_sale'] : 0;
         $filter ['count_not_sale'] 	= $filter_count['count_not_sale'] > 0 ? $filter_count['count_not_sale'] : 0;
-        $filter ['merchant'] 		= $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
+        $filter ['self'] 			= $filter_count['self'] > 0 ? $filter_count['self'] : 0;
         
         $sql = $db_goods
         	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.goods_thumb, g.is_on_sale, g.is_best, g.is_new, g.is_hot, g.sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name')

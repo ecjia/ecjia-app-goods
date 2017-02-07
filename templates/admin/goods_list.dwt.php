@@ -85,8 +85,8 @@
 		</a>
 	</li>
 	
-	<li class="{if $smarty.get.type eq 'merchant'}active{/if}">
-		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=merchant
+	<li class="{if $smarty.get.type eq 'self'}active{/if}">
+		<a class="data-pjax" href='{RC_Uri::url("goods/admin/init", "type=self
 			{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
 			{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
 			{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
@@ -94,8 +94,8 @@
 			{if $filter.keywords}&keywords={$filter.keywords}{/if}
 			{if $filter.review_status}&review_status={$filter.review_status}{/if}
 			{if $filter.store_id}&store_id={$filter.store_id}{/if}
-			")}'>{lang key='goods::goods.merchant'}
-			<span class="badge badge-info unuse-plugins-num">{$goods_list.filter.merchant}</span>
+			")}'>{lang key='goods::goods.self'}
+			<span class="badge badge-info unuse-plugins-num">{$goods_list.filter.self}</span>
 		</a>
 	</li>
 

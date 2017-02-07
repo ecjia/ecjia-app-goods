@@ -584,6 +584,7 @@ return array(
 	),
 	'select_please'		=> '请选择...',
 	'all_category'		=> '所有分类',
+	'self'				=> '自营',
 	
 );
 
