@@ -1214,11 +1214,11 @@ function build_merchant_attr_html($cat_id, $goods_id = 0) {
 			$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
 			$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
 			if ($val ['attr_input_type'] == 0) {
-				$html .= '<div class="col-lg-6 p_l0"><input class="form-control" name="attr_value_list[]" type="text" value="' . htmlspecialchars($val ['attr_value']) . '" size="40" /></div> ';
+				$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="attr_value_list[]" type="text" value="' . htmlspecialchars($val ['attr_value']) . '" size="40" /></div> ';
 			} elseif ($val ['attr_input_type'] == 2) {
-				$html .= '<div class="col-lg-6 p_l0"><textarea class="form-control" name="attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea></div>';
+				$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea></div>';
 			} else {
-				$html .= '<div class="col-lg-6 p_l0"><select class="form-control" name="attr_value_list[]" autocomplete="off">';
+				$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="attr_value_list[]" autocomplete="off">';
 				$html .= '<option value="">' . RC_Lang::get('goods::goods_batch.select_please') . '</option>';
 				$attr_values = explode("\n", $val ['attr_values']);
 				foreach ($attr_values as $opt) {
@@ -1228,7 +1228,7 @@ function build_merchant_attr_html($cat_id, $goods_id = 0) {
 				}
 				$html .= '</select></div>';
 			}
-			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::get('goods::goods.spec_price') . '</span>' . ' <div class="col-lg-5 p_l0"><input class="form-control" type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" /></div>' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
+			$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5 f_l l_h30">' . RC_Lang::get('goods::goods.spec_price') . '</span>' . ' <div class="col-lg-5 p_l0"><input class="form-control" type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" /></div>' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
 			if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
 				$html .= ($spec != $val ['attr_id']) ? "<a class='m_l5 l_h30' href='javascript:;' data-toggle='clone-obj' data-parent='.form-group'><i class='fa fa-plus'></i></a>" : "<a class='m_l5 l_h30' href='javascript:;' data-trigger='toggleSpec'><i class='fa fa-times'></i></a>";
 				$spec = $val ['attr_id'];
