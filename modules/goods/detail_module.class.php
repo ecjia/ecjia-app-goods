@@ -274,8 +274,8 @@ class detail_module extends api_front implements api_interface {
         $data['rec_type'] = empty($rec_type) ? $activity_type : 'GROUPBUY_GOODS';
         $data['object_id'] = $object_id;
 
-        if (ecjia::config('shop_touch_url', ecjia::CONFIG_EXISTS)) {
-        	$data['goods_url'] = ecjia::config('shop_touch_url').'?goods&c=index&a=show&id='.$goods_id.'&hidenav=1&hidetab=1';
+        if (ecjia::config('mobile_touch_url', ecjia::CONFIG_EXISTS)) {
+        	$data['goods_url'] = ecjia::config('mobile_touch_url').'?goods&c=index&a=show&id='.$goods_id.'&hidenav=1&hidetab=1';
         } else {
         	$data['goods_url'] = null;
         }
