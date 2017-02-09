@@ -1590,7 +1590,7 @@ class admin extends ecjia_admin {
 		if (empty($goods) === true) {
 			return $this->showmessage(sprintf(__('找不到ID为%s的商品！'), $goods_id), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		_dump($_POST,1);
+
 		$data = array(
 			'goods_desc'	=> $_POST['goods_desc'],
 		  	'last_update'	=> RC_Time::gmtime(),
