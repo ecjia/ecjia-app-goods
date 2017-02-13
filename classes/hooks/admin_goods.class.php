@@ -91,6 +91,6 @@ class goods_hooks {
     }
 }
 
-RC_Hook::add_action( 'admin_dashboard_right', array('goods_hooks', 'widget_admin_dashboard_goodsstat') );
+RC_Hook::add_action( 'admin_dashboard_left', array('goods_hooks', 'widget_admin_dashboard_goodsstat'), 20);
 
 // end
