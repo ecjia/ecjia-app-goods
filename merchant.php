@@ -1007,7 +1007,7 @@ class merchant extends ecjia_merchant {
 		if ($code == 'virtual_card') {
 		  	$link[1] = array('href' => RC_Uri::url('goods/mh_virtual_card/replenish', 'goods_id=' . $goods_id), 'text' => RC_Lang::get('goods::goods.add_replenish'));
 		}
-		$link[3] = list_link($code);
+		$link[3] = list_merchant_link($code);
 
 		for ($i = 0; $i < count($link); $i++) {
 		  	$key_array[] = $i;
