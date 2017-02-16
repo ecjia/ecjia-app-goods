@@ -80,7 +80,7 @@ class mh_category extends ecjia_merchant {
 	 * 商品分类列表
 	 */
 	public function init() {
-	    $this->admin_priv('merchant_category_manage', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('merchant_category_manage');
 
 		$cat_list = merchant_cat_list(0, 0, false);
 
@@ -110,7 +110,7 @@ class mh_category extends ecjia_merchant {
 	 * 添加商品分类
 	 */
 	public function add() {
-	    $this->admin_priv('merchant_category_update', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('merchant_category_update');
 
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.add_goods_cat')));
 		
@@ -166,7 +166,7 @@ class mh_category extends ecjia_merchant {
 	 * 编辑商品分类信息
 	 */
 	public function edit() {
-		$this->admin_priv('merchant_category_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('merchant_category_update');
 
 		$cat_id = intval($_GET['cat_id']);
 		$cat_info = get_merchant_cat_info($cat_id);  // 查询分类信息数据
@@ -187,6 +187,8 @@ class mh_category extends ecjia_merchant {
 	}
 
 	public function add_category() {
+	    $this->admin_priv('merchant_category_update', ecjia::MSGTYPE_JSON);
+	    
 		$parent_id 	= empty($_REQUEST['parent_id'])	? 0		: intval($_REQUEST['parent_id']);
 		$category 	= empty($_REQUEST['cat']) 		? '' 	: trim($_REQUEST['cat']);
 		

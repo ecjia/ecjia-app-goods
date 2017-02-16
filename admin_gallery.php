@@ -151,7 +151,7 @@ class admin_gallery extends ecjia_admin {
      * 上传商品相册图片的方法
      */
     public function insert() {
-        $this->admin_priv('goods_update');
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
         
         $step = isset($_GET['step']) ? trim($_GET['step']) : '';
         

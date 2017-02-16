@@ -76,7 +76,7 @@ class admin_goods_type extends ecjia_admin {
 	 * 管理界面
 	 */
 	public function init() {
-		$this->admin_priv('attr_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('attr_manage');
 		
 		ecjia_screen::get_current_screen()->remove_last_nav_here();
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.goods_type_list')));
@@ -108,7 +108,7 @@ class admin_goods_type extends ecjia_admin {
 	 * 添加商品类型
 	 */
 	public function add() {
-		$this->admin_priv('goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_update');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.add_goods_type')));
 		ecjia_screen::get_current_screen()->add_help_tab(array(
@@ -157,7 +157,7 @@ class admin_goods_type extends ecjia_admin {
 	 * 编辑商品类型
 	 */
 	public function edit() {
-		$this->admin_priv('goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_update');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.edit_goods_type')));
 		$goods_type = get_goods_type_info(intval($_GET['cat_id']));

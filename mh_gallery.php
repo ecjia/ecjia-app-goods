@@ -97,6 +97,8 @@ class mh_gallery extends ecjia_merchant {
      * 商品相册
      */
     public function init() {
+        $this->admin_priv('goods_update');
+        
         ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/merchant/init')));
         $this->assign('ur_here', RC_Lang::get('goods::goods.edit_goods_photo'));
 
@@ -173,6 +175,8 @@ class mh_gallery extends ecjia_merchant {
      * 上传商品相册图片的方法
      */
     public function insert() {
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        
         $step = isset($_GET['step']) ? trim($_GET['step']) : '';
         
         RC_Loader::load_app_class('goods_image_data', 'goods', false);

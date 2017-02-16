@@ -92,7 +92,7 @@ class admin_category extends ecjia_admin {
 	 * 商品分类列表
 	 */
 	public function init() {
-	    $this->admin_priv('category_manage', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('category_manage');
 
 		$cat_list = cat_list(0, 0, false);
 		ecjia_screen::get_current_screen()->remove_last_nav_here();
@@ -121,7 +121,7 @@ class admin_category extends ecjia_admin {
 	 * 添加商品分类
 	 */
 	public function add() {
-	    $this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('category_update');
 
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.add_goods_cat')));
@@ -233,7 +233,7 @@ class admin_category extends ecjia_admin {
 	 * 编辑商品分类信息
 	 */
 	public function edit() {
-		$this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_update');
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 
 		$cat_id = intval($_GET['cat_id']);
@@ -297,6 +297,8 @@ class admin_category extends ecjia_admin {
 	}
 
 	public function add_category() {
+	    $this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+	    
 		$parent_id 	= empty($_REQUEST['parent_id'])	? 0		: intval($_REQUEST['parent_id']);
 		$category 	= empty($_REQUEST['cat']) 		? '' 	: trim($_REQUEST['cat']);
 		
@@ -457,7 +459,7 @@ class admin_category extends ecjia_admin {
 	 * 批量转移商品分类页面
 	 */
 	public function move() {
-		$this->admin_priv('category_move', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('category_move');
 
 		$cat_id = !empty($_REQUEST['cat_id']) ? intval($_REQUEST['cat_id']) : 0;
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.move_goods')));

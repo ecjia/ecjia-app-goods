@@ -76,7 +76,7 @@ class mh_attribute extends ecjia_merchant {
 	 * 属性列表
 	 */
 	public function init() {
-		$this->admin_priv('attr_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('attr_manage');
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::attribute.goods_attribute')));
 		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
@@ -116,7 +116,7 @@ class mh_attribute extends ecjia_merchant {
 	 * 添加/编辑属性
 	 */
 	public function add() {
-		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('attr_update');
 
 		/* 取得属性信息 */
 		$cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
@@ -190,7 +190,7 @@ class mh_attribute extends ecjia_merchant {
 	 * 添加/编辑属性
 	 */
 	public function edit() {
-		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('attr_update');
 		
 		$is_add = !empty($_GET['act']) ? 'add' : '';
 		$this->assign('form_act', $is_add ? 'insert' : 'update');
