@@ -200,6 +200,13 @@ class merchant extends ecjia_merchant {
 	public function preview() {
 		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
 		
+		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
+		if (empty($goods_id)) {
+		    return $this->showmessage(RC_Lang::get('goods::goods.no_goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => RC_Lang::get('goods::goods.return_last_page'), 'href' => 'javascript:history.go(-1)'))));
+		}
+		
+		RC_Hook::do_action('goods_merchant_priview_handler', $goods_id);
+		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_preview')));
 		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
 			'id'		=> 'overview',
@@ -212,7 +219,6 @@ class merchant extends ecjia_merchant {
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E9.A2.84.E8.A7.88.E5.95.86.E5.93.81" target="_blank">'. RC_Lang::get('goods::goods.about_goods_preview') .'</a>') . '</p>'
 		);
 		
-		$goods_id = trim($_GET['id']);
 		$this->assign('ur_here', RC_Lang::get('goods::goods.goods_preview'));
 		$this->assign('action_linkedit', array('text' => RC_Lang::get('goods::goods.goods_edit'), 'href' => RC_Uri::url('goods/merchant/edit', array('goods_id' => $goods_id))));
 		$this->assign('action_link', array('text' => RC_Lang::get('goods::goods.goods_list'), 'href' => RC_Uri::url('goods/merchant/init')));
