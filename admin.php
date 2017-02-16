@@ -700,18 +700,17 @@ class admin extends ecjia_admin {
 	 * 审核商品
 	 */
 	public function review() {
-		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
-		
 		$code = empty($_REQUEST['extension_code']) ? '' : trim($_REQUEST['extension_code']);
 		if ($code == 'virtual_card') {
-			$this->admin_priv('virualcard'); // 检查权限
+			$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON); // 检查权限
 		} else {
-			$this->admin_priv('goods_manage'); // 检查权限
+			$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON); // 检查权限
 		}
 		
 		$arr['review_status'] = intval($_POST['value']);
 		$id = intval($_POST['pk']);
 		RC_DB::table('goods')->where('goods_id', $id)->update($arr);
+		
 		return $this->showmessage(__('成功切换审核状态'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 	}
 
@@ -1582,9 +1581,9 @@ class admin extends ecjia_admin {
 	public function update_goods_desc() {
 	    $code = empty($_REQUEST['extension_code']) ? '' : trim($_REQUEST['extension_code']);
 	    if ($code == 'virtual_card') {
-	        $this->admin_priv('virualcard'); // 检查权限
+	        $this->admin_priv('virualcard', ecjia::MSGTYPE_JSON); // 检查权限
 	    } else {
-	        $this->admin_priv('goods_manage'); // 检查权限
+	        $this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON); // 检查权限
 	    }
 
 		$goods_type = isset($_POST['goods_type']) ? $_POST['goods_type'] : 0;

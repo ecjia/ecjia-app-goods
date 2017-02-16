@@ -246,7 +246,7 @@ class mh_category extends ecjia_merchant {
 	 * 批量转移商品分类页面
 	 */
 	public function move() {
-		$this->admin_priv('merchant_category_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('merchant_category_update');
 
 		$cat_id = !empty($_REQUEST['cat_id']) ? intval($_REQUEST['cat_id']) : 0;
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::category.move_goods')));

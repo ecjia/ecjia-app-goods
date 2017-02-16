@@ -1004,10 +1004,7 @@ class merchant extends ecjia_merchant {
 		
 		$code = '';
 		$link = array();
-		if ($code == 'virtual_card') {
-		  	$link[1] = array('href' => RC_Uri::url('goods/mh_virtual_card/replenish', 'goods_id=' . $goods_id), 'text' => RC_Lang::get('goods::goods.add_replenish'));
-		}
-		$link[3] = list_merchant_link($code);
+		$link[1] = list_merchant_link($code);
 
 		for ($i = 0; $i < count($link); $i++) {
 		  	$key_array[] = $i;
@@ -1041,9 +1038,9 @@ class merchant extends ecjia_merchant {
 		
 		$code = empty($_REQUEST['extension_code']) ? '' : trim($_REQUEST['extension_code']);
 		if ($code == 'virtual_card') {
-			$this->admin_priv('virualcard'); 
+			$this->admin_priv('virualcard', ecjia::MSGTYPE_JSON); 
 		} else {
-			$this->admin_priv('goods_manage');
+			$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
 		}
 		if (empty($_SESSION['ru_id'])) {
 			$arr['review_status'] = $_POST['value'];
