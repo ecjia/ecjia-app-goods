@@ -70,7 +70,7 @@ class admin_brand extends ecjia_admin {
 	 * 品牌列表
 	 */
 	public function init() {
-	    $this->admin_priv('brand_manage', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('brand_manage');
 	    
 		RC_Script::enqueue_script('bootstrap-editable-script', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/js/bootstrap-editable.min.js', array(), false, true);
 		RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css');
@@ -100,7 +100,7 @@ class admin_brand extends ecjia_admin {
 	 * 添加品牌
 	 */
 	public function add() {
-	    $this->admin_priv('brand_update', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('brand_update');
 	    
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::brand.add_brand')));
 		ecjia_screen::get_current_screen()->add_help_tab(array(
@@ -181,7 +181,7 @@ class admin_brand extends ecjia_admin {
 	 * 编辑品牌
 	 */
 	public function edit() {
-	    $this->admin_priv('brand_update', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('brand_update');
 	    
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::brand.edit_brand')));
 		ecjia_screen::get_current_screen()->add_help_tab(array(

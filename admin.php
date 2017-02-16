@@ -141,7 +141,7 @@ class admin extends ecjia_admin {
 	*/
 	public function init() {
 		
-	    $this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('goods_manage');
 	    
 		$cat_id = empty($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
 		
@@ -190,7 +190,7 @@ class admin extends ecjia_admin {
 	 * 预览
 	 */
 	public function preview() {
-		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_manage');
 		
 		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
 		if (empty($goods_id)) {
@@ -297,7 +297,7 @@ class admin extends ecjia_admin {
 	* 商品回收站
 	*/
 	public function trash()	{
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goods_update');
 
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_recycle')));
 	    ecjia_screen::get_current_screen()->add_help_tab(array(
@@ -334,7 +334,7 @@ class admin extends ecjia_admin {
 	 * 编辑商品
 	 */
 	public function edit() {
-		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_update');
 
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods')));
@@ -731,100 +731,100 @@ class admin extends ecjia_admin {
 			/* 放入回收站 */
 			if ($_GET['type'] == 'trash') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_delete', '1');
 				$action = 'batch_trash';
 			} 
 			/* 上架 */
 			elseif ($_GET['type'] == 'on_sale') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_on_sale', '1');
 			} 
 			/* 下架 */
 			elseif ($_GET['type'] == 'not_on_sale') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_on_sale', '0');
 			} 
 			/* 设为精品 */
 			elseif ($_GET['type'] == 'best') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_best', '1');
 			} 
 			/* 取消精品 */
 			elseif ($_GET['type'] == 'not_best') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_best', '0');
 			} 
 			/* 设为新品 */
 			elseif ($_GET['type'] == 'new') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_new', '1');
 			} 
 			/* 取消新品 */
 			elseif ($_GET['type'] == 'not_new') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_new', '0');
 			} 
 			/* 设为热销 */
 			elseif ($_GET['type'] == 'hot') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_hot', '1');
 			} 
 			/* 取消热销 */
 			elseif ($_GET['type'] == 'not_hot') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_hot', '0');
 			} 
 			/* 转移到分类 */
 			elseif ($_GET['type'] == 'move_to') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'cat_id', $_GET['target_cat']);
 			} 
 			/* 还原 */
 			elseif ($_GET['type'] == 'restore') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'is_delete', '0');
 				$action = 'batch_restore';
 			} 
 			/* 删除 */
 			elseif ($_GET['type'] == 'drop') {
 				/* 检查权限 */
-				$this->admin_priv('goods_delete');
+				$this->admin_priv('goods_delete', ecjia::MSGTYPE_JSON);
 				delete_goods($goods_id);
 				$action = 'batch_remove';
 			}
 			/* 审核通过 */
 			elseif ($_GET['type'] == 'pass') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'review_status', '3');
 			}
 			/* 审核未通过 */
 			elseif ($_GET['type'] == 'not_pass') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'review_status', '2');
 			}
 			/* 设为未审核 */
 			elseif ($_GET['type'] == 'not_audited') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'review_status', '1');
 			}
 			/* 无需审核 */
 			elseif ($_GET['type'] == 'not_check') {
 				/* 检查权限 */
-				$this->admin_priv('goods_update');
+				$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 				update_goods($goods_id, 'review_status', '5');
 			}
 		}
@@ -1208,7 +1208,7 @@ class admin extends ecjia_admin {
 	* 货品列表
 	*/
 	public function product_list() {
-		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_manage');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品列表')));
@@ -1553,7 +1553,7 @@ class admin extends ecjia_admin {
 	 * 商品描述编辑页面
 	 */
 	public function edit_goods_desc() {
-	    $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+	    $this->admin_priv('goods_update');
 	    
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'),RC_Uri::url('goods/admin/init')));
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods_desc')));
@@ -1623,7 +1623,7 @@ class admin extends ecjia_admin {
 	* 商品属性
 	*/
 	public function edit_goods_attr() {
-	     $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+	     $this->admin_priv('goods_update');
 	     
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
 	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods_attr')));
@@ -1786,7 +1786,7 @@ class admin extends ecjia_admin {
 	 * 关联商品
 	 */
 	public function edit_link_goods() {
-		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_update');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goods/admin/init')));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_link_goods')));
@@ -2055,6 +2055,8 @@ class admin extends ecjia_admin {
 	 * 商品添加/编辑页 添加商品品牌
 	 */
 	public function add_brand() {
+	    $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+	    
 		$brand_name = !empty($_POST['brand_name']) ? trim($_POST['brand_name']) : '';
 		$is_only = $this->db_brand->brand_count(array('brand_name' => $brand_name));
 		if ($is_only != 0) {
@@ -2077,7 +2079,8 @@ class admin extends ecjia_admin {
 	 * 商品添加/编辑页 添加商品分类
 	 */
 	public function add_category() {
-	
+	    $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+	    
 		$cat['parent_id']	= !empty($_POST['cat_id'])		? intval($_POST['cat_id'])	: 0;
 		$cat['cat_name']	= !empty($_POST['cat_name'])	? trim($_POST['cat_name'])	: '';
 		$cat['sort_order']  = 1;

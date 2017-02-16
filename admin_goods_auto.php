@@ -101,7 +101,7 @@ class admin_goods_auto extends ecjia_admin {
 	 * 批量上架
 	 */
 	public function batch_start() {
-		$this->admin_priv('goods_auto_update');
+		$this->admin_priv('goods_auto_update', ecjia::MSGTYPE_JSON);
 	
 		$goods_id = !empty($_POST['goods_id']) ? $_POST['goods_id'] : '';
 		$time = !empty($_POST['select_time']) ? RC_Time::local_strtotime($_POST['select_time']) : '';
@@ -148,7 +148,7 @@ class admin_goods_auto extends ecjia_admin {
 	 * 批量下架
 	 */
 	public function batch_end() {
-		$this->admin_priv('goods_auto_update');
+		$this->admin_priv('goods_auto_update', ecjia::MSGTYPE_JSON);
 	
 		$goods_id = !empty($_POST['goods_id']) ? $_POST['goods_id'] : '';
 		$time = RC_Time::local_strtotime($_POST['select_time']);
@@ -192,7 +192,7 @@ class admin_goods_auto extends ecjia_admin {
 	
 	//撤销
 	public function del() {
-		$this->admin_priv('goods_auto_delete');
+		$this->admin_priv('goods_auto_delete', ecjia::MSGTYPE_JSON);
 		
 		$goods_id = (int)$_GET['id'];
 		$goods_name = $this->db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
@@ -224,7 +224,7 @@ class admin_goods_auto extends ecjia_admin {
 	}
 	
 	public function edit_endtime() {
-		$this->admin_priv('goods_auto_update');
+		$this->admin_priv('goods_auto_update', ecjia::MSGTYPE_JSON);
 		
 		$id		= !empty($_POST['pk']) 	? intval($_POST['pk']) : 0;
 		$value 	= !empty($_POST['value']) ? trim($_POST['value']) : '';

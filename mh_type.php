@@ -76,7 +76,7 @@ class mh_type extends ecjia_merchant {
 	 * 管理界面
 	 */
 	public function init() {
-		$this->admin_priv('goods_type', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type');
 
 		ecjia_merchant_screen::get_current_screen()->remove_last_nav_here();
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.goods_type_list')));
@@ -108,7 +108,7 @@ class mh_type extends ecjia_merchant {
 	 * 添加商品类型
 	 */
 	public function add() {
-		$this->admin_priv('goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_update');
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.add_goods_type')));
 		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
@@ -162,7 +162,7 @@ class mh_type extends ecjia_merchant {
 	 * 编辑商品类型
 	 */
 	public function edit() {
-		$this->admin_priv('goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_update');
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.edit_goods_type')));
 		
