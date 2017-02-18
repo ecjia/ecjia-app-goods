@@ -506,13 +506,13 @@ class merchant extends ecjia_merchant {
 
 		/* 处理商品数据 */
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
-		$market_price 	= !empty($_POST['market_price']) 	? $_POST['market_price'] 			: 0;
+		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
 		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
 		$is_promote 	= empty($promote_price) 			? 0 								: 1;
 
 		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
 		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
-		$goods_weight 		= !empty($_POST['goods_weight']) 						? $_POST['goods_weight'] * $_POST['weight_unit'] 			: 0;
+		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
 
 		$is_best 		= !empty($_POST['is_best']) 			? 1 : 0;
 		$is_new 		= !empty($_POST['is_new']) 			? 1 : 0;
@@ -878,13 +878,13 @@ class merchant extends ecjia_merchant {
 
 		/* 处理商品数据 */
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
-		$market_price 	= !empty($_POST['market_price']) 	? $_POST['market_price'] 			: 0;
+		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
 		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
 		$is_promote 	= empty($_POST['is_promote']) 		? 0 								: 1;
 		
 		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
 		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
-		$goods_weight 		= !empty($_POST['goods_weight']) 						? $_POST['goods_weight'] * $_POST['weight_unit'] 			: 0;
+		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
 
 		$is_best 		= isset($_POST['is_best']) 			? 1 : 0;
 		$is_new 		= isset($_POST['is_new']) 			? 1 : 0;
