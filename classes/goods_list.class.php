@@ -163,13 +163,14 @@ class goods_list {
 			/* 缓存对象*/
 			
 		}
-		
+		 
 		/* 地理位置获取店铺*/
 		if (isset($filter['geohash']) && !empty($filter['geohash'])) {
 	        $store_id_group = RC_Api::api('store', 'neighbors_store_id', array('geohash' => $filter['geohash']));
 	        if (empty($store_id_group)) {
 	            $store_id_group = RC_Api::api('store', 'neighbors_store_id', array('geohash' => substr($filter['geohash'], 0, 4)));
 	        }
+	        $where['g.store_id'] = !empty($store_id_group) ? $store_id_group : 0;
 	        $cache_key .= '-geohash-' . $filter['geohash'];
 		}
 		
