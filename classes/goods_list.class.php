@@ -138,6 +138,7 @@ class goods_list {
 		    'is_on_sale'	=> 1,
 		    'is_alone_sale' => 1,
 		    'is_delete'		=> 0,
+			'shop_close'	=> 0,
 		);
 		
 		/* 商品列表缓存key*/
@@ -312,7 +313,7 @@ class goods_list {
 		$goods_result = $goods_db->get_cache_item($fomated_cache_key);
 		if (empty($goods_result)) {
 			/* 返回商品总数 */
-			$count = $dbview->join(null)->where($where)->count();
+			$count = $dbview->join(array('store_franchisee'))->where($where)->count();
 			
 			//实例化分页
 			if (empty($filter['size']) && empty($filter['page'])) {
