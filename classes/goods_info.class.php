@@ -329,7 +329,7 @@ class goods_info {
 	 *
 	 * @return string
 	 */
-	private function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
+	private static function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
 		$dbview = RC_DB::table('attribute as a')
 		->leftJoin('goods_attr as v', RC_DB::raw('v.attr_id'), '=', RC_DB::raw('a.attr_id'));
 		$dbview->where(RC_DB::raw('a.attr_type'), '=', 1);
