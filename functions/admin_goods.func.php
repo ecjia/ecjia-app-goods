@@ -731,7 +731,7 @@ function get_goods_properties($goods_id, $warehouse_id = 0, $area_id = 0) {
 					'price' => $row ['attr_price'],
 					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
 					'id' => $row ['goods_attr_id']
-					);
+				);
 			}
 
 			if ($row ['is_linked'] == 1) {
