@@ -71,7 +71,7 @@ class list_module extends api_front implements api_interface {
 				'sort'			=> array('sort_order' => 'asc'),
 				'limit'			=> 'all'
 		);
-		RC_Logger::getLogger('pay')->info($options);
+
 		/*经纬度为空判断*/
 		$mobile_location_range = ecjia::config('mobile_location_range');
 		if ((is_array($location) || !empty($location['longitude']) || !empty($location['latitude'])) && $mobile_location_range > 0) {
