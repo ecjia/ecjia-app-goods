@@ -325,9 +325,9 @@ class detail_module extends api_front implements api_interface {
 					'img' => array(
 						'thumb'	=> $val['goods_img'],
 						'url'	=> $val['original_img'],
-						'small'	=> $val['goods_thumb']
+						'small'	=> $val['goods_thumb'],
 					),
-				    'specification'     => $properties['spe'],
+				    'specification'     => array_values($properties['spe']),
 					'activity_type' 	=> $activity_type,
 					'object_id'			=> 0,
 					'saving_price'		=>	$saving_price,
