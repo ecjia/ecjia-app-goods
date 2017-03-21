@@ -138,7 +138,7 @@ class goods_info {
 				}
 			}
 		}
-		$field = "g.promote_price, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . intval($_SESSION['discount']) . "') AS shop_price";
+		$field = "g.promote_price, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . $_SESSION['discount'] . "') AS shop_price";
 		// 取得商品促销价格列表
 		$goods = $db_goodsview->join(array('member_price'))->field($field)->where(array('g.goods_id' => $goods_id, 'g.is_delete' => 0))->find();
 
