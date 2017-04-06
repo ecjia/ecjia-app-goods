@@ -280,7 +280,7 @@
 					</div>
 					<div class="accordion-body in in_visable collapse" id="goods_info_area_tvimg">
 						<div class="accordion-inner">
-							<label>请选择一个广告位，作为您的分类广告{$category_ad.position_id}</label>
+							<label>请选择一个广告位，作为您的分类广告</label>
 							<div class="control-group">
 							    <input type='text' name='ad_search' class='keywords'/>
     							<input type='button' class='btn ad_search' value="{lang key='mobile::mobile.search'}" data-url="{url path='goods/admin_category/search_ad'}"/>
