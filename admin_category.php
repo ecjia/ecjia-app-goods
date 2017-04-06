@@ -238,7 +238,6 @@ class admin_category extends ecjia_admin {
 	 * 编辑商品分类信息
 	 */
 	public function edit() {
-	    _dump(ecjia::config('shop_reg_closed'),1);
 		$this->admin_priv('category_update');
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 
