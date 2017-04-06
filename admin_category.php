@@ -200,6 +200,11 @@ class admin_category extends ecjia_admin {
 			}
 			$cat['cat_recommend']  = !empty($_POST['cat_recommend'])  ? $_POST['cat_recommend'] : array();
 			insert_cat_recommend($cat['cat_recommend'], $cat_id);
+			
+			//存储广告
+			if(!empty($_POST['category_ad'])) {
+			    self::update_category_ad($insert_id, $_POST['category_ad']);
+			}
 
 			ecjia_admin::admin_log($_POST['cat_name'], 'add', 'category');   // 记录管理员操作
 
@@ -233,6 +238,7 @@ class admin_category extends ecjia_admin {
 	 * 编辑商品分类信息
 	 */
 	public function edit() {
+	    _dump(ecjia::config('shop_reg_closed'),1);
 		$this->admin_priv('category_update');
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_info.js',__FILE__), array(), false, false);
 
@@ -283,6 +289,9 @@ class admin_category extends ecjia_admin {
 
 		$cat_info['category_img'] = !empty($cat_info['category_img']) ? RC_Upload::upload_url($cat_info['category_img']) : '';
 		
+		$category_ad = self::get_category_ad($cat_info['cat_id']);
+// 		_dump($category_ad,1);
+		$this->assign('category_ad', $category_ad);
 		$this->assign('cat_info', $cat_info);
 		$this->assign('cat_select', cat_list(0, $cat_info['parent_id'], true));
 		$this->assign('goods_type_list', goods_type_list(0)); // 取得商品类型
@@ -379,6 +388,10 @@ class admin_category extends ecjia_admin {
 		$info = RC_DB::table('category')->select('cat_name', 'parent_id', 'show_in_nav')->where('cat_id', $cat_id)->first();
 		
 		RC_DB::table('category')->where('cat_id', $cat_id)->update($cat);
+		//存储广告
+		if(!empty($_POST['category_ad'])) {
+		    self::update_category_ad($cat_id, $_POST['category_ad']);
+		}
 		
 		if ($cat['cat_name'] != $info['cat_name']) {
 			/* 如果分类名称发生了改变 */
@@ -658,6 +671,56 @@ class admin_category extends ecjia_admin {
 		
 		return $this->showmessage(RC_Lang::get('goods::category.drop_cat_img_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
 	}
+	
+	public function search_ad() {
+	    $result = RC_DB::table('ad_position')->where('position_name', 'like', '%'.$_POST['keywords'].'%')->get();
+	    $list = array();
+	    if (!empty($result)) {
+	        foreach ($result as $val) {
+	            $list[] = array(
+	                'id' 	=> $val['position_id'],
+	                'name' 	=> $val['position_name']
+	            );
+	        }
+	    }
+	    return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $list));
+	}
+	
+	private function update_category_ad($category_id, $ad_position_id) {
+	    
+	    if (empty($category_id)) {
+	        return false;
+	    }
+	    if (RC_DB::table('term_meta')->where('object_type', 'ecjia.goods')->where('object_group', 'category')->where('object_id', $category_id)->where('meta_key', 'category_ad')->count()) {
+	        RC_DB::table('term_meta')->where('object_type', 'ecjia.goods')->where('object_group', 'category')->where('object_id', $category_id)->where('meta_key', 'category_ad')
+	        ->update(array('meta_value', $ad_position_id));
+	    } else {
+	        $data = array(
+	            'object_type' => 'ecjia.goods',
+	            'object_group' => 'category',
+	            'object_id' => $category_id,
+	            'meta_key' =>'category_ad',
+	            'meta_value' => $ad_position_id
+	        );
+	        RC_DB::table('term_meta')->insert($data);
+	    }
+	    
+	    return true;
+	}
+	
+	private function get_category_ad($category_id) {
+	    if (empty($category_id)) {
+	        return false;
+	    }
+        $ad_position_id = RC_DB::table('term_meta')->where('object_type', 'ecjia.goods')->where('object_group', 'category')->where('object_id', $category_id)->where('meta_key', 'category_ad')->pluck('meta_value');
+        if ($ad_position_id) {
+            $ad_info = RC_DB::table('ad_position')->where('position_id', $ad_position_id)->first();
+            return $ad_info;
+        } else {
+            return false;
+        }
+	}
+	
 }
 
 // end
