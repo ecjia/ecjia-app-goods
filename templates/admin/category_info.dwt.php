@@ -280,10 +280,19 @@
 					</div>
 					<div class="accordion-body in in_visable collapse" id="goods_info_area_tvimg">
 						<div class="accordion-inner">
-							<label>请选择一个广告位，作为您的分类广告</label>
+						    <div class="control-group">当前广告位：<br/>
+						    <span class="m_t5 ecjiaf-ib">
+						    <!-- {if $category_ad.position_id} -->
+						    {$category_ad.position_name}
+						    <a class="ajaxremove ecjiafc-red m_l10" data-toggle="ajaxremove" data-msg="您确定要移除此分类广告么？" href='{url path="goods/admin_category/remove_ad" args="cat_id={$cat_info.cat_id}"}'>移除</a>
+						    {else}未设置{/if}
+						    </span>
+						    </div>
+							<!-- <label>请选择一个广告位，作为您的分类广告</label> -->
 							<div class="control-group">
 							    <input type='text' name='ad_search' class='keywords'/>
     							<input type='button' class='btn ad_search' value="{lang key='mobile::mobile.search'}" data-url="{url path='goods/admin_category/search_ad'}"/>
+    							<span class="help-block" style="margin-top: 5px;">请先搜索并选择一个广告位作为此分类广告</span>
 							</div>
 							<div class="control-group ">
     							<select name='category_ad' class="ad_list">

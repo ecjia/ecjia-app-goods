@@ -298,7 +298,7 @@ class admin_category extends ecjia_admin {
 
 		$this->display('category_info.dwt');
 	}
-
+	
 	public function choose_goods_type() {
 		$attr_list = get_attr_list();
 		return $this->showmessage('', ecjia::MSGSTAT_SUCCESS | ecjia::MSGTYPE_JSON, array('attr_list' => $attr_list));
@@ -671,6 +671,28 @@ class admin_category extends ecjia_admin {
 		return $this->showmessage(RC_Lang::get('goods::category.drop_cat_img_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
 	}
 	
+	/**
+	 * 删除商品分类广告
+	 */
+	public function remove_ad() {
+	    $this->admin_priv('category_update', ecjia::MSGTYPE_JSON);
+	
+	    $cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
+	    if (empty($cat_id)) {
+	        return $this->showmessage('参数错误', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	    }
+	
+	    $info = RC_DB::table('category')->where('cat_id', $cat_id)->first();
+	    $this->remove_category_ad($cat_id);
+	
+	    /* 释放app缓存 */
+	    $category_db = RC_Model::model('goods/orm_category_model');
+	    $cache_key = sprintf('%X', crc32('category-'. $info['parent_id']));
+	    $category_db->delete_cache_item($cache_key);
+	
+	    return $this->showmessage('操作成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin_category/edit', array('cat_id' => $cat_id))));
+	}
+	
 	public function search_ad() {
 	    $result = RC_DB::table('ad_position')->where('position_name', 'like', '%'.$_POST['keywords'].'%')->get();
 	    $list = array();
@@ -718,6 +740,16 @@ class admin_category extends ecjia_admin {
         } else {
             return false;
         }
+	}
+	
+	private function remove_category_ad($category_id) {
+	
+	    if (empty($category_id)) {
+	        return false;
+	    }
+	    
+        return RC_DB::table('term_meta')->where('object_type', 'ecjia.goods')->where('object_group', 'category')->where('object_id', $category_id)->where('meta_key', 'category_ad')
+        ->delete();
 	}
 	
 }
