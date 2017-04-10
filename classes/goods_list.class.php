@@ -167,6 +167,9 @@ class goods_list {
 			} else {
 				$cache_key .= '-store-' . $filter['store_id'];
 			}
+		} else {
+			$where['g.store_id'] = 0;
+			$cache_key .= '-store-0';
 		}
 		 
 		/* 地理位置获取店铺*/
@@ -318,6 +321,7 @@ class goods_list {
 		$fomated_cache_key = $goods_db->create_cache_key_array($cache_key, 2880);
 		
 		$goods_result = $goods_db->get_cache_item($fomated_cache_key);
+		
 		if (empty($goods_result['list'])) {
 			/* 返回商品总数 */
 			$count = $dbview->join(array('store_franchisee'))->where($where)->count();
