@@ -167,9 +167,6 @@ class goods_list {
 			} else {
 				$cache_key .= '-store-' . $filter['store_id'];
 			}
-		} else {
-			$where['g.store_id'] = 0;
-			$cache_key .= '-store-0';
 		}
 		 
 		/* 地理位置获取店铺*/
