@@ -179,6 +179,12 @@ class goods_list {
 	        $cache_key .= '-geohash-' . $filter['geohash'];
 		}
 		
+		/* 城市id */
+		if (isset($filter['city_id'])) {
+			$where['sf.city'] = $filter['city_id'];
+			$cache_key .= '-city-' . $filter['city_id'];
+		}
+		
 		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
 		    $merchant_cat_list = RC_DB::table('merchants_category')
 		    	->selectRaw('cat_id')
