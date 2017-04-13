@@ -714,7 +714,7 @@ class admin_category extends ecjia_admin {
 	    }
 	    if (RC_DB::table('term_meta')->where('object_type', 'ecjia.goods')->where('object_group', 'category')->where('object_id', $category_id)->where('meta_key', 'category_ad')->count()) {
 	        RC_DB::table('term_meta')->where('object_type', 'ecjia.goods')->where('object_group', 'category')->where('object_id', $category_id)->where('meta_key', 'category_ad')
-	        ->update(array('meta_value', $ad_position_id));
+	        ->update(array('meta_value' => $ad_position_id));
 	    } else {
 	        $data = array(
 	            'object_type' => 'ecjia.goods',
