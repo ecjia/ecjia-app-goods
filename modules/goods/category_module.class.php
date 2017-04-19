@@ -52,6 +52,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class category_module extends api_front implements api_interface {
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+	    RC_Logger::getlogger('info')->info($_REQUEST);
 // 		$cache_key = 'api_goods_category';
 // 		$categoryGoods = RC_Cache::app_cache_get($cache_key, 'goods');
 	
