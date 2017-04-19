@@ -52,7 +52,10 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class category_module extends api_front implements api_interface {
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
-	    RC_Logger::getlogger('info')->info($_REQUEST);
+	    $api_old = false;
+	    if (version_compare($request->header('api_version'), '1.5', '<')) {
+	        $api_old = true;
+	    }
 // 		$cache_key = 'api_goods_category';
 // 		$categoryGoods = RC_Cache::app_cache_get($cache_key, 'goods');
 	
@@ -66,25 +69,27 @@ class category_module extends api_front implements api_interface {
 				foreach($category as $key => $val) {
 					$categoryGoods[$key]['id'] = $val['id'];
 					$categoryGoods[$key]['name'] = $val['name'];
-					$categoryGoods[$key]['image'] = $val['img'];
 					$ad = RC_Api::api('adsense', 'get_category_ad', array('cat_id' => $val['id']));
+					$categoryGoods[$key]['image'] = $api_old ? $ad[0]['image'] : $val['img'];
 					$categoryGoods[$key]['ad'] = $ad;
 					if (!empty($val['cat_id'])) {
 						foreach($val['cat_id'] as $k => $v ) {
+						    $ad = RC_Api::api('adsense', 'get_category_ad', array('cat_id' => $v['id']));
 							$categoryGoods[$key]['children'][$k] = array(
 									'id'     => $v['id'],
 									'name'   => $v['name'],
-									'image'	 => $v['img'],
-							        'ad'     => RC_Api::api('adsense', 'get_category_ad', array('cat_id' => $v['id'])),
+									'image'	 => $api_old ? $ad[0]['image'] : $v['img'],
+							        'ad'     => $ad,
 							);
 								
 							if( !empty($v['cat_id']) ) {
 								foreach($v['cat_id'] as $k1 => $v1) {
+								    $ad =  RC_Api::api('adsense', 'get_category_ad', array('cat_id' => $v1['id']));
 									$categoryGoods[$key]['children'][$k]['children'][] = array(
 											'id'     => $v1['id'],
 											'name'   => $v1['name'],
-											'image'	 => $v1['img'],
-									        'ad'     => RC_Api::api('adsense', 'get_category_ad', array('cat_id' => $v1['id'])),
+											'image'	 => $api_old ? $ad[0]['image'] : $v1['img'],
+									        'ad'     => $ad,
 									);
 								}
 							} else {
