@@ -52,6 +52,8 @@ defined('IN_ECJIA') or exit('No permission resources.');
  */
 class category_module extends api_front implements api_interface {
 	public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+	    RC_Logger::getlogger('info')->info('api_version');
+	    RC_Logger::getlogger('info')->info($request->header('api_version'));
 	    $api_old = false;
 	    if (version_compare($request->header('api_version'), '1.5', '<')) {
 	        $api_old = true;
@@ -88,7 +90,7 @@ class category_module extends api_front implements api_interface {
 									$categoryGoods[$key]['children'][$k]['children'][] = array(
 											'id'     => $v1['id'],
 											'name'   => $v1['name'],
-											'image'	 => $api_old ? $ad[0]['image'] : $v1['img'],
+											'image'	 => $v1['img'],
 									        'ad'     => $ad,
 									);
 								}
