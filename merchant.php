@@ -988,6 +988,12 @@ class merchant extends ecjia_merchant {
 				if (is_ecjia_error($result)) {
 					return $this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 				}
+				//删除生成的商品二维码
+				$goods_qrcode = 'data/qrcodes/goods/goods_'.$goods_id.'.png';
+				if (file_exists(RC_Upload::upload_path($goods_qrcode))) {
+					$disk = RC_Filesystem::disk();
+					$disk->delete(RC_Upload::upload_path().$goods_qrcode);
+				}
 			}
 		}
 
@@ -998,6 +1004,12 @@ class merchant extends ecjia_merchant {
 				$result = $thumb_image->update_thumb();
 				if (is_ecjia_error($result)) {
 					return $this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				}
+				//删除生成的商品二维码
+				$goods_qrcode = 'data/qrcodes/goods/goods_'.$goods_id.'.png';
+				if (file_exists(RC_Upload::upload_path($goods_qrcode))) {
+					$disk = RC_Filesystem::disk();
+					$disk->delete(RC_Upload::upload_path().$goods_qrcode);
 				}
 			}
 		}
