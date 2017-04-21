@@ -153,7 +153,7 @@ class add_module extends api_admin implements api_interface {
     	}
     	
     	/* 记录日志 */
-    	ecjia_admin::admin_log($goods_name, 'add', 'goods');
+    	ecjia_admin::admin_log($goods_name.'【来源掌柜】', 'add', 'goods');
 		
     	$today = RC_Time::gmtime();
     	$field = '*, (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ') AS is_promote';

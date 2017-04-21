@@ -81,7 +81,7 @@ class restore_module extends api_admin implements api_interface {
 		
 		foreach ($id as $val) {
 			$goods_name = $db_goods->where(array('goods_id' => $val))->get_field('goods_name');
-			ecjia_admin::admin_log(addslashes($goods_name), 'restore', 'goods'); // 记录日志
+			ecjia_admin::admin_log(addslashes($goods_name).'【来源掌柜】', 'restore', 'goods'); // 记录日志
 		}
 		
 		return array();
