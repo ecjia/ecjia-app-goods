@@ -401,7 +401,7 @@ function insert_cat_recommend($recommend_type, $cat_id) {
 	}
 }
 
-function get_parent_cats($cat_id, $is_merchant_category = 0, $ru_id = 0)
+function get_parent_cats($cat_id, $is_merchant_category = 0, $store_id = 0)
 {
     if ($cat_id == 0) {
         return array(
@@ -415,7 +415,7 @@ function get_parent_cats($cat_id, $is_merchant_category = 0, $ru_id = 0)
     $where = array();
     if ($is_merchant_category) {
         $db_category = RC_Loader::load_app_model ( 'merchants_category_model', 'goods');
-        $where = array('user_id', $ru_id);
+        $where = array('store_id', $store_id);
     } else {
         $db_category = RC_Loader::load_app_model ( 'category_model', 'goods');
     }
