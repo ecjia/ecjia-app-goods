@@ -50,27 +50,28 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author will
  *
  */
-class list_module implements ecjia_interface {
-	
-	public function run(ecjia_api & $api) {
-		
-		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-		$ecjia->authadminSession();
-		$result = $ecjia->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-			EM_Api::outPut($result);
+class list_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
 		}
 		
-		$keywords	= _POST('keywords');
+		$keywords	= $this->requestData('keywords');
 		
-		$size = EM_Api::$pagination['count'];
-		$page = EM_Api::$pagination['page'];
+		$size = $this->requestData('pagination.count', 15);
+		$page = $this->requestData('pagination.page', 1);
 		
 		$where = array(
 			'is_delete' => 1,
 		);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
 		
 		if ( !empty($keywords)) {
@@ -134,7 +135,7 @@ class list_module implements ecjia_interface {
 				"more" => $page_row->total_pages <= $page ? 0 : 1,
 		);
 		
-		EM_Api::outPut($goods_list , $pager);
+		return array('data' => $goods_list, 'pager' => $pager);
 	}
 	
 	
