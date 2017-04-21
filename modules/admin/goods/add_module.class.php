@@ -168,7 +168,7 @@ class add_module implements ecjia_interface
     	$field = '*, (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ') AS is_promote';
     	$row = RC_Model::model('goods/goods_model')->field($field)->find(array('goods_id' => $goods_id));
     	
-    	RC_Loader::load_app_func('category', 'goods');
+    	RC_Loader::load_app_func('admin_category', 'goods');
     	$brand_db = RC_Loader::load_app_model('brand_model', 'goods');
     	$category_db = RC_Loader::load_app_model('category_model', 'goods');
     		

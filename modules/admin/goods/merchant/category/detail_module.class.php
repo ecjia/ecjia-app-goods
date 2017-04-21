@@ -76,7 +76,7 @@ class detail_module implements ecjia_interface
     		return new ecjia_error('category_empty', '未找到对应分类！');
     	}
     	
-    	RC_Loader::load_app_func('category', 'goods');
+    	RC_Loader::load_app_func('admin_category', 'goods');
     	$category_detail = array(
 			'category_id'	=> $category_info['cat_id'],
 			'category_name'	=> $category_info['cat_name'],

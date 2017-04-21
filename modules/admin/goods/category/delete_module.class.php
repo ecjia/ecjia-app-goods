@@ -50,21 +50,25 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class delete_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('cat_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
+class delete_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('cat_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
+    	
+    	if (!empty($_SESSION['staff_id'])) {
+    		return new ecjia_error('priv_error', '您无权对此分类进行操作！');
     	}
     	
-    	$cat_id = _POST('category_id');
-    	if (empty($cat_id) || !empty($_SESSION['ru_id'])) {
-    		EM_Api::outPut(101);
+    	$cat_id = $this->requestData('category_id');
+    	if (empty($cat_id)) {
+    	    return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
 		$category	= RC_Model::model('goods/category_model')->where(array('cat_id' => $cat_id))->find();
@@ -78,12 +82,12 @@ class delete_module implements ecjia_interface
 			}
 			$query = RC_Model::model('goods/category_model')->where(array('cat_id' => $cat_id))->delete();
 			if ($query) {
-				$db_nav = RC_Loader::load_model('nav_model');
-				$db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->delete();
+// 				$db_nav = RC_Loader::load_model('nav_model');
+// 				$db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->delete();
 				ecjia_admin::admin_log($category['cat_name'], 'remove', 'category');
 			}
 		} else {
-			return new ecjia_error('category_delete_error','该分类下有商品或非末级分类！');
+			return new ecjia_error('category_delete_error', '该分类下有商品或非末级分类！');
 		}
     	
     	
