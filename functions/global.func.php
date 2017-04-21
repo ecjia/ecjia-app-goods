@@ -1908,4 +1908,26 @@ function get_package_goods($package_id) {
 	return $row;
 }
 
+/**
+ * 获取审核状态
+ */
+function get_review_status($store_id) {
+    $review_status = 1;
+    if (ecjia::config('review_goods') == 0) {
+        $review_status = 5;
+    } else {
+        if (isset($store_id) && $store_id > 0) {
+            $shop_review_goods = RC_DB::table('merchants_config')->where('store_id', $store_id)->where('code', 'shop_review_goods')->pluck('value');
+            if ($shop_review_goods == 0) {
+                $review_status = 5;
+            } else {
+                $review_status = 0;
+            }
+        } else {
+            $review_status = 5;
+        }
+    }
+    return $review_status;
+}
+
 // end

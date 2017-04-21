@@ -411,6 +411,8 @@ function get_review_status() {
 			$shop_review_goods = RC_DB::table('merchants_config')->where('store_id', $_SESSION['store_id'])->where('code', 'shop_review_goods')->pluck('value');
 			if ($shop_review_goods == 0) {
 				$review_status = 5;
+			} else {
+			    $review_status = 0;
 			}
 		} else {
 			$review_status = 5;

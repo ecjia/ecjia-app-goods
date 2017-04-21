@@ -50,38 +50,28 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class add_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('goods_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
+class add_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+		$result = $this->admin_priv('goods_manage');
+		if (is_ecjia_error($result)) {
+		    return $result;
+		}
     	
-    	$goods_name		= _POST('goods_name');
+    	$goods_name		= $this->requestData('goods_name');
     	if (empty($goods_name)) {
     	    return new ecjia_error('goods_name_empty', '请输入商品名称');
     	}
-    	$category_id	= _POST('category_id', 0);
-    	$merchant_category_id = _POST('merchant_category', 0);
-    	$goods_price	= _POST('goods_price', 0.00);
-    	$stock			= _POST('stock', 0);
+    	$category_id	= $this->requestData('category_id', 0);
+    	$merchant_category_id = $this->requestData('merchant_category', 0);
+    	$goods_price	= $this->requestData('goods_price', 0.00);
+    	$stock			= $this->requestData('stock', 0);
     	
-    	if (isset($_SESSION['ru_id']) && $_SESSION['ru_id']) {
-    		$review_status = RC_Model::model('seller/merchants_shop_information_model')->where(array('user_id' => $_SESSION['ru_id']))->get_field('review_goods');
-    		if ($review_status == 0) {
-    			$review_status = 5;
-    		} else {
-    			$review_status = 0;
-    		}
-    	} else {
-    		$review_status = 5;
-    	}
-    	RC_Loader::load_app_func('system_goods', 'goods');
+    	RC_Loader::load_app_func('global', 'goods');
     	/* 如果没有输入商品货号则自动生成一个商品货号 */
     	
     	$max_id = RC_Model::model('goods/goods_model')->field('MAX(goods_id) + 1|max')->find();
@@ -109,6 +99,7 @@ class add_module implements ecjia_interface
 					    	'is_on_sale'         => 0,
 					    	'is_alone_sale'      => 1,
 					    	'is_shipping'        => 0,
+    	                    'review_status'      => get_review_status($_SESSION['store_id']),
 					    	'add_time'           => RC_Time::gmtime(),
 					    	'last_update'        => RC_Time::gmtime(),
     	));
@@ -119,7 +110,7 @@ class add_module implements ecjia_interface
     	}
     	
     	
-    	RC_Loader::load_app_class('goods_image', 'goods', false);
+    	RC_Loader::load_app_class('goods_image_data', 'goods', false);
     	
     	/* 处理商品图片 */
     	$goods_img		= ''; // 初始化商品图片
@@ -145,7 +136,7 @@ class add_module implements ecjia_interface
     	/* 更新上传后的商品图片 */
     	if ($proc_goods_img) {
     		if (isset($image_info)) {
-    			$goods_image = new goods_image($image_info);
+    			$goods_image = new goods_image_data($image_info);
     			if ($proc_thumb_img) {
     				$goods_image->set_auto_thumb(false);
     			}
@@ -156,7 +147,7 @@ class add_module implements ecjia_interface
     	/* 更新上传后的缩略图片 */
     	if ($proc_thumb_img) {
     		if (isset($image_info)) {
-    			$thumb_image = new goods_image($image_info);
+    			$thumb_image = new goods_image_data($image_info);
     			$result = $thumb_image->update_thumb($goods_id);
     		}
     	}
@@ -228,7 +219,7 @@ class add_module implements ecjia_interface
     			'sales_volume'				=> $row['sales_volume'],
     	);
     	
-    	RC_Loader::load_app_func('common', 'goods');
+    	RC_Loader::load_app_func('admin_user', 'user');
     		
     	$goods_detail['user_rank'] = array();
     		
@@ -259,10 +250,7 @@ class add_module implements ecjia_interface
     	
     	$goods_detail['pictures'] = array();
     	
-    	
     	return $goods_detail;
-    	
     }
-    	 
     
 }
