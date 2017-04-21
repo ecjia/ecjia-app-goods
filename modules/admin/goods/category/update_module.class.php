@@ -50,29 +50,29 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class update_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('cat_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
+class update_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('cat_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
     	
-    	if (!empty($_SESSION['ru_id'])) {
+    	if (!empty($_SESSION['staff_id'])) {
     		return new ecjia_error('priv_error', '您无权对此分类进行操作！');
     	}
     	
-    	$cat_id			= _POST('category_id');
-    	$parent_id		= _POST('parent_id', 0);
-    	$category_name	= _POST('category_name');
-    	$is_show		= _POST('is_show', 1);
+    	$cat_id			= $this->requestData('category_id');
+    	$parent_id		= $this->requestData('parent_id', 0);
+    	$category_name	= $this->requestData('category_name');
+    	$is_show		= $this->requestData('is_show', 1);
     	
     	if (empty($cat_id)) {
-    		EM_Api::outPut(101);
+    	    return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$cat = array(
@@ -117,10 +117,8 @@ class update_module implements ecjia_interface
     			'is_show'		=> $category_info['is_show'],
     			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('cat_id' => $cat_id))->count(),
     	);
+    	
     	return $category_detail;
-    	
-    	
     }
-    	 
     
 }

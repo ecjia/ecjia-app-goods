@@ -92,7 +92,7 @@ class list_module implements ecjia_interface {
 		
 		$goods_list = array();
 		if (!empty($data)) {
-			RC_Loader::load_app_func('goods', 'goods');
+			RC_Loader::load_app_func('admin_goods', 'goods');
 			RC_Loader::load_sys_func('global');
 			foreach ($data as $key => $val) {
 				$goods_list[] = array(
