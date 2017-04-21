@@ -49,21 +49,20 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * 编辑商品详情
  *
  */
-class updatedesc_module implements ecjia_interface
-{
-	private $db_goods;
-	
-    public function run(ecjia_api & $api)
-    { 
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('goods_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
+class updatedesc_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
 		//请求参数：
-       	$goods_id				= _POST('goods_id', 0);
-       	$goods_desc				= _POST('goods_desc', '');
+       	$goods_id			= $this->requestData('goods_id', 0);
+       	$goods_desc			= $this->requestData('goods_desc', '');
     	if (empty($goods_id) || empty($goods_desc)) {
     		return new ecjia_error('invalid_parameter', '参数错误');
     	}
@@ -74,12 +73,10 @@ class updatedesc_module implements ecjia_interface
     	    return new ecjia_error('goods_not_exists', '商品不存在');
     	}
     	/*当前登录账号是平台还是商家*/
-    	$is_ru_id = $_SESSION['ru_id'];
-
-    	if ($is_ru_id > 0) {
+    	if ($_SESSION['store_id'] > 0) {
     		/*获取商家积分等级限制处理*/
-    		$ru_id = $this->db_goods->where(array('goods_id' => $goods_id))->get_field('user_id');
-    		if ($is_ru_id != $ru_id) {
+    		$store_id = $this->db_goods->where(array('goods_id' => $goods_id))->get_field('store_id');
+    		if ($_SESSION['store_id'] != $store_id) {
     			return new ecjia_error('no_purview', '您没权限修改此商品信息');
     		}
     	}
@@ -88,9 +85,10 @@ class updatedesc_module implements ecjia_interface
     			'goods_desc'			=> $goods_desc,
     			'last_update'			=> RC_Time::gmtime()
     	);
+    	RC_Loader::load_app_func('global', 'goods');
     	/*如果设有审核商家商品，商家账号修改商品信息后，商品下架，状态改为待审核*/
-    	$review_goods = RC_Model::model('seller/merchants_shop_information_model')->where(array('user_id' => $is_ru_id))->get_field('review_goods');
-    	if ($is_ru_id > 0 && $review_goods == 1) {
+    	$review_goods = get_review_status($_SESSION['store_id']);
+    	if ($_SESSION['store_id'] > 0 && $review_goods == 1) {
     		$data['is_on_sale'] = 0;
     		$data['review_status'] = 1;
     	}
@@ -98,9 +96,10 @@ class updatedesc_module implements ecjia_interface
     	$rs = $this->db_goods->where(array('goods_id' => $goods_id))->update($data);
     	if ($rs) {
     		$goods_name = $this->db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
-    		ecjia_admin::admin_log($goods_name, 'edit', 'goods');
+    		ecjia_admin::admin_log($goods_name.'【来源掌柜】', 'edit', 'goods');
     		return array();
+    	} else {
+    	    return new ecjia_error('error', '操作失败');
     	}
-    	
     }
 }
