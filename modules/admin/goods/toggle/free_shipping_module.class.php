@@ -89,7 +89,6 @@ class free_shipping_module extends api_admin implements api_interface {
 		} else {
 		    $action = '取消包邮，'.$goods_name;
 		}
-		ecjia_admin::admin_log($action, 'setup', 'goods');
 		if ($_SESSION['store_id'] > 0) {
 		    RC_Api::api('merchant', 'admin_log', array('text' => $action.'【来源掌柜】', 'action' => 'setup', 'object' => 'goods'));
 		} else {

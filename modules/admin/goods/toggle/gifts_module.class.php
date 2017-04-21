@@ -50,19 +50,20 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author will
  *
  */
-class gifts_module implements ecjia_interface {
-	
-	public function run(ecjia_api & $api) {
-		
-		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-		$ecjia->authadminSession();
-		$result = $ecjia->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-			EM_Api::outPut($result);
+class gifts_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
 		}
 		
-		$goods_id	= _POST('id');
-		$is_alone	= _POST('is_gift', 0);
+		$goods_id	= $this->requestData('id');
+		$is_alone	= $this->requestData('is_gift', 0);
 		if (empty($goods_id)) {
 			return new ecjia_error('invalid_parameter', '参数错误');
 		}
@@ -77,8 +78,8 @@ class gifts_module implements ecjia_interface {
 		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
 		
 		$where = array('goods_id' => $goods_id);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
 		$db_goods->where($where)->update($data);
 		
@@ -86,16 +87,20 @@ class gifts_module implements ecjia_interface {
 		$goods_name = $db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
 		
 		if ($is_alone == '1') {
-			ecjia_admin::admin_log('设为普通商品销售，'.$goods_name, 'setup', 'goods');
+		    $action = '设为普通商品销售，'.$goods_name;
 		} else {
-			ecjia_admin::admin_log('设为配件或赠品销售，'.$goods_name, 'setup', 'goods');
+		    $action = '设为配件或赠品销售，'.$goods_name;
+		}
+		
+		if ($_SESSION['store_id'] > 0) {
+		    RC_Api::api('merchant', 'admin_log', array('text' => $action.'【来源掌柜】', 'action' => 'setup', 'object' => 'goods'));
+		} else {
+		    ecjia_admin::admin_log($action.'【来源掌柜】', 'setup', 'goods'); // 记录日志
 		}
 		
 		return array();
 	}
 	
-	
 }
-
 
 // end
