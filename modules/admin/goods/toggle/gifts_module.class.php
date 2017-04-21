@@ -64,7 +64,7 @@ class gifts_module implements ecjia_interface {
 		$goods_id	= _POST('id');
 		$is_alone	= _POST('is_gift', 0);
 		if (empty($goods_id)) {
-			EM_Api::outPut(101);
+			return new ecjia_error('invalid_parameter', '参数错误');
 		}
 		
 		$is_alone = $is_alone == 1 ? 0 : 1;

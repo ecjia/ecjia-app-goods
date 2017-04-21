@@ -65,7 +65,7 @@ class updatedesc_module implements ecjia_interface
        	$goods_id				= _POST('goods_id', 0);
        	$goods_desc				= _POST('goods_desc', '');
     	if (empty($goods_id) || empty($goods_desc)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$this->db_goods = RC_Loader::load_app_model('goods_model','goods');

@@ -69,7 +69,7 @@ class show_module implements ecjia_interface
     	$category_id = _POST('category_id');
     	$is_show	 = _POST('is_show', 1);
     	if (empty($category_id)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$name = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $category_id))->get_field('cat_name');

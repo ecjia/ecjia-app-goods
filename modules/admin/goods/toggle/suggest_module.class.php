@@ -65,7 +65,7 @@ class suggest_module implements ecjia_interface {
 		$type		= _POST('type');//best 精品，new 新品，hot 热销
 		$is_suggest	= _POST('is_suggest', 0);
 		if (empty($goods_id) || empty($type)) {
-			EM_Api::outPut(101);
+			return new ecjia_error('invalid_parameter', '参数错误');
 		}
 		
 		$data = array(

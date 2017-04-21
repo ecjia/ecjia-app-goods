@@ -64,7 +64,7 @@ class free_shipping_module implements ecjia_interface {
 		$goods_id	= _POST('id');
 		$is_shipping	= _POST('is_free', 0);
 		if (empty($goods_id)) {
-			EM_Api::outPut(101);
+			return new ecjia_error('invalid_parameter', '参数错误');
 		}
 		
 		$data = array(

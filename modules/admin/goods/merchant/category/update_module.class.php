@@ -72,7 +72,7 @@ class update_module implements ecjia_interface
     	$is_show		= _POST('is_show', 1);
     	
     	if (empty($cat_id)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$cat = array(

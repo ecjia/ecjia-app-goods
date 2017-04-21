@@ -64,7 +64,7 @@ class update_module implements ecjia_interface
     	
     	$goods_id		= _POST('id');
     	if (empty($goods_id)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$promote_price	= _POST('promote_price', 0.00);

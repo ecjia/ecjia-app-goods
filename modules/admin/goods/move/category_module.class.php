@@ -68,7 +68,7 @@ class category_module implements ecjia_interface
     	
     	/* 商品分类不允许为空 */
     	if (empty($category_id) || empty($target_category_id) || empty($goods_id)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	/* 获取商品*/

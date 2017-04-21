@@ -66,7 +66,7 @@ class sale_module implements ecjia_interface {
 		$id 	= explode(',', $id);
 		$type	= _POST('type');//online 上架;offline下架
 		if (empty($id) || empty($type)) {
-			EM_Api::outPut(101);
+			return new ecjia_error('invalid_parameter', '参数错误');
 		}
 		$on_sale = $type == 'online' ? 1 : 0;
 		

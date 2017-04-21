@@ -65,7 +65,7 @@ class update_module implements ecjia_interface
     	//请求参数：
     	$goods_id				= _POST('goods_id', 0);
     	if (empty($goods_id)) {
-    	    EM_Api::outPut(101);
+    	    return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$goods_name		= _POST('goods_name');

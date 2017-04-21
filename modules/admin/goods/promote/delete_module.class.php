@@ -64,7 +64,7 @@ class delete_module implements ecjia_interface
     	
     	$goods_id		= _POST('id');
     	if (empty($goods_id)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$where = array('goods_id' => $goods_id);

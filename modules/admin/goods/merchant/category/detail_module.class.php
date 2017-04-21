@@ -64,7 +64,7 @@ class detail_module implements ecjia_interface
     	
     	$cat_id = _POST('category_id');
     	if (empty($cat_id)) {
-    		EM_Api::outPut(101);
+    		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	$where = array('cat_id' => $cat_id);
     	if (!empty($_SESSION['ru_id'])) {
