@@ -50,20 +50,22 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author will
  *
  */
-class restore_module implements ecjia_interface {
-	
-	public function run(ecjia_api & $api) {
-		
-		$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-		$ecjia->authadminSession();
-		$result = $ecjia->admin_priv('remove_back');
-		if (is_ecjia_error($result)) {
-			EM_Api::outPut($result);
+class restore_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
 		}
-		$id		= _POST('id');
+    	$result = $this->admin_priv('remove_back');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
+		
+		$id		= $this->requestData('id');
 		$id 	= explode(',', $id);
 		if (empty($id)) {
-			EM_Api::outPut(101);
+			return new ecjia_error('invalid_parameter', '参数错误');
 		}
 		$data = array(
 				'is_delete' => 0,
@@ -72,8 +74,8 @@ class restore_module implements ecjia_interface {
 		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
 		
 		$where = array('goods_id' => $id);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
 		$db_goods->where($where)->update($data);
 		
@@ -84,8 +86,6 @@ class restore_module implements ecjia_interface {
 		
 		return array();
 	}
-	
-	
 }
 
 
