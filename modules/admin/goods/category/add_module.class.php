@@ -88,7 +88,12 @@ class add_module extends api_admin implements api_interface {
     	
     	$cat_id = RC_Model::model('goods/category_model')->insert($cat);
     	
-    	ecjia_admin::admin_log($category_name, 'add', 'category');   // 记录管理员操作
+    	// 记录管理员操作
+    	if ($_SESSION['store_id'] > 0) {
+    	    RC_Api::api('merchant', 'admin_log', array('text' => $category_name.'【来源掌柜】', 'action' => 'add', 'object' => 'category'));
+    	} else {
+    	    ecjia_admin::admin_log($category_name.'【来源掌柜】', 'add', 'category'); // 记录日志
+    	}
     	RC_Cache::app_cache_delete('cat_list', 'goods');
     	
     	$category_info = RC_Model::model('goods/category_model')->where(array('cat_id' => $cat_id))->find();

@@ -84,7 +84,11 @@ class delete_module extends api_admin implements api_interface {
 			if ($query) {
 // 				$db_nav = RC_Loader::load_model('nav_model');
 // 				$db_nav->where(array('ctype' => 'c', 'cid' => $cat_id, 'type' => 'middle'))->delete();
-				ecjia_admin::admin_log($category['cat_name'], 'remove', 'category');
+				if ($_SESSION['store_id'] > 0) {
+				    RC_Api::api('merchant', 'admin_log', array('text' => $category['cat_name'].'【来源掌柜】', 'action' => 'remove', 'object' => 'category'));
+				} else {
+				    ecjia_admin::admin_log($category['cat_name'].'【来源掌柜】', 'remove', 'category'); // 记录日志
+				}
 			}
 		} else {
 			return new ecjia_error('category_delete_error', '该分类下有商品或非末级分类！');

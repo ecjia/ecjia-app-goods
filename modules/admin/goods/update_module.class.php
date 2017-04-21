@@ -134,7 +134,11 @@ class update_module extends api_admin implements api_interface {
     	}
     	
     	/* 记录日志 */
-    	ecjia_admin::admin_log($goods_name.'【来源掌柜】', 'edit', 'goods');
+    	if ($_SESSION['store_id'] > 0) {
+    	    RC_Api::api('merchant', 'admin_log', array('text' => $goods_name.'【来源掌柜】', 'action' => 'edit', 'object' => 'goods'));
+    	} else {
+    	    ecjia_admin::admin_log(addslashes($goods_name).'【来源掌柜】', 'edit', 'goods'); // 记录日志
+    	}
 		
     	$today = RC_Time::gmtime();
     	$field = '*, (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ')|is_promote';
