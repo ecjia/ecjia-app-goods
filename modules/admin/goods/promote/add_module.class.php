@@ -50,31 +50,31 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class add_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('goods_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
+class add_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
     	
-    	$goods_id		= _POST('id');
+    	$goods_id		= $this->requestData('id');
     	if (empty($goods_id)) {
     		return new ecjia_error('invalid_parameter', '参数错误');
     	}
-    	$is_promote		= _POST('is_promote', 1);
-    	$promote_price	= _POST('promote_price', 0.00);
-    	$start_date		= _POST('start_date', '');
-    	$end_date		= _POST('end_date', '');
+    	$is_promote		= $this->requestData('is_promote', 1);
+    	$promote_price	= $this->requestData('promote_price', 0.00);
+    	$start_date		= $this->requestData('start_date', '');
+    	$end_date		= $this->requestData('end_date', '');
     	
     	
     	$where = array('goods_id' => $goods_id);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
     	
 		$start_date = RC_Time::local_strtotime($start_date);
@@ -84,21 +84,25 @@ class add_module implements ecjia_interface
 		}
     	
     	$rs = RC_Model::model('goods/goods_model')->where($where)->update(array(
-    															'is_promote'	=> 1,
-    															'promote_price'	=> $promote_price,
-    															'promote_start_date'	=> $start_date,
-    															'promote_end_date'		=> $end_date,
+				'is_promote'	=> 1,
+				'promote_price'	=> $promote_price,
+				'promote_start_date'	=> $start_date,
+				'promote_end_date'		=> $end_date,
     	));
     	
     	if (! $rs) {
-    	    EM_Api::outPut(8);
+    	    return new ecjia_error('error', '操作失败');
     	}
     	
     	$goods_name = RC_Model::model('goods/goods_model')->where($where)->get_field('goods_name');
-    	ecjia_admin::admin_log('更新商品促销价格：'.addslashes($goods_name), 'edit', 'goods');
-    	return array();
+    	$action = '更新商品促销价格：'.addslashes($goods_name);
+    	if ($_SESSION['store_id'] > 0) {
+    	    RC_Api::api('merchant', 'admin_log', array('text' => $action.'【来源掌柜】', 'action' => 'edit', 'object' => 'goods'));
+    	} else {
+    	    ecjia_admin::admin_log($action.'【来源掌柜】', 'edit', 'goods'); // 记录日志
+    	}
     	
+    	return array();
     }
     	 
-    
 }
