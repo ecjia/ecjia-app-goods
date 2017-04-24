@@ -50,27 +50,27 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class delete_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('goods_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
+class delete_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
     	
-    	$goods_id		= _POST('goods_id');
-    	$img_id			= _POST('img_id');
+    	$goods_id		= $this->requestData('goods_id');
+    	$img_id			= $this->requestData('img_id');
     	if (empty($goods_id) || empty($img_id)) {
     		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$where = array('goods_id' => $goods_id);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
 		
 		$goods_info = RC_Model::model('goods/goods_model')->where($where)->find();
@@ -96,9 +96,8 @@ class delete_module implements ecjia_interface
 		
 		/* 删除数据 */
 		RC_Model::model('goods/goods_gallery_model')->where(array('img_id' => $img_id))->delete();
+		
     	return array();
-    	
     }
-    	 
     
 }
