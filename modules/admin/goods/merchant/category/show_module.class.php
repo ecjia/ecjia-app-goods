@@ -50,31 +50,36 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class show_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('cat_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
+class show_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('cat_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
     	
-    	if (!empty($_SESSION['ru_id'])) {
+    	if (!empty($_SESSION['store_id'])) {
     		return new ecjia_error('priv_error', '您无权对此分类进行操作！');
     	}
     	
-    	$category_id = _POST('category_id');
-    	$is_show	 = _POST('is_show', 1);
+    	$category_id = $this->requestData('category_id');
+    	$is_show	 = $this->requestData('is_show', 1);
     	if (empty($category_id)) {
     		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
     	$name = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $category_id))->get_field('cat_name');
     	RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $category_id))->update(array('is_show' => $is_show));
-    	ecjia_admin::admin_log($name."切换商家分类显示状态", 'edit', 'category');
+    	$action = $name."切换商家分类显示状态";
+    	if ($_SESSION['store_id'] > 0) {
+    	    RC_Api::api('merchant', 'admin_log', array('text' => $action.'【来源掌柜】', 'action' => 'edit', 'object' => 'category'));
+    	} else {
+    	    ecjia_admin::admin_log($action.'【来源掌柜】', 'edit', 'category'); // 记录日志
+    	}
     	RC_Cache::app_cache_delete('cat_list', 'goods');
 
     	return array();

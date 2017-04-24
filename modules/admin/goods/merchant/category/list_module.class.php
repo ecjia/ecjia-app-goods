@@ -50,18 +50,21 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class list_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
+class list_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('cat_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
     
+        $store_id = $_SESSION['store_id'];
+    	$data = RC_Api::api('goods', 'seller_goods_category', array('type' => 'seller_goods_cat_list_api', 'store_id' => $store_id));
     	
-    	RC_Loader::load_app_class('merchants_category', 'goods', false);
-    	$data = merchants_category::cat_list(0, 0, false);
-    		
     	$outdata = array();
     	if (!empty($data)) {
     		foreach ($data as $key => $value) {

@@ -50,29 +50,30 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author chenzhejun@ecmoban.com
  *
  */
-class add_module implements ecjia_interface
-{
- 	
-    public function run(ecjia_api & $api)
-    {  	
-    	$ecjia = RC_Loader::load_app_class('api_admin', 'api');
-    	$ecjia->authadminSession();
-    	$result = $ecjia->admin_priv('cat_manage');
-    	if (is_ecjia_error($result)) {
-    		EM_Api::outPut($result);
-    	}
+class add_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
+
+		$this->authadminSession();
+		if ($_SESSION['admin_id'] <= 0 && $_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('cat_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
     	
-    	if (!empty($_SESSION['ru_id'])) {
+    	if (!empty($_SESSION['store_id'])) {
     		return new ecjia_error('priv_error', '您无权对此分类进行操作！');
     	}
-    	$parent_id		= _POST('parent_id', 0);
-    	$category_name	= _POST('category_name');
-    	$is_show		= _POST('is_show', 1);
+    	$parent_id		= $this->requestData('parent_id', 0);
+    	$category_name	= $this->requestData('category_name');
+    	$is_show		= $this->requestData('is_show', 1);
     	
     	$cat = array(
-    			'cat_name'	=> $category_name,
-    			'parent_id'	=> $parent_id,
-    			'is_show'	=> $is_show,
+			'cat_name'	=> $category_name,
+			'parent_id'	=> $parent_id,
+    	    'store_id'	=> $_SESSION['store_id'],
+			'is_show'	=> $is_show,
     	);
     	/* 上传分类图片 */
     	$upload = RC_Upload::uploader('image', array('save_path' => 'data/category', 'auto_sub_dirs' => true));
@@ -85,7 +86,12 @@ class add_module implements ecjia_interface
     	
     	$cat_id = RC_Model::model('goods/merchants_category_model')->insert($cat);
     	
-    	ecjia_admin::admin_log($category_name, 'add', 'category');   // 记录管理员操作
+    	if ($_SESSION['store_id'] > 0) {
+    	    RC_Api::api('merchant', 'admin_log', array('text' => $category_name.'【来源掌柜】', 'action' => 'add', 'object' => 'category'));
+    	} else {
+    	    ecjia_admin::admin_log($category_name.'【来源掌柜】', 'add', 'category'); // 记录日志
+    	}
+    	
     	RC_Cache::app_cache_delete('cat_list', 'goods');
     	
     	$category_info = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $cat_id))->find();
@@ -99,7 +105,7 @@ class add_module implements ecjia_interface
 			'category_id'	=> $category_info['cat_id'],
 			'category_name'	=> $category_info['cat_name'],
 			'category_image'	=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
-    	    'category' => get_parent_cats($category_info['cat_id'], 1, $_SESSION['ru_id']),
+    	    'category' => get_parent_cats($category_info['cat_id'], 1, $_SESSION['store_id']),
 			'is_show'		=> $category_info['is_show'],
 			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('user_cat' => $cat_id))->count(),
     	);
