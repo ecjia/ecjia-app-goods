@@ -402,7 +402,7 @@ function goods_enable_type_list($selected, $enabled = false) {
 /**
  * 获取审核状态
  */
-function get_review_status() {
+function get_merchant_review_status() {
 	$review_status = 1;
 	if (ecjia::config('review_goods') == 0) {
 		$review_status = 5;
