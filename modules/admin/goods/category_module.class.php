@@ -59,7 +59,8 @@ class category_module extends api_admin implements api_interface {
 		}
         $keywords = $this->requestData('keywords');
     	$store_id = empty($_SESSION['store_id']) ? 0 : $_SESSION['store_id'];
-    	$data = RC_Api::api('goods', 'seller_goods_category', array('type' => 'seller_goods_cat_list_api', 'store_id' => $store_id, 'keywords' => $keywords));
+    	$data = RC_Api::api('goods', 'get_goods_category');
+    	
     	$outdata = array();
     	if (!empty($data)) {
     		foreach ($data as $key=>$value) {
