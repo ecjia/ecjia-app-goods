@@ -127,7 +127,7 @@ class list_module extends api_admin implements api_interface {
 		$page_row = new ecjia_page($record_count, $size, 6, '', $page);
 
 		$today = RC_Time::gmtime();
-		$field = "goods_id, goods_sn, goods_name, goods_number, shop_price, market_price, promote_price, promote_start_date, promote_end_date, click_count, goods_thumb, is_best, is_new, is_hot, is_shipping, goods_img, original_img, last_update, 
+		$field = "goods_id, goods_sn, goods_name, goods_number, shop_price, sales_volume, market_price, promote_price, promote_start_date, promote_end_date, click_count, goods_thumb, is_best, is_new, is_hot, is_shipping, goods_img, original_img, last_update, 
 		    (promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ')|is_promote";
 		$data = $db->join(null)->field($field)->where($where)->order($sort_by)->limit($page_row->limit())->select();
 

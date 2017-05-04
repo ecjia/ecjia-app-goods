@@ -67,7 +67,7 @@ class detail_module extends api_admin implements api_interface {
 		}else {
 			$where['goods_id'] = $id;
 		}
-		$where['is_delete'] = 0;
+// 		$where['is_delete'] = 0;
 		$db_goods = RC_Model::model('goods/goods_model');
 
 		if ($_SESSION['store_id'] > 0) {
