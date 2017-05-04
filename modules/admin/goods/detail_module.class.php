@@ -167,6 +167,19 @@ class detail_module extends api_admin implements api_interface {
 		    		);
 		    	}
 		    }
+		    $pictures = get_goods_gallery($id);
+		    $pictures_array = array();
+		    if (!empty($pictures)) {
+		        foreach ($pictures as $val) {
+		            $pictures_array[] = array(
+		                'img_id'	=> $val['img_id'],
+		                'thumb'		=> $val['thumb'],
+		                'url'		=> $val['url'],
+		                'small'		=> $val['small'],
+		            );
+		        }
+		    }
+		    $goods_detail['pictures'] = $pictures_array;
 			return $goods_detail;
 		}
 	}
