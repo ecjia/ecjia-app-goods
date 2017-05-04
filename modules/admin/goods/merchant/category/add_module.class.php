@@ -62,7 +62,7 @@ class add_module extends api_admin implements api_interface {
 			return $result;
 		}
     	
-    	if (!empty($_SESSION['store_id'])) {
+    	if (empty($_SESSION['store_id'])) {
     		return new ecjia_error('priv_error', '您无权对此分类进行操作！');
     	}
     	$parent_id		= $this->requestData('parent_id', 0);
