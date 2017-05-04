@@ -80,6 +80,10 @@ class update_module extends api_admin implements api_interface {
     			'parent_id'	=> $parent_id,
     			'is_show'	=> $is_show,
     	);
+    	$count = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => array('neq' => $cat_id), 'cat_name' => $category_name, 'store_id' => $_SESSION['store_id']))->count();
+    	if ($count) {
+    	    return new ecjia_error('already exists', '此分类名称已存在，请修改！');
+    	}
     	/* 上传分类图片 */
     	$upload = RC_Upload::uploader('image', array('save_path' => 'data/category', 'auto_sub_dirs' => true));
     	if (isset($_FILES['category_image']) && $upload->check_upload_file($_FILES['category_image'])) {
@@ -111,7 +115,7 @@ class update_module extends api_admin implements api_interface {
     			'category_name'	=> $category_info['cat_name'],
     			'category_image'	=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
     			'is_show'		=> $category_info['is_show'],
-    			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('cat_id' => $cat_id))->count(),
+    			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('merchant_cat_id' => $cat_id))->count(),
     	);
     	return $category_detail;
     	
