@@ -75,10 +75,12 @@ class add_module extends api_admin implements api_interface {
     	    'store_id'	=> $_SESSION['store_id'],
 			'is_show'	=> $is_show,
     	);
+    	RC_Logger::getLogger('error')->info($_FILES);
     	/* 上传分类图片 */
     	$upload = RC_Upload::uploader('image', array('save_path' => 'data/category', 'auto_sub_dirs' => true));
     	if (isset($_FILES['category_image']) && $upload->check_upload_file($_FILES['category_image'])) {
     		$image_info = $upload->upload($_FILES['category_image']);
+    		RC_Logger::getLogger('error')->info($image_info);
     		if (!empty($image_info)) {
     			$cat['style'] = $upload->get_position($image_info);
     		}
