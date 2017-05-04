@@ -1930,4 +1930,23 @@ function get_review_status($store_id) {
     return $review_status;
 }
 
+/**
+ * 获得指定商品的相册
+ *
+ * @access public
+ * @param integer $goods_id
+ * @return array
+ */
+function get_goods_gallery_gol($goods_id) {
+    $db = RC_Model::model('goods/goods_gallery_model');
+    $row = $db->field('img_id, img_url, thumb_url, img_desc')->where(array('goods_id' => $goods_id))/* ->limit(ecjia::config ('goods_gallery_number')) */->select();
+    /* 格式化相册图片路径 */
+    RC_Loader::load_app_func('global', 'goods');
+    foreach ( $row as $key => $gallery_img ) {
+        $row [$key] ['img_url'] = get_image_path ( $goods_id, $gallery_img ['img_url'], false, 'gallery' );
+        $row [$key] ['thumb_url'] = get_image_path ( $goods_id, $gallery_img ['thumb_url'], true, 'gallery' );
+    }
+    return $row;
+}
+
 // end

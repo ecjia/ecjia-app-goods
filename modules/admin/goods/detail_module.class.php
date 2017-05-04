@@ -139,7 +139,6 @@ class detail_module extends api_admin implements api_interface {
 			);
 
 			RC_Loader::load_app_func('global', 'goods');
-			RC_Loader::load_app_func('admin_goods', 'goods');
 			RC_Loader::load_app_func('admin_user', 'user');
 
 			$goods_detail['user_rank'] = array();
@@ -168,7 +167,7 @@ class detail_module extends api_admin implements api_interface {
 		    		);
 		    	}
 		    }
-		    $pictures = get_goods_gallery($id);
+		    $pictures = get_goods_gallery_gol($id);
 		    $pictures_array = array();
 		    if (!empty($pictures)) {
 		        foreach ($pictures as $val) {
