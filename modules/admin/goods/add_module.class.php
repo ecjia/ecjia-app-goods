@@ -88,7 +88,7 @@ class add_module extends api_admin implements api_interface {
     	    'store_id'           => $_SESSION['store_id'],
 	    	'goods_sn'           => $goods_sn,
 	    	'cat_id'             => $category_id,
-			'user_cat'			 => $merchant_category_id,
+			'merchant_cat_id'	 => $merchant_category_id,
 	    	'shop_price'         => $goods_price,
 	    	'market_price'       => $goods_price * 1.1,
 	    	'goods_number'       => $stock,
