@@ -95,6 +95,9 @@ class add_module extends api_admin implements api_interface {
 		}
 		RC_Logger::getLogger('info')->info(array('gallery_add', $_FILES));
 		$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
+		$upload->add_saving_callback(function ($file, $filename) {
+		    return true;
+		});
 		
 		for ($i = 0; $i < $count; $i++) {
 		    $picture = array(
