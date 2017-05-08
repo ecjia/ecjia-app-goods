@@ -81,7 +81,7 @@ class add_module extends api_admin implements api_interface {
 		    return new ecjia_error('upload_empty', '请选择您要上传的图片');
 		}
 		
-		RC_Loader::load_app_class('goods_image', 'goods', false);
+		RC_Loader::load_app_class('goods_image_data', 'goods', false);
 		
 		$goods_gallery_number = ecjia::config('goods_gallery_number');
 		if ($goods_gallery_number != 0) {
@@ -116,7 +116,7 @@ class add_module extends api_admin implements api_interface {
 		}
 		
 		foreach ($image_info as $image) {
-		    $goods_image = new goods_image($image);
+		    $goods_image = new goods_image_data($image);
 		    $goods_image->update_gallery($goods_id);
 		}
 		
