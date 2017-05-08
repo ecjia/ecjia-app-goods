@@ -167,7 +167,7 @@ class detail_module extends api_admin implements api_interface {
 		    		);
 		    	}
 		    }
-		    $pictures = get_goods_gallery_gol($id);
+		    $pictures = get_goods_gallery($id);
 		    $pictures_array = array();
 		    if (!empty($pictures)) {
 		        foreach ($pictures as $val) {
@@ -183,6 +183,29 @@ class detail_module extends api_admin implements api_interface {
 			return $goods_detail;
 		}
 	}
+}
+
+function get_goods_gallery($goods_id) {
+    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
+    $row = $db_goods_gallery->field('img_id, img_url, thumb_url, img_desc, img_original')->where(array('goods_id' => $goods_id))->select();
+    $img_list_sort = $img_list_id = array();
+    $img = array();
+    /* 格式化相册图片路径 */
+    if (!empty($row)) {
+        foreach ($row as $key => $gallery_img) {
+            $desc_index = intval(strrpos($gallery_img['img_original'], '?')) + 1;
+            !empty($desc_index) && $row[$key]['desc'] = substr($gallery_img['img_original'], $desc_index);
+            $row[$key]['small']	= substr($gallery_img['img_original'], 0, 4) == 'http' ? $gallery_img['img_original'] : RC_Upload::upload_url($gallery_img['img_original']);
+            $row[$key]['url']		= substr($gallery_img['img_url'], 0, 4) == 'http' ? $gallery_img['img_url'] : RC_Upload::upload_url($gallery_img['img_url']);
+            $row[$key]['thumb']		= substr($gallery_img['thumb_url'], 0, 4) == 'http' ? $gallery_img['thumb_url'] : RC_Upload::upload_url($gallery_img['thumb_url']);
+
+            $img_list_sort[$key] = $row[$key]['desc'];
+            $img_list_id[$key] = $gallery_img['img_id'];
+        }
+        //先使用sort排序，再使用id排序。
+        array_multisort($img_list_sort, $img_list_id, $row);
+    }
+    return $row;
 }
 
 /**

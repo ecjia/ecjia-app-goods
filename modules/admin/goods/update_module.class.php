@@ -119,7 +119,7 @@ class update_module extends api_admin implements api_interface {
     	if ($proc_goods_img) {
     		if (isset($image_info)) {
     			$goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
-    			
+    			$goods_image->set_auto_thumb(true);
     			$result = $goods_image->update_goods();
     			if (is_ecjia_error($result)) {
     			    return $result;
