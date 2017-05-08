@@ -84,17 +84,18 @@ class add_module extends api_admin implements api_interface {
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
 		
 		$goods_gallery_number = ecjia::config('goods_gallery_number');
+		$count = count($_FILES['image']['name']);
 		if ($goods_gallery_number != 0) {
 		    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
 		    $count = $db_goods_gallery->where(array('goods_id' => $goods_id))->count();
 		    
-		    if (count($_FILES['image']['name']) > $goods_gallery_number - $count) {
+		    if ($count > $goods_gallery_number - $count) {
 		        return new ecjia_error('upload_counts_error', '商品相册图片不能超过'.$goods_gallery_number.'张');
 		    }
 		}
-		
+		RC_Logger::getLogger('info')->info(array('gallery_add', $_FILES));
 		$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
-		$count = count($_FILES['image']['name']);
+		
 		for ($i = 0; $i < $count; $i++) {
 		    $picture = array(
 		        'name' 		=> 	$_FILES['image']['name'][$i],
@@ -111,13 +112,14 @@ class add_module extends api_admin implements api_interface {
 		}
 		
 		$image_info = $upload->batch_upload($_FILES);
+		RC_Logger::getLogger('info')->info(array('image_info', $image_info));
 		if (empty($image_info)) {
 			return new ecjia_error('upload_error'. __LINE__, $upload->error());
 		}
 		
 		foreach ($image_info as $image) {
 		    $goods_image = new goods_image_data($image);
-		    $goods_image->update_gallery($goods_id);
+		    $goods_image->update_gallery($image['name'], $image['tmpname'], $image['ext'], $goods_id);
 		}
 		
     	return array();
