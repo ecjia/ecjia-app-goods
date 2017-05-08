@@ -84,12 +84,15 @@ class detail_module extends api_admin implements api_interface {
 			$brand_name = $row['brand_id'] > 0 ? $brand_db->where(array('brand_id' => $row['brand_id']))->get_field('brand_name') : '';
 			$category_name = $category_db->where(array('cat_id' => $row['cat_id']))->get_field('cat_name');
 			$merchant_category = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $row['merchant_cat_id']))->get_field('cat_name');
-			
-			if (ecjia_config::has('mobile_touch_url')) {
-				$goods_desc_url = ecjia::config('mobile_touch_url').'index.php?m=goods&c=index&a=init&id='.$id.'&hidenav=1&hidetab=1';
-			} else {
-				$goods_desc_url = null;
+			$goods_desc_url = null;
+			if ($row['goods_desc']) {
+			    if (ecjia_config::has('mobile_touch_url')) {
+			        $goods_desc_url = ecjia::config('mobile_touch_url').'index.php?m=goods&c=index&a=init&id='.$id.'&hidenav=1&hidetab=1';
+			    } else {
+			        $goods_desc_url = null;
+			    }
 			}
+			
 			if ($row['promote_price'] > 0) {
 				$promote_price = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
 			} else {
