@@ -93,7 +93,6 @@ class add_module extends api_admin implements api_interface {
 		        return new ecjia_error('upload_counts_error', '商品相册图片不能超过'.$goods_gallery_number.'张');
 		    }
 		}
-		RC_Logger::getLogger('info')->info(array('gallery_add', $_FILES));
 		$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
 		$upload->add_saving_callback(function ($file, $filename) {
 		    return true;
@@ -115,7 +114,6 @@ class add_module extends api_admin implements api_interface {
 		}
 		
 		$image_info = $upload->batch_upload($_FILES);
-		RC_Logger::getLogger('info')->info(array('image_info', $image_info));
 		if (empty($image_info)) {
 			return new ecjia_error('upload_error'. __LINE__, $upload->error());
 		}

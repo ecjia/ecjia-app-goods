@@ -108,12 +108,13 @@ class list_module extends api_admin implements api_interface {
 			$where['goods_number'] = 0;
 		}
 		if (!empty($category_id)) {
-			RC_Loader::load_app_func('admin_category', 'goods');
-			RC_Loader::load_app_func('admin_goods', 'goods');
-			RC_Loader::load_app_func('global', 'goods');
-			$children = get_children($category_id);
-            $merchant_cat_id = 'merchant_cat_id ' . db_create_in (array_unique(array_merge(array($category_id), array_keys(cat_list($category_id, 0, false )))));
-			$where[] = "(".$children ." OR ".get_extension_goods($children) ." OR ". $merchant_cat_id .")";
+// 			RC_Loader::load_app_func('admin_category', 'goods');
+// 			RC_Loader::load_app_func('admin_goods', 'goods');
+// 			RC_Loader::load_app_func('global', 'goods');
+// 			$children = get_children($category_id);
+//             $merchant_cat_id = 'merchant_cat_id ' . db_create_in (array_unique(array_merge(array($category_id), array_keys(cat_list($category_id, 0, false )))));
+// 			$where[] = "(".$children ." OR ".get_extension_goods($children) ." OR ". $merchant_cat_id .")";
+		    $where['merchant_cat_id'] = $category_id;
 		}
 		if ( !empty($keywords)) {
 			$where[] = "( goods_name like '%".$keywords."%' or goods_sn like '%".$keywords."%' )";
