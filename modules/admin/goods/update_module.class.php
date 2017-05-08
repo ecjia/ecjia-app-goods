@@ -99,14 +99,15 @@ class update_module extends api_admin implements api_interface {
     	$img_original	= ''; // 初始化原始图片
     	
     	$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
+    	$upload->add_saving_callback(function ($file, $filename) {
+    	    return true;
+    	});
     	
     	/* 是否处理商品图 */
     	$proc_goods_img = true;
     	if (isset($_FILES['goods_image']) && !$upload->check_upload_file($_FILES['goods_image'])) {
     		$proc_goods_img = false;
     	}
-    	/* 是否处理缩略图 */
-    	$proc_thumb_img = true;
     	
     	if ($proc_goods_img) {
     		if (isset($_FILES['goods_image'])) {
@@ -117,21 +118,15 @@ class update_module extends api_admin implements api_interface {
     	/* 更新上传后的商品图片 */
     	if ($proc_goods_img) {
     		if (isset($image_info)) {
-    			$goods_image = new goods_image_data($image_info);
-    			if ($proc_thumb_img) {
-    				$goods_image->set_auto_thumb(false);
+    			$goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
+    			
+    			$result = $goods_image->update_goods();
+    			if (is_ecjia_error($result)) {
+    			    return $result;
     			}
-    			$result = $goods_image->update_goods($goods_id);
     		}
     	}
     	
-    	/* 更新上传后的缩略图片 */
-    	if ($proc_thumb_img) {
-    		if (isset($image_info)) {
-    			$thumb_image = new goods_image_data($image_info);
-    			$result = $thumb_image->update_thumb($goods_id);
-    		}
-    	}
     	
     	/* 记录日志 */
     	if ($_SESSION['store_id'] > 0) {
