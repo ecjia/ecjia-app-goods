@@ -85,7 +85,7 @@ class add_module extends api_admin implements api_interface {
 		
 		$goods_gallery_number = ecjia::config('goods_gallery_number');
 		$count = count($_FILES['image']['name']);
-		if ($goods_gallery_number != 0) {
+		if (!empty($goods_gallery_number)) {
 		    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
 		    $count = $db_goods_gallery->where(array('goods_id' => $goods_id))->count();
 		    
@@ -118,8 +118,8 @@ class add_module extends api_admin implements api_interface {
 		}
 		
 		foreach ($image_info as $image) {
-		    $goods_image = new goods_image_data($image);
-		    $goods_image->update_gallery($image['name'], $image['tmpname'], $image['ext'], $goods_id);
+		    $goods_image = new goods_image_data($image['name'], $image['tmpname'], $image['ext'], $goods_id);
+		    $goods_image->update_gallery();
 		}
 		
     	return array();
