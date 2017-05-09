@@ -164,7 +164,7 @@ class add_module extends api_admin implements api_interface {
     		
     	$brand_name = $row['brand_id'] > 0 ? $brand_db->where(array('brand_id' => $row['brand_id']))->get_field('brand_name') : '';
     	$category_name = $category_db->where(array('cat_id' => $row['cat_id']))->get_field('cat_name');
-    	$merchant_category = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $row['user_cat']))->get_field('cat_name');
+    	$merchant_category = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $row['merchant_cat_id']))->get_field('cat_name');
     		
     	if (ecjia::config('shop_touch_url', ecjia::CONFIG_EXISTS)) {
     		$goods_desc_url = ecjia::config('shop_touch_url').'index.php?m=goods&c=index&a=init&id='.$id.'&hidenav=1&hidetab=1';
@@ -180,9 +180,9 @@ class add_module extends api_admin implements api_interface {
         	    'category_id'	=> $row['cat_id'],
         	    'category_name' => $category_name,
         	    'category' => get_parent_cats($row['cat_id']),
-        	    'merchant_category_id'		=> empty($row['user_cat']) ? 0 : $row['user_cat'],
+        	    'merchant_category_id'		=> empty($row['merchant_cat_id']) ? 0 : $row['merchant_cat_id'],
         	    'merchant_category_name'	=> empty($merchant_category) ? '' : $merchant_category,
-        	    'merchant_category' => get_parent_cats($row['user_cat'], 1, $_SESSION['ru_id']),
+        	    'merchant_category' => get_parent_cats($row['merchant_cat_id'], 1, $_SESSION['store_id']),
     			'market_price'	=> price_format($row['market_price'] , false),
     			'shop_price'	=> price_format($row['shop_price'] , false),
     			'is_promote'	=> $row['is_promote'],
