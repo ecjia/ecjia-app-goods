@@ -115,7 +115,7 @@ class update_module extends api_admin implements api_interface {
     			'category_name'	=> $category_info['cat_name'],
     			'category_image'	=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
     			'is_show'		=> $category_info['is_show'],
-    			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('merchant_cat_id' => $cat_id))->count(),
+    			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('merchant_cat_id' => $cat_id, 'is_delete' => 0))->count(),
     	);
     	return $category_detail;
     	
