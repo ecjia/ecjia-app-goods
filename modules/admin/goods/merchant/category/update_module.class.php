@@ -109,13 +109,19 @@ class update_module extends api_admin implements api_interface {
     	if (empty($category_info)) {
     		return new ecjia_error('category_empty', '未找到对应分类！');
     	}
+    	
+    	$where_goods_count = array(
+    	    'merchant_cat_id' => $cat_id,
+    	    'is_delete' => 0,
+    	    'store_id' => $_SESSION['store_id']
+    	);
     	 
     	$category_detail = array(
     			'category_id'	=> $category_info['cat_id'],
     			'category_name'	=> $category_info['cat_name'],
     			'category_image'	=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
     			'is_show'		=> $category_info['is_show'],
-    			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('merchant_cat_id' => $cat_id, 'is_delete' => 0))->count(),
+    			'goods_count'	=> RC_Model::model('goods/goods_model')->where($where_goods_count)->count(),
     	);
     	return $category_detail;
     	

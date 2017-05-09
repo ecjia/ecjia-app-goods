@@ -67,6 +67,11 @@ class detail_module extends api_admin implements api_interface {
     		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	$where = array('cat_id' => $cat_id);
+    	$where_goods_count = array(
+    	    'merchant_cat_id' => $cat_id,
+    	    'is_delete' => 0,
+    	    'store_id' => $_SESSION['store_id']
+    	);
     	if (!empty($_SESSION['store_id'])) {
     		$where['store_id'] = $_SESSION['store_id'];
     	}
@@ -83,7 +88,7 @@ class detail_module extends api_admin implements api_interface {
 			'category_image'	=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
     	    'category' => get_parent_cats($category_info['cat_id'], 1, $_SESSION['store_id']),
 			'is_show'		=> $category_info['is_show'],
-			'goods_count'	=> RC_Model::model('goods/goods_model')->where(array('merchant_cat_id' => $cat_id, 'is_delete' => 0))->count(),
+			'goods_count'	=> RC_Model::model('goods/goods_model')->where($where_goods_count)->count(),
     	);
     	 
     	return $category_detail;
