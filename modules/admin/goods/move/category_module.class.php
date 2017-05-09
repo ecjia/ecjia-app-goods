@@ -80,9 +80,9 @@ class category_module extends api_admin implements api_interface {
     	$goods_ids = RC_Model::model('goods/goods_model')->where($where)->get_field('goods_id', true);
     	
     	/* 更新商品分类 */
-    	$data = array('cat_id' => $target_category_id);
-    	$new_cat_name = RC_Model::model('goods/category_model')->where(array('cat_id' => $target_category_id))->get_field('cat_name');
-    	$old_cat_name = RC_Model::model('goods/category_model')->where(array('cat_id' => $category_id))->get_field('cat_name');
+    	$data = array('merchant_cat_id' => $target_category_id);
+    	$new_cat_name = RC_DB::table('merchants_category')->where('merchant_cat_id', $target_category_id)->pluck('cat_name');
+    	$old_cat_name = RC_DB::table('merchants_category')->where(array('merchant_cat_id' => $category_id))->pluck('cat_name');
     	$query = RC_Model::model('goods/goods_model')->where(array('goods_id' => $goods_id))->update($data);
     	
     	$action = $old_cat_name.'下商品id为：'.implode(',', $goods_ids).'转移到'.$new_cat_name;
