@@ -1231,9 +1231,9 @@ class admin extends ecjia_admin {
         
         $db_goods = RC_DB::table('goods')->where('goods_id', $goods_id);
 		// 过滤商品id
-        if (isset($_SESSION['ru_id'])) {
-        	$where['user_id'] = $_SESSION['ru_id'];
-        	$db_goods->where('user_id', $_SESSION['ru_id']);
+        if (isset($_SESSION['store_id'])) {
+        	$where['store_id'] = $_SESSION['store_id'];
+        	$db_goods->where('store_id', $_SESSION['store_id']);
         }
 		//获取商品的信息
 		$goods = $this->db_goods->field('goods_sn, goods_name, goods_type, shop_price')->find(array('goods_id' => $goods_id));

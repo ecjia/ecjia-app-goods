@@ -76,8 +76,8 @@ class togglesale_module extends api_admin implements api_interface {
 		$db_goods = RC_Model::model('goods/goods_model');
 
 		$where = array('goods_id' => $id);
-		if ($_SESSION['ru_id'] > 0) {
-			$where = array_merge($where, array('user_id' => $_SESSION['ru_id']));
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
 		$db_goods->where($where)->update($data);
 

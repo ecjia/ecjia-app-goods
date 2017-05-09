@@ -1054,7 +1054,7 @@ class merchant extends ecjia_merchant {
 		} else {
 			$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
 		}
-		if (empty($_SESSION['ru_id'])) {
+		if (empty($_SESSION['store_id'])) {
 			$arr['review_status'] = $_POST['value'];
 			$id = intval($_POST['pk']);
 			RC_DB::table('goods')->where('goods_id', $id)->update($arr);

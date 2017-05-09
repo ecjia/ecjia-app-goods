@@ -81,9 +81,9 @@ class update_module extends api_admin implements api_interface {
     	/*新增商品信息入库*/
     	$rs = RC_Model::model('goods/goods_model')->where(array('goods_id' => $goods_id))->update(array(
 					    	'goods_name'         => $goods_name,
-					    	'user_id'            => isset($_SESSION['ru_id']) ? $_SESSION['ru_id'] : 0,
+					    	'store_id'            => isset($_SESSION['store_id']) ? $_SESSION['store_id'] : 0,
 					    	'cat_id'             => $category_id,
-    						'user_cat'			 => $merchant_category_id,
+    						'merchant_cat_id'	 => $merchant_category_id,
 					    	'shop_price'         => $goods_price,
 					    	'market_price'       => $goods_price * 1.1,
 					    	'goods_number'       => $stock,

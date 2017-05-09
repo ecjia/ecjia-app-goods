@@ -68,7 +68,7 @@ class desc_module extends api_admin implements api_interface {
             /* 如果没有找到任何记录则跳回到首页 */
            	return new ecjia_error('not_exists_info', '不存在的信息');
         } else {
-        	if ($_SESSION['ru_id'] > 0 && $_SESSION['ru_id'] != $goods['user_id']) {
+        	if ($_SESSION['store_id'] > 0 && $_SESSION['store_id'] != $goods['store_id']) {
         		return new ecjia_error('not_exists_info', '不存在的信息');
         	}
         	$data = $goods;
