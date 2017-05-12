@@ -127,7 +127,6 @@ class detail_module extends api_admin implements api_interface {
 				'is_alone_sale'	 		=> $row['is_alone_sale'] == 1 ? 1 : 0,
 				'last_updatetime' 		=> RC_Time::local_date(ecjia::config('time_format'), $row['last_update']),
 				'goods_desc' 			=> $goods_desc_url,
-				
 				'img' => array(
 					'thumb'	=> !empty($row['goods_img']) ? RC_Upload::upload_url($row['goods_img']) : '',
 					'url'	=> !empty($row['original_img']) ? RC_Upload::upload_url($row['original_img']) : '',
