@@ -94,7 +94,7 @@ class detail_module extends api_admin implements api_interface {
 			}
 			
 			if ($row['promote_price'] > 0) {
-				$promote_price = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
+				$promote_price = $row['promote_price'];//bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
 			} else {
 				$promote_price = 0;
 			}
