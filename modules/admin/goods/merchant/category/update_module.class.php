@@ -62,10 +62,6 @@ class update_module extends api_admin implements api_interface {
 			return $result;
 		}
     	
-    	if (!empty($_SESSION['store_id'])) {
-    		return new ecjia_error('priv_error', '您无权对此分类进行操作！');
-    	}
-    	
     	$cat_id			= $this->requestData('category_id');
     	$parent_id		= $this->requestData('parent_id', 0);
     	$category_name	= $this->requestData('category_name');
@@ -73,6 +69,11 @@ class update_module extends api_admin implements api_interface {
     	
     	if (empty($cat_id)) {
     		return new ecjia_error('invalid_parameter', '参数错误');
+    	}
+    	
+    	$category	= RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $cat_id, 'store_id' => $_SESSION['store_id']))->find();
+    	if (empty($category)) {
+    	    return new ecjia_error('priv_error', '您无权对此分类进行操作！');
     	}
     	
     	$cat = array(
