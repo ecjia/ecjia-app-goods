@@ -173,12 +173,12 @@ function get_parent_grade($cat_id) {
  */
 function get_linked_articles($goods_id) {
     $dbview = RC_Model::model('article/goods_article_viewmodel');
-    $data = $dbview->join('article')->where(array('ga.goods_id' => "$goods_id" ,'a.is_open' => '1'))->order(array('a.add_time' =>'DESC'))->select();
+    $data = $dbview->join('article')->where(array('ga.goods_id' => "$goods_id" ,'a.article_approved' => '1'))->order(array('a.add_time' =>'DESC'))->select();
 
     $arr = array();
 
     foreach ($data as $row) {
-        $row['url']         = $row['open_type'] != 1 ?
+        $row['url']         = $row['article_type'] == 'article' ?
         build_uri('article', array('aid'=>$row['article_id']), $row['title']) : trim($row['file_url']);
         $row['add_time']    = RC_Time::local_date(ecjia::config('date_format'), $row['add_time']);
         $row['short_title'] = ecjia::config('article_title_length') > 0 ?
