@@ -138,7 +138,7 @@ class list_module extends api_admin implements api_interface {
 			RC_Loader::load_sys_func('global');
 			foreach ($data as $key => $val) {
 				if ($val['promote_price'] > 0) {
-					$promote_price = bargain_price($val['promote_price'], $val['promote_start_date'], $val['promote_end_date']);
+					$promote_price = $val['promote_price'];//bargain_price($val['promote_price'], $val['promote_start_date'], $val['promote_end_date']);
 				} else {
 					$promote_price = 0;
 				}
