@@ -81,7 +81,7 @@ class delete_batch_module extends api_admin implements api_interface {
 		
 		foreach ($img_ids as $img_id) {
     		/* 删除图片文件 */
-    		$row = RC_Model::model('goods/goods_gallery_model')->field('img_url, thumb_url, img_original')->find(array('img_id' => $img_id));
+    		$row = RC_Model::model('goods/goods_gallery_model')->field('img_url, thumb_url, img_original')->find(array('img_id' => $img_id, 'goods_id' => $goods_id));
     		strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
     		
     		$disk = RC_Filesystem::disk();
@@ -96,7 +96,7 @@ class delete_batch_module extends api_admin implements api_interface {
     		}
     		
     		/* 删除数据 */
-    		RC_Model::model('goods/goods_gallery_model')->where(array('img_id' => $img_id))->delete();
+    		RC_Model::model('goods/goods_gallery_model')->where(array('img_id' => $img_id, 'goods_id' => $goods_id))->delete();
 		}
 		
 		
