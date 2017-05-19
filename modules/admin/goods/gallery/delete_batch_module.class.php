@@ -68,13 +68,17 @@ class delete_batch_module extends api_admin implements api_interface {
     		return new ecjia_error('invalid_parameter', '参数错误');
     	}
     	
+    	RC_Logger::getLogger('info')->info('delete_batch');
+    	RC_Logger::getLogger('info')->info(array('goods_id', $goods_id));
+    	RC_Logger::getLogger('info')->info(array('img_ids', $img_ids));
+    	
     	$where = array('goods_id' => $goods_id);
 		if ($_SESSION['store_id'] > 0) {
 			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
 		}
 		
 		$goods_info = RC_Model::model('goods/goods_model')->where($where)->select();
-		
+		RC_Logger::getLogger('info')->info(array('goods_info', $goods_info));
 		if (empty($goods_info)) {
 			return new ecjia_error('goods_empty', '未找到对应商品');
 		}
@@ -82,8 +86,8 @@ class delete_batch_module extends api_admin implements api_interface {
 		foreach ($img_ids as $img_id) {
     		/* 删除图片文件 */
     		$row = RC_Model::model('goods/goods_gallery_model')->field('img_url, thumb_url, img_original')->find(array('img_id' => $img_id, 'goods_id' => $goods_id));
-    		strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
-    		
+//     		strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
+    		RC_Logger::getLogger('info')->info(array('row', $row));
     		$disk = RC_Filesystem::disk();
     		if ($row['img_url'] != '' && is_file(RC_Upload::upload_path() . '/' . $row['img_url'])) {
     			$disk->delete(RC_Upload::upload_path() . $row['img_url']);

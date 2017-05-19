@@ -149,7 +149,7 @@ class list_module extends api_admin implements api_interface {
 					'market_price'		=> price_format($val['market_price'] , false),
 					'shop_price'		=> price_format($val['shop_price'] , false),
 				    'is_promote'	=> $val['is_promote'],
-				    'promote_price'	=> price_format($val['promote_price'] , false),
+				    'promote_price'	=> price_format($promote_price , false),
 				    'promote_start_date'	=> intval($val['promote_start_date']),
 				    'promote_end_date'		=> intval($val['promote_end_date']),
 				    'formatted_promote_start_date'	=> !empty($val['promote_start_date']) ? RC_Time::local_date('Y-m-d H:i:s', $val['promote_start_date']) : '',
