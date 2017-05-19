@@ -2346,6 +2346,8 @@ class merchant extends ecjia_merchant {
 		if (!empty($_SESSION['store_id']) && $_SESSION['store_id'] > 0) {
 			$filter['store_id'] = $_SESSION['store_id'];
 		}
+		$filter['is_on_sale'] = 1;
+		$filter['is_delete'] = 0;
 		$arr = get_merchant_goods_list($filter);
 		$opt = array();
 		if (!empty($arr)) {

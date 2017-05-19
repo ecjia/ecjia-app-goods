@@ -354,6 +354,8 @@ function get_merchant_where_sql($filter) {
 
 	$where  = isset($filter->is_delete) && $filter->is_delete == '1' ?
 	' is_delete = 1 ' : ' is_delete = 0 ';
+	$where .= isset($filter->is_on_sale) && $filter->is_on_sale == '1' ?
+	' AND is_on_sale = 1 ' : ' is_on_sale = 0 ';
 	$where .= (isset($filter->real_goods) && ($filter->real_goods > -1)) ? ' AND is_real = ' . intval($filter->real_goods) : '';
 	$where .= isset($filter->cat_id) && $filter->cat_id > 0 ? ' AND ' . merchant_get_children($filter->cat_id) : '';
 	$where .= isset($filter->brand_id) && $filter->brand_id > 0 ? " AND brand_id = '" . $filter->brand_id . "'" : '';
