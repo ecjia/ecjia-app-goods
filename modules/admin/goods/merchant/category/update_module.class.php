@@ -110,7 +110,9 @@ class update_module extends api_admin implements api_interface {
     		}
     	}
     	 
-    	$cat_id = RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $cat_id))->update($cat);
+    	if (!RC_Model::model('goods/merchants_category_model')->where(array('cat_id' => $cat_id))->update($cat)) {
+    	    return new ecjia_error('category_error', '更新失败！');
+    	}
     	 
     	if ($_SESSION['store_id'] > 0) {
     	    RC_Api::api('merchant', 'admin_log', array('text' => $category_name.'【来源掌柜】', 'action' => 'edit', 'object' => 'category'));
