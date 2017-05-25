@@ -56,6 +56,36 @@ function assign_adminlog_content() {
     ecjia_admin_log::instance()->add_action('batch_end',	    '批量下架');
 }
 
+/*
+ * 上传图片
+ *  @param string $path 上传路径
+ *  @param string $code 接收图片参数
+ *  @param string $old_images 旧图片
+ */
+function file_upload_info($path, $code, $old_images)
+{
+    $code = empty($code) ? $path : $code;
+    $upload = RC_Upload::uploader('image', array('save_path' => 'merchant/' . $_SESSION['store_id'] . '/data/' . $path, 'auto_sub_dirs' => true));
+    $file = $_FILES[$code];
+    if (!empty($file) && (isset($file['error']) && $file['error'] == 0 || !isset($file['error']) && $file['tmp_name'] != 'none')) {
+        // 检测图片类型是否符合
+        if (!$upload->check_upload_file($file)) {
+            ecjia_admin::$controller->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        } else {
+            $image_info = $upload->upload($file);
+            if (empty($image_info)) {
+                ecjia_admin::$controller->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+            // 删除旧的图片
+            if (!empty($old_images)) {
+                $upload->remove($old_images);
+            }
+            $img_path = $upload->get_position($image_info);
+        }
+        return $img_path;
+    }
+}
+
 /**
  * 获取分类属性列表
  *

@@ -217,7 +217,12 @@ function merchant_get_children($cat = 0) {
  * @return  mix
  */
 function get_merchant_cat_info($cat_id) {
-	return RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
+	$info = RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
+	if (!empty($info['cat_image'])) {
+	    $info['cat_image_base'] = $info['cat_image'];
+	    $info['cat_image'] = RC_Upload::upload_url($info['cat_image']);
+	}
+	return $info;
 }
 
 /**
