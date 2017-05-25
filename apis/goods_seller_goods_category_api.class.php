@@ -77,7 +77,8 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 		}
 		//商家商品分类
 		if (isset($options['cat_id']) && isset($options['store_id']) && isset($options['type']) && $options['type'] == 'seller_goods_cat') {
-			$row = $this->cat_list($options['cat_id'], 0, false, 0, true, $options['store_id']);
+			$level = empty($options['level']) ? 0 : $options['level'];
+		    $row = $this->cat_list($options['cat_id'], 0, false, $level, true, $options['store_id']);
 		}
 	    return $row;
 	}
