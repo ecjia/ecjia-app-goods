@@ -47,7 +47,7 @@
                                     </span>
                                     <a class="btn btn-danger btn-sm fileupload-exists" {if $cat_info.cat_image}data-toggle="ajaxremove"{else}data-dismiss="fileupload"{/if} href="{url path='goods/mh_category/drop_cat_image' args="cat_id={$cat_info.cat_id}"}" >删除</a>
                                 </div>
-                                <span class="help-block">推荐图片的尺寸为：3:1（900x300px）</span>
+                                <span class="help-block">推荐图片的尺寸为：顶级分类为3:1（900x300px），子集分类为1:1（200x200px）</span>
 							</div>
 							<span class="input-must">{lang key='system::system.require_field'}</span>
 						</div>
