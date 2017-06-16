@@ -1957,14 +1957,14 @@ class admin extends ecjia_admin {
 						'goods_id'		=> $val['id'],
 						'link_goods_id'	=> $goods_id,
 						'is_double'		=> $is_double,
-						'admin_id'		=> $_SESSION['admin_id'],
+						'admin_id'		=> 0,
 					);
 				}
 				$data[] = array(
 					'goods_id'		=> $goods_id,
 					'link_goods_id'	=> $val['id'],
 					'is_double'		=> $is_double,
-					'admin_id'		=> $_SESSION['admin_id'],
+					'admin_id'		=> 0,
 				);
 			}
 		}
