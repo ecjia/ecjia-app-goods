@@ -235,7 +235,7 @@
 							<a class="data-pjax" href='{url path="goods/admin/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_properties'}</a>&nbsp;|&nbsp;
 							<a class="data-pjax" href='{url path="goods/admin_gallery/init" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_gallery'}</a>&nbsp;|&nbsp;
 							<a class="data-pjax" href='{url path="goods/admin/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_linkgoods'}</a>&nbsp;|&nbsp;
-<!-- 							<a class="data-pjax" href='{url path="goods/admin/edit_link_article" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_article'}</a>&nbsp;|&nbsp; -->
+							<a class="data-pjax" href='{url path="goods/admin/edit_link_article" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_article'}</a>&nbsp;|&nbsp;
 <!-- 							<a class="data-pjax" href='{url path="goods/admin/edit_link_parts" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_groupgoods'}</a>&nbsp;|&nbsp; -->
 							<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{lang key='goods::goods.preview'}</a>&nbsp;|&nbsp;
 							{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goods/admin/product_list" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.product_list'}</a>&nbsp;|&nbsp;{/if}

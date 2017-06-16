@@ -860,7 +860,7 @@ function get_goods_info_nav($goods_id=0, $extension_code='') {
 		'edit_goods_photo'      => array('name' => RC_Lang::get('goods::goods.tab_gallery'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin_gallery/init', "goods_id=$goods_id".$extension_code)),
 		'edit_link_goods'       => array('name' => RC_Lang::get('goods::goods.tab_linkgoods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_goods', "goods_id=$goods_id".$extension_code)),
 // 		'edit_link_parts'       => array('name' => RC_Lang::get('goods::goods.tab_groupgoods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_parts', "goods_id=$goods_id".$extension_code)),
-// 		'edit_link_article'     => array('name' => RC_Lang::get('goods::goods.tab_article'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_article', "goods_id=$goods_id".$extension_code)),
+		'edit_link_article'     => array('name' => RC_Lang::get('goods::goods.tab_article'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/edit_link_article', "goods_id=$goods_id".$extension_code)),
 		'product_list'          => array('name' => RC_Lang::get('goods::goods.tab_product'), 'pjax' => 1, 'href' => RC_Uri::url('goods/admin/product_list', "goods_id=$goods_id".$extension_code)),
 	);
 }
