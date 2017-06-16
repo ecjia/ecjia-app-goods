@@ -1329,7 +1329,8 @@ function get_goods_articles($goods_id) {
 		)
 	);
 	if ($goods_id == 0) {
-		$row = $dbview->where(array('ga.goods_id' => $goods_id, 'ga.admin_id' => $_SESSION ['admin_id']))->select();
+// 		$row = $dbview->where(array('ga.goods_id' => $goods_id, 'ga.admin_id' => $_SESSION ['admin_id']))->select();
+		$row = $dbview->where(array('ga.goods_id' => $goods_id))->select();
 	}
 	return $dbview->where(array('ga.goods_id' => $goods_id))->select();
 }
