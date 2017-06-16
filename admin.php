@@ -2050,7 +2050,7 @@ class admin extends ecjia_admin {
 // 				$data[] = array(
 // 					'goods_id' => $goods_id,
 // 					'article_id' => $val['article_id'],
-// 					'admin_id' => $_SESSION['admin_id'],
+// 					'admin_id'	=> 0
 // 				);
 // 			}
 // 		}
