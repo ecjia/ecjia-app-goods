@@ -119,13 +119,14 @@ class admin_gallery extends ecjia_admin {
 
          /* 格式化相册图片路径 */
         if (!empty($img_list)) {
+        	$disk = RC_Filesystem::disk();
         	foreach ($img_list as $key => $gallery_img) {
         		$desc_index = intval(strrpos($gallery_img['img_original'], '?')) + 1;
         		!empty($desc_index) && $img_list[$key]['desc'] = substr($gallery_img['img_original'], $desc_index);
         		
-        		$img_list[$key]['img_url'] 		= empty($gallery_img['img_url']) 		|| !file_exists(RC_Upload::upload_path($gallery_img['img_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_url'];
-        		$img_list[$key]['thumb_url'] 	= empty($gallery_img['thumb_url']) 		|| !file_exists(RC_Upload::upload_path($gallery_img['thumb_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['thumb_url'];
-        		$img_list[$key]['img_original'] = empty($gallery_img['img_original']) 	|| !file_exists(RC_Upload::upload_path($gallery_img['img_original'])) 	?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_original'];
+        		$img_list[$key]['img_url'] 		= empty($gallery_img['img_url']) 		|| !$disk->exists(RC_Upload::upload_path($gallery_img['img_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_url'];
+        		$img_list[$key]['thumb_url'] 	= empty($gallery_img['thumb_url']) 		|| !$disk->exists(RC_Upload::upload_path($gallery_img['thumb_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['thumb_url'];
+        		$img_list[$key]['img_original'] = empty($gallery_img['img_original']) 	|| !$disk->exists(RC_Upload::upload_path($gallery_img['img_original'])) 	?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_original'];
         	
         		$img_list_sort[$key] = $img_list[$key]['desc'];
         		$img_list_id[$key] = $gallery_img['img_id'];
