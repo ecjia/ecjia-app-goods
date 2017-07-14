@@ -137,9 +137,16 @@ class mh_gallery extends ecjia_merchant {
         		$desc_index = intval(strrpos($gallery_img['img_original'], '?')) + 1;
         		!empty($desc_index) && $img_list[$key]['desc'] = substr($gallery_img['img_original'], $desc_index);
         		
+        		//判断img_original值是否有？出现，过滤以便检测
+        		if (strrpos($gallery_img['img_original'], '?') > 0) {
+        			$img_original = substr($gallery_img['img_original'], 0, strrpos($gallery_img['img_original'], '?'));
+        		} else {
+        			$img_original = $gallery_img['img_original'];
+        		}
+        		
         		$img_list[$key]['img_url'] 		= empty($gallery_img['img_url']) 		|| !$disk->exists(RC_Upload::upload_path($gallery_img['img_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_url'];
         		$img_list[$key]['thumb_url'] 	= empty($gallery_img['thumb_url']) 		|| !$disk->exists(RC_Upload::upload_path($gallery_img['thumb_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['thumb_url'];
-        		$img_list[$key]['img_original'] = empty($gallery_img['img_original']) 	|| !$disk->exists(RC_Upload::upload_path($gallery_img['img_original'])) 	?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_original'];
+        		$img_list[$key]['img_original'] = empty($gallery_img['img_original']) 	|| !$disk->exists(RC_Upload::upload_path($img_original)) 	?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_original'];
         	
         		$img_list_sort[$key] = $img_list[$key]['desc'];
         		$img_list_id[$key] = $gallery_img['img_id'];
