@@ -360,12 +360,12 @@ class merchant extends ecjia_merchant {
 			$this->assign('cat_html', $cat_html);
 		}
 		if (!empty($cat_id)) {
-			$merchant_cat = merchant_cat_list(0, 0, true, 2);		//店铺分类
+			$merchant_cat = merchant_cat_list(0, 0, true, 2, false);		//店铺分类
 			$ur_here = '基本信息';
 			$this->assign('step', 2);
 			$this->assign('merchant_cat', $merchant_cat);
 		} else {
-			$cat_list = cat_list(0, 0, false, 1);	//平台分类
+			$cat_list = cat_list(0, 0, false, 1, false);	//平台分类
 			$ur_here = '选择商品分类';
 			$this->assign('step', 1);
 			$this->assign('cat_list', $cat_list);
@@ -2369,7 +2369,7 @@ class merchant extends ecjia_merchant {
 	public function get_cat_list() {
 		$cat_id = !empty($_POST['cat_id']) ? intval($_POST['cat_id']) : 0;
 		
-		$cat_list = RC_DB::table('category')->where('parent_id', $cat_id)->get();
+		$cat_list = RC_DB::table('category')->where('parent_id', $cat_id)->where('is_show', 1)->get();
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $cat_list));
 	}
 
