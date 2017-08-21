@@ -1775,6 +1775,11 @@ function goods_type_list($selected, $store_id = 0) {
 
 	if (!empty($store_id)) {
 		$db_goods_type->where('store_id', $store_id);
+		//自营商家可以使用平台后台添加的商品规格
+		$store_info = RC_DB::table('store_franchisee')->where('store_id', $store_id)->first();
+		if ($store_info['manage_mode'] == 'self') {
+			$db_goods_type->orWhere('store_id', 0);
+		}
 	}
 	$data = $db_goods_type->get();
 

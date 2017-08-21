@@ -389,13 +389,18 @@ function get_merchant_where_sql($filter) {
  * @return  string
  */
 function goods_enable_type_list($selected, $enabled = false) {
-	$db_goods_type = RC_DB::table('goods_type');
+	$db_goods_type = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id']);
 
 	if ($enabled) {
 		$db_goods_type->where('enabled', 1);
 	}
-	$data = $db_goods_type->select('cat_id', 'cat_name')->where('store_id', $_SESSION['store_id'])->get();
-
+	//自营商家可以使用平台后台添加的商品规格
+	$store_info = RC_DB::table('store_franchisee')->where('store_id', $_SESSION['store_id'])->first();
+	if ($store_info['manage_mode'] == 'self') {
+		$db_goods_type->orWhere('store_id', 0);
+	}
+	$data = $db_goods_type->select('cat_id', 'cat_name')->get();
+	
 	$opt = '';
 	if (!empty($data)) {
 		foreach ($data as $row){

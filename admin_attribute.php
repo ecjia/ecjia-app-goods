@@ -69,7 +69,7 @@ class admin_attribute extends ecjia_admin {
 		RC_Script::enqueue_script('goods_attribute', RC_App::apps_url('statics/js/goods_attribute.js', __FILE__), array(), false, true);
 		RC_Script::localize_script('goods_attribute', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
 		
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_type.goods_type_list'), RC_Uri::url('goods/admin_goods_type/init')));
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_spec.goods_spec_list'), RC_Uri::url('goods/admin_goods_spec/init')));
 	}
 
 	/**
@@ -95,14 +95,14 @@ class admin_attribute extends ecjia_admin {
 		
 		$this->assign('ur_here', RC_Lang::get('goods::attribute.goods_attribute'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin_attribute/add', array('cat_id' => $goods_type)), 'text' => RC_Lang::get('system::system.10_attribute_add')));
-		$this->assign('action_link2', array('text' => RC_Lang::get('goods::goods_type.goods_type_list'), 'href' => RC_Uri::url('goods/admin_goods_type/init')));
+		$this->assign('action_link2', array('text' => RC_Lang::get('goods::goods_spec.goods_spec_list'), 'href' => RC_Uri::url('goods/admin_goods_spec/init')));
 		
 		$this->assign('goods_type_list', goods_type_list($goods_type));
 		$this->assign('attr_list', $attr_list);
 		$this->assign('cat_id', $goods_type);
 		$this->assign('form_action', RC_Uri::url('goods/admin_attribute/batch'));
 		
-		$this->display('attribute_list.dwt');		
+		$this->display('attribute_list.dwt');
 	}
 	
 	/**
