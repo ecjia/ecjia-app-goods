@@ -430,7 +430,7 @@ function get_merchant_review_status() {
 			if ($shop_review_goods == 0) {
 				$review_status = 5;
 			} else {
-			    $review_status = 0;
+			    $review_status = 1;
 			}
 		} else {
 			$review_status = 5;
