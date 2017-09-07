@@ -541,7 +541,7 @@ class merchant extends ecjia_merchant {
 
 		/* 入库 */
 		$data = array(
-			'goods_name'            => $goods_name,
+			'goods_name'            => rc_stripslashes($goods_name),
 			'goods_name_style'      => $goods_name_style,
 			'goods_sn'              => $goods_sn,
 			'cat_id'                => $cat_id,				//平台分类id
@@ -918,7 +918,7 @@ class merchant extends ecjia_merchant {
 		}
 
 		$data = array(
-		  	'goods_name'				=> $goods_name,
+		  	'goods_name'				=> rc_stripslashes($goods_name),
 		  	'goods_name_style'	  		=> $goods_name_style,
 		  	'goods_sn'			  		=> $goods_sn,
 			'merchant_cat_id'			=> $merchant_cat_id,	//店铺分类id
