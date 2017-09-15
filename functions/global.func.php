@@ -1767,7 +1767,7 @@ function is_spec($goods_attr_id_array, $sort = 'asc') {
  *
  * @return 商品最终购买价格
  */
-function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array(), $warehouse_id = 0, $area_id = 0) {
+function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array()) {
 	$dbview = RC_Model::model('goods/sys_goods_member_viewmodel');
 	RC_Loader::load_app_func('admin_goods', 'goods');
 
