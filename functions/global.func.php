@@ -1983,4 +1983,11 @@ function get_goods_gallery_gol($goods_id) {
     return $row;
 }
 
+function formated_price_bulk($price) {
+    //格式化散装商品价格
+    $price = sprintf("%.1f", $price);
+    $price = sprintf("%01.2f",$price);
+    return $price;
+}
+
 // end
