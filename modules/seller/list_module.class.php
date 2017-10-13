@@ -159,8 +159,8 @@ class list_module extends api_front implements api_interface {
 								'activity_type' => $v['activity_type'],
 								'label_activity_type' => $v['label_activity_type'],
 								'limit_time_type'	  => $v['limit_time_type'],
-								'limit_time_weekly '  => $v['limit_time_weekly'],
-								'limit_time_daily '   => $v['limit_time_daily'],
+								'limit_time_weekly '  => $v['limit_time_weekly_str'],
+								'limit_time_daily '   => $v['limit_time_daily_str'],
 								'limit_time_exclude'  => $v['limit_time_exclude'],
 								'total_order_count '  => $v['total_order_count']
 						);
