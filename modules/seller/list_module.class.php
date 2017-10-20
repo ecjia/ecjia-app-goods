@@ -210,6 +210,7 @@ class list_module extends api_front implements api_interface {
 	
 				$seller_list[] = array(
 					'id'				=> $row['id'],
+					'allow_use_quickpay'=> empty($row['allow_use_quickpay']) ? 0 : 1,
 					'seller_name'		=> $row['seller_name'],
 					'seller_category'	=> $row['seller_category'],
 					'manage_mode'		=> $row['manage_mode'],
