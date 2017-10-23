@@ -1787,7 +1787,11 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
 		}
 	}
 	// 取得商品促销价格列表
-	$goods = $dbview->join ( 'member_price' )->find (array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
+	//$goods = $dbview->join ('member_price')->find (array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
+	$field = "g.promote_price, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . $_SESSION['discount'] . "') AS shop_price";
+	// 取得商品促销价格列表
+	$goods = $dbview->join(array('member_price'))->field($field)->where(array('g.goods_id' => $goods_id, 'g.is_delete' => 0))->find();
+	
 	/* 计算商品的促销价格 */
 	if ($goods ['promote_price'] > 0) {
 		$promote_price = bargain_price ( $goods ['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
