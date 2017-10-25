@@ -164,7 +164,7 @@ class goods_category {
     	if ($res === NULL) {
     		$data = false;
     		if ($data === false) {
-    			$res = $db_category->join('category')->field('c.cat_id, c.cat_name, c.measure_unit, c.parent_id, c.is_show, c.show_in_nav, c.grade, c.sort_order, COUNT(s.cat_id) AS has_children')->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+    			$res = $db_category->join('category')->field('c.cat_id, c.cat_name, c.measure_unit, c.parent_id, c.is_show, c.show_in_nav, c.grade, c.sort_order, COUNT(s.cat_id) AS has_children')->group('c.cat_id, c.cat_name, c.measure_unit, c.parent_id, c.is_show, c.show_in_nav, c.grade, c.sort_order')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
     			$res2 = $db_goods->field ( 'cat_id, COUNT(*)|goods_num' )->where(array('is_delete' => 0,'is_on_sale' => 1))->group ('cat_id asc')->select();
     			$res3 = $db_goods_catview->join('goods')->field('gc.cat_id, COUNT(*)|goods_num')->where(array('g.is_delete' => 0,'g.is_on_sale' => 1))->group ('gc.cat_id')->select();
     			$newres = array ();

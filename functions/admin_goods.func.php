@@ -547,53 +547,8 @@ function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min =
  * @return void
  */
 function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
-// 	$db_goods = RC_Model::model('goods/goods_auto_viewmodel');
 	RC_Loader::load_app_func('global', 'goods');
 	$time = RC_Time::gmtime();
-
-// 	$field = "g.*,  g.model_price, g.model_attr, ".
-// 	    ' c.measure_unit, g.brand_id as brand_id, b.brand_logo, g.comments_number, g.sales_volume,b.brand_name AS goods_brand, m.type_money AS bonus_money, ' .
-// 	    'IFNULL(AVG(r.comment_rank), 0) AS comment_rank, ' .
-// 	    "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS rank_price ";
-
-// 	$db_goods->view = array (
-// 		'category' => array(
-// 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias'    => 'c',
-// 			'on'       => 'g.cat_id = c.cat_id'
-// 		),
-// 		'brand' => array(
-// 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias'    => 'b',
-// 			'on'       => 'g.brand_id = b.brand_id '
-// 		),
-// 		'comment' => array(
-// 			'type' => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias' => 'r',
-// 			'on' => 'r.id_value = g.goods_id AND comment_type = 0 AND r.parent_id = 0 AND r.status = 1'
-// 		),
-// 		'bonus_type' => array(
-// 			'type' => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias' => 'm',
-// 			'on' => 'g.bonus_type_id = m.type_id AND m.send_start_date <= "' . $time . '" AND m.send_end_date >= "' . $time . '"'
-// 		),
-// 		'member_price'   => array(
-// 			'type'     => Component_Model_View::TYPE_LEFT_JOIN,
-// 			'alias'    => 'mp',
-// 			'on'       => 'mp.goods_id = g.goods_id AND mp.user_rank = "' . $_SESSION ['user_rank'] . '"'
-// 		)
-// 	);
-
-// 	$where = array('g.goods_id' => $goods_id/* , 'g.is_delete' => 0 */);
-	
-// 	if (!empty($_SESSION['store_id'])) {
-// 		if (ecjia::config('review_goods')) {
-// 			$where['g.review_status'] = array('gt' => 2);
-// 		}
-// 	} else {
-// 		$where['g.review_status'] = array('gt' => 2);
-// 	}
-//     $row = $db_goods->field($field)->group('g.goods_id')->find($where);
     
 	$db_goods = RC_DB::table('goods')->where('goods_id', $goods_id);
 	
