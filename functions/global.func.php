@@ -465,21 +465,58 @@ function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order) {
 * @return  array
 */
 function brand_related_cat($brand) {
-	$db = RC_Model::model('goods/category_viewmodel');
+	// $db = RC_Model::model('goods/category_viewmodel');
+	// $arr[] = array(
+	// 	'cat_id' 	=> 0,
+	// 	'cat_name'	=> RC_Lang::get('goods::goods.all_category'),
+	// 	'url'		=> build_uri('brand', array('bid' => $brand), RC_Lang::get('goods::goods.all_category'))
+	// );
+	// $data = $db->join('goods')->where(array('g.brand_id' => $brand))->group('g.cat_id')->select();
+	// if(!empty($data)) {
+	// 	foreach ($data as $row) {
+	// 		$row['url'] = build_uri('brand', array('cid' => $row['cat_id'], 'bid' => $brand), $row['cat_name']);
+	// 		$arr[] = $row;
+	// 	}
+	// }
+
 	$arr[] = array(
 		'cat_id' 	=> 0,
 		'cat_name'	=> RC_Lang::get('goods::goods.all_category'),
 		'url'		=> build_uri('brand', array('bid' => $brand), RC_Lang::get('goods::goods.all_category'))
 	);
-	$data = $db->join('goods')->where(array('g.brand_id' => $brand))->group('g.cat_id')->select();
-	if(!empty($data)) {
-		foreach ($data as $row) {
-			$row['url'] = build_uri('brand', array('cid' => $row['cat_id'], 'bid' => $brand), $row['cat_name']);
-			$arr[] = $row;
+	
+	//商品信息
+	$data = RC_DB::table('goods')->where('brand_id', $brand)->groupBy('cat_id')->get();
+	if (!empty($data)) {
+		foreach ($data as $k => $v) {
+			$data[$v['cat_id']] = $v;
+		}
+	}
+	
+	$cat_list = array();
+	if (!empty($data)) {
+		foreach ($data as $k => $v) {
+			$cat_list[] = $v['cat_id'];
+		}
+	}
+	
+	$db_category = RC_DB::table('category');
+	if (!empty($cat_list)) {
+		$db_category->whereIn('cat_id', $cat_list);
+	}
+	//分类列表
+	$cat_temp_list = $db_category->get();
+	if (!empty($cat_temp_list)) {
+		foreach ($cat_temp_list as $k => $row) {
+			$cat_temp_list[$k] = array_merge($row, $data[$row['cat_id']]);
+			
+			$cat_temp_list[$k]['url'] = build_uri('brand', array('cid' => $row['cat_id'], 'bid' => $brand), $row['cat_name']);
+			$arr[] = $cat_temp_list[$k];
 		}
 	}
 	return $arr;
 }
+
 /*------------------------------------------------------ */
 //-- END PRIVATE FUNCTION品牌表的方法结束
 /*------------------------------------------------------ */
