@@ -117,7 +117,7 @@ class goods_seller_goods_category_api extends Component_Event_Api {
 					$where['c.is_show'] = 1;
 				}
                 $field = 'c.cat_id, c.cat_name, c.cat_image, c.parent_id, c.is_show, c.sort_order, COUNT(s.cat_id) AS has_children';
-                $res = $db_category->join(array('merchants_category'))->field($field)->where($where)->group('c.cat_id')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
+                $res = $db_category->join(array('merchants_category'))->field($field)->where($where)->group('c.cat_id, c.cat_name, c.cat_image, c.parent_id, c.is_show, c.sort_order')->order(array('c.parent_id' => 'asc', 'c.sort_order' => 'asc'))->select();
 
     			$res2 = RC_DB::table('goods')->selectRaw('cat_id, COUNT(*) as goods_num')->where('is_delete', 0)->where('is_on_sale', 1)->groupBy('cat_id')->get();
 
