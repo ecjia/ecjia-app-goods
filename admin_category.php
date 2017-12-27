@@ -50,11 +50,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * ECJIA 商品分类管理程序
  */
 class admin_category extends ecjia_admin {
-	private $db_category;
-	private $db_attribute;
-	private $db_cat;
-	private $db_goods;
-	
 	public function __construct() {
 		parent::__construct();
 		
@@ -63,11 +58,6 @@ class admin_category extends ecjia_admin {
 		RC_Loader::load_app_func('admin_goods');
 		RC_Loader::load_app_func('admin_category');
 		RC_Loader::load_app_func('global');
-		
-		$this->db_category 	= RC_Model::model('goods/category_model');
-		$this->db_attribute = RC_Model::model('goods/attribute_model');
-		$this->db_cat 		= RC_Model::model('goods/cat_recommend_model');
-		$this->db_goods 	= RC_Model::model('goods/goods_model');
 		
 		RC_Script::enqueue_script('jquery-chosen');
 		RC_Script::enqueue_script('jquery-validate');
