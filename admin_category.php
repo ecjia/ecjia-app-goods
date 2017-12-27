@@ -111,7 +111,10 @@ class admin_category extends ecjia_admin {
 		);
 		
 		$cat_id = !empty($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
-		$cat_list = $this->get_cat_list($cat_id);
+		$this->assign('cat_id', $cat_id);
+		
+		$cat_list = cat_list($cat_id, 0, false);
+		unset($cat_list[$cat_id]);
 		$this->assign('cat_list', $cat_list);
 		
 		$cat_info = get_cat_info($cat_id);
@@ -137,7 +140,7 @@ class admin_category extends ecjia_admin {
 		}
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/admin_category/add', $add_arr), 'text' => RC_Lang::get('goods::category.add_goods_cat')));
 		
-		$this->display('category_list_new.dwt');
+		$this->display('category_list.dwt');
 	}
 
 	/**
