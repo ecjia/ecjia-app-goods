@@ -176,9 +176,9 @@ class merchant extends ecjia_merchant {
 		$use_storage = ecjia::config('use_storage');
 		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
 		
-		$get_list = !empty($_GET) ? $_GET : '';
-		$get_rul = $this->generate_url($_GET);
-		$this->assign('get_url', $get_rul);
+// 		$get_list = !empty($_GET) ? $_GET : '';
+// 		$get_rul = $this->generate_url($get_list);
+// 		$this->assign('get_url', $get_rul);
 		
 		$goods_list = goods::merchant_goods_list(0, 1);
 		$this->assign('goods_list', $goods_list);
