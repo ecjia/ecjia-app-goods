@@ -216,6 +216,7 @@ class list_module extends api_front implements api_interface {
 					'seller_logo'		=> $row['shop_logo'],
 				    'seller_notice'     => $row['seller_notice'],
 					'follower'			=> $row['follower'],
+					'shop_closed'		=> $row['shop_closed'],
 					'is_follower'		=> in_array($row['id'], $collect_store_id) ? 1 : 0,
 					'goods_count'       => $goods_store_data['count'],
 					'favourable_list'	=> $favourable_list,
