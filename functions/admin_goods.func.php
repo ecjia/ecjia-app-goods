@@ -561,7 +561,9 @@ function get_goods_info($goods_id, $warehouse_id = 0, $area_id = 0) {
 	}
     //商品信息
     $row = $db_goods->first();
-    
+    if (empty($row)) {
+    	return false;
+    }
     //分类信息
     $cat_info = RC_DB::table('category')->where('cat_id', $row['cat_id'])->first();
     $row['measure_unit'] = $cat_info['measure_unit'];
@@ -1762,7 +1764,7 @@ function get_where_sql($filter) {
  * @return  string
  */
 function goods_type_list($selected, $store_id = 0, $show_all = false) {
-	$db_goods_type = RC_DB::table('goods_type')->select('cat_id', 'cat_name')->where('enabled', 1);
+	$db_goods_type = RC_DB::table('goods_type')->select('cat_id', 'cat_name');
 
 	$db_goods_type->where('store_id', $store_id);
 	if ($show_all) {
