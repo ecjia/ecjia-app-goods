@@ -78,7 +78,7 @@ class detail_module extends api_front implements api_interface {
 
         if (empty($goods)) {
         	$goods = get_goods_info($goods_id);
-        	$orm_goods_db->set_cache_item($cache_basic_info_id);
+        	$orm_goods_db->set_cache_item($cache_basic_info_id, $goods);
         }
     
         if ($goods === false) {
@@ -112,7 +112,7 @@ class detail_module extends api_front implements api_interface {
             $properties = $goods_type_db->get_cache_item($cache_goods_properties_id);
             if (empty($properties)) {
             	$properties = get_goods_properties($goods_id); // 获得商品的规格和属性
-            	$goods_type_db->set_cache_item($cache_goods_properties_id);
+            	$goods_type_db->set_cache_item($cache_goods_properties_id, $properties);
             }
             
             // 获取关联礼包
@@ -133,7 +133,7 @@ class detail_module extends api_front implements api_interface {
         $user_rank_prices = $orm_member_price_db->get_cache_item($cache_user_rank_prices_id);
         if (empty($user_rank_prices)) {
         	$user_rank_prices = get_user_rank_prices($goods_id, $shop_price);
-        	$orm_member_price_db->set_cache_item($cache_goods_properties_id);      	
+        	$orm_member_price_db->set_cache_item($cache_goods_properties_id, $user_rank_prices);      	
         }
         
         /*给商品的相册增加缓存*/
@@ -143,7 +143,7 @@ class detail_module extends api_front implements api_interface {
         $goods_gallery = $orm_goods_gallery_db->get_cache_item($cache_goods_gallery_id);
         if (empty($goods_gallery)) {
         	$goods_gallery = EM_get_goods_gallery($goods_id);
-        	$orm_goods_gallery_db->set_cache_item($cache_goods_gallery_id);
+        	$orm_goods_gallery_db->set_cache_item($cache_goods_gallery_id, $goods_gallery);
         }
         
         $data['rank_prices']     = !empty($shop_price) ? $user_rank_prices : 0;
@@ -331,7 +331,7 @@ class detail_module extends api_front implements api_interface {
 				$properties = $goods_type_db->get_cache_item($cache_goods_properties_id);
 				if (empty($properties)) {
 				    $properties = get_goods_properties($val['goods_id']); // 获得商品的规格和属性
-				    $goods_type_db->set_cache_item($cache_goods_properties_id);
+				    $goods_type_db->set_cache_item($cache_goods_properties_id, $properties);
 				}
 				
 				$data['related_goods'][] = array(
