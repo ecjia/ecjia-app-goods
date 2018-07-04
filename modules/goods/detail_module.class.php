@@ -63,13 +63,24 @@ class detail_module extends api_front implements api_interface {
         	return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
         }
 
-        $rec_type = $this->requestData('rec_type');
-        $object_id = $this->requestData('object_id');
+        //$rec_type = $this->requestData('rec_type');
+        $object_id = $this->requestData('goods_activity_id', 0);
 
         /* 获得商品的信息 */
         RC_Loader::load_app_func('admin_goods', 'goods');
         RC_Loader::load_app_func('admin_category', 'goods');
 		
+        if (!empty($object_id)) {
+        	$group_buy = group_buy_info($object_id);
+        	if (!empty($group_buy)) {
+        		$rec_type = 'GROUPBUY_GOODS';
+        	}else {
+        		$rec_type = '';
+        	}
+        } else {
+        	$rec_type = '';
+        }
+        
         /*增加商品基本信息缓存*/
         $cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
         $cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
@@ -237,14 +248,24 @@ class detail_module extends api_front implements api_interface {
 		
         $data = API_DATA('GOODS', $data);
         $data['unformatted_shop_price'] = $goods['shop_price'];
+        
+        $groupbuy_info = [];
+     
         if ($rec_type == 'GROUPBUY_GOODS') {
         	/* 取得团购活动信息 */
-        	$group_buy = group_buy_info($object_id);
-        	$data['promote_price'] = $group_buy['cur_price'];
+        	//$group_buy = group_buy_info($object_id);
+        	$data['promote_price'] 			= $group_buy['cur_price'];
         	$data['formated_promote_price'] = $group_buy['formated_cur_price'];
-        	$data['promote_start_date'] = $group_buy['formated_start_date'];
-        	$data['promote_end_date'] = $group_buy['formated_end_date'];
-        	$activity_type = 'GROUPBUY_GOODS';
+        	$data['promote_start_date'] 	= $group_buy['formated_start_date'];
+        	$data['promote_end_date'] 		= $group_buy['formated_end_date'];
+        	$activity_type 					= 'GROUPBUY_GOODS';
+        	$groupbuy_info = array(
+        			'activity_id'		=> $group_buy['act_id'],
+        			'deposit'			=> empty($group_buy['deposit']) ? 0 : $group_buy['deposit'],
+        			'formated_deposit'	=> $group_buy['formated_deposit'],
+        			'resitrict_num'		=> empty($group_buy['restrict_amount']) ? 0 : $group_buy['restrict_amount'],
+        			'left_num'			=> $group_buy['left_num']
+        	);
         } else {
         	$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
         	$groupbuy = $mobilebuy_db->find(array(
@@ -277,10 +298,12 @@ class detail_module extends api_front implements api_interface {
 			}
 
         }
+        $data['groupbuy_info'] = $groupbuy_info;
 
         /* 计算节约价格*/
         $saving_price = ($data['unformatted_shop_price'] - $price) > 0 ? $data['unformatted_shop_price'] - $price : 0;
         $data['activity_type']	= $activity_type;
+        $data['goods_activity_id'] = empty($object_id) ? 0 : intval($object_id);
         $data['saving_price']	= $saving_price;
         $data['formatted_saving_price'] = '已省'.$saving_price.'元';
         if ($price < $data['unformatted_shop_price'] && isset($price)) {
@@ -291,7 +314,7 @@ class detail_module extends api_front implements api_interface {
         }
 
         $data['rec_type'] = empty($rec_type) ? $activity_type : 'GROUPBUY_GOODS';
-        $data['object_id'] = $object_id;
+        $data['object_id'] = empty($object_id) ? 0 : $object_id;
 
         if (ecjia_config::has('mobile_touch_url')) {
         	$data['goods_url'] = ecjia::config('mobile_touch_url').'index.php?m=goods&c=index&a=show&goods_id='.$goods_id.'&hidenav=1&hidetab=1';

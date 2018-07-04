@@ -1041,10 +1041,11 @@ function spec_price($spec, $goods_id = 0) {
  * @return array status 状态：
  */
 function group_buy_info($group_buy_id, $current_num = 0) {
-	$db = RC_Model::model('goods/goods_activity_model');
 	/* 取得团购活动信息 */
 	$group_buy_id = intval ( $group_buy_id );
-	$group_buy = $db->field( '*,act_id as group_buy_id, act_desc as group_buy_desc, start_time as start_date, end_time as end_date' )->find(array('act_id' => $group_buy_id, 'act_type' => GAT_GROUP_BUY));
+	$db = RC_DB::table('goods_activity');
+	$group_buy = $db->where('act_id', $group_buy_id)->where('act_type',GAT_GROUP_BUY)->selectRaw('*,act_id as group_buy_id, act_desc as group_buy_desc, start_time as start_date, end_time as end_date')->first();
+
 	/* 如果为空，返回空数组 */
 	if (empty ( $group_buy )) {
 		return array ();
@@ -1059,6 +1060,25 @@ function group_buy_info($group_buy_id, $current_num = 0) {
 
 	/* 格式化保证金 */
 	$group_buy ['formated_deposit'] = price_format ( $group_buy ['deposit'], false );
+	
+	//团购限购时，剩余可团购数
+	if (!empty($group_buy['restrict_amount'])) {
+		//获取已团购数量
+		$has_buyed = RC_DB::table('order_info as oi')
+							->leftJoin('order_goods as og', RC_DB::raw('og.order_id'), '=', RC_DB::raw('oi.order_id'))
+							->where(RC_DB::raw('oi.extension_id'), $group_buy_id)
+							->where(RC_DB::raw('oi.extension_code'), 'groupbuy')
+							->where(RC_DB::raw('oi.order_status'), '<>', OS_INVALID)
+							->select(RC_DB::raw('SUM(goods_number) as total_buyed'))->first();
+		
+		if ($group_buy['restrict_amount'] > $has_buyed['total_buyed']) {
+			$group_buy['left_num'] = $group_buy['restrict_amount'] - $has_buyed['total_buyed'];
+		} else {
+			$group_buy['left_num'] = 0;
+		}
+	} else {
+		$group_buy['left_num'] = null;
+	}
 
 	/* 处理价格阶梯 */
 	$price_ladder = $group_buy ['price_ladder'];
@@ -1104,7 +1124,7 @@ function group_buy_info($group_buy_id, $current_num = 0) {
 
 	$group_buy ['start_time'] = $group_buy ['formated_start_date'];
 	$group_buy ['end_time'] = $group_buy ['formated_end_date'];
-
+	
 	return $group_buy;
 }
 
