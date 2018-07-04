@@ -65,13 +65,26 @@ class detail_module extends api_front implements api_interface {
 
         //$rec_type = $this->requestData('rec_type');
         $object_id = $this->requestData('goods_activity_id', 0);
+        //判断商品是否是团购商品
+        $is_groupbuy = 0;
+        if (empty($object_id)) {
+        	$group_goods_activity_info = RC_DB::table('goods_activity')
+        									->where('goods_id',$goods_id)
+        									->where('start_time', '<', RC_Time::gmtime())
+        									->where('end_time', '>', RC_Time::gmtime())
+        									->where('act_type',GAT_GROUP_BUY)->first(); 
+        	if (!empty($group_goods_activity_info)) {
+        		$is_groupbuy = 1;
+        	}
+        }
 
         /* 获得商品的信息 */
-        RC_Loader::load_app_func('admin_goods', 'goods');
         RC_Loader::load_app_func('admin_category', 'goods');
-		
+        RC_Loader::load_app_func('admin_goods', 'goods');
+        
         if (!empty($object_id)) {
-        	$group_buy = group_buy_info($object_id);
+        	RC_Loader::load_app_class('groupbuy_activity', 'groupbuy', false);
+        	$group_buy = groupbuy_activity::group_buy_info($object_id);
         	if (!empty($group_buy)) {
         		$rec_type = 'GROUPBUY_GOODS';
         	}else {
@@ -302,6 +315,7 @@ class detail_module extends api_front implements api_interface {
 
         /* 计算节约价格*/
         $saving_price = ($data['unformatted_shop_price'] - $price) > 0 ? $data['unformatted_shop_price'] - $price : 0;
+        $data['is_groupbuy']	= $is_groupbuy;
         $data['activity_type']	= $activity_type;
         $data['goods_activity_id'] = empty($object_id) ? 0 : intval($object_id);
         $data['saving_price']	= $saving_price;
