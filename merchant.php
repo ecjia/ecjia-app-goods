@@ -525,8 +525,8 @@ class merchant extends ecjia_merchant {
 		$warn_number 	= !empty($_POST['warn_number'])		? $_POST['warn_number'] 	: 0;
 		$goods_type 	= !empty($_POST['goods_type']) 		? $_POST['goods_type'] 		: 0;
 
-		$give_integral 	= !empty($_POST['give_integral']) 	? intval($_POST['give_integral']) 	: '-1';
-		$rank_integral 	= !empty($_POST['rank_integral']) 	? intval($_POST['rank_integral']) 	: '-1';
+// 		$give_integral 	= !empty($_POST['give_integral']) 	? intval($_POST['give_integral']) 	: '-1';
+// 		$rank_integral 	= !empty($_POST['rank_integral']) 	? intval($_POST['rank_integral']) 	: '-1';
 		$suppliers_id 	= !empty($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
 		$goods_name 		= isset($_POST['goods_name']) 		? htmlspecialchars($_POST['goods_name']) 		: '';
@@ -568,7 +568,7 @@ class merchant extends ecjia_merchant {
 			'goods_number'          => $goods_number,
 			'warn_number'           => $warn_number,
 			'integral'              => $_POST['integral'],
-			'give_integral'         => $give_integral,
+			'give_integral'         => 0,//商家不可设置赠送积分
 			'store_best'            => $is_best,
 			'store_new'             => $is_new,
 			'store_hot'             => $is_hot,
@@ -578,7 +578,7 @@ class merchant extends ecjia_merchant {
 			'add_time'              => RC_Time::gmtime(),
 			'last_update'           => RC_Time::gmtime(),
 			'goods_type'            => $goods_type,
-			'rank_integral'         => $rank_integral,
+			'rank_integral'         => 0,//商家不可设置赠送积分
 			'suppliers_id'          => $suppliers_id,
 		    'review_status'         => get_merchant_review_status(),
 			'store_id'				=> $_SESSION['store_id'],
@@ -906,8 +906,8 @@ class merchant extends ecjia_merchant {
 		$warn_number 	= isset($_POST['warn_number']) 		? $_POST['warn_number'] 	: 0;
 		
 // 		$goods_type 	= isset($_POST['goods_type']) 		? $_POST['goods_type'] 				: 0;
-		$give_integral	= isset($_POST['give_integral']) 	? intval($_POST['give_integral']) 	: '-1';
-		$rank_integral 	= isset($_POST['rank_integral']) 	? intval($_POST['rank_integral']) 	: '-1';
+// 		$give_integral	= isset($_POST['give_integral']) 	? intval($_POST['give_integral']) 	: '-1';
+// 		$rank_integral 	= isset($_POST['rank_integral']) 	? intval($_POST['rank_integral']) 	: '-1';
 		$suppliers_id 	= isset($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
 // 		$goods_name_style 	= $_POST['goods_name_color'] . '+' . $_POST['goods_name_style'];
@@ -953,8 +953,8 @@ class merchant extends ecjia_merchant {
 		  	'goods_number'		  		=> $goods_number,
 		  	'warn_number'		   		=> $warn_number,
 		  	'integral'			  		=> $_POST['integral'],
-		  	'give_integral'		 		=> $give_integral,
-		  	'rank_integral'		 		=> $rank_integral,
+		  	'give_integral'		 		=> 0,//商家不可设置赠送积分
+		  	'rank_integral'		 		=> 0,//商家不可设置赠送积分
 		  	'store_best'			   	=> $is_best,
 		  	'store_new'					=> $is_new,
 		  	'store_hot'					=> $is_hot,
