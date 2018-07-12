@@ -1138,35 +1138,45 @@ function group_buy_info($group_buy_id, $current_num = 0) {
  *  valid_goods 有效商品数
  */
 function group_buy_stat($group_buy_id, $deposit) {
-	$group_buy_id = intval ( $group_buy_id );
-    $db = RC_Model::model('goods/goods_activity_model');
-	$dbview = RC_Model::model('goods/order_info_viewmodel');
-	$group_buy_goods_id = $db->where(array('act_id' => $group_buy_id,'act_type' => GAT_GROUP_BUY))->get_field('goods_id');
+        $group_buy_id = intval($group_buy_id);
+        $group_buy_goods_id = RC_DB::table('goods_activity')->where('store_id', $_SESSION['store_id'])->where('act_id', $group_buy_id)->where('act_type', GAT_GROUP_BUY)->pluck('goods_id');
 
-	/* 取得总订单数和总商品数 */
-	$dbview->view = array (
-		'order_goods' => array (
-			'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-			'alias' => 'g',
-			'field' => 'COUNT(*) AS total_order, SUM(g.goods_number) AS total_goods',
-			'on' 	=> 'o.order_id = g.order_id '
-		)
-	);
+        /* 取得总订单数和总商品数 */
+        $stat = RC_DB::table('order_info as o')->leftJoin('order_goods as g', RC_DB::raw('o.order_id'), '=', RC_DB::raw('g.order_id'))
+            ->select(RC_DB::raw('COUNT(*) AS total_order'), RC_DB::raw('SUM(g.goods_number) AS total_goods'))
+            ->where(RC_DB::raw('o.extension_code'), 'group_buy')
+            ->where(RC_DB::raw('o.extension_id'), $group_buy_id)
+            ->where(RC_DB::raw('g.goods_id'), $group_buy_goods_id)
+            ->whereRaw("(order_status = '" . OS_CONFIRMED . "' OR order_status = '" . OS_UNCONFIRMED . "')")
+            ->first();
 
-	$stat = $dbview->find ( "o.extension_code = 'group_buy' AND o.extension_id = '$group_buy_id' AND g.goods_id = '$group_buy_goods_id' AND (order_status = '" . OS_CONFIRMED . "' OR order_status = '" . OS_UNCONFIRMED . "')" );
-	if ($stat ['total_order'] == 0) {
-		$stat ['total_goods'] = 0;
-	}
+        if ($stat['total_order'] == 0) {
+            $stat['total_goods'] = 0;
+        }
 
-	/* 取得有效订单数和有效商品数 */
-	$deposit = floatval ( $deposit );
-	if ($deposit > 0 && $stat ['total_order'] > 0) {
+        /* 取得有效订单数和有效商品数 */
+        $deposit = floatval($deposit);
+        if ($deposit > 0 && $stat['total_order'] > 0) {
+            $row = RC_DB::table('order_info as o')->leftJoin('order_goods as g', RC_DB::raw('o.order_id'), '=', RC_DB::raw('g.order_id'))
+                ->select(RC_DB::raw('COUNT(*) AS total_order'), RC_DB::raw('SUM(g.goods_number) AS total_goods'))
+                ->where(RC_DB::raw('o.extension_code'), 'group_buy')
+                ->where(RC_DB::raw('o.extension_id'), $group_buy_id)
+                ->where(RC_DB::raw('g.goods_id'), $group_buy_goods_id)
+                ->whereRaw("(order_status = '" . OS_CONFIRMED . "' OR order_status = '" . OS_UNCONFIRMED . "')")
+                ->whereRaw("(o.money_paid + o.surplus) >= '$deposit'")
+                ->first();
+            $stat['valid_order'] = $row['total_order'];
+            if ($stat['valid_order'] == 0) {
+                $stat['valid_goods'] = 0;
+            } else {
+                $stat['valid_goods'] = $row['total_goods'];
+            }
 
-	} else {
-		$stat ['valid_order'] = $stat ['total_order'];
-		$stat ['valid_goods'] = $stat ['total_goods'];
-	}
-	return $stat;
+        } else {
+            $stat['valid_order'] = $stat['total_order'];
+            $stat['valid_goods'] = $stat['total_goods'];
+        }
+        return $stat;
 }
 
 /**
