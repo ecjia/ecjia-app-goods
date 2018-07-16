@@ -1487,7 +1487,7 @@ function get_goods_fittings($goods_list = array()) {
  * @return array
  */
 function get_products_info($goods_id, $spec_goods_attr_id) {
-	$model_attr = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('model_attr');
+// 	$model_attr = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('model_attr');
 
 	$return_array = array ();
 
