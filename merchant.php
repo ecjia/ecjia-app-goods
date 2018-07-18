@@ -568,7 +568,7 @@ class merchant extends ecjia_merchant {
 			'goods_number'          => $goods_number,
 			'warn_number'           => $warn_number,
 			'integral'              => $_POST['integral'],
-			'give_integral'         => 0,//商家不可设置赠送积分
+			//'give_integral'         => 0,//商家不可设置赠送积分
 			'store_best'            => $is_best,
 			'store_new'             => $is_new,
 			'store_hot'             => $is_hot,
@@ -578,7 +578,7 @@ class merchant extends ecjia_merchant {
 			'add_time'              => RC_Time::gmtime(),
 			'last_update'           => RC_Time::gmtime(),
 			'goods_type'            => $goods_type,
-			'rank_integral'         => 0,//商家不可设置赠送积分
+			//'rank_integral'         => 0,//商家不可设置赠送积分
 			'suppliers_id'          => $suppliers_id,
 		    'review_status'         => get_merchant_review_status(),
 			'store_id'				=> $_SESSION['store_id'],
@@ -953,8 +953,8 @@ class merchant extends ecjia_merchant {
 		  	'goods_number'		  		=> $goods_number,
 		  	'warn_number'		   		=> $warn_number,
 		  	'integral'			  		=> $_POST['integral'],
-		  	'give_integral'		 		=> 0,//商家不可设置赠送积分
-		  	'rank_integral'		 		=> 0,//商家不可设置赠送积分
+		  	//'give_integral'		 		=> 0,//商家不可设置赠送积分
+		  	//'rank_integral'		 		=> 0,//商家不可设置赠送积分
 		  	'store_best'			   	=> $is_best,
 		  	'store_new'					=> $is_new,
 		  	'store_hot'					=> $is_hot,
