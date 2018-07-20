@@ -82,11 +82,22 @@ class detail_module extends api_front implements api_interface {
         RC_Loader::load_app_func('admin_category', 'goods');
         RC_Loader::load_app_func('admin_goods', 'goods');
         
+        $groupbuy_activity_desc = '';
+        $groupbuy_price_ladder_str = '';
         if (!empty($object_id)) {
         	RC_Loader::load_app_class('groupbuy_activity', 'groupbuy', false);
         	$group_buy = groupbuy_activity::group_buy_info($object_id);
         	if (!empty($group_buy)) {
         		$rec_type = 'GROUPBUY_GOODS';
+        		$groupbuy_activity_desc = $group_buy['group_buy_desc'];
+        		$price_ladder = $group_buy['price_ladder'];
+        		if (!empty($price_ladder)) {
+        			foreach ($price_ladder as $rows) {
+        				$price_ladder_str .= '满'.$rows['amount'].'份'.$rows['price'].'元'.',';
+        			}
+        			$groupbuy_price_ladder_str = substr($price_ladder_str, 0, -1);
+        		}
+        		
         	}else {
         		$rec_type = '';
         	}
@@ -273,11 +284,13 @@ class detail_module extends api_front implements api_interface {
         	$data['promote_end_date'] 		= $group_buy['formated_end_date'];
         	$activity_type 					= 'GROUPBUY_GOODS';
         	$groupbuy_info = array(
-        			'activity_id'		=> $group_buy['act_id'],
-        			'deposit'			=> empty($group_buy['deposit']) ? 0 : $group_buy['deposit'],
-        			'formated_deposit'	=> $group_buy['formated_deposit'],
-        			'resitrict_num'		=> empty($group_buy['restrict_amount']) ? 0 : $group_buy['restrict_amount'],
-        			'left_num'			=> $group_buy['left_num']
+        			'activity_id'				=> $group_buy['act_id'],
+        			'deposit'					=> empty($group_buy['deposit']) ? 0 : $group_buy['deposit'],
+        			'formated_deposit'			=> $group_buy['formated_deposit'],
+        			'resitrict_num'				=> empty($group_buy['restrict_amount']) ? 0 : $group_buy['restrict_amount'],
+        			'left_num'					=> $group_buy['left_num'],
+        			'groupbuy_activity_desc'	=> empty($groupbuy_activity_desc) ? '' : $groupbuy_activity_desc,
+        			'groupbuy_price_ladder'		=> empty($groupbuy_price_ladder_str) ? '' : $groupbuy_price_ladder_str
         	);
         } else {
         	$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
