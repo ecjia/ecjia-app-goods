@@ -1678,9 +1678,6 @@ class admin extends ecjia_admin {
 		$this->assign('tags', $this->tags);
 		$href = RC_Uri::url('goods/admin/init');
 		
-		if ($code) {
-			$href = RC_Uri::url('goods/admin/init', array('extension_code' => $code));
-		}
 		$this->assign('action_link', array('href' => $href, 'text' => RC_Lang::get('system::system.01_goods_list')));
 		$this->assign('goods_type_list', goods_type_list($goods['goods_type'], $goods['store_id'], true));
 		
