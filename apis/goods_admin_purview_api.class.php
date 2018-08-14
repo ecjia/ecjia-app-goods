@@ -56,6 +56,7 @@ class goods_admin_purview_api extends Component_Event_Api {
             array('action_name' => RC_Lang::get('goods::goods.goods_manage'), 'action_code' => 'goods_manage', 'relevance' => ''),
         	array('action_name' => RC_Lang::get('goods::goods.goods_update'), 'action_code' => 'goods_update', 'relevance' => ''),
         	array('action_name' => RC_Lang::get('goods::goods.goods_delete'),'action_code' => 'goods_delete', 'relevance' => ''),
+            array('action_name' => '导入商品库','action_code' => 'goods_insert_goodslib', 'relevance' => ''),
         		
             array('action_name' => RC_Lang::get('goods::goods.category_manage'), 'action_code' => 'category_manage', 'relevance' => ''),
         	array('action_name' => RC_Lang::get('goods::goods.category_update'), 'action_code' => 'category_update', 'relevance' => ''),
