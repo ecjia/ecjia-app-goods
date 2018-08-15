@@ -33,10 +33,10 @@
 	</div>
 </div>
 
-<div class="modal fade" id="insertGoods">
+<div class="modal fade fade" id="insertGoods">
 	<div class="modal-header">
-		<button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-		<h4 class="modal-title">导入商品</h4>
+		<button class="close" data-dismiss="modal">×</button>
+		<h3 class="modal-title">导入商品</h3>
 	</div>
 	<div class="modal-body" style="height:auto;">
 		<form class="form-horizontal" action="{$form_action_insert}" method="post" name="insertForm">
@@ -79,7 +79,7 @@
           	<input type="hidden" name="goods_id" value="" />
           	
 			<div class="form-group t_c">
-				<a class="btn btn-primary insertSubmit" href="javascript:;">开始导入</a>
+				<a class="btn btn-gebo insertSubmit" href="javascript:;">开始导入</a>
 			</div>
 		</form>
    </div>
