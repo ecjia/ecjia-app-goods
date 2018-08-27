@@ -282,6 +282,7 @@ class goods {
     	$filter ['review_status'] 			= empty ($_REQUEST ['review_status']) 			?  0 	: intval($_REQUEST ['review_status']);
     
     	$where = $filter ['cat_id'] > 0 ? " AND " . merchant_get_children($filter ['cat_id']) : '';
+    	$where .= " AND extension_code !='bulk'";
     
     	/* 推荐类型 */
     	switch ($filter ['intro_type']) {
