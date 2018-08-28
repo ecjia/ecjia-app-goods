@@ -215,7 +215,7 @@ class goods {
         $filter ['self'] 			= $filter_count['self'] > 0 ? $filter_count['self'] : 0;
         
         $sql = $db_goods
-        	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.market_price, g.goods_thumb, g.is_on_sale, g.is_best, g.is_new, g.is_hot, g.sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name')
+            ->select(RC_DB::raw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.market_price, g.goods_thumb, g.is_on_sale, g.is_best, g.is_new, g.is_hot, g.sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name'))
         	->orderBy($filter ['sort_by'], $filter['sort_order'])
         	->take(10)
         	->skip($page->start_id-1)
@@ -374,12 +374,12 @@ class goods {
     	$filter ['merchant'] 		= $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
     
     	$sql = $db_goods
-	    	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.goods_thumb, g.is_on_sale, g.store_best, g.store_new, g.store_hot, g.store_sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name')
-	    	->orderBy($filter ['sort_by'], $filter['sort_order'])
-	    	->orderBy('goods_id', 'desc')
-	    	->take(10)
-	    	->skip($page->start_id-1)
-	    	->get();
+    	    ->select(RC_DB::raw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.goods_thumb, g.is_on_sale, g.store_best, g.store_new, g.store_hot, g.store_sort_order, g.goods_number, g.integral, (g.promote_price > 0 AND g.promote_start_date <= ' . $today . ' AND g.promote_end_date >= ' . $today . ') as is_promote, g.review_status, s.merchants_name'))
+            ->orderBy($filter ['sort_by'], $filter['sort_order'])
+            ->orderBy('goods_id', 'desc')
+            ->take(10)
+            ->skip($page->start_id-1)
+            ->get();
     
     	$filter ['keyword'] = stripslashes($filter ['keyword']);
     	$filter ['count'] 	= $count;

@@ -199,7 +199,7 @@ class goods_list {
 
 		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
 		    $merchant_cat_list = RC_DB::table('merchants_category')
-		    	->selectRaw('cat_id')
+		        ->select(RC_DB::raw('cat_id'))
 			    ->where('parent_id', $filter['merchant_cat_id'])
 			    ->where('store_id', $filter['store_id'])
 			    ->where('is_show', 1)
@@ -471,11 +471,11 @@ class goods_list {
 	    	
 	    if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
 	        $merchant_cat_list = RC_DB::table('merchants_category')
-	        ->selectRaw('cat_id')
-	        ->where('parent_id', $filter['merchant_cat_id'])
-	        ->where('store_id', $filter['store_id'])
-	        ->where('is_show', 1)
-	        ->get();
+	            ->select(RC_DB::raw('cat_id'))
+    	        ->where('parent_id', $filter['merchant_cat_id'])
+    	        ->where('store_id', $filter['store_id'])
+    	        ->where('is_show', 1)
+    	        ->get();
 	        $children_cat = "'".$filter['merchant_cat_id']."'";
 	        if ($merchant_cat_list) {
 	            foreach ($merchant_cat_list as $cat) {
