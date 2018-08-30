@@ -9,7 +9,7 @@ class GoodsServiceProvider extends  AppParentServiceProvider
     
     public function boot()
     {
-        $this->package('ecjia/app-goods');
+        $this->package('ecjia/app-goods', null, dirname(__DIR__));
     }
     
     public function register()
