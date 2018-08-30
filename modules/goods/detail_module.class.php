@@ -145,9 +145,10 @@ class detail_module extends api_front implements api_interface {
             $cache_goods_properties_id = sprintf('%X', crc32($cache_goods_properties_key));
             $goods_type_db = RC_Model::model('goods/orm_goods_type_model');
             $properties = $goods_type_db->get_cache_item($cache_goods_properties_id);
+            $properties = array();
             if (empty($properties)) {
             	$properties = get_goods_properties($goods_id); // 获得商品的规格和属性
-            	$goods_type_db->set_cache_item($cache_goods_properties_id, $properties);
+            	//$goods_type_db->set_cache_item($cache_goods_properties_id, $properties);
             }
             
             // 获取关联礼包
