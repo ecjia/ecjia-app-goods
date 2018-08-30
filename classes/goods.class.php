@@ -314,8 +314,6 @@ class goods {
     	/* 扩展 */
     	if ($filter ['extension_code']) {
     		$where .= " AND extension_code='".$filter['extension_code']."'";
-    	} else {
-    		$where .= " AND extension_code is null";
     	}
     
     	/* 关键字 */

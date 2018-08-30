@@ -179,8 +179,10 @@ class merchant extends ecjia_merchant {
 // 		$get_list = !empty($_GET) ? $_GET : '';
 // 		$get_rul = $this->generate_url($get_list);
 // 		$this->assign('get_url', $get_rul);
+		$conditions = '';
+		$conditions .= " AND extension_code is null";
 		
-		$goods_list = goods::merchant_goods_list(0, 1);
+		$goods_list = goods::merchant_goods_list(0, 1, $conditions);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('filter', $goods_list['filter']);
 		
