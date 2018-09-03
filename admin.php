@@ -164,8 +164,9 @@ class admin extends ecjia_admin {
 
 		$use_storage = ecjia::config('use_storage');
 		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
-		
-		$goods_list = goods::goods_list(0, 1);
+		$conditions = '';
+		$conditions .= " AND (g.extension_code is null or g.extension_code='')";
+		$goods_list = goods::goods_list(0, 1, $conditions);
 
 		$this->assign('goods_list', $goods_list);
 		$this->assign('filter', $goods_list['filter']);

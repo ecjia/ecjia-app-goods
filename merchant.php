@@ -180,7 +180,7 @@ class merchant extends ecjia_merchant {
 // 		$get_rul = $this->generate_url($get_list);
 // 		$this->assign('get_url', $get_rul);
 		$conditions = '';
-		//$conditions .= " AND extension_code = ''";//条件有bug 用null也不对
+		$conditions .= " AND (g.extension_code is null or g.extension_code = '') ";
 		
 		$goods_list = goods::merchant_goods_list(0, 1, $conditions);
 		
