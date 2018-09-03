@@ -196,7 +196,13 @@ class goods_list {
 				$cache_key .= '-street-' . $filter['city_id'];
 			}
 		}
-
+		
+		/*是否是收银台请求；非收银台请求过滤散装商品*/
+		if (empty($filter['is_cashdesk'])) {
+			$where[] = "(g.extension_code is null or g.extension_code ='')";
+			$cache_key .= '-is_cashdesk-' . $filter['is_cashdesk'];
+		}
+		
 		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
 		    $merchant_cat_list = RC_DB::table('merchants_category')
 		        ->select(RC_DB::raw('cat_id'))
