@@ -186,8 +186,9 @@ class list_module extends api_front implements api_interface {
                         'object_id'                 => 0,//$object_id,
                         'saving_price'              => $saving_price,
                         'formatted_saving_price'    => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
-                        'seller_id'                  => $val['store_id'],
-                        'seller_name'                => $val['store_name'],
+                        'seller_id'                 => $val['store_id'],
+                        'seller_name'               => $val['store_name'],
+                        'store_logo'                => $val['store_logo'],
                     );
                 }
             }
