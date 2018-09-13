@@ -411,6 +411,10 @@ class detail_module extends api_front implements api_interface {
             $db_view = RC_Model::model('goods/store_franchisee_viewmodel');
             $field = 'sf.*, sc.cat_name';
             $info = $db_view->field($field)->where(array('sf.status' => 1, 'sf.store_id' => $goods['store_id']))->find();
+            //营业时间
+            RC_Loader::load_app_func('merchant', 'merchant');
+            $info['trade_time']    = get_store_trade_time($goods['store_id']);
+            
             $store_config = array(
                 'shop_kf_mobile'            => '', // 客服手机号码
 //                 'shop_kf_email'             => '', // 客服邮件地址
@@ -428,7 +432,8 @@ class detail_module extends api_front implements api_interface {
                 $store_config[$value['code']] = $value['value'];
             }
             $info = array_merge($info, $store_config);
-
+        
+            
         	if(substr($info['shop_logo'], 0, 1) == '.') {
         		$info['shop_logo'] = str_replace('../', '/', $info['shop_logo']);
         	}
@@ -446,6 +451,7 @@ class detail_module extends api_front implements api_interface {
         		'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
         		'goods_count'		=> $goods_count,
         	   	'manage_mode'       => $info['manage_mode'],
+        		'label_trade_time'	=> $info['trade_time'],
  				'follower'			=> $follower_count,
         		'comment' 			=> array(
         			'comment_goods' 	=> '100%',
