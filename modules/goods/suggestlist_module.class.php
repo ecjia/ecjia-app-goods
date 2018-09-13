@@ -153,6 +153,7 @@ class suggestlist_module extends api_front implements api_interface {
 					'formatted_saving_price' => $saving_price > 0 ? '已省'.$saving_price.'元' : '',
 					'seller_id'		=> $val['store_id'],
 					'seller_name'	=> $val['store_name'],
+					'store_logo'	=> $val['store_logo']
 				);
 			}
 		}
