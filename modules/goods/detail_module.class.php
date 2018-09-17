@@ -81,6 +81,7 @@ class goods_detail_module extends api_front implements api_interface {
         /* 获得商品的信息 */
         RC_Loader::load_app_func('admin_category', 'goods');
         RC_Loader::load_app_func('admin_goods', 'goods');
+        RC_Loader::load_app_func('global', 'api');
         
         $groupbuy_activity_desc = '';
         $groupbuy_price_ladder_str = '';
