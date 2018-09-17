@@ -1346,21 +1346,14 @@ function get_group_goods($goods_id) {
  * @param integer $goods_id
  * @return array
  */
-function get_goods_articles($goods_id) {
-	$dbview = RC_Model::model('goods/goods_article_viewmodel');
-	$dbview->view = array(
-		'article' => array(
-			'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-			'alias' => 'a',
-			'field' => 'ga.article_id, a.title',
-			'on'    => 'ga.article_id = a.article_id'
-		)
-	);
-	if ($goods_id == 0) {
-// 		$row = $dbview->where(array('ga.goods_id' => $goods_id, 'ga.admin_id' => $_SESSION ['admin_id']))->select();
-		$row = $dbview->where(array('ga.goods_id' => $goods_id))->select();
+function get_goods_articles($goods_id = 0) {
+	
+	$dbview = RC_DB::table('goods_article as ga')->leftJoin('article as a', RC_DB::raw('ga.article_id'), '=', RC_DB::raw('a.article_id'));
+	$goods_article = [];
+	if (!empty($goods_id)) {
+		$goods_article = $dbview->where(RC_DB::raw('ga.goods_id'), $goods_id)->select(RC_DB::raw('ga.article_id,a.title'))->get();
 	}
-	return $dbview->where(array('ga.goods_id' => $goods_id))->select();
+	return $goods_article;
 }
 
 /**
