@@ -56,10 +56,11 @@ class home_category_module extends api_front implements api_interface {
 
         RC_Loader::load_app_func('admin_goods', 'goods');
         RC_Loader::load_app_func('admin_category', 'goods');
-        RC_Loader::load_app_func('global', 'api');
+//         RC_Loader::load_app_func('global', 'api');
 
         $categoryGoods = array();
         $category = get_categories_tree();
+
         if (! empty($category)) {
             foreach ($category as $key => $val) {
                 $goods = array();
@@ -85,9 +86,9 @@ class home_category_module extends api_front implements api_interface {
                 		'promote_price' => 0,
                 		'brief' 		=> '',
                 		'img' => array(
-                			'thumb' => API_DATA('PHOTO', $val['img']),
-                			'url' 	=> API_DATA('PHOTO', $val['img']),
-                			'small' => API_DATA('PHOTO', $val['img'])
+                			'thumb' => ecjia_api::transformerData('PHOTO', $val['img']),
+                			'url' 	=> ecjia_api::transformerData('PHOTO', $val['img']),
+                			'small' => ecjia_api::transformerData('PHOTO', $val['img'])
                 		)
                 	);
                 }
@@ -136,9 +137,9 @@ class home_category_module extends api_front implements api_interface {
                             'promote_price' => ($price < $v['unformatted_shop_price'] && $price > 0) ? price_format($price) : '',
                             'brief' 		=> $v['brief'],
                             'img' => array(
-                                'thumb' => API_DATA('PHOTO', $v['goods_img']),
-                                'url' 	=> API_DATA('PHOTO', $v['original_img']),
-                                'small' => API_DATA('PHOTO', $v['thumb'])
+                                'thumb' => ecjia_api::transformerData('PHOTO', $v['goods_img']),
+                                'url' 	=> ecjia_api::transformerData('PHOTO', $v['original_img']),
+                                'small' => ecjia_api::transformerData('PHOTO', $v['thumb'])
                             ),
                         	'activity_type' => $activity_type,
                         	'object_id'		=> $object_id,

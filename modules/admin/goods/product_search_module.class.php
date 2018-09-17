@@ -104,9 +104,9 @@ class admin_goods_product_search_module extends api_admin implements api_interfa
 					'goods_sn'				=> empty($v['product_sn']) ? $v['goods_sn'] : $v['product_sn'],
 					'attribute'				=> $v['goods_attr'],
 					'img' => array(
-						'thumb'	=> API_DATA('PHOTO', $v['goods_img']),
-						'url'	=> API_DATA('PHOTO', $v['original_img']),
-						'small'	=> API_DATA('PHOTO', $v['goods_thumb'])
+						'thumb'	=> ecjia_api::transformerData('PHOTO', $v['goods_img']),
+						'url'	=> ecjia_api::transformerData('PHOTO', $v['original_img']),
+						'small'	=> ecjia_api::transformerData('PHOTO', $v['goods_thumb'])
 					),
 	    	 	);
 			}
