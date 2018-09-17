@@ -132,9 +132,10 @@ class goods_detail_module extends api_front implements api_interface {
             /* 购买该商品可以得到多少钱的红包 */
             if ($goods['bonus_type_id'] > 0) {
                 $time = RC_Time::gmtime();
-                $db_bonus_type = RC_Model::model('bonus/bonus_type_model');
-                $goods['bonus_money'] = $db_bonus_type->where(array('type_id' => $goods['bonus_type_id'] , 'send_type' => SEND_BY_GOODS , 'send_start_date' => array('elt' => $time) , 'send_end_date' => array('egt' => $time)))-> get_field('type_money');
-
+                //$db_bonus_type = RC_Model::model('bonus/bonus_type_model');
+                //$goods['bonus_money'] = $db_bonus_type->where(array('type_id' => $goods['bonus_type_id'] , 'send_type' => SEND_BY_GOODS , 'send_start_date' => array('elt' => $time) , 'send_end_date' => array('egt' => $time)))-> get_field('type_money');
+                $bonus_money = RC_DB::table('bonus_type')->where('type_id', $goods['bonus_type_id'])->where('send_type', SEND_BY_GOODS)->where('send_start_date', '<=', $time)->where('send_end_date', '>=', $time)->pluck('type_money');
+                $goods['bonus_money'] = $bonus_money;
                 if ($goods['bonus_money'] > 0) {
                     $goods['bonus_money'] = price_format($goods['bonus_money']);
                 }
