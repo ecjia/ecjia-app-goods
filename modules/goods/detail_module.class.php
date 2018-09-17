@@ -271,7 +271,7 @@ class goods_detail_module extends api_front implements api_interface {
             }
         }
 		
-        $data = API_DATA('GOODS', $data);
+        $data = ecjia_api::transformerData('GOODS', $data);
         $data['unformatted_shop_price'] = $goods['shop_price'];
         
         $groupbuy_info = [];
