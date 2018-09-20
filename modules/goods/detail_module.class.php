@@ -207,7 +207,7 @@ class goods_detail_module extends api_front implements api_interface {
         	}
         }
         
-        $db_favourable = RC_Model::model('favourable/favourable_activity_model');
+        //$db_favourable = RC_Model::model('favourable/favourable_activity_model');
        	/*增加优惠活动缓存*/
 		$store_options = array(
 				'store_id' => $goods['store_id']
