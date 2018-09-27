@@ -406,15 +406,9 @@ class goods_detail_module extends api_front implements api_interface {
         //多店铺的内容
         $data['seller_id'] = $goods['store_id'];
         if ($goods['store_id'] > 0) {
-        	$seller_where = array();
-        	$seller_where['ssi.status'] = 1; // 店铺开启状态
-        	$seller_where['ssi.store_id'] = $goods['store_id'];
-            $db_view = RC_Model::model('goods/store_franchisee_viewmodel');
-            $field = 'sf.*, sc.cat_name';
-            $info = $db_view->field($field)->where(array('sf.status' => 1, 'sf.store_id' => $goods['store_id']))->find();
+        	$info = Ecjia\App\Store\StoreFranchisee::StoreFranchiseeInfo(array('status' => 1, 'store_id' => $goods['store_id'], 'field' => 'sf.*, sc.cat_name'));
             //营业时间
-            RC_Loader::load_app_func('merchant', 'merchant');
-            $info['trade_time']    = get_store_trade_time($goods['store_id']);
+            $info['trade_time']    = Ecjia\App\Store\StoreFranchisee::GetStoreTradetime($goods['store_id']);
             
             $store_config = array(
                 'shop_kf_mobile'            => '', // 客服手机号码
