@@ -441,9 +441,7 @@ class goods_detail_module extends api_front implements api_interface {
         	$db_goods = RC_Model::model('goods/goods_model');
         	$goods_count = $db_goods->where(array('store_id' => $data['seller_id'], 'is_on_sale' => 1, 'is_alone_sale' => 1, 'is_delete' => 0))->count();
 
-        	$cs_db = RC_Model::model('store/collect_store_model');
-        	$follower_count = $cs_db->where(array('store_id' => $data['seller_id']))->count();
-
+        	$follower_count = RC_DB::table('collect_store')->where('store_id', $data['seller_id'])->count();
 
 
         	$data['merchant_info'] = array(
