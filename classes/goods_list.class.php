@@ -200,10 +200,13 @@ class goods_list {
 			}
 		}
 		
-		/*是否是收银台请求；非收银台请求过滤散装商品*/
-		if (empty($filter['is_cashdesk'])) {
+		/*是否是收银台请求；非收银台请求过滤散装商品和收银台商品*/
+		if (!empty($filter['need_cashier_goods'])) {
+			$where[] = "(g.extension_code is null or g.extension_code ='' or g.extension_code ='cashier')";
+			$cache_key .= '-need_cashier_goods-' . $filter['need_cashier_goods'];
+		} else {
 			$where[] = "(g.extension_code is null or g.extension_code ='')";
-			$cache_key .= '-is_cashdesk-' . $filter['is_cashdesk'];
+			$cache_key .= '-need_cashier_goods-' . $filter['need_cashier_goods'];
 		}
 		
 		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
