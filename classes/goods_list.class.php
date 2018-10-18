@@ -201,10 +201,7 @@ class goods_list {
 		}
 		
 		/*是否是收银台请求；非收银台请求过滤散装商品和收银台商品*/
-		if (!empty($filter['need_cashier_goods'])) {
-			$where[] = "(g.extension_code is null or g.extension_code ='' or g.extension_code ='cashier')";
-			$cache_key .= '-need_cashier_goods-' . $filter['need_cashier_goods'];
-		} else {
+		if (empty($filter['need_cashier_goods'])){
 			$where[] = "(g.extension_code is null or g.extension_code ='')";
 			$cache_key .= '-need_cashier_goods-' . $filter['need_cashier_goods'];
 		}
