@@ -661,7 +661,7 @@ class goods_list {
 	                    $arr[$key]['goods_name'] = $row['goods_name'];
 	                }
 	                $row['goods_attr'] = explode('|', $row['goods_attr']);
-	                $attr_list = RC_DB::table('goods_attr')->select('attr_value')->whereIn('goods_attr_id', $row['goods_attr'])->get();
+	                $attr_list = RC_DB::table('goods_attr')->select('attr_value', 'attr_price')->whereIn('goods_attr_id', $row['goods_attr'])->get();
 					foreach ($attr_list AS $attr) {
 						$row['goods_attr_name'] .= ' [' . $attr['attr_value'] . '] ';
 						$row['attr_price'] += $attr['attr_price'];
@@ -672,6 +672,7 @@ class goods_list {
 					if ($row['attr_price'] > 0) {
 					    $row['market_price'] += $row['attr_price'];
 					    $row['shop_price'] += $row['attr_price'];
+					    $promote_price += $promote_price;
 					}
 	                $arr[$key]['goods_id']		= $row['goods_id'];
 	                $arr[$key]['name']			= $row['goods_name'];
