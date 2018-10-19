@@ -672,7 +672,7 @@ class goods_list {
 					if ($row['attr_price'] > 0) {
 					    $row['market_price'] += $row['attr_price'];
 					    $row['shop_price'] += $row['attr_price'];
-					    $promote_price += $promote_price;
+					    $promote_price += $row['attr_price'];
 					}
 	                $arr[$key]['goods_id']		= $row['goods_id'];
 	                $arr[$key]['name']			= $row['goods_name'];
