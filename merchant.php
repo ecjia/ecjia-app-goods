@@ -550,6 +550,10 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(RC_Lang::get('goods::goods.goods_name_null'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
+		if ($promote_price > $shop_price) {
+			return $this->showmessage('促销价不能大于商品价格：'.$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+
 		/* 入库 */
 		$data = array(
 			'goods_name'            => rc_stripslashes($goods_name),
@@ -931,6 +935,10 @@ class merchant extends ecjia_merchant {
 		
 		if (empty($goods_name)) {
 			return $this->showmessage(RC_Lang::get('goods::category.goods_name_null'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+
+		if ($promote_price > $shop_price) {
+			return $this->showmessage('促销价不能大于商品价格：'.$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
 		$data = array(

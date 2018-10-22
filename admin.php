@@ -582,6 +582,10 @@ class admin extends ecjia_admin {
 			return $this->showmessage(RC_Lang::get('goods::category.goods_name_null'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
+		if ($promote_price > $shop_price) {
+			return $this->showmessage('促销价不能大于商品价格：'.$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+
 		$data = array(
 		  	'goods_name'				=> rc_stripslashes($goods_name),
 		  	'goods_name_style'	  		=> $goods_name_style,
