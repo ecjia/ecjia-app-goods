@@ -132,7 +132,7 @@ class goods_list {
 			)
 		);
 		$field = "g.goods_id, g.goods_name, g.goods_sn, g.store_id, g.goods_name_style, g.market_price,
-				  g.is_new, g.is_best, g.is_hot, g.shop_price AS org_price, 
+				  g.is_new, g.is_best, g.is_hot, g.sales_volume, g.shop_price AS org_price, 
 				  IFNULL(mp.user_price, g.shop_price * ".$_SESSION['discount'].") AS shop_price, 
 				  g.promote_price, g.goods_type, g.promote_start_date, g.promote_end_date,
 				  g.goods_brief, g.goods_thumb, g.original_img, g.goods_img,
@@ -407,6 +407,8 @@ class goods_list {
 					$arr[$key]['unformatted_shop_price']	= $row['shop_price'];
 					$arr[$key]['unformatted_promote_price'] = $promote_price;
 					$arr[$key]['unformatted_market_price'] = $row['market_price'];
+					
+					$arr[$key]['sales_volume']		= $row['sales_volume'];
 				}
 			}
 			$goods_result = array('list' => $arr, 'page' => $page_row);
