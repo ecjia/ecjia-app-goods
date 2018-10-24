@@ -408,9 +408,13 @@ class goods_list {
 					$arr[$key]['unformatted_promote_price'] = $promote_price;
 					$arr[$key]['unformatted_market_price'] = $row['market_price'];
 					
+					$arr[$key]['is_hot']		= $row['is_hot'];
+					$arr[$key]['is_new']		= $row['is_new'];
+					$arr[$key]['is_best']		= $row['is_best'];
 					$arr[$key]['sales_volume']		= $row['sales_volume'];
 				}
 			}
+		
 			$goods_result = array('list' => $arr, 'page' => $page_row);
 			$goods_db->set_cache_item($fomated_cache_key, $goods_result, 2880);
 		}
