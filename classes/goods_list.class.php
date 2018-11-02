@@ -742,7 +742,7 @@ class goods_list {
 	 *
 	 * @return void
 	 */
-	private function db_create_in($item_list, $field_name = '') {
+	public static function db_create_in($item_list, $field_name = '') {
 		if (empty ( $item_list )) {
 			return $field_name . " IN ('') ";
 		} else {
