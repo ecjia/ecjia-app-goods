@@ -243,7 +243,16 @@ class goods_list {
 			$where[] = "shop_price <= ".$filter['max'];
 			$cache_key .= '-max-' . $filter['max'];
 		}
-
+		
+		if (isset($filter['ship']) && $filter['ship'] == 1) {
+			$where['is_shipping'] = 1;
+			$cache_key .= '-is_shipping-' . $filter['is_shipping'];
+		}
+		
+		if (isset($filter['have']) && $filter['have'] == 1) {
+			$where[] = "goods_number > 0 ";
+			$cache_key .= '-goods_number-' . $filter['goods_number'];
+		}
 		if (isset(self::$keywords_where['keywords']) && !empty(self::$keywords_where['keywords']) && isset($filter['keywords']) && !empty($filter['keywords'])) {
 			$where[] = self::$keywords_where['keywords'];
 			$cache_key .= '-keywords-' . $filter['keywords'];
