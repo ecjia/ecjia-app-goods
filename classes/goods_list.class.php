@@ -246,13 +246,19 @@ class goods_list {
 		
 		if (isset($filter['ship']) && $filter['ship'] == 1) {
 			$where['is_shipping'] = 1;
-			$cache_key .= '-is_shipping-' . $filter['is_shipping'];
+			$cache_key .= '-ship-' . $filter['ship'];
 		}
 		
 		if (isset($filter['have']) && $filter['have'] == 1) {
 			$where[] = "goods_number > 0 ";
-			$cache_key .= '-goods_number-' . $filter['goods_number'];
+			$cache_key .= '-have-' . $filter['have'];
 		}
+		
+		if (isset($filter['self']) && $filter['self'] == 1) {
+			$where['manage_mode'] = 'self';
+			$cache_key .= '-self-' . $filter['self'];
+		}
+		
 		if (isset(self::$keywords_where['keywords']) && !empty(self::$keywords_where['keywords']) && isset($filter['keywords']) && !empty($filter['keywords'])) {
 			$where[] = self::$keywords_where['keywords'];
 			$cache_key .= '-keywords-' . $filter['keywords'];
