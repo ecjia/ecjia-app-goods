@@ -111,13 +111,17 @@ class seller_list_module extends api_front implements api_interface {
 						$start_time = strtotime($shop_trade_time['start']);
 	                    $end_time = strtotime($shop_trade_time['end']);
 						//处理营业时间格式例：7:00--次日5:30
-	                    $start = $shop_trade_time['start'];
+	                    $start = explode(':', $shop_trade_time['start']);
 	                    $end = explode(':', $shop_trade_time['end']);
 	                    if ($end[0] >= 24) {
 	                        $hour = $end[0] - 24;
 	                    	$end[0] = '次日'. ($hour);
 	                        $end_str = $hour. ':' . $end[1];
-	                        $end_time = strtotime($end_str) + 24*3600;
+	                        //$end_time = strtotime($end_str) + 24*3600;
+	                        $dif_hour = 23 - $start['0'];
+	                        $dif_min = 60 - $start['1'];
+	                        $start_time = $start_time - 24*3600;
+	                        $end_time = $start_time + ($dif_hour*3600 + $dif_min*60) + ($hour*3600 + $end['1'] *60);
 	                    }
 	                    if ($start_time < $current_time && $current_time < $end_time) {
 	                        $shop_closed = 0;
