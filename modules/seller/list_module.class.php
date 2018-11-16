@@ -120,7 +120,11 @@ class seller_list_module extends api_front implements api_interface {
 	                        //$end_time = strtotime($end_str) + 24*3600;
 	                        $dif_hour = 23 - $start['0'];
 	                        $dif_min = 60 - $start['1'];
-	                        $start_time = $start_time - 24*3600;
+	                     	$current_time_str = date('H:i');
+			                $current_time_arr = explode(':', $current_time_str);
+			                if ($current_time_arr['0'] < 12) {
+			                	$start_time = $start_time - 24*3600;
+			                }
 	                        $end_time = $start_time + ($dif_hour*3600 + $dif_min*60) + ($hour*3600 + $end['1'] *60);
 	                    }
 	                    if ($start_time < $current_time && $current_time < $end_time) {
