@@ -161,13 +161,16 @@ class goods_list {
 		
 		/* 店铺条件*/
 		if (isset($filter['store_id']) && !empty($filter['store_id'])) {
-			$where['g.store_id'] = $filter['store_id'];
 			/* 缓存对象*/
 			if (is_array($filter['store_id'])) {
+				$store_id_arr = implode(',', $filter['store_id']);
+				$where[] = 'g.store_id IN (' . $store_id_arr . ') ';
+				
 				foreach ($filter['store_id'] as $v) {
 					$cache_key .= '-store-' . $v;
 				}
 			} else {
+				$where['g.store_id'] = $filter['store_id'];
 				$cache_key .= '-store-' . $filter['store_id'];
 			}
 		}
