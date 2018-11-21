@@ -523,7 +523,9 @@ class goods_detail_module extends api_front implements api_interface {
 	        	$img_list_id[$key] = $gallery_img['img_id'];
 	        }
 	        //先使用sort排序，再使用id排序。
-	        array_multisort($img_list_sort, $img_list_id, $row);
+	        if ($row) {
+	        	array_multisort($img_list_sort, $img_list_id, $row);
+	        }
 	    }
 	    return $row;
 	}
