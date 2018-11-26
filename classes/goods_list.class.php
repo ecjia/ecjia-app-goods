@@ -111,7 +111,6 @@ class goods_list {
 			}
 			$keywords .= ')';
 		}
-		_dump($keywords,1);
 		self::$keywords_where['keywords']	= $keywords;
 		return true;
 	}
