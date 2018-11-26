@@ -55,27 +55,31 @@ class goods_list {
 	private static $keywords_where;
 	/* 初始化搜索条件 */
 	public static function get_keywords_where($keyword) {
-
 		$keywords = '';
 		$tag_where = '';
 		if (!empty($keyword)) {
 			$arr = array();
-			if (stristr($keyword, ' AND ') !== false) {
-				/* 检查关键字中是否有AND，如果存在就是并 */
-				$arr = explode('AND', $keyword);
-				$operator = " AND ";
-			} elseif (stristr($keyword, ' OR ') !== false) {
-				/* 检查关键字中是否有OR，如果存在就是或 */
-				$arr = explode('OR', $keyword);
-				$operator = " OR ";
-			} elseif (stristr($keyword, ' + ') !== false) {
-				/* 检查关键字中是否有加号，如果存在就是或 */
-				$arr = explode('+', $keyword);
+			if (is_array($keyword)) {
+				$arr = $keyword;
 				$operator = " OR ";
 			} else {
-				/* 检查关键字中是否有空格，如果存在就是并 */
-				$arr = explode(' ', $keyword);
-				$operator = " AND ";
+				if (stristr($keyword, ' AND ') !== false) {
+					/* 检查关键字中是否有AND，如果存在就是并 */
+					$arr = explode('AND', $keyword);
+					$operator = " AND ";
+				} elseif (stristr($keyword, ' OR ') !== false) {
+					/* 检查关键字中是否有OR，如果存在就是或 */
+					$arr = explode('OR', $keyword);
+					$operator = " OR ";
+				} elseif (stristr($keyword, ' + ') !== false) {
+					/* 检查关键字中是否有加号，如果存在就是或 */
+					$arr = explode('+', $keyword);
+					$operator = " OR ";
+				} else {
+					/* 检查关键字中是否有空格，如果存在就是并 */
+					$arr = explode(' ', $keyword);
+					$operator = " AND ";
+				}
 			}
 
 			$keywords = '(';
@@ -107,6 +111,7 @@ class goods_list {
 			}
 			$keywords .= ')';
 		}
+		_dump($keywords,1);
 		self::$keywords_where['keywords']	= $keywords;
 		return true;
 	}
