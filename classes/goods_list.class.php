@@ -239,13 +239,15 @@ class goods_list {
 		}
 		
 		if (isset($filter['brand']) && $filter['brand'] > 0) {
-			$where['brand_id'] = $filter['brand'];
+			$where[] = 'brand_id IN (' . $filter['brand'] . ') ';
 			$cache_key .= '-brand-' . $filter['brand'];
 		}
+		
 		if (isset($filter['min']) && $filter['min'] > 0) {
 			$where[] = "shop_price >= ".$filter['min'];
 			$cache_key .= '-min-' . $filter['min'];
 		}
+		
 		if (isset($filter['max']) && $filter['max'] > 0) {
 			$where[] = "shop_price <= ".$filter['max'];
 			$cache_key .= '-max-' . $filter['max'];
