@@ -270,7 +270,13 @@ class goods_list {
 		
 		if (isset(self::$keywords_where['keywords']) && !empty(self::$keywords_where['keywords']) && isset($filter['keywords']) && !empty($filter['keywords'])) {
 			$where[] = self::$keywords_where['keywords'];
-			$cache_key .= '-keywords-' . $filter['keywords'];
+			if(is_array($filter['keywords'])) {
+				foreach ($filter['keywords'] as $keyword) {
+					$cache_key .= '-keywords-' . $keyword;
+				}
+			} else {
+				$cache_key .= '-keywords-' . $filter['keywords'];
+			}
 		}
 
 		if (!empty($filter['intro'])) {
