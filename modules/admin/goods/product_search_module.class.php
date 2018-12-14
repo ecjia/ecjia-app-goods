@@ -68,16 +68,6 @@ class admin_goods_product_search_module extends api_admin implements api_interfa
 		$device		  = $this->device;
     	$device_code = $device['code'];
 		
-    	//判断传入的goods_sn是否是散装商品条码
-    	$pre = substr($goods_sn, 0, 1);
-    	if ($pre == '2') {
-    		$bulk_goods_sn = substr($goods_sn, 0, 7);
-    		$bulk_goods_info = RC_DB::table('goods')->where('store_id', $_SESSION['store_id'])->where('is_on_sale', 1)->where('is_delete', 0)->where('goods_sn', $bulk_goods_sn)->first();
-    		if ($bulk_goods_info['extension_code'] == 'bulk') {
-    			$goods_sn = $bulk_goods_sn;
-    		}
-    	}
-    	
 		$db_goods = RC_Model::model('goods/goods_viewmodel');
 
 		$db_goods->view = array(
@@ -91,6 +81,9 @@ class admin_goods_product_search_module extends api_admin implements api_interfa
 		$field = 'g.goods_id, g.goods_name, g.shop_price, g.shop_price, g.goods_sn, g.goods_img, g.original_img, g.goods_thumb, p.goods_attr, p.product_sn';
 
     	$where[] = "(goods_sn like '%".$goods_sn."%' OR  product_sn like '%".$goods_sn."%')";
+    	//散装商品不支持搜索；只能扫码
+    	$where[] = $where[] = "(g.extension_code is null or g.extension_code ='')";
+    	
         if(!empty($_SESSION['store_id'])){
             $where['store_id'] = $_SESSION['store_id'];
         }
