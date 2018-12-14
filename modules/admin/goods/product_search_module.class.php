@@ -58,7 +58,7 @@ class admin_goods_product_search_module extends api_admin implements api_interfa
 			return new ecjia_error(100, 'Invalid session');
 		}
 
-    	$goods_sn	= $this->requestData('goods_sn','');
+    	$goods_sn	= trim($this->requestData('goods_sn',''));
     	if (empty($goods_sn)) {
     		return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
     	}
@@ -67,7 +67,17 @@ class admin_goods_product_search_module extends api_admin implements api_interfa
 
 		$device		  = $this->device;
     	$device_code = $device['code'];
-
+		
+    	//判断传入的goods_sn是否是散装商品条码
+    	$pre = substr($goods_sn, 0, 1);
+    	if ($pre == '2') {
+    		$bulk_goods_sn = substr($goods_sn, 0, 7);
+    		$bulk_goods_info = RC_DB::table('goods')->where('store_id', $_SESSION['store_id'])->where('is_on_sale', 1)->where('is_delete', 0)->where('goods_sn', $bulk_goods_sn)->first();
+    		if ($bulk_goods_info['extension_code'] == 'bulk') {
+    			$goods_sn = $bulk_goods_sn;
+    		}
+    	}
+    	
 		$db_goods = RC_Model::model('goods/goods_viewmodel');
 
 		$db_goods->view = array(
@@ -104,9 +114,9 @@ class admin_goods_product_search_module extends api_admin implements api_interfa
 					'goods_sn'				=> empty($v['product_sn']) ? $v['goods_sn'] : $v['product_sn'],
 					'attribute'				=> $v['goods_attr'],
 					'img' => array(
-						'thumb'	=> ecjia_api::transformerData('PHOTO', $v['goods_img']),
-						'url'	=> ecjia_api::transformerData('PHOTO', $v['original_img']),
-						'small'	=> ecjia_api::transformerData('PHOTO', $v['goods_thumb'])
+						'thumb'	=> !empty($v['goods_img']) ? RC_Upload::upload_url($v['goods_img']) : '',
+						'url'	=> !empty($v['original_img']) ? RC_Upload::upload_url($v['original_img']) : '',
+						'small'	=> !empty($v['goods_thumb']) ? RC_Upload::upload_url($v['goods_thumb']) : ''
 					),
 	    	 	);
 			}
