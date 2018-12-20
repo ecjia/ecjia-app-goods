@@ -119,7 +119,10 @@ class goods_get_goods_list_api extends Component_Event_Api {
 		if (isset($filter['is_on_sale'])) {
 			$where['is_on_sale'] = $filter['is_on_sale'];
 		}
-		
+        if (isset($filter['review_status'])) {
+            $where['review_status'] = $filter['review_status'];
+        }
+
 		/* 取得数据 */
 		$row = $db->field('goods_id, goods_name, shop_price')->where($where)->limit(50)->select();
 		return $row;
