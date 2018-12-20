@@ -67,12 +67,12 @@ class goods_detail_module extends api_front implements api_interface {
         $object_id = $this->requestData('goods_activity_id', 0);
         //判断商品是否是团购商品
         $is_groupbuy = 0;
-        if (empty($object_id)) {
+        if (!empty($object_id)) {
         	$group_goods_activity_info = RC_DB::table('goods_activity')
-        									->where('goods_id',$goods_id)
-        									->where('start_time', '<', RC_Time::gmtime())
-        									->where('end_time', '>', RC_Time::gmtime())
-        									->where('act_type',GAT_GROUP_BUY)->first(); 
+        									->where('goods_id', $goods_id)
+        									->where('start_time', '<=', RC_Time::gmtime())
+        									->where('end_time', '>=', RC_Time::gmtime())
+        									->where('act_type', GAT_GROUP_BUY)->first(); 
         	if (!empty($group_goods_activity_info)) {
         		$is_groupbuy = 1;
         	}
