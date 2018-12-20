@@ -63,8 +63,16 @@ class goods_detail_module extends api_front implements api_interface {
         	return new ecjia_error('invalid_parameter', RC_Lang::get('system::system.invalid_parameter'));
         }
 
-        //$rec_type = $this->requestData('rec_type');
+        RC_Loader::load_app_class('groupbuy_activity', 'groupbuy', false);
+        
         $object_id = $this->requestData('goods_activity_id', 0);
+        if (empty($object_id)) {
+        	$is_groupbuy_result = groupbuy_activity::is_groupbuy_goods($goods_id);
+        	if (!empty($is_groupbuy_result)) {
+        		$object_id = $is_groupbuy_result['act_id'];
+        	}
+        }
+        
         //判断商品是否是团购商品
         $is_groupbuy = 0;
         if (!empty($object_id)) {
@@ -86,7 +94,6 @@ class goods_detail_module extends api_front implements api_interface {
         $groupbuy_price_ladder_str = '';
         $price_ladder = [];
         if (!empty($object_id)) {
-        	RC_Loader::load_app_class('groupbuy_activity', 'groupbuy', false);
         	$group_buy = groupbuy_activity::group_buy_info($object_id);
         	if (!empty($group_buy)) {
         		$rec_type = 'GROUPBUY_GOODS';
