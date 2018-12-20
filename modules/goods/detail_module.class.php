@@ -84,6 +84,7 @@ class goods_detail_module extends api_front implements api_interface {
         
         $groupbuy_activity_desc = '';
         $groupbuy_price_ladder_str = '';
+        $price_ladder = [];
         if (!empty($object_id)) {
         	RC_Loader::load_app_class('groupbuy_activity', 'groupbuy', false);
         	$group_buy = groupbuy_activity::group_buy_info($object_id);
@@ -284,7 +285,8 @@ class goods_detail_module extends api_front implements api_interface {
         			'resitrict_num'				=> empty($group_buy['restrict_amount']) ? 0 : $group_buy['restrict_amount'],
         			'left_num'					=> $group_buy['left_num'],
         			'groupbuy_activity_desc'	=> empty($groupbuy_activity_desc) ? '' : $groupbuy_activity_desc,
-        			'groupbuy_price_ladder'		=> empty($groupbuy_price_ladder_str) ? '' : $groupbuy_price_ladder_str
+        			'groupbuy_price_ladder'		=> empty($groupbuy_price_ladder_str) ? '' : $groupbuy_price_ladder_str,
+        			'price_ladder'				=> $price_ladder,
         	);
         } else {
         	$mobilebuy_db = RC_Model::model('goods/goods_activity_model');
