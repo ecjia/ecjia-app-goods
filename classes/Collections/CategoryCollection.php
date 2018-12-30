@@ -44,7 +44,7 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-namespace Ecjia\App\Goods\Category;
+namespace Ecjia\App\Goods\Collections;
 
 /**
  * 商品分类相关处理类

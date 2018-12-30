@@ -11,7 +11,7 @@ namespace Ecjia\App\Goods\Goods;
 /**
  * Class GroupbuyGoods
  * 团购商品类型
- * 
+ *
  * @package Ecjia\App\Goods\Goods
  */
 class GroupbuyGoods extends StandardGoods
