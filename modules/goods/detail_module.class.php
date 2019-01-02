@@ -276,8 +276,9 @@ class goods_detail_module extends api_front implements api_interface {
         	}
         	foreach ($user_rank_prices as $key => $val) {
         		if ($key == $user_rank_info['rank_id']) {
-        			$data['shop_price'] = $val['unformatted_price'];
-        			$data['unformatted_shop_price'] = $data['shop_price'];
+        			$data['shop_price'] = $val['price'];
+        			$data['unformatted_shop_price'] = $data['unformatted_price'];
+        			break;
         		}
         	}
         }
