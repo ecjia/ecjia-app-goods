@@ -123,9 +123,16 @@ class goods_detail_module extends api_front implements api_interface {
         	$goods = get_goods_info($goods_id);
         	$orm_goods_db->set_cache_item($cache_basic_info_id, $goods);
         }
+        
         if ($goods === false) {
            return new ecjia_error('does_not_exist', '不存在的信息');
         } 
+        //判断促销是否过期
+        if($goods['is_promote'] && $goods['promote_end_date'] > RC_Time::gmtime()) {
+            $orm_goods_db->delete_cache_item($cache_basic_info_id);
+            $goods = get_goods_info($goods_id);
+            $orm_goods_db->set_cache_item($cache_basic_info_id, $goods);
+        }
         
         if ($goods['brand_id'] > 0) {
         	$goods['goods_brand_url'] = build_uri('brand', array('bid' => $goods['brand_id']), $goods['goods_brand']);
