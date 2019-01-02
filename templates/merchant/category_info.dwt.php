@@ -43,6 +43,7 @@
                                         </div>
                                         {/if}
                                         <div class="fileupload-preview fileupload-{if $cat_info.cat_image}new{else}exists{/if} thumbnail" style="max-width: 300px;max-height: 60px;line-height: 10px;"></div>
+                                        {if $cat_info.cat_image}<div class="m_t10"></div>{/if}
                                         <span class="btn btn-primary btn-file btn-sm">
                                             <span class="fileupload-new"><i class="fa fa-paper-clip"></i> 浏览</span>
                                             <span class="fileupload-exists"> 修改</span>
@@ -133,7 +134,7 @@
                                                     <input class="form-control" type="text" name="keywords" value="" placeholder="请输入关键词进行搜索"/>
                                                 </div>
                                                 <a class="btn btn-primary ad_search" href="javascript:;" data-url="{RC_Uri::url('goods/mh_category/search_ad')}"><i class="fa fa-search"></i> 搜索 </a>
-                                                <span class="help-block" style="padding-left: 15px;">请先搜索并选择一个广告位作为此分类广告</span>
+                                                <span class="help-block" style="padding-left: 15px;">请先搜索并选择一个广告位作为此分类广告<br>建议尺寸：宽284 高572</span>
                                             </div>
 
                                             <div class="form-group">
