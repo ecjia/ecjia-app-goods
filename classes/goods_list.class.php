@@ -213,7 +213,7 @@ class goods_list {
 			$cache_key .= '-need_cashier_goods-' . $filter['need_cashier_goods'];
 		}
 	
-		if (isset($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
+		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
 		    $merchant_cat_list = RC_DB::table('merchants_category')
 		        ->select(RC_DB::raw('cat_id'))
 			    ->where('parent_id', $filter['merchant_cat_id'])
@@ -226,9 +226,11 @@ class goods_list {
 		            $children_cat .= ",'".$cat['cat_id']."'";
 		        }
 		    }
-
 		    $where[] = "merchant_cat_id IN (" . $children_cat.")";
 		    $cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
+		} elseif ($filter['merchant_cat_id'] == 0){
+			$where['merchant_cat_id'] = $filter['merchant_cat_id'];
+			$cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
 		}
 
 
