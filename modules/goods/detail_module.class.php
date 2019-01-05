@@ -468,7 +468,7 @@ class goods_detail_module extends api_front implements api_interface {
         }
         // $data['is_warehouse'] = null;
         $data['seller_name'] = $info['merchants_name'];
-        $shop_name = empty($info['store_name']) ? ecjia::config('shop_name') : $info['store_name'];
+        $shop_name = empty($info['merchants_name']) ? ecjia::config('shop_name') : $info['merchants_name'];
         $data['server_desc'] = '由'.$shop_name.'发货并提供售后服务';
 
         /* 分享链接*/
