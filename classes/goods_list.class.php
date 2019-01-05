@@ -228,8 +228,8 @@ class goods_list {
 		    }
 		    $where[] = "merchant_cat_id IN (" . $children_cat.")";
 		    $cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
-		} elseif ($filter['merchant_cat_id'] === 0){
-			$where['merchant_cat_id'] = $filter['merchant_cat_id'];
+		} elseif ($filter['merchant_cat_id'] == '-1'){  //未分类
+			$where['merchant_cat_id'] = 0;
 			$cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
 		}
 
