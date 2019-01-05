@@ -212,8 +212,8 @@ class goods_list {
 			$where[] = "(g.extension_code is null or g.extension_code ='')";
 			$cache_key .= '-need_cashier_goods-' . $filter['need_cashier_goods'];
 		}
-		
-		if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
+	
+		if (isset($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
 		    $merchant_cat_list = RC_DB::table('merchants_category')
 		        ->select(RC_DB::raw('cat_id'))
 			    ->where('parent_id', $filter['merchant_cat_id'])
