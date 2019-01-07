@@ -228,7 +228,7 @@ class goods_list {
 		    }
 		    $where[] = "merchant_cat_id IN (" . $children_cat.")";
 		    $cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
-		} elseif (!empty($filter['merchant_cat_id']) && $filter['merchant_cat_id'] == 'undefined'){  //未分类，兼容pc未分类
+		} elseif (!empty($filter['merchant_cat_id']) && $filter['merchant_cat_id'] == 'undefined' && !empty($filter['store_id']){  //未分类，兼容pc未分类
 			$children_cat = 0;
 			$where[] = "merchant_cat_id IN (" . $children_cat.")";
 			$cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
