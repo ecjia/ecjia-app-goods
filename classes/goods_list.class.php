@@ -230,7 +230,7 @@ class goods_list {
 		    $cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
 		} elseif ($filter['merchant_cat_id'] == 'undefined'){  //未分类
 			$where['merchant_cat_id'] = 0;
-			$cache_key .= '-merchant_cat_id-' . 0;
+			$cache_key .= '-merchant_cat_id-' . $filter['merchant_cat_id'];
 		}
 
 
