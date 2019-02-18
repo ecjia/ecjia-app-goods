@@ -447,11 +447,11 @@ class goods_detail_module extends api_front implements api_interface {
 
         	$follower_count = RC_DB::table('collect_store')->where('store_id', $data['seller_id'])->count();
 
-
         	$data['merchant_info'] = array(
         		'seller_id'			=> $info['store_id'],
         		'seller_name'		=> $info['merchants_name'],
         		'shop_logo'		    => !empty($info['shop_logo']) ? RC_Upload::upload_url().'/'.$info['shop_logo'] : '',
+        		'store_service_phone'=> !empty($info['shop_kf_mobile']) ? $info['shop_kf_mobile'] : '',
         		'goods_count'		=> $goods_count,
         	   	'manage_mode'       => $info['manage_mode'],
         		'label_trade_time'	=> $info['trade_time'],
