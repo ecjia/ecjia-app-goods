@@ -45,7 +45,7 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
-
+use Ecjia\App\Groupbuy\GroupbuyStatus;
 /**
  * 商品相关函数库
  */
@@ -1123,9 +1123,10 @@ function group_buy_info($group_buy_id, $current_num = 0) {
 	/* 状态 */
 	$group_buy ['status'] = group_buy_status ( $group_buy );
 
-	if (RC_Lang::get('goods::goods.gbs.' . $group_buy ['status'])) {
-		$group_buy ['status_desc'] = RC_Lang::get('goods::goods.gbs.' . $group_buy ['status']);
-	}
+//	if (RC_Lang::get('goods::goods.gbs.' . $group_buy ['status'])) {
+//		$group_buy ['status_desc'] = RC_Lang::get('goods::goods.gbs.' . $group_buy ['status']);
+//	}
+    $group_buy ['status_desc'] = Ecjia\App\Groupbuy\GroupbuyStatus::getStatusLabel($group_buy ['status']);
 
 	$group_buy ['start_time'] = $group_buy ['formated_start_date'];
 	$group_buy ['end_time'] = $group_buy ['formated_end_date'];
