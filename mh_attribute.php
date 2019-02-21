@@ -49,6 +49,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 属性规格管理
  */
+use Ecjia\App\Goods\GoodsAttr;
 class mh_attribute extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();
@@ -137,6 +138,9 @@ class mh_attribute extends ecjia_merchant {
 		/* 取得商品分类列表 */
 		$this->assign('goods_type_list', goods_enable_type_list($cat_id));
 		$this->assign('attr_groups', get_attr_groups($cat_id));
+        $this->assign('attr_indexs', Ecjia\App\Goods\GoodsAttr::getAttrIndex());
+        $this->assign('attr_types', Ecjia\App\Goods\GoodsAttr::getAttrType());
+        $this->assign('attr_input_types', Ecjia\App\Goods\GoodsAttr::getAttrInputType());
 		
 		$this->assign('ur_here', __('添加属性', 'goods'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_attribute/init', 'cat_id='.$cat_id), 'text' => __('商品属性', 'goods')));
@@ -212,6 +216,9 @@ class mh_attribute extends ecjia_merchant {
 		}
 		$this->assign('attr', $attr);
 		$this->assign('attr_groups', get_attr_groups($attr['cat_id']));
+        $this->assign('attr_indexs', Ecjia\App\Goods\GoodsAttr::getAttrIndex());
+        $this->assign('attr_types', Ecjia\App\Goods\GoodsAttr::getAttrType());
+        $this->assign('attr_input_types', Ecjia\App\Goods\GoodsAttr::getAttrInputType());
 		/* 取得商品分类列表 */
 		$this->assign('goods_type_list', goods_enable_type_list($attr['cat_id']));
 	

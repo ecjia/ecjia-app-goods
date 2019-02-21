@@ -46,6 +46,7 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 use Ecjia\App\Groupbuy\GroupbuyStatus;
+use Ecjia\App\Goods\GoodsAttr;
 /**
  * 商品相关函数库
  */
@@ -1544,8 +1545,9 @@ function get_attr_list() {
 
 	if (!empty($row)) {
 		foreach ($row AS $key => $val) {
-			$row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
-			$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
+			//$row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
+            $row[$key]['attr_input_type_desc'] = Ecjia\App\Goods\GoodsAttr::getAttrInputTypeLabel($val['attr_input_type']);
+            $row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
 		}
 	}
 	return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
@@ -1649,7 +1651,8 @@ function get_merchant_attr_list() {
 
 	if (!empty($row)) {
 		foreach ($row AS $key => $val) {
-			$row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
+//			$row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
+            $row[$key]['attr_input_type_desc'] = Ecjia\App\Goods\GoodsAttr::getAttrInputTypeLabel($val['attr_input_type']);
 			$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
 		}
 	}
