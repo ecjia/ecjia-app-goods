@@ -65,8 +65,9 @@
                                 <input name="attr_index" id="attr_index_{$key}" type="radio" value="{$key}" {if $attr.attr_index eq $key}checked{/if} autocomplete="off" />
                                 <label for="attr_index_{$key}">{$value}</label>
                                 {/foreach}
+                                <span class="help-block" id="noticeindex">{t domain="goods" escape=no}不需要该属性成为检索商品条件的情况请选择不需要检索，需要该属性进行关键字检索商品时选择关键字检索，<br/>如果该属性检索时希望是指定某个范围时，选择范围检索。{/t}</span>
 							</div>
-							<span class="help-block" {if $help_open}style="display:block" {else} style="display:none" {/if} id="noticeindex">{t domain="goods"}不需要该属性成为检索商品条件的情况请选择不需要检索，需要该属性进行关键字检索商品时选择关键字检索，<br/>如果该属性检索时希望是指定某个范围时，选择范围检索。{/t}</span>
+
 						</div>
 						
 						<div class="form-group">
@@ -87,8 +88,9 @@
                                 <input name="attr_type" id="attr_type_{$key}" type="radio" value="{$key}" {if $attr.attr_type eq $key}checked{/if} autocomplete="off" />
                                 <label for="attr_type_{$key}">{$value}</label>
                                 {/foreach}
+                                <span class="help-block" id="noticeAttrType">{t domain="goods" escape=no}选择"单选/复选属性"时，可以对商品该属性设置多个值，同时还能对不同属性值指定不同的价格加价，用户购买商品时需要选定具体的属性值。<br/>选择"唯一属性"时，商品的该属性值只能设置一个值，用户只能查看该值。{/t}</span>
 							</div>
-							<span class="help-block" {if $help_open}style="display:block" {else} style="display:none" {/if} id="noticeAttrType">{t domain="goods"}选择"单选/复选属性"时，可以对商品该属性设置多个值，同时还能对不同属性值指定不同的价格加价，用户购买商品时需要选定具体的属性值。<br/>选择"唯一属性"时，商品的该属性值只能设置一个值，用户只能查看该值。{/t}</span>
+
 						</div>
 						
 						<div class="form-group">
