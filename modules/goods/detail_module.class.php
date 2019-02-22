@@ -104,7 +104,7 @@ class goods_detail_module extends api_front implements api_interface {
         			foreach ($price_ladder as $rows) {
                         $price_ladder_str .= sprintf(__('满%d份%s元，', 'goods'), $rows['amount'], $rows['price']);
         			}
-        			$groupbuy_price_ladder_str = substr($price_ladder_str, 0, -1);
+        			$groupbuy_price_ladder_str = mb_substr($price_ladder_str, 0, -1);
         		}
         		
         	}else {
@@ -285,7 +285,7 @@ class goods_detail_module extends api_front implements api_interface {
         }
         
         $groupbuy_info = [];
-     
+
         if ($rec_type == 'GROUPBUY_GOODS') {
         	/* 取得团购活动信息 */
         	//$group_buy = group_buy_info($object_id);
@@ -470,7 +470,7 @@ class goods_detail_module extends api_front implements api_interface {
         // $data['is_warehouse'] = null;
         $data['seller_name'] = $info['merchants_name'];
         $shop_name = empty($info['merchants_name']) ? ecjia::config('shop_name') : $info['merchants_name'];
-        $data['server_desc'] = sprintf(__('由%s发货并提供售后服务', 'goods'), $shop_name);;
+        $data['server_desc'] = sprintf(__('由%s发货并提供售后服务', 'goods'), $shop_name);
 
         /* 分享链接*/
         $data['share_link'] = '';
@@ -513,7 +513,7 @@ class goods_detail_module extends api_front implements api_interface {
 		} else {
 			$data['add_time'] = '';
 		}
-        
+
         return $data;
     }
     
@@ -603,7 +603,7 @@ class goods_detail_module extends api_front implements api_interface {
 				}
 			}
 		}
-	
+
 		foreach ($res as $tempkey => $value) {
 			$subtotal = 0;
 			$row = unserialize($value['ext_info']);
