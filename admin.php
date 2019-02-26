@@ -2036,7 +2036,7 @@ class admin extends ecjia_admin {
 			'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.85.B3.E8.81.94.E6.96.87.E7.AB.A0" target="_blank">关于商品关联文章帮助文档</a>', 'goods') . '</p>'
 		);
-		$this->assign('ur_here', __('欢迎访问ECJia智能后台商品关联文章页面，可以在此对相应的商品进行关联文章操作。', 'goods'));
+		$this->assign('ur_here', __('关联文章', 'goods'));
 		
 		$goods_id = intval($_GET['goods_id']);
 		$goods_article_list = get_goods_articles($goods_id);
