@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecjia App goods 1.27.4\n"
 "Report-Msgid-Bugs-To: https://make.ecjia.com/polyglots/\n"
-"POT-Creation-Date: 2019-02-21 03:54:45+00:00\n"
+"POT-Creation-Date: 2019-03-01 01:43:29+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -29,13 +29,12 @@ msgid "商品列表"
 msgstr ""
 
 #: admin.php:152 admin.php:207 admin.php:308 admin.php:350 admin.php:1800
-#: admin.php:1962 admin.php:2031 admin_attribute.php:84 admin_attribute.php:123
-#: admin_attribute.php:225 admin_brand.php:82 admin_brand.php:109
+#: admin.php:1962 admin.php:2031 admin_brand.php:82 admin_brand.php:109
 #: admin_brand.php:190 admin_category.php:94 admin_category.php:526
 #: admin_gallery.php:99 merchant.php:164 merchant.php:216 merchant.php:308
 #: merchant.php:348 merchant.php:697 merchant.php:2073 merchant.php:2256
-#: merchant.php:2338 mh_attribute.php:84 mh_attribute.php:128
-#: mh_attribute.php:226 mh_category.php:104 mh_category.php:307
+#: merchant.php:2338 mh_attribute.php:85 mh_attribute.php:129
+#: mh_attribute.php:233 mh_category.php:104 mh_category.php:307
 #: mh_gallery.php:106 mh_spec.php:85 mh_spec.php:116 mh_spec.php:175
 msgid "概述"
 msgstr ""
@@ -45,13 +44,12 @@ msgid "欢迎访问ECJia智能后台商品列表页面，系统中所有的商�
 msgstr ""
 
 #: admin.php:157 admin.php:212 admin.php:313 admin.php:355 admin.php:1805
-#: admin.php:1967 admin.php:2036 admin_attribute.php:89 admin_attribute.php:128
-#: admin_attribute.php:230 admin_brand.php:87 admin_brand.php:113
+#: admin.php:1967 admin.php:2036 admin_brand.php:87 admin_brand.php:113
 #: admin_brand.php:195 admin_category.php:99 admin_category.php:531
 #: admin_gallery.php:105 merchant.php:169 merchant.php:221 merchant.php:313
 #: merchant.php:353 merchant.php:702 merchant.php:2078 merchant.php:2261
-#: merchant.php:2343 mh_attribute.php:89 mh_attribute.php:133
-#: mh_attribute.php:231 mh_category.php:109 mh_category.php:312
+#: merchant.php:2343 mh_attribute.php:90 mh_attribute.php:134
+#: mh_attribute.php:238 mh_category.php:109 mh_category.php:312
 #: mh_gallery.php:112 mh_spec.php:90 mh_spec.php:121 mh_spec.php:180
 msgid "更多信息："
 msgstr ""
@@ -250,13 +248,11 @@ msgstr ""
 msgid "缺少参数，请重试"
 msgstr ""
 
-#: admin.php:1412 admin_attribute.php:81 admin_attribute.php:98
-#: admin_attribute.php:118 admin_attribute.php:138 admin_attribute.php:220
-#: apis/goods_goods_info_api.class.php:245 functions/admin_goods.func.php:729
-#: functions/global.func.php:888 functions/global.func.php:902
-#: functions/unuse.func.php:402 merchant.php:1670 mh_attribute.php:81
-#: mh_attribute.php:103 mh_attribute.php:123 mh_attribute.php:142
-#: mh_attribute.php:221
+#: admin.php:1412 apis/goods_goods_info_api.class.php:245
+#: functions/admin_goods.func.php:730 functions/global.func.php:888
+#: functions/global.func.php:902 functions/unuse.func.php:402 merchant.php:1670
+#: mh_attribute.php:82 mh_attribute.php:104 mh_attribute.php:124
+#: mh_attribute.php:146 mh_attribute.php:228
 msgid "商品属性"
 msgstr ""
 
@@ -376,8 +372,7 @@ msgid ""
 "E8.81.94.E5.95.86.E5.93.81\" target=\"_blank\">关于关联商品帮助文档</a>"
 msgstr ""
 
-#: admin.php:2028 admin.php:2032 admin.php:2039 merchant.php:2339
-#: merchant.php:2359
+#: admin.php:2028 admin.php:2032 merchant.php:2339
 msgid ""
 "欢迎访问ECJia智能后台商品关联文章页面，可以在此对相应的商品进行关联文章操作。"
 msgstr ""
@@ -388,13 +383,17 @@ msgid ""
 "E8.81.94.E6.96.87.E7.AB.A0\" target=\"_blank\">关于商品关联文章帮助文档</a>"
 msgstr ""
 
+#: admin.php:2039 functions/global.func.php:892 functions/global.func.php:906
+#: merchant.php:2359
+msgid "关联文章"
+msgstr ""
+
 #: admin.php:2146 merchant.php:2480
 msgid "增加关联商品，被设置的商品名称是%s"
 msgstr ""
 
-#: admin.php:2150 admin.php:2221 admin_attribute.php:330
-#: admin_attribute.php:355 admin_gallery.php:259 merchant.php:2488
-#: merchant.php:2576 mh_attribute.php:329 mh_attribute.php:354
+#: admin.php:2150 admin.php:2221 admin_gallery.php:259 merchant.php:2488
+#: merchant.php:2576 mh_attribute.php:336 mh_attribute.php:361
 #: mh_gallery.php:281 mh_spec.php:271
 msgid "编辑成功"
 msgstr ""
@@ -416,98 +415,6 @@ msgstr ""
 
 #: admin.php:2275 admin_category.php:267 merchant.php:2633 mh_category.php:181
 msgid "新商品分类添加成功！"
-msgstr ""
-
-#: admin_attribute.php:72 admin_attribute.php:100 mh_attribute.php:71
-#: mh_attribute.php:105 mh_spec.php:71 mh_spec.php:82 mh_spec.php:100
-#: mh_spec.php:126 mh_spec.php:185
-msgid "商品规格列表"
-msgstr ""
-
-#: admin_attribute.php:85 mh_attribute.php:85
-msgid ""
-"欢迎访问ECJia智能后台商品属性列表页面，系统中所有的商品属性都会显示在此列表"
-"中。"
-msgstr ""
-
-#: admin_attribute.php:90 mh_attribute.php:90
-msgid ""
-"<a href=\"https://ecjia.com/wiki/帮助:ECJia智能后台:商品类型#.E5.B1.9E.E6.80."
-"A7.E5.88.97.E8.A1.A8\" target=\"_blank\">关于商品属性列表帮助文档</a>"
-msgstr ""
-
-#: admin_attribute.php:99 admin_attribute.php:119 admin_attribute.php:137
-#: admin_attribute.php:219 mh_attribute.php:104 mh_attribute.php:124
-#: mh_attribute.php:141 mh_attribute.php:220
-msgid "添加属性"
-msgstr ""
-
-#: admin_attribute.php:124 mh_attribute.php:129
-msgid "欢迎访问ECJia智能后台添加商品属性页面，可以在此页面添加商品属性信息。"
-msgstr ""
-
-#: admin_attribute.php:129 mh_attribute.php:134
-msgid ""
-"<a href=\"https://ecjia.com/wiki/帮助:ECJia智能后台:商品类型#.E6.B7.BB.E5.8A."
-"A0.E5.B1.9E.E6.80.A7\" target=\"_blank\">关于添加商品属性帮助文档</a>"
-msgstr ""
-
-#: admin_attribute.php:154 mh_attribute.php:158
-msgid "商品类型不能为空"
-msgstr ""
-
-#: admin_attribute.php:158 admin_attribute.php:249 admin_attribute.php:323
-#: mh_attribute.php:162 mh_attribute.php:248 mh_attribute.php:322
-msgid "该属性名称已存在，请您换一个名称。"
-msgstr ""
-
-#: admin_attribute.php:178 admin_attribute.php:269 mh_attribute.php:182
-#: mh_attribute.php:268
-msgid "返回属性列表"
-msgstr ""
-
-#: admin_attribute.php:179 mh_attribute.php:183
-msgid "添加下一个属性"
-msgstr ""
-
-#: admin_attribute.php:181 mh_attribute.php:185
-msgid "添加属性 [%s] 成功。"
-msgstr ""
-
-#: admin_attribute.php:219 mh_attribute.php:220
-msgid "编辑属性"
-msgstr ""
-
-#: admin_attribute.php:226 mh_attribute.php:227
-msgid "欢迎访问ECJia智能后台编辑商品属性页面，可以在此页面编辑商品属性信息。"
-msgstr ""
-
-#: admin_attribute.php:231 mh_attribute.php:232
-msgid ""
-"<a href=\"https://ecjia.com/wiki/帮助:ECJia智能后台:商品类型#.E7.BC.96.E8."
-"BE.91.E5.B1.9E.E6.80.A7\" target=\"_blank\">关于编辑商品属性帮助文档</a>"
-msgstr ""
-
-#: admin_attribute.php:271 mh_attribute.php:270
-msgid "编辑属性 [%s] 成功。"
-msgstr ""
-
-#: admin_attribute.php:285 admin_brand.php:379 admin_brand.php:400
-#: admin_gallery.php:239 admin_goods_auto.php:203 mh_attribute.php:284
-#: mh_gallery.php:261 mh_spec.php:249
-msgid "删除成功"
-msgstr ""
-
-#: admin_attribute.php:305 mh_attribute.php:304
-msgid "成功删除了 %d 条商品属性"
-msgstr ""
-
-#: admin_attribute.php:333 configs/jslang.php:58 mh_attribute.php:332
-msgid "请输入属性名称"
-msgstr ""
-
-#: admin_attribute.php:348 mh_attribute.php:347
-msgid "请输入大于0的整数"
 msgstr ""
 
 #: admin_brand.php:79 admin_brand.php:91 admin_brand.php:118
@@ -573,6 +480,12 @@ msgstr ""
 
 #: admin_brand.php:288 admin_brand.php:315
 msgid "品牌 %s 修改成功！"
+msgstr ""
+
+#: admin_brand.php:379 admin_brand.php:400 admin_gallery.php:239
+#: admin_goods_auto.php:203 mh_attribute.php:291 mh_gallery.php:261
+#: mh_spec.php:249
+msgid "删除成功"
 msgstr ""
 
 #: admin_category.php:79 admin_category.php:88 admin_category.php:90
@@ -794,7 +707,7 @@ msgstr ""
 #: apis/goods_admin_menu_api.class.php:54
 #: apis/goods_admin_purview_api.class.php:56
 #: apis/goods_merchant_purview_api.class.php:57 merchant.php:147
-#: mh_attribute.php:70 mh_category.php:80 mh_gallery.php:92 mh_spec.php:70
+#: mh_attribute.php:71 mh_category.php:80 mh_gallery.php:92 mh_spec.php:70
 msgid "商品管理"
 msgstr ""
 
@@ -851,8 +764,8 @@ msgid "全部"
 msgstr ""
 
 #: apis/goods_goods_info_api.class.php:159 classes/Helper.php:95
-#: classes/goods.class.php:74 functions/admin_goods.func.php:642
-#: functions/admin_goods.func.php:1343 functions/global.func.php:1888
+#: classes/goods.class.php:74 functions/admin_goods.func.php:643
+#: functions/admin_goods.func.php:1344 functions/global.func.php:1888
 #: modules/admin/goods/add_module.class.php:202
 #: modules/admin/goods/desc_module.class.php:180
 #: modules/admin/goods/detail_module.class.php:126
@@ -863,8 +776,8 @@ msgid "千克"
 msgstr ""
 
 #: apis/goods_goods_info_api.class.php:159 classes/Helper.php:96
-#: classes/goods.class.php:75 functions/admin_goods.func.php:642
-#: functions/admin_goods.func.php:1343 functions/global.func.php:1885
+#: classes/goods.class.php:75 functions/admin_goods.func.php:643
+#: functions/admin_goods.func.php:1344 functions/global.func.php:1885
 #: modules/admin/goods/add_module.class.php:203
 #: modules/admin/goods/desc_module.class.php:180
 #: modules/admin/goods/detail_module.class.php:126
@@ -908,6 +821,50 @@ msgstr ""
 
 #: apis/goods_merchant_purview_api.class.php:73
 msgid "删除商品类型"
+msgstr ""
+
+#: classes/GoodsAttr.php:66
+msgid "不需要检索"
+msgstr ""
+
+#: classes/GoodsAttr.php:67
+msgid "关键字检索"
+msgstr ""
+
+#: classes/GoodsAttr.php:68
+msgid "范围检索"
+msgstr ""
+
+#: classes/GoodsAttr.php:80 classes/GoodsAttr.php:106 classes/GoodsAttr.php:131
+msgid "未知"
+msgstr ""
+
+#: classes/GoodsAttr.php:92
+msgid "唯一属性"
+msgstr ""
+
+#: classes/GoodsAttr.php:93
+msgid "单选属性"
+msgstr ""
+
+#: classes/GoodsAttr.php:94
+msgid "复选属性"
+msgstr ""
+
+#: classes/GoodsAttr.php:116
+msgid "手工录入"
+msgstr ""
+
+#: classes/GoodsAttr.php:117
+msgid "从下面的列表中选择（一行代表一个可选值）"
+msgstr ""
+
+#: classes/GoodsAttr.php:118
+msgid "多行文本框"
+msgstr ""
+
+#: classes/GoodsAttr.php:128
+msgid "从列表中选择"
 msgstr ""
 
 #: classes/Helper.php:61
@@ -963,7 +920,7 @@ msgid "商品缩略图路径无效"
 msgstr ""
 
 #: classes/goods_list.class.php:426 classes/goods_list.class.php:732
-#: functions/admin_goods.func.php:376
+#: functions/admin_goods.func.php:377
 msgid "免费"
 msgstr ""
 
@@ -973,6 +930,10 @@ msgstr ""
 
 #: configs/jslang.php:57
 msgid "请输入规格名称"
+msgstr ""
+
+#: configs/jslang.php:58 mh_attribute.php:339
+msgid "请输入属性名称"
 msgstr ""
 
 #: configs/jslang.php:59
@@ -1012,7 +973,7 @@ msgstr ""
 msgid "取消"
 msgstr ""
 
-#: configs/jslang.php:86 functions/admin_goods.func.php:1424
+#: configs/jslang.php:86 functions/admin_goods.func.php:1425
 #: functions/global.func.php:1236 functions/global.func.php:1282
 msgid "请选择..."
 msgstr ""
@@ -1160,15 +1121,15 @@ msgid ""
 "客提供商品，同时达到既定的经济效益指标。"
 msgstr ""
 
-#: functions/admin_goods.func.php:769
+#: functions/admin_goods.func.php:770
 msgid "相同%s的商品"
 msgstr ""
 
-#: functions/admin_goods.func.php:1671 functions/merchant_goods.func.php:259
+#: functions/admin_goods.func.php:1674 functions/merchant_goods.func.php:259
 msgid "添加虚拟商品"
 msgstr ""
 
-#: functions/admin_goods.func.php:1673 functions/merchant_goods.func.php:261
+#: functions/admin_goods.func.php:1676 functions/merchant_goods.func.php:261
 msgid "添加商品"
 msgstr ""
 
@@ -1194,10 +1155,6 @@ msgstr ""
 
 #: functions/global.func.php:890 functions/global.func.php:904
 msgid "关联商品"
-msgstr ""
-
-#: functions/global.func.php:892 functions/global.func.php:906
-msgid "关联文章"
 msgstr ""
 
 #: functions/global.func.php:893 functions/global.func.php:907
@@ -1256,6 +1213,84 @@ msgstr ""
 
 #: merchant.php:2115
 msgid "添加商品属性"
+msgstr ""
+
+#: mh_attribute.php:72 mh_attribute.php:106 mh_spec.php:71 mh_spec.php:82
+#: mh_spec.php:100 mh_spec.php:126 mh_spec.php:185
+msgid "商品规格列表"
+msgstr ""
+
+#: mh_attribute.php:86
+msgid ""
+"欢迎访问ECJia智能后台商品属性列表页面，系统中所有的商品属性都会显示在此列表"
+"中。"
+msgstr ""
+
+#: mh_attribute.php:91
+msgid ""
+"<a href=\"https://ecjia.com/wiki/帮助:ECJia智能后台:商品类型#.E5.B1.9E.E6.80."
+"A7.E5.88.97.E8.A1.A8\" target=\"_blank\">关于商品属性列表帮助文档</a>"
+msgstr ""
+
+#: mh_attribute.php:105 mh_attribute.php:125 mh_attribute.php:145
+#: mh_attribute.php:227
+msgid "添加属性"
+msgstr ""
+
+#: mh_attribute.php:130
+msgid "欢迎访问ECJia智能后台添加商品属性页面，可以在此页面添加商品属性信息。"
+msgstr ""
+
+#: mh_attribute.php:135
+msgid ""
+"<a href=\"https://ecjia.com/wiki/帮助:ECJia智能后台:商品类型#.E6.B7.BB.E5.8A."
+"A0.E5.B1.9E.E6.80.A7\" target=\"_blank\">关于添加商品属性帮助文档</a>"
+msgstr ""
+
+#: mh_attribute.php:162
+msgid "商品类型不能为空"
+msgstr ""
+
+#: mh_attribute.php:166 mh_attribute.php:255 mh_attribute.php:329
+msgid "该属性名称已存在，请您换一个名称。"
+msgstr ""
+
+#: mh_attribute.php:186 mh_attribute.php:275
+msgid "返回属性列表"
+msgstr ""
+
+#: mh_attribute.php:187
+msgid "添加下一个属性"
+msgstr ""
+
+#: mh_attribute.php:189
+msgid "添加属性 [%s] 成功。"
+msgstr ""
+
+#: mh_attribute.php:227
+msgid "编辑属性"
+msgstr ""
+
+#: mh_attribute.php:234
+msgid "欢迎访问ECJia智能后台编辑商品属性页面，可以在此页面编辑商品属性信息。"
+msgstr ""
+
+#: mh_attribute.php:239
+msgid ""
+"<a href=\"https://ecjia.com/wiki/帮助:ECJia智能后台:商品类型#.E7.BC.96.E8."
+"BE.91.E5.B1.9E.E6.80.A7\" target=\"_blank\">关于编辑商品属性帮助文档</a>"
+msgstr ""
+
+#: mh_attribute.php:277
+msgid "编辑属性 [%s] 成功。"
+msgstr ""
+
+#: mh_attribute.php:311
+msgid "成功删除了 %d 条商品属性"
+msgstr ""
+
+#: mh_attribute.php:354
+msgid "请输入大于0的整数"
 msgstr ""
 
 #: mh_category.php:194
@@ -1550,10 +1585,10 @@ msgstr ""
 msgid "满%d份%s元，"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:213
-#: modules/goods/detail_module.class.php:223
-#: modules/goods/detail_module.class.php:232
-#: modules/goods/detail_module.class.php:241
+#: modules/goods/detail_module.class.php:212
+#: modules/goods/detail_module.class.php:222
+#: modules/goods/detail_module.class.php:231
+#: modules/goods/detail_module.class.php:240
 #: modules/goods/search_module.class.php:117
 #: modules/goods/search_module.class.php:127
 #: modules/goods/search_module.class.php:136
@@ -1565,10 +1600,10 @@ msgstr ""
 msgid "满减"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:213
-#: modules/goods/detail_module.class.php:223
-#: modules/goods/detail_module.class.php:232
-#: modules/goods/detail_module.class.php:241
+#: modules/goods/detail_module.class.php:212
+#: modules/goods/detail_module.class.php:222
+#: modules/goods/detail_module.class.php:231
+#: modules/goods/detail_module.class.php:240
 #: modules/goods/search_module.class.php:117
 #: modules/goods/search_module.class.php:127
 #: modules/goods/search_module.class.php:136
@@ -1580,8 +1615,8 @@ msgstr ""
 msgid "满折"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:347
-#: modules/goods/detail_module.class.php:412
+#: modules/goods/detail_module.class.php:321
+#: modules/goods/detail_module.class.php:386
 #: modules/goods/list_module.class.php:189
 #: modules/goods/mobilebuygoods_module.class.php:135
 #: modules/goods/search_module.class.php:187
@@ -1592,23 +1627,23 @@ msgstr ""
 msgid "已省%s元"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:473
+#: modules/goods/detail_module.class.php:447
 msgid "由%s发货并提供售后服务"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:492
+#: modules/goods/detail_module.class.php:466
 msgid "商品货号"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:497
+#: modules/goods/detail_module.class.php:471
 msgid "商品重量"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:505
+#: modules/goods/detail_module.class.php:479
 msgid "商品库存"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:510
+#: modules/goods/detail_module.class.php:484
 msgid "商品上架时间"
 msgstr ""
 
@@ -1751,7 +1786,6 @@ msgid "搜索"
 msgstr ""
 
 #: content/apps/goods/templates/admin/goods_list.dwt.php:171
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:24
 #: content/apps/goods/templates/admin/goods_trash.dwt.php:33
 #: content/apps/goods/templates/merchant/goods_list.dwt.php:104
 #: content/apps/goods/templates/merchant/attribute_list.dwt.php:34
@@ -1976,7 +2010,6 @@ msgstr ""
 
 #: content/apps/goods/templates/admin/goods_list.dwt.php:268
 #: content/apps/goods/templates/admin/category_list.dwt.php:36
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:60
 #: content/apps/goods/templates/admin/brand_list.dwt.php:44
 #: content/apps/goods/templates/merchant/goods_list.dwt.php:182
 #: content/apps/goods/templates/merchant/category_list.dwt.php:33
@@ -1990,7 +2023,6 @@ msgstr ""
 
 #: content/apps/goods/templates/admin/goods_list.dwt.php:289
 #: content/apps/goods/templates/admin/category_list.dwt.php:83
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:91
 #: content/apps/goods/templates/admin/brand_list.dwt.php:78
 #: content/apps/goods/templates/admin/goods_photo.dwt.php:57
 #: content/apps/goods/templates/merchant/goods_list.dwt.php:203
@@ -2020,7 +2052,6 @@ msgstr ""
 
 #: content/apps/goods/templates/admin/goods_list.dwt.php:299
 #: content/apps/goods/templates/admin/category_list.dwt.php:84
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:92
 #: content/apps/goods/templates/admin/brand_info.dwt.php:56
 #: content/apps/goods/templates/admin/product_info.dwt.php:65
 #: content/apps/goods/templates/admin/brand_list.dwt.php:79
@@ -2059,7 +2090,6 @@ msgstr ""
 
 #: content/apps/goods/templates/admin/goods_list.dwt.php:392
 #: content/apps/goods/templates/admin/category_list.dwt.php:90
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:97
 #: content/apps/goods/templates/admin/goods_auto.dwt.php:102
 #: content/apps/goods/templates/admin/brand_list.dwt.php:84
 #: content/apps/goods/templates/admin/goods_trash.dwt.php:116
@@ -2095,7 +2125,6 @@ msgid "是否显示"
 msgstr ""
 
 #: content/apps/goods/templates/admin/category_list.dwt.php:42
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:63
 #: content/apps/goods/templates/admin/goods_auto.dwt.php:55
 #: content/apps/goods/templates/admin/product_info.dwt.php:45
 #: content/apps/goods/templates/admin/brand_list.dwt.php:50
@@ -2194,63 +2223,6 @@ msgstr ""
 #: content/apps/goods/templates/admin/goods_attr.dwt.php:40
 #: content/apps/goods/templates/merchant/goods_attr.dwt.php:56
 msgid "请选择商品的所属规格，进而完善此商品的属性"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:27
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:36
-msgid "您确定要删除选中的商品属性吗？"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:27
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:36
-msgid "您没有选择需要删除的属性"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:27
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:36
-msgid "批量删除"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:32
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:41
-msgid "按商品规格显示："
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:34
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:44
-msgid "所有商品规格"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:48
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:22
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:62
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:32
-msgid "属性名称"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:54
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:64
-msgid "属性值的录入方式"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:57
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:65
-msgid "可选值列表"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:74
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:80
-msgid "属性名称不能为空"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:88
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:87
-msgid "请输入排序号"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_list.dwt.php:92
-#: content/apps/goods/templates/merchant/attribute_list.dwt.php:90
-msgid "您确实要删除该属性吗？"
 msgstr ""
 
 #: content/apps/goods/templates/admin/goods_auto.dwt.php:11
@@ -2384,17 +2356,15 @@ msgid "是否显示："
 msgstr ""
 
 #: content/apps/goods/templates/admin/brand_info.dwt.php:75
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:61
 #: content/apps/goods/templates/admin/category_info.dwt.php:221
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:84
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:80
 #: content/apps/goods/templates/merchant/category_info.dwt.php:80
 msgid "是"
 msgstr ""
 
 #: content/apps/goods/templates/admin/brand_info.dwt.php:76
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:60
 #: content/apps/goods/templates/admin/category_info.dwt.php:222
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:81
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:77
 #: content/apps/goods/templates/merchant/category_info.dwt.php:83
 msgid "否"
 msgstr ""
@@ -2509,103 +2479,6 @@ msgstr ""
 msgid "筛选搜索到的商品信息"
 msgstr ""
 
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:29
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:40
-msgid "所属商品规格："
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:39
-#: content/apps/goods/templates/merchant/goods_type_info.dwt.php:52
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:51
-msgid "属性分组："
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:49
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:62
-msgid "能否进行检索："
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:51
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:65
-msgid "不需要检索"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:52
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:68
-msgid "关键字检索"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:53
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:71
-msgid "范围检索"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:54
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:74
-msgid ""
-"不需要该属性成为检索商品条件的情况请选择不需要检索，需要该属性进行关键字检索"
-"商品时选择关键字检索，<br/>如果该属性检索时希望是指定某个范围时，选择范围检"
-"索。"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:58
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:78
-msgid "相同属性商品是否关联："
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:65
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:89
-msgid "属性是否可选："
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:67
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:92
-msgid "唯一属性"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:68
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:95
-msgid "单选属性"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:69
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:98
-msgid "复选属性"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:70
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:100
-msgid ""
-"选择\"单选/复选属性\"时，可以对商品该属性设置多个值，同时还能对不同属性值指定"
-"不同的价格加价，用户购买商品时需要选定具体的属性值。<br/>选择\"唯一属性\"时，"
-"商品的该属性值只能设置一个值，用户只能查看该值。"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:74
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:104
-msgid "该属性值的录入方式："
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:76
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:107
-msgid "手工录入"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:77
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:110
-msgid "从下面的列表中选择（一行代表一个可选值）"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:78
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:113
-msgid "多行文本框"
-msgstr ""
-
-#: content/apps/goods/templates/admin/attribute_info.dwt.php:82
-#: content/apps/goods/templates/merchant/attribute_info.dwt.php:118
-msgid "可选值列表："
-msgstr ""
-
 #: content/apps/goods/templates/admin/link_article.dwt.php:34
 #: content/apps/goods/templates/merchant/link_article.dwt.php:48
 msgid "文章标题"
@@ -2643,8 +2516,8 @@ msgid "还原"
 msgstr ""
 
 #: content/apps/goods/templates/admin/goods_trash.dwt.php:38
-#: content/apps/goods/templates/merchant/goods_trash.dwt.php:27
-msgid "彻底删除商品将删除与该商品有关的所有信息，n您确定要删除选中的商品吗？"
+msgid ""
+"彻底删除商品将删除与该商品有关的所有信息，<br/>您确定要删除选中的商品吗？"
 msgstr ""
 
 #: content/apps/goods/templates/admin/goods_trash.dwt.php:109
@@ -3111,6 +2984,11 @@ msgstr ""
 msgid "禁用"
 msgstr ""
 
+#: content/apps/goods/templates/merchant/goods_type_info.dwt.php:52
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:51
+msgid "属性分组："
+msgstr ""
+
 #: content/apps/goods/templates/merchant/goods_desc.dwt.php:57
 #: content/apps/goods/templates/merchant/goods_info.dwt.php:218
 msgid "直接完成"
@@ -3128,6 +3006,51 @@ msgstr ""
 msgid "店铺分类"
 msgstr ""
 
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:36
+msgid "您确定要删除选中的商品属性吗？"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:36
+msgid "您没有选择需要删除的属性"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:36
+msgid "批量删除"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:41
+msgid "按商品规格显示："
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:44
+msgid "所有商品规格"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:62
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:32
+msgid "属性名称"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:64
+msgid "属性值的录入方式"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:65
+msgid "可选值列表"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:80
+msgid "属性名称不能为空"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:87
+msgid "请输入排序号"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_list.dwt.php:90
+msgid "您确实要删除该属性吗？"
+msgstr ""
+
 #: content/apps/goods/templates/merchant/library/widget_admin_dashboard_goodsstat.lbi.php:17
 msgid "库存警告商品数"
 msgstr ""
@@ -3138,6 +3061,49 @@ msgstr ""
 
 #: content/apps/goods/templates/merchant/product_info.dwt.php:95
 msgid "再添加一项"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:40
+msgid "所属商品规格："
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:62
+msgid "能否进行检索："
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:68
+msgid ""
+"不需要该属性成为检索商品条件的情况请选择不需要检索，需要该属性进行关键字检索"
+"商品时选择关键字检索，<br/>如果该属性检索时希望是指定某个范围时，选择范围检"
+"索。"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:74
+msgid "相同属性商品是否关联："
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:85
+msgid "属性是否可选："
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:91
+msgid ""
+"选择\"单选/复选属性\"时，可以对商品该属性设置多个值，同时还能对不同属性值指定"
+"不同的价格加价，用户购买商品时需要选定具体的属性值。<br/>选择\"唯一属性\"时，"
+"商品的该属性值只能设置一个值，用户只能查看该值。"
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:97
+msgid "该属性值的录入方式："
+msgstr ""
+
+#: content/apps/goods/templates/merchant/attribute_info.dwt.php:107
+msgid "可选值列表："
+msgstr ""
+
+#: content/apps/goods/templates/merchant/goods_trash.dwt.php:27
+msgid ""
+"彻底删除商品将删除与该商品有关的所有信息，<br>您确定要删除选中的商品吗？"
 msgstr ""
 
 #: content/apps/goods/templates/merchant/goods_cat_select.dwt.php:47
@@ -3204,7 +3170,8 @@ msgid "查看规格属性"
 msgstr ""
 
 #: content/apps/goods/templates/merchant/goods_type_list.dwt.php:57
-msgid "删除商品规格将会清除该规格下的所有属性。n您确定要删除选定的商品规格吗？"
+msgid ""
+"删除商品规格将会清除该规格下的所有属性。<br>您确定要删除选定的商品规格吗？"
 msgstr ""
 
 #: content/apps/goods/templates/merchant/goods_type_list.dwt.php:62
