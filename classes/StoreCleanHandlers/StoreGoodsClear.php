@@ -40,18 +40,16 @@ class StoreGoodsClear extends StoreCleanAbstract
      */
     public function handlePrintData()
     {
-        $count = $this->handleCount();
-
         $url = RC_Uri::url('goods/admin/init', array('store_id' => $this->store_id));
 
+        $count     = $this->handleCount();
+        $text      = sprintf(__('店铺商品总共<span class="ecjiafc-red ecjiaf-fs3">%s</span>件，将店铺内所有商品数据全部删除', 'goods'), $count);
+        $text_info = __('查看全部>>>', 'goods');
+
         return <<<HTML
-
-<span class="controls-info w400">店铺商品总共<span class="ecjiafc-red ecjiaf-fs3">{$count}</span>件，将店铺内所有商品数据全部删除</span>
-
-<span class="controls-info"><a href="{$url}" target="__blank">查看全部>>></a></span>
-
+<span class="controls-info w400">{$text}</span>
+<span class="controls-info"><a href="{$url}" target="__blank">{$text_info}</a></span>
 HTML;
-
     }
 
     /**
