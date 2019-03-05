@@ -61,7 +61,7 @@ class admin_brand extends ecjia_admin {
 		RC_Script::enqueue_script('smoke');
 		RC_Script::enqueue_script('jquery-uniform');
 		RC_Style::enqueue_style('uniform-aristo');
-		RC_Script::enqueue_script('goods_brand', RC_Uri::home_url('content/apps/goods/statics/js/goods_brand.js'), array());
+		RC_Script::enqueue_script('goods_brand', RC_Uri::home_url('content/apps/goods/statics/js/goods_brand.js'), array(), false, 1);
         RC_Script::localize_script('goods_brand', 'js_lang', config('app-goods::jslang.brand_page'));
 		
 		RC_Loader::load_app_class('goods_brand', 'goods', false);
