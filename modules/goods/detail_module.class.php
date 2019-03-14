@@ -175,7 +175,8 @@ class goods_detail_module extends api_front implements api_interface {
         $cache_user_rank_prices_id = sprintf('%X', crc32($cache_goods_user_rank_prices_key));
         $orm_member_price_db = RC_Model::model('goods/orm_member_price_model');
         $user_rank_prices = $orm_member_price_db->get_cache_item($cache_user_rank_prices_id);
-        if (empty($user_rank_prices)) {
+        //商品是团购时，重新获取会员等级价格
+        if (empty($user_rank_prices) || !empty($rec_type)) {
         	$user_rank_prices = $this->get_user_rank_prices($goods_id, $shop_price);
         	$orm_member_price_db->set_cache_item($cache_user_rank_prices_id, $user_rank_prices);      	
         }
