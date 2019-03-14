@@ -286,7 +286,13 @@ class goods_detail_module extends api_front implements api_interface {
         
         $groupbuy_info = [];
 
+        
+        RC_Logger::getLogger('error')->info('testaaa');
+        RC_Logger::getLogger('error')->info($rec_type);
+        
+        
         if ($rec_type == 'GROUPBUY_GOODS') {
+        	RC_Logger::getLogger('error')->info('testbbb');
         	/* 取得团购活动信息 */
         	$data['promote_price'] 			= $group_buy['cur_price'];
         	$data['formated_promote_price'] = $group_buy['formated_cur_price'];
@@ -308,6 +314,7 @@ class goods_detail_module extends api_front implements api_interface {
         	$price = ($data['unformatted_shop_price'] > $goods['promote_price_org'] && $goods['promote_price_org'] > 0) ? $goods['promote_price_org'] : $data['unformatted_shop_price'];
         	$activity_type = ($data['unformatted_shop_price'] > $goods['promote_price_org'] && $goods['promote_price_org'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
 			
+        	RC_Logger::getLogger('error')->info('testccc');
 
         }
         $data['groupbuy_info'] = $groupbuy_info;
