@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecjia App goods 1.28.0\n"
 "Report-Msgid-Bugs-To: https://make.ecjia.com/polyglots/\n"
-"POT-Creation-Date: 2019-03-06 09:04:38+00:00\n"
+"POT-Creation-Date: 2019-03-15 01:49:05+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1483,7 +1483,7 @@ msgstr ""
 #: modules/admin/goods/detail_module.class.php:84
 #: modules/admin/goods/trash_module.class.php:66
 #: modules/goods/desc_module.class.php:67
-#: modules/goods/detail_module.class.php:129
+#: modules/goods/detail_module.class.php:120
 msgid "不存在的信息"
 msgstr ""
 
@@ -1603,14 +1603,14 @@ msgstr ""
 msgid "您没权限修改此商品信息"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:105
+#: modules/goods/detail_module.class.php:96
 msgid "满%d份%s元，"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:212
-#: modules/goods/detail_module.class.php:222
-#: modules/goods/detail_module.class.php:231
-#: modules/goods/detail_module.class.php:240
+#: modules/goods/detail_module.class.php:209
+#: modules/goods/detail_module.class.php:219
+#: modules/goods/detail_module.class.php:228
+#: modules/goods/detail_module.class.php:237
 #: modules/goods/search_module.class.php:117
 #: modules/goods/search_module.class.php:127
 #: modules/goods/search_module.class.php:136
@@ -1622,10 +1622,10 @@ msgstr ""
 msgid "满减"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:212
-#: modules/goods/detail_module.class.php:222
-#: modules/goods/detail_module.class.php:231
-#: modules/goods/detail_module.class.php:240
+#: modules/goods/detail_module.class.php:209
+#: modules/goods/detail_module.class.php:219
+#: modules/goods/detail_module.class.php:228
+#: modules/goods/detail_module.class.php:237
 #: modules/goods/search_module.class.php:117
 #: modules/goods/search_module.class.php:127
 #: modules/goods/search_module.class.php:136
@@ -1637,8 +1637,8 @@ msgstr ""
 msgid "满折"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:321
-#: modules/goods/detail_module.class.php:386
+#: modules/goods/detail_module.class.php:315
+#: modules/goods/detail_module.class.php:380
 #: modules/goods/list_module.class.php:189
 #: modules/goods/mobilebuygoods_module.class.php:135
 #: modules/goods/search_module.class.php:187
@@ -1649,23 +1649,23 @@ msgstr ""
 msgid "已省%s元"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:447
+#: modules/goods/detail_module.class.php:441
 msgid "由%s发货并提供售后服务"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:466
+#: modules/goods/detail_module.class.php:460
 msgid "商品货号"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:471
+#: modules/goods/detail_module.class.php:465
 msgid "商品重量"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:479
+#: modules/goods/detail_module.class.php:473
 msgid "商品库存"
 msgstr ""
 
-#: modules/goods/detail_module.class.php:484
+#: modules/goods/detail_module.class.php:478
 msgid "商品上架时间"
 msgstr ""
 
