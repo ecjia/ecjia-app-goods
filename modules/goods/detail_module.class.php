@@ -105,10 +105,6 @@ class goods_detail_module extends api_front implements api_interface {
         	$rec_type = '';
         }
         
-        RC_Logger::getLogger('error')->info('testaaa');
-        RC_Logger::getLogger('error')->info($rec_type);
-        RC_Logger::getLogger('error')->info('testbbb');
-        
         /*增加商品基本信息缓存*/
         $cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
         $cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
