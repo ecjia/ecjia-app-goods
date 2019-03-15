@@ -66,22 +66,13 @@ class goods_detail_module extends api_front implements api_interface {
         RC_Loader::load_app_class('groupbuy_activity', 'groupbuy', false);
         
         $object_id = $this->requestData('goods_activity_id', 0);
+        
+        //判断商品是否是团购商品
+        $is_groupbuy = 0;
         if (empty($object_id)) {
         	$is_groupbuy_result = groupbuy_activity::is_groupbuy_goods($goods_id);
         	if (!empty($is_groupbuy_result)) {
         		$object_id = $is_groupbuy_result['act_id'];
-        	}
-        }
-        
-        //判断商品是否是团购商品
-        $is_groupbuy = 0;
-        if (!empty($object_id)) {
-        	$group_goods_activity_info = RC_DB::table('goods_activity')
-        									->where('goods_id', $goods_id)
-        									->where('start_time', '<=', RC_Time::gmtime())
-        									->where('end_time', '>=', RC_Time::gmtime())
-        									->where('act_type', GAT_GROUP_BUY)->first(); 
-        	if (!empty($group_goods_activity_info)) {
         		$is_groupbuy = 1;
         	}
         }
@@ -113,6 +104,10 @@ class goods_detail_module extends api_front implements api_interface {
         } else {
         	$rec_type = '';
         }
+        
+        RC_Logger::getLogger('error')->info('testaaa');
+        RC_Logger::getLogger('error')->info($rec_type);
+        RC_Logger::getLogger('error')->info('testbbb');
         
         /*增加商品基本信息缓存*/
         $cache_goods_basic_info_key = 'goods_basic_info_'.$goods_id;
