@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecjia App goods 1.28.0\n"
 "Report-Msgid-Bugs-To: https://make.ecjia.com/polyglots/\n"
-"POT-Creation-Date: 2019-03-20 07:33:50+00:00\n"
+"POT-Creation-Date: 2019-03-22 03:53:32+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1643,7 +1643,7 @@ msgstr ""
 
 #: modules/goods/detail_module.class.php:315
 #: modules/goods/detail_module.class.php:380
-#: modules/goods/list_module.class.php:189
+#: modules/goods/list_module.class.php:165
 #: modules/goods/mobilebuygoods_module.class.php:135
 #: modules/goods/search_module.class.php:187
 #: modules/goods/search_module.class.php:290
