@@ -449,7 +449,7 @@ class goods_list {
 				}
 			}
 		
-			//$goods_result = array('list' => $arr, 'page' => $page_row);
+			$goods_result = array('list' => $arr, 'page' => $page_row);
 			//$goods_db->set_cache_item($fomated_cache_key, $goods_result, 2880);
 		}
 		
