@@ -106,10 +106,10 @@ class goods_admin_hooks
     {
         $setting = ecjia_admin_setting::singleton();
 
-        $menus[] = ecjia_admin::make_admin_menu('nav-header', __('商品', 'goods'), '', 20)->add_purview(array('shop_config'));
-        $menus[] = ecjia_admin::make_admin_menu('goods', __('商品基本设置', 'goods'), RC_Uri::url('setting/shop_config/init', array('code' => 'goods')), 21)->add_purview('shop_config')->add_icon('fontello-icon-gift');
-        $menus[] = ecjia_admin::make_admin_menu('goods_display', __('商品显示设置', 'goods'), RC_Uri::url('setting/shop_config/init', array('code' => 'goods_display')), 22)->add_purview('shop_config')->add_icon('fontello-icon-desktop');
-        $menus[] = ecjia_admin::make_admin_menu('goods_price', __('商品价格设置', 'goods'), RC_Uri::url('setting/shop_config/init', array('code' => 'goods_price')), 23)->add_purview('shop_config')->add_icon('fontello-icon-gift');
+        $menus[] = ecjia_admin::make_admin_menu('nav-header', __('商品', 'goods'), '', 20)->add_purview(array('goods_setting'));
+        $menus[] = ecjia_admin::make_admin_menu('goods', __('商品基本设置', 'goods'), RC_Uri::url('setting/shop_config/init', array('code' => 'goods')), 21)->add_purview('goods_setting')->add_icon('fontello-icon-gift');
+        $menus[] = ecjia_admin::make_admin_menu('goods_display', __('商品显示设置', 'goods'), RC_Uri::url('setting/shop_config/init', array('code' => 'goods_display')), 22)->add_purview('goods_setting')->add_icon('fontello-icon-desktop');
+        $menus[] = ecjia_admin::make_admin_menu('goods_price', __('商品价格设置', 'goods'), RC_Uri::url('setting/shop_config/init', array('code' => 'goods_price')), 23)->add_purview('goods_setting')->add_icon('fontello-icon-gift');
 
         return $menus;
     }
