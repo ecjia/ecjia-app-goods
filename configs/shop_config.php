@@ -592,45 +592,45 @@ return array(
 //        'cfg_range' => '',
 //    ],
 
-    [
-        'cfg_code' => 'use_integral',
-        'cfg_name' => __('是否使用积分', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不使用', 'goods'),
-            '1' => __('使用', 'goods'),
-        ),
-    ],
+//    [
+//        'cfg_code' => 'use_integral',
+//        'cfg_name' => __('是否使用积分', 'goods'),
+//        'cfg_desc' => '',
+//        'cfg_range' => array(
+//            '0' => __('不使用', 'goods'),
+//            '1' => __('使用', 'goods'),
+//        ),
+//    ],
 
-    [
-        'cfg_code' => 'use_bonus',
-        'cfg_name' => __('是否使用红包', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不使用', 'goods'),
-            '1' => __('使用', 'goods'),
-        ),
-    ],
+//    [
+//        'cfg_code' => 'use_bonus',
+//        'cfg_name' => __('是否使用红包', 'goods'),
+//        'cfg_desc' => '',
+//        'cfg_range' => array(
+//            '0' => __('不使用', 'goods'),
+//            '1' => __('使用', 'goods'),
+//        ),
+//    ],
 
-    [
-        'cfg_code' => 'use_surplus',
-        'cfg_name' => __('是否使用余额', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不使用', 'goods'),
-            '1' => __('使用', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'use_how_oos',
-        'cfg_name' => __('是否使用缺货处理', 'goods'),
-        'cfg_desc' => __('使用缺货处理时前台订单确认页面允许用户选择缺货时处理方法。', 'goods'),
-        'cfg_range' => array(
-            '0' => __('不使用', 'goods'),
-            '1' => __('使用', 'goods'),
-        ),
-    ],
+//    [
+//        'cfg_code' => 'use_surplus',
+//        'cfg_name' => __('是否使用余额', 'goods'),
+//        'cfg_desc' => '',
+//        'cfg_range' => array(
+//            '0' => __('不使用', 'goods'),
+//            '1' => __('使用', 'goods'),
+//        ),
+//    ],
+//
+//    [
+//        'cfg_code' => 'use_how_oos',
+//        'cfg_name' => __('是否使用缺货处理', 'goods'),
+//        'cfg_desc' => __('使用缺货处理时前台订单确认页面允许用户选择缺货时处理方法。', 'goods'),
+//        'cfg_range' => array(
+//            '0' => __('不使用', 'goods'),
+//            '1' => __('使用', 'goods'),
+//        ),
+//    ],
 
     [
         'cfg_code' => 'send_confirm_email',

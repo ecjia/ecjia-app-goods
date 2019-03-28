@@ -80,7 +80,7 @@ class GoodsSetting extends ComponentAbstract
 
     public function handle()
     {
-        $data= [
+        $data = [
             ['code' => 'review_goods', 'value' => '1', 'options' => ['type' => 'select', 'store_range' => '0,1']],
             ['code' => 'sn_prefix', 'value' => 'ECS', 'options' => ['type' => 'text']],
             ['code' => 'use_storage', 'value' => '1', 'options' => ['type' => 'select', 'store_range' => '1,0']],
