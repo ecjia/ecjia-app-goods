@@ -79,11 +79,11 @@ class GoodsPriceSetting extends ComponentAbstract
 
     public function handle()
     {
-        $data= [
+        $data = [
             ['code' => 'currency_format', 'value' => '￥%s', 'options' => ['type' => 'text']],
             ['code' => 'market_price_rate', 'value' => '1.2', 'options' => ['type' => 'text']],
             ['code' => 'price_format', 'value' => '0', 'options' => ['type' => 'select', 'store_range' => '0,1,2,3,4,5']],
-
+            ['code' => 'sku_price_mode', 'value' => 'goods_sku', 'options' => ['type' => 'select', 'store_range' => 'sku,goods_sku']],
         ];
 
         return $data;
@@ -94,23 +94,23 @@ class GoodsPriceSetting extends ComponentAbstract
     {
         $config = [
             [
-                'cfg_code' => 'currency_format',
-                'cfg_name' => __('货币格式', 'goods'),
-                'cfg_desc' => __('显示商品价格的格式，%s将被替换为相应的价格数字。', 'goods'),
+                'cfg_code'  => 'currency_format',
+                'cfg_name'  => __('货币格式', 'goods'),
+                'cfg_desc'  => __('显示商品价格的格式，%s将被替换为相应的价格数字。', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
-                'cfg_code' => 'market_price_rate',
-                'cfg_name' => __('市场价格比例', 'goods'),
-                'cfg_desc' => __('输入商品售价时将自动根据该比例计算市场价格', 'goods'),
+                'cfg_code'  => 'market_price_rate',
+                'cfg_name'  => __('市场价格比例', 'goods'),
+                'cfg_desc'  => __('输入商品售价时将自动根据该比例计算市场价格', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
-                'cfg_code' => 'price_format',
-                'cfg_name' => __('商品价格显示规则', 'goods'),
-                'cfg_desc' => '',
+                'cfg_code'  => 'price_format',
+                'cfg_name'  => __('商品价格显示规则', 'goods'),
+                'cfg_desc'  => '',
                 'cfg_range' => array(
                     '0' => __('不处理', 'goods'),
                     '1' => __('保留不为 0 的尾数', 'goods'),
@@ -118,6 +118,16 @@ class GoodsPriceSetting extends ComponentAbstract
                     '3' => __('不四舍五入，不保留小数', 'goods'),
                     '4' => __('先四舍五入，保留一位小数', 'goods'),
                     '5' => __('先四舍五入，不保留小数 ', 'goods'),
+                ),
+            ],
+
+            [
+                'cfg_code'  => 'sku_price_mode',
+                'cfg_name'  => __('商品SKU价格模式', 'goods'),
+                'cfg_desc'  => __('选择第一种方式的时候，设置促销活动会无效，比如促销价格等；会默认按商品价格来计算促销活动', 'goods'),
+                'cfg_range' => array(
+                    'sku'       => __('SKU价格（属性货品价格）', 'goods'),
+                    'goods_sku' => __('SKU价格（商品价格 + 属性货品价格）', 'goods'),
                 ),
             ],
 
