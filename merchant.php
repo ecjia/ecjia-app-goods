@@ -509,11 +509,11 @@ class merchant extends ecjia_merchant {
 		/* 处理商品数据 */
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
-		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
-		$is_promote 	= empty($promote_price) 			? 0 								: 1;
+//		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
+//		$is_promote 	= empty($promote_price) 			? 0 								: 1;
 
-		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
-		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
+//		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
+//		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
 		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
 
 		$is_best 		= !empty($_POST['is_best']) 		? 1 : 0;
@@ -549,9 +549,9 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(__('请输入商品名称', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
-		if (!empty($is_promote) && $promote_price > $shop_price) {
-			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+//		if (!empty($is_promote) && $promote_price > $shop_price) {
+//			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+//		}
 
 		/* 入库 */
 		$data = array(
@@ -563,10 +563,10 @@ class merchant extends ecjia_merchant {
 			'brand_id'              => $brand_id,
 			'shop_price'            => $shop_price,
 			'market_price'          => $market_price,
-			'is_promote'            => $is_promote,
-			'promote_price'         => $promote_price,
-			'promote_start_date'    => $promote_start_date,
-			'promote_end_date'      => $promote_end_date,
+//			'is_promote'            => $is_promote,
+//			'promote_price'         => $promote_price,
+//			'promote_start_date'    => $promote_start_date,
+//			'promote_end_date'      => $promote_end_date,
 			'keywords'              => $_POST['keywords'],
 			'goods_brief'           => $_POST['goods_brief'],
 			'seller_note'           => $_POST['seller_note'],
@@ -960,11 +960,11 @@ class merchant extends ecjia_merchant {
 		  	'brand_id'			  		=> $brand_id,
 		  	'shop_price'				=> $shop_price,
 		  	'market_price'		  		=> $market_price,
-		  	'is_promote'				=> $is_promote,
-		  	'promote_price'		 		=> $promote_price,
-		  	'promote_start_date'		=> $promote_start_date,
+//		  	'is_promote'				=> $is_promote,
+//		  	'promote_price'		 		=> $promote_price,
+//		  	'promote_start_date'		=> $promote_start_date,
 		  	'suppliers_id'		  		=> $suppliers_id,
-		  	'promote_end_date'	  		=> $promote_end_date,
+//		  	'promote_end_date'	  		=> $promote_end_date,
 		  	'is_real'			   		=> empty($code) ? '1' : '0',
 		  	'extension_code'			=> $code,
 		  	'keywords'			  		=> $_POST['keywords'],
