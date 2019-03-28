@@ -386,13 +386,13 @@
 
                                             <div class="form-group m_b0">
                                                 <div class="control-label col-lg-3 p_r5">
-                                                    <a target="_blank" class="btn btn-info" href="{RC_Uri::url('promotion/merchant/edit')}&id={$goods.goods_id}">查看促销</a>
+                                                    <a target="_blank" class="btn btn-info" href="{RC_Uri::url('promotion/merchant/edit')}&id={$goods.goods_id}">{t domain="goods"}查看促销{/t}</a>
                                                 </div>
                                             </div>
                                             {else}
                                             <div class="form-group m_b0">
                                                 <div class="control-label col-lg-3 p_r5">
-                                                    <a target="_blank" class="btn btn-info" href="{RC_Uri::url('promotion/merchant/add')}{if $goods.goods_id}&id={$goods.goods_id}{/if}">添加促销</a>
+                                                    <a target="_blank" class="btn btn-info" href="{RC_Uri::url('promotion/merchant/add')}{if $goods.goods_id}&id={$goods.goods_id}{/if}">{t domain="goods"}添加促销{/t}</a>
                                                 </div>
                                             </div>
                                             {/if}
