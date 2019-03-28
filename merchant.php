@@ -905,11 +905,11 @@ class merchant extends ecjia_merchant {
 		/* 处理商品数据 */
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
-		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
-		$is_promote 	= empty($_POST['is_promote']) 		? 0 								: 1;
-		
-		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
-		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
+//		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
+//		$is_promote 	= empty($_POST['is_promote']) 		? 0 								: 1;
+//
+//		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
+//		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
 		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
 
 		$is_best 		= isset($_POST['is_best']) 			? 1 : 0;
@@ -947,9 +947,9 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(__('请输入商品名称', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
-		if (!empty($is_promote) && $promote_price > $shop_price) {
-			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+//		if (!empty($is_promote) && $promote_price > $shop_price) {
+//			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+//		}
 
 		$data = array(
 		  	'goods_name'				=> rc_stripslashes($goods_name),
