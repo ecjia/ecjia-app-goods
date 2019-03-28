@@ -864,12 +864,12 @@ return array(
 //        'cfg_range' => '',
 //    ],
 
-    [
-        'cfg_code' => 'article_page_size',
-        'cfg_name' => __('文章分类页列表的数量', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
+//    [
+//        'cfg_code' => 'article_page_size',
+//        'cfg_name' => __('文章分类页列表的数量', 'goods'),
+//        'cfg_desc' => '',
+//        'cfg_range' => '',
+//    ],
 
     [
         'cfg_code' => 'page_style',
@@ -1178,12 +1178,12 @@ return array(
 //        'cfg_range' => '',
 //    ],
 
-    [
-        'cfg_code' => 'article_title_length',
-        'cfg_name' => __('文章标题的长度', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
+//    [
+//        'cfg_code' => 'article_title_length',
+//        'cfg_name' => __('文章标题的长度', 'goods'),
+//        'cfg_desc' => '',
+//        'cfg_range' => '',
+//    ],
 
     [
         'cfg_code' => 'timezone',
@@ -1313,15 +1313,15 @@ return array(
         ),
     ],
 
-    [
-        'cfg_code' => 'help_open',
-        'cfg_name' => __('用户帮助是否打开', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('关闭', 'goods'),
-            '1' => __('打开', 'goods'),
-        ),
-    ],
+//    [
+//        'cfg_code' => 'help_open',
+//        'cfg_name' => __('用户帮助是否打开', 'goods'),
+//        'cfg_desc' => '',
+//        'cfg_range' => array(
+//            '0' => __('关闭', 'goods'),
+//            '1' => __('打开', 'goods'),
+//        ),
+//    ],
 
     [
         'cfg_code' => 'company_name',
