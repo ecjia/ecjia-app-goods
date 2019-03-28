@@ -140,23 +140,6 @@ return array(
         ),
     ],
 
-//    [
-//        'cfg_code' => 'use_storage',
-//        'cfg_name' => __('是否启用库存管理', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('否', 'goods'),
-//            '1' => __('是', 'goods'),
-//        ),
-//    ],
-
-//    [
-//        'cfg_code' => 'market_price_rate',
-//        'cfg_name' => __('市场价格比例', 'goods'),
-//        'cfg_desc' => __('输入商品售价时将自动根据该比例计算市场价格', 'goods'),
-//        'cfg_range' => '',
-//    ],
-
     [
         'cfg_code' => 'rewrite',
         'cfg_name' => __('URL重写', 'goods'),
@@ -199,13 +182,6 @@ return array(
         ),
     ],
 
-//    [
-//        'cfg_code' => 'default_storage',
-//        'cfg_name' => __('默认库存', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
     [
         'cfg_code' => 'date_format',
         'cfg_name' => __('日期格式', 'goods'),
@@ -219,104 +195,6 @@ return array(
         'cfg_desc' => '',
         'cfg_range' => '',
     ],
-
-//    [
-//        'cfg_code' => 'currency_format',
-//        'cfg_name' => __('货币格式', 'goods'),
-//        'cfg_desc' => __('显示商品价格的格式，%s将被替换为相应的价格数字。', 'goods'),
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'thumb_width',
-//        'cfg_name' => __('缩略图宽度', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'thumb_height',
-//        'cfg_name' => __('缩略图高度', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'image_width',
-//        'cfg_name' => __('商品图片宽度', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'image_height',
-//        'cfg_name' => __('商品图片高度', 'goods'),
-//        'cfg_desc' => __('如果您的服务器支持GD，在您上传商品图片的时候将自动将图片缩小到指定的尺寸。', 'goods'),
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'best_number',
-//        'cfg_name' => __('精品推荐数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'new_number',
-//        'cfg_name' => __('新品推荐数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'hot_number',
-//        'cfg_name' => __('热销商品数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'promote_number',
-//        'cfg_name' => __('促销商品的数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'group_goods_number',
-//        'cfg_name' => __('团购商品的数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'top_number',
-//        'cfg_name' => __('销量排行数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'history_number',
-//        'cfg_name' => __('浏览历史数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-//
-//    [
-//        'cfg_code' => 'comments_number',
-//        'cfg_name' => __('评论数量', 'goods'),
-//        'cfg_desc' => __('显示在商品详情页的用户评论数量。', 'goods'),
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'bought_goods',
-//        'cfg_name' => __('相关商品数量', 'goods'),
-//        'cfg_desc' => __('显示多少个购买此商品的人还买过哪些商品', 'goods'),
-//        'cfg_range' => '',
-//    ],
 
     [
         'cfg_code' => 'article_number',
@@ -455,16 +333,6 @@ return array(
     ],
 
     [
-        'cfg_code' => 'can_invoice',
-        'cfg_name' => __('能否开发票', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不能', 'goods'),
-            '1' => __('能', 'goods'),
-        ),
-    ],
-
-    [
         'cfg_code' => 'user_notice',
         'cfg_name' => __('用户中心公告', 'goods'),
         'cfg_desc' => __('该信息将在用户中心欢迎页面显示', 'goods'),
@@ -497,26 +365,6 @@ return array(
             '1' => __('开启', 'goods'),
         ),
     ],
-
-//    [
-//        'cfg_code' => 'auto_generate_gallery',
-//        'cfg_name' => __('上传商品是否自动生成相册图', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('否', 'goods'),
-//            '1' => __('是', 'goods'),
-//        ),
-//    ],
-
-//    [
-//        'cfg_code' => 'retain_original_img',
-//        'cfg_name' => __('上传商品时是否保留原图', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('否', 'goods'),
-//            '1' => __('是', 'goods'),
-//        ),
-//    ],
 
     [
         'cfg_code' => 'member_email_validate',
@@ -558,16 +406,6 @@ return array(
         ),
     ],
 
-//    [
-//        'cfg_code' => 'review_goods',
-//        'cfg_name' => __('审核商家商品', 'goods'),
-//        'cfg_desc' => __('设置是否需要审核商家添加的商品，如果开启则所有商家添加的商品都需要审核之后才能显示', 'goods'),
-//        'cfg_range' => array(
-//            '0' => __('否', 'goods'),
-//            '1' => __('是', 'goods'),
-//        ),
-//    ],
-
     [
         'cfg_code' => 'store_identity_certification',
         'cfg_name' => __('商家强制认证', 'goods'),
@@ -577,60 +415,6 @@ return array(
             '1' => __('是', 'goods'),
         ),
     ],
-
-//    [
-//        'cfg_code' => 'use_package',
-//        'cfg_name' => __('是否使用包装', 'goods',
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'use_card',
-//        'cfg_name' => __('是否使用贺卡', 'goods',
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'use_integral',
-//        'cfg_name' => __('是否使用积分', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不使用', 'goods'),
-//            '1' => __('使用', 'goods'),
-//        ),
-//    ],
-
-//    [
-//        'cfg_code' => 'use_bonus',
-//        'cfg_name' => __('是否使用红包', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不使用', 'goods'),
-//            '1' => __('使用', 'goods'),
-//        ),
-//    ],
-
-//    [
-//        'cfg_code' => 'use_surplus',
-//        'cfg_name' => __('是否使用余额', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不使用', 'goods'),
-//            '1' => __('使用', 'goods'),
-//        ),
-//    ],
-//
-//    [
-//        'cfg_code' => 'use_how_oos',
-//        'cfg_name' => __('是否使用缺货处理', 'goods'),
-//        'cfg_desc' => __('使用缺货处理时前台订单确认页面允许用户选择缺货时处理方法。', 'goods'),
-//        'cfg_range' => array(
-//            '0' => __('不使用', 'goods'),
-//            '1' => __('使用', 'goods'),
-//        ),
-//    ],
 
     [
         'cfg_code' => 'send_confirm_email',
@@ -762,13 +546,6 @@ return array(
         ),
     ],
 
-//    [
-//        'cfg_code' => 'sn_prefix',
-//        'cfg_name' => __('商品货号前缀', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
     [
         'cfg_code' => 'close_comment',
         'cfg_name' => __('关闭网店的原因', 'goods'),
@@ -788,30 +565,6 @@ return array(
         'cfg_name' => __('ICP证书或ICP备案证书号', 'goods'),
         'cfg_desc' => '',
         'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'invoice_content',
-        'cfg_name' => __('发票内容', 'goods'),
-        'cfg_desc' => __('客户要求开发票时可以选择的内容。例如：办公用品。每一行代表一个选项。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'invoice_type',
-        'cfg_name' => __('发票类型及税率', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'stock_dec_time',
-        'cfg_name' => __('减库存的时机', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('发货时', 'goods'),
-            '1' => __('下订单时', 'goods'),
-        ),
     ],
 
     [
@@ -836,13 +589,6 @@ return array(
         ),
     ],
 
-//    [
-//        'cfg_code' => 'no_picture',
-//        'cfg_name' => __('商品的默认图片', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
     [
         'cfg_code' => 'stats_code',
         'cfg_name' => __('统计代码', 'goods'),
@@ -856,20 +602,6 @@ return array(
         'cfg_desc' => __('前台页面缓存的存活时间，以秒为单位。', 'goods'),
         'cfg_range' => '',
     ],
-
-//    [
-//        'cfg_code' => 'page_size',
-//        'cfg_name' => __('商品分类页列表的数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'article_page_size',
-//        'cfg_name' => __('文章分类页列表的数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
 
     [
         'cfg_code' => 'page_style',
@@ -913,27 +645,6 @@ return array(
         ),
     ],
 
-//    [
-//        'cfg_code' => 'goods_name_length',
-//        'cfg_name' => __('商品名称的长度', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'price_format',
-//        'cfg_name' => __('商品价格显示规则', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不处理', 'goods'),
-//            '1' => __('保留不为 0 的尾数', 'goods'),
-//            '2' => __('不四舍五入，保留一位小数', 'goods'),
-//            '3' => __('不四舍五入，不保留小数', 'goods'),
-//            '4' => __('先四舍五入，保留一位小数', 'goods'),
-//            '5' => __('先四舍五入，不保留小数 ', 'goods'),
-//        ),
-//    ],
-
     [
         'cfg_code' => 'register_points',
         'cfg_name' => __('会员注册赠送积分', 'goods'),
@@ -959,43 +670,6 @@ return array(
     ],
 
     [
-        'cfg_code' => 'anonymous_buy',
-        'cfg_name' => __('是否允许未登录用户购物', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不允许', 'goods'),
-            '1' => __('允许', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'min_goods_amount',
-        'cfg_name' => __('最小购物金额', 'goods'),
-        'cfg_desc' => __('达到此购物金额，才能提交订单。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'one_step_buy',
-        'cfg_name' => __('是否一步购物', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('否', 'goods'),
-            '1' => __('是', 'goods'),
-        ),
-    ],
-
-//    [
-//        'cfg_code' => 'show_goodssn',
-//        'cfg_name' => __('是否显示货号', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不显示', 'goods'),
-//            '1' => __('显示', 'goods'),
-//        ),
-//    ],
-
-    [
         'cfg_code' => 'show_brand',
         'cfg_name' => __('是否显示品牌', 'goods'),
         'cfg_desc' => '',
@@ -1004,46 +678,6 @@ return array(
             '1' => __('显示', 'goods'),
         ),
     ],
-
-//    [
-//        'cfg_code' => 'show_goodsweight',
-//        'cfg_name' => __('是否显示重量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不显示', 'goods'),
-//            '1' => __('显示', 'goods'),
-//        ),
-//    ],
-
-//    [
-//        'cfg_code' => 'show_goodsnumber',
-//        'cfg_name' => __('是否显示库存', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不显示', 'goods'),
-//            '1' => __('显示', 'goods'),
-//        ),
-//    ],
-
-//    [
-//        'cfg_code' => 'show_addtime',
-//        'cfg_name' => __('是否显示上架时间', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不显示', 'goods'),
-//            '1' => __('显示', 'goods'),
-//        ),
-//    ],
-
-//    [
-//        'cfg_code' => 'show_marketprice',
-//        'cfg_name' => __('是否显示市场价格', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('不显示', 'goods'),
-//            '1' => __('显示', 'goods'),
-//        ),
-//    ],
 
     [
         'cfg_code' => 'goodsattr_style',
@@ -1171,20 +805,6 @@ return array(
         ),
     ],
 
-//    [
-//        'cfg_code' => 'goods_gallery_number',
-//        'cfg_name' => __('商品详情页相册图片数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
-//    [
-//        'cfg_code' => 'article_title_length',
-//        'cfg_name' => __('文章标题的长度', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
     [
         'cfg_code' => 'timezone',
         'cfg_name' => __('默认时区', 'goods'),
@@ -1250,18 +870,6 @@ return array(
     ],
 
     [
-        'cfg_code' => 'cart_confirm',
-        'cfg_name' => __('购物车确定提示', 'goods'),
-        'cfg_desc' => __('允许您设置用户点击“加入购物车”后是否提示以及随后的动作。', 'goods'),
-        'cfg_range' => array(
-            '1' => __('提示用户，点击“确定”进购物车', 'goods'),
-            '2' => __('提示用户，点击“取消”进购物车', 'goods'),
-            '3' => __('直接进入购物车', 'goods'),
-            '4' => __('不提示并停留在当前页面', 'goods'),
-        ),
-    ],
-
-    [
         'cfg_code' => 'bgcolor',
         'cfg_name' => __('缩略图背景色', 'goods'),
         'cfg_desc' => __('颜色请以#FFFFFF格式填写', 'goods'),
@@ -1296,13 +904,6 @@ return array(
         'cfg_range' => '',
     ],
 
-//    [
-//        'cfg_code' => 'related_goods_number',
-//        'cfg_name' => __('关联商品显示数量', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => '',
-//    ],
-
     [
         'cfg_code' => 'visit_stats',
         'cfg_name' => __('站点访问统计', 'goods'),
@@ -1312,16 +913,6 @@ return array(
             '1' => __('开启', 'goods'),
         ),
     ],
-
-//    [
-//        'cfg_code' => 'help_open',
-//        'cfg_name' => __('用户帮助是否打开', 'goods'),
-//        'cfg_desc' => '',
-//        'cfg_range' => array(
-//            '0' => __('关闭', 'goods'),
-//            '1' => __('打开', 'goods'),
-//        ),
-//    ],
 
     [
         'cfg_code' => 'company_name',
@@ -1410,18 +1001,6 @@ return array(
             '1' => __('是', 'goods'),
         ),
     ],
-
-//    [
-//        'cfg_code' => 'recommend_order',
-//        'cfg_name' => __('推荐商品排序', 'goods'),
-//        'cfg_desc' => __('推荐排序适合少量推荐，随机显示大量推荐', 'goods'),
-//        'cfg_range' => array(
-//            '0' => __('推荐排序', 'goods'),
-//            '1' => __('随机显示', 'goods'),
-//        ),
-//    ],
-
-
 
     [
         'cfg_code' => 'wap',
