@@ -95,29 +95,11 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'lang',
-        'cfg_name' => __('系统语言', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_closed',
-        'cfg_name' => __('暂时关闭网站', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('否', 'goods'),
-            '1' => __('是', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'icp_file',
-        'cfg_name' => __('ICP 备案证书文件', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
+
+
+
 
     [
         'cfg_code' => 'watermark',
@@ -140,16 +122,7 @@ return array(
         ),
     ],
 
-    [
-        'cfg_code' => 'rewrite',
-        'cfg_name' => __('URL重写', 'goods'),
-        'cfg_desc' => __('URL重写是一种搜索引擎优化技术，可以将动态的地址模拟成静态的HTML文件。需要Apache的支持。', 'goods'),
-        'cfg_range' => array(
-            '0' => __('禁用', 'goods'),
-            '1' => __('简单重写', 'goods'),
-            '2' => __('复杂重写', 'goods'),
-        ),
-    ],
+
 
     [
         'cfg_code' => 'integral_name',
@@ -182,26 +155,9 @@ return array(
         ),
     ],
 
-    [
-        'cfg_code' => 'date_format',
-        'cfg_name' => __('日期格式', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'time_format',
-        'cfg_name' => __('时间格式', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'article_number',
-        'cfg_name' => __('最新文章显示数量', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
+
 
     [
         'cfg_code' => 'order_number',
@@ -210,19 +166,7 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'shop_name',
-        'cfg_name' => __('商店名称', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_title',
-        'cfg_name' => __('商店标题', 'goods'),
-        'cfg_desc' => __('商店的标题将显示在浏览器的标题栏', 'goods'),
-        'cfg_range' => '',
-    ],
 
     [
         'cfg_code' => 'shop_website',
@@ -231,106 +175,13 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'shop_desc',
-        'cfg_name' => __('商店描述', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_keywords',
-        'cfg_name' => __('商店关键字', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_country',
-        'cfg_name' => __('指定运营国家', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_province',
-        'cfg_name' => __('所在省份', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_city',
-        'cfg_name' => __('所在城市', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_address',
-        'cfg_name' => __('详细地址', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'licensed',
-        'cfg_name' => __('是否显示 Licensed', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('否', 'goods'),
-            '1' => __('是', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'qq',
-        'cfg_name' => __('客服QQ号码', 'goods'),
-        'cfg_desc' => __('如果您有多个客服的QQ号码，请在每个号码之间使用半角逗号（,）分隔。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'ww',
-        'cfg_name' => __('淘宝旺旺', 'goods'),
-        'cfg_desc' => __('如果您有多个客服的淘宝旺旺号码，请在每个号码之间使用半角逗号（,）分隔。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'skype',
-        'cfg_name' => __('Skype', 'goods'),
-        'cfg_desc' => __('如果您有多个客服的Skype号码，请在每个号码之间使用半角逗号（,）分隔。提示：你需要在你的Skype隐私设置中启用状态显示功能', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'ym',
-        'cfg_name' => __('微信号码', 'goods'),
-        'cfg_desc' => __('如果您有多个客服的微信码，请在每个号码之间使用半角逗号（,）分隔。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'msn',
-        'cfg_name' => __('微博号码', 'goods'),
-        'cfg_desc' => __('如果您有多个客服的微博号码，请在每个号码之间使用半角逗号（,）分隔。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'service_email',
-        'cfg_name' => __('客服邮件地址', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'service_phone',
-        'cfg_name' => __('客服电话', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
     [
         'cfg_code' => 'user_notice',
@@ -339,12 +190,7 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'shop_notice',
-        'cfg_name' => __('商店公告', 'goods'),
-        'cfg_desc' => __('以上内容将显示在首页商店公告中,注意控制公告内容长度不要超过公告显示区域大小。', 'goods'),
-        'cfg_range' => '',
-    ],
+
 
     [
         'cfg_code' => 'shop_reg_closed',
@@ -447,12 +293,7 @@ return array(
         ),
     ],
 
-    [
-        'cfg_code' => 'close_comment',
-        'cfg_name' => __('关闭网店的原因', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
+
 
     [
         'cfg_code' => 'watermark_alpha',
@@ -461,48 +302,13 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'icp_number',
-        'cfg_name' => __('ICP证书或ICP备案证书号', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'comment_check',
-        'cfg_name' => __('用户评论是否需要审核', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不需要', 'goods'),
-            '1' => __('需要', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'comment_factor',
-        'cfg_name' => __('商品评论的条件', 'goods'),
-        'cfg_desc' => __('选取较高的评论条件可以有效的减少垃圾评论的产生。只有用户订单完成后才认为该用户有购买行为', 'goods'),
-        'cfg_range' => array(
-            '0' => __('所有用户', 'goods'),
-            '1' => __('仅登录用户', 'goods'),
-            '2' => __('有过一次以上购买行为用户', 'goods'),
-            '3' => __('仅购买过该商品用户', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'stats_code',
-        'cfg_name' => __('统计代码', 'goods'),
-        'cfg_desc' => __('您可以将其他访问统计服务商提供的代码添加到每一个页面。', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'cache_time',
-        'cfg_name' => __('缓存存活时间（秒）', 'goods'),
-        'cfg_desc' => __('前台页面缓存的存活时间，以秒为单位。', 'goods'),
-        'cfg_range' => '',
-    ],
+
+
+
 
     [
         'cfg_code' => 'page_style',
@@ -553,22 +359,9 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'shop_logo',
-        'cfg_name' => __('商店 Logo', 'goods'),
-        'cfg_desc' => __('请在上传前将图片的文件名命名为logo.gif', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'enable_gzip',
-        'cfg_name' => __('是否启用Gzip模式', 'goods'),
-        'cfg_desc' => __('启用Gzip模式可压缩发送页面大小，加快网页传输。需要php支持Gzip。如果已经用Apache等对页面进行Gzip压缩，请禁止该功能。', 'goods'),
-        'cfg_range' => array(
-            '0' => __('禁用', 'goods'),
-            '1' => __('启用', 'goods'),
-        ),
-    ],
+
+
 
     [
         'cfg_code' => 'show_brand',
@@ -676,62 +469,9 @@ return array(
         ),
     ],
 
-    [
-        'cfg_code' => 'timezone',
-        'cfg_name' => __('默认时区', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '-12' 	=> __('(GMT -12:00) 国际日期变更线西', 'goods'),
-            '-11' 	=> __('(GMT -11:00) 中途岛萨摩亚群岛', 'goods'),
-            '-10' 	=> __('(GMT -10:00) 夏威夷', 'goods'),
-            '-9'	=> __('(GMT -09:00) 阿拉斯加', 'goods'),
-            '-8' 	=> __('(GMT -08:00) 太平洋时间 （美国和加拿大）蒂华纳', 'goods'),
-            '-7' 	=> __('(GMT -07:00) 山地时间 （美国和加拿大）', 'goods'),
-            '-6' 	=> __('(GMT -06:00) 中部时间 （美国和加拿大）墨西哥城', 'goods'),
-            '-5' 	=> __('(GMT -05:00) 东部时间（美国和加拿大）, 波哥大, 利马, 基多', 'goods'),
-            '-4' 	=> __('(GMT -04:00) 大西洋时间（加拿大），加拉加斯，拉巴斯', 'goods'),
-            '-3.5' 	=> __('(GMT -03:30) 纽芬兰', 'goods'),
-            '-3' 	=> __('(GMT -03:00) 布拉西拉，布宜诺斯艾利斯，乔治敦，福克兰群岛', 'goods'),
-            '-2' 	=> __('(GMT -02:00) 大西洋中部，阿森松岛，圣赫勒拿岛', 'goods'),
-            '-1' 	=> __('(GMT -01:00) 亚速尔群岛，佛得角群岛', 'goods'),
-            '0' 	=> __('(GMT) 卡萨布兰卡，都柏林，爱丁堡，伦敦，里斯本，蒙罗维亚', 'goods'),
-            '1' 	=> __('(GMT +01:00) 阿姆斯特丹，柏林，布鲁塞尔，马德里，巴黎，罗马', 'goods'),
-            '2' 	=> __('(GMT +02:00) 开罗，赫尔辛基，加里宁格勒，南非', 'goods'),
-            '3' 	=> __('(GMT +03:00) 巴格达，利雅得，莫斯科，内罗毕', 'goods'),
-            '3.5' 	=> __('(GMT +03:30) 德黑兰', 'goods'),
-            '4' 	=> __('(GMT +04:00) 阿布扎比，巴库，马斯喀特，第比利斯', 'goods'),
-            '4.5' 	=> __('(GMT +04:30) 喀布尔', 'goods'),
-            '5' 	=> __('(GMT +05:00) 叶卡捷琳堡，伊斯兰堡，卡拉奇，塔什干', 'goods'),
-            '5.5' 	=> __('(GMT +05:30) 孟买，加尔各答，马德拉斯，新德里', 'goods'),
-            '5.75' 	=> __('(GMT +05:45) 加德满都', 'goods'),
-            '6' 	=> __('(GMT +06:00) 阿拉木图，科伦坡，达卡，新西伯利亚', 'goods'),
-            '6.5' 	=> __('(GMT +06:30) 仰光', 'goods'),
-            '7' 	=> __('(GMT +07:00) 曼谷，河内，雅加达', 'goods'),
-            '8' 	=> __('(GMT +08:00) 北京，香港，珀斯，新加坡，台北', 'goods'),
-            '9' 	=> __('(GMT +09:00) 大阪，札幌，首尔，东京，雅库茨克', 'goods'),
-            '9.5' 	=> __('(GMT +09:30) 阿德莱德，达尔文', 'goods'),
-            '10' 	=> __('(GMT +10:00) 堪培拉，关岛，墨尔本，悉尼，符拉迪沃斯托克', 'goods'),
-            '11' 	=> __('(GMT +11:00) 马加丹，新喀里多尼亚，所罗门群岛', 'goods'),
-            '12' 	=> __('(GMT +12:00) 奥克兰，惠灵顿，斐济，马歇尔岛', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'upload_size_limit',
-        'cfg_name' => __('附件上传大小', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '-1' 	=> __('服务默认设置', 'goods'),
-            '0' 	=> __('0KB', 'goods'),
-            '64' 	=> __('64KB', 'goods'),
-            '128' 	=> __('128KB', 'goods'),
-            '256' 	=> __('256KB', 'goods'),
-            '512' 	=> __('512KB', 'goods'),
-            '1024' 	=> __('1MB', 'goods'),
-            '2048' 	=> __('2MB', 'goods'),
-            '4096' 	=> __('4MB', 'goods'),
-        ),
-    ],
+
+
 
     [
         'cfg_code' => 'search_keywords',
@@ -747,64 +487,13 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'name_of_region_1',
-        'cfg_name' => __('一级配送区域名称', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'name_of_region_2',
-        'cfg_name' => __('二级配送区域名称', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'name_of_region_3',
-        'cfg_name' => __('三级配送区域名称', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'name_of_region_4',
-        'cfg_name' => __('四级配送区域名称', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'visit_stats',
-        'cfg_name' => __('站点访问统计', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('关闭', 'goods'),
-            '1' => __('开启', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'company_name',
-        'cfg_name' => __('公司名称', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_weibo_url',
-        'cfg_name' => __('微博地址', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_wechat_qrcode',
-        'cfg_name' => __('微信二维码', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
     //与底部语言合并
 
