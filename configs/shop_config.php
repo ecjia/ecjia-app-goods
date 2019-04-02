@@ -101,26 +101,7 @@ return array(
 
 
 
-    [
-        'cfg_code' => 'watermark',
-        'cfg_name' => __('水印文件', 'goods'),
-        'cfg_desc' => __('水印文件须为gif格式才可支持透明度设置。', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'watermark_place',
-        'cfg_name' => __('水印位置', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('无', 'goods'),
-            '1' => __('左上', 'goods'),
-            '2' => __('右上', 'goods'),
-            '3' => __('居中', 'goods'),
-            '4' => __('左下', 'goods'),
-            '5' => __('右下', 'goods'),
-        ),
-    ],
 
 
 
@@ -292,21 +273,6 @@ return array(
             '1' => __('必须填写备注', 'goods'),
         ),
     ],
-
-
-
-    [
-        'cfg_code' => 'watermark_alpha',
-        'cfg_name' => __('水印透明度', 'goods'),
-        'cfg_desc' => __('水印的透明度，可选值为0-100。当设置为100时则为不透明。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-
-
-
-
-
 
 
 
