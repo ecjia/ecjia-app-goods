@@ -16,7 +16,15 @@ class GoodsKeywords
 
     const WHERE_OR = 'OR';
 
+    /**
+     * @var array
+     */
     protected $keyword = [];
+
+    /**
+     * @var string
+     */
+    protected $keyword_input;
 
     protected $operator = self::WHERE_AND;
 
@@ -28,9 +36,12 @@ class GoodsKeywords
     {
         if (is_array($keyword)) {
             $this->keyword = $keyword;
+            $this->operator = self::WHERE_OR;
+            $this->keyword_input = implode(' ', $keyword);
         }
         else {
             $this->keyword = $this->participle($keyword);
+            $this->keyword_input = $keyword;
         }
 
     }
@@ -53,14 +64,14 @@ class GoodsKeywords
             $this->operator = self::WHERE_OR;
         }
         elseif (stristr($keyword, ' + ') !== false) {
-            /* 检查关键字中是否有加号，如果存在就是或 */
+            /* 检查关键字中是否有加号，如果存在就是并 */
             $keywords = explode('+', $keyword);
-            $this->operator = self::WHERE_OR;
+            $this->operator = self::WHERE_AND;
         }
         elseif (stristr($keyword, ' ') !== false) {
-            /* 检查关键字中是否有空格，如果存在就是并 */
+            /* 检查关键字中是否有空格，如果存在就是或 */
             $keywords = explode(' ', $keyword);
-            $this->operator = self::WHERE_AND;
+            $this->operator = self::WHERE_OR;
         }
         else {
             /* 检查关键字中是否有空格，如果存在就是并 */
@@ -79,6 +90,8 @@ class GoodsKeywords
             $query = function ($query) {
 
                 collect($this->keyword)->each(function($item, $key) use ($query) {
+
+                    $item = trim($item);
 
                     $subQuery =  function ($query) use ($item) {
                         $query->where('goods_name', 'like', "%{$item}%")
