@@ -99,9 +99,15 @@ class GoodsKeywords
                             ->orWhere('keywords', 'like', "%{$item}%");
                     };
 
-                    $query->orWhere($subQuery);
+                    if ($key === 0) {
+                        $query->where($subQuery);
+                    } else {
+                        $query->orWhere($subQuery);
+                    }
+
                 });
 
+                return $query;
             };
 
         }
@@ -110,6 +116,8 @@ class GoodsKeywords
             $query = function ($query) {
 
                 collect($this->keyword)->each(function($item, $key) use ($query) {
+
+                    $item = trim($item);
 
                     $subQuery =  function ($query) use ($item) {
                         $query->where('goods_name', 'like', "%{$item}%")
@@ -120,6 +128,7 @@ class GoodsKeywords
                     $query->where($subQuery);
                 });
 
+                return $query;
             };
         }
 

@@ -8,14 +8,25 @@
 
 namespace Ecjia\App\Goods\GoodsSearch;
 
-
-
 use Ecjia\App\Goods\Models\GoodsModel;
 use Royalcms\Component\Database\Eloquent\Builder;
 use Royalcms\Component\Http\Request;
 
 class GoodsSearch
 {
+
+    public static function test()
+    {
+
+        $request = Request::create('', 'GET', [
+            'store_id' => 58,
+            'keywords' => '水果',
+//            'keywords' => ['水果', '苹果', '柚子'],
+//            'keywords' => '水果 AND 苹果 AND 柚子',
+        ]);
+
+        return static::apply($request);
+    }
 
 
     public static function apply(Request $filters)
