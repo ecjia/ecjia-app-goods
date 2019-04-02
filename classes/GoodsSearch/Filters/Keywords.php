@@ -10,6 +10,7 @@ namespace Ecjia\App\Goods\GoodsSearch\Filters;
 
 
 use Ecjia\App\Goods\GoodsSearch\FilterInterface;
+use Ecjia\App\Goods\GoodsSearch\GoodsKeywords;
 use Royalcms\Component\Database\Eloquent\Builder;
 use goods_list;
 
@@ -38,12 +39,16 @@ class Keywords implements FilterInterface
 		//}
 
     	//$value=$filter['keywords']
-    	\RC_Loader::load_app_class('goods_list', 'goods', false);
-    	if (isset(goods_list::$keywords_where['keywords']) && !empty(goods_list::$keywords_where['keywords']) && isset($filter['keywords']) && !empty($value)) {
-    		//$where[] = self::$keywords_where['keywords'];
-    		$where_keywords = goods_list::$keywords_where['keywords'];
-    		return $builder->whereRaw($where_keywords);
-    	}
+//    	\RC_Loader::load_app_class('goods_list', 'goods', false);
+//    	if (isset(goods_list::$keywords_where['keywords']) && !empty(goods_list::$keywords_where['keywords']) && isset($filter['keywords']) && !empty($value)) {
+//    		//$where[] = self::$keywords_where['keywords'];
+//    		$where_keywords = goods_list::$keywords_where['keywords'];
+//    		return $builder->whereRaw($where_keywords);
+//    	}
+
+        $query = (new GoodsKeywords($value))->buildQuery();
+
+        return $query($builder);
 		
     }
 
