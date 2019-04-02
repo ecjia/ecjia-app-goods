@@ -29,8 +29,7 @@ class GoodsUndeleted implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-    	$dbview->where(RC_DB::raw('g.is_delete'), 0);
+    	return $builder->where('is_delete', $value);//$value=0
     }
 
 }

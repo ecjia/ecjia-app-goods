@@ -30,10 +30,12 @@ class ShopPriceMoreThan implements FilterInterface
     public static function apply(Builder $builder, $value)
     {
     	//return $builder->where('city', $value);
-    	if (isset($filter['min']) && $filter['min'] > 0) {
-			//$where[] = "shop_price >= ".$filter['min'];
-			$dbview->where(RC_DB::raw('g.shop_price'), '>=', $filter['min']);
-		}
+//     	if (isset($filter['min']) && $filter['min'] > 0) {
+// 			$dbview->where(RC_DB::raw('g.shop_price'), '>=', $filter['min']);
+// 		}
+    	if ($value && $value > 0) {
+    		return $builder->where('shop_price', '>=', $value);
+    	}
     }
 
 }

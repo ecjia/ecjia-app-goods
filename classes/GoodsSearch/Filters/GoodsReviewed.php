@@ -29,8 +29,7 @@ class GoodsReviewed implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-    	$dbview->where(RC_DB::Raw('g.review_status'), '>', 2);
+    	return $builder->where('review_status', '>', $value);//$value=2
     }
 
 }

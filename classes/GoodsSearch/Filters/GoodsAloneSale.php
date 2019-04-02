@@ -29,8 +29,7 @@ class GoodsAloneSale implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-    	$dbview->where(RC_DB::raw('g.is_alone_sale'), 1);
+    	return $builder->where('is_alone_sale', $value);
     }
 
 }
