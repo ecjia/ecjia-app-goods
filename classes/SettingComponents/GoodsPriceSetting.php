@@ -64,17 +64,10 @@ class GoodsPriceSetting extends ComponentAbstract
      */
     protected $code = 'goods_price';
 
-    /**
-     * 名称
-     * @var string
-     */
-    protected $name = '商品显示设置';
-
-    /**
-     * 描述
-     * @var string
-     */
-    protected $description = '';
+    public function __construct()
+    {
+        $this->name = __('商品价格设置', 'goods');
+    }
 
 
     public function handle()

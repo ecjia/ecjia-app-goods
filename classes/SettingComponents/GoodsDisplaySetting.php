@@ -65,25 +65,16 @@ class GoodsDisplaySetting extends ComponentAbstract
      */
     protected $code = 'goods_display';
 
-    /**
-     * 名称
-     * @var string
-     */
-    protected $name = '商品显示设置';
-
-    /**
-     * 描述
-     * @var string
-     */
-    protected $description = '';
-
+    public function __construct()
+    {
+        $this->name = __('商品显示设置', 'goods');
+    }
 
     public function handle()
     {
         $data = [
             ['code' => 'page_size', 'value' => '20', 'options' => ['type' => 'text']],
             ['code' => 'bought_goods', 'value' => '15', 'options' => ['type' => 'text']],
-            ['code' => 'related_goods_number', 'value' => '5', 'options' => ['type' => 'text']],
             ['code' => 'goods_gallery_number', 'value' => '5', 'options' => ['type' => 'text']],
             ['code' => 'recommend_order', 'value' => '0', 'options' => ['type' => 'select', 'store_range' => '0,1']],
             ['code' => 'show_goodssn', 'value' => '0', 'options' => ['type' => 'select', 'store_range' => '1,0']],
@@ -102,6 +93,8 @@ class GoodsDisplaySetting extends ComponentAbstract
             ['code' => 'history_number', 'value' => '', 'options' => ['type' => 'text']],
             ['code' => 'comments_number', 'value' => '', 'options' => ['type' => 'text']],
 
+            ['code' => 'attr_related_number', 'value' => '5', 'options' => ['type' => 'text']],
+            ['code' => 'related_goods_number', 'value' => '5', 'options' => ['type' => 'text']],
 
 
         ];
@@ -266,6 +259,14 @@ class GoodsDisplaySetting extends ComponentAbstract
                 'cfg_desc' => __('显示在商品详情页的用户评论数量。', 'goods'),
                 'cfg_range' => '',
             ],
+
+            [
+                'cfg_code' => 'attr_related_number',
+                'cfg_name' => __('属性关联的商品数量', 'goods'),
+                'cfg_desc' => __('在商品详情页面显示多少个属性关联的商品。', 'goods'),
+                'cfg_range' => '',
+            ],
+
 
         ];
 

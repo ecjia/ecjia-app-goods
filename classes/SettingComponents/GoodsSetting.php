@@ -65,17 +65,11 @@ class GoodsSetting extends ComponentAbstract
      */
     protected $code = 'goods';
 
-    /**
-     * 名称
-     * @var string
-     */
-    protected $name = '商品显示设置';
 
-    /**
-     * 描述
-     * @var string
-     */
-    protected $description = '';
+    public function __construct()
+    {
+        $this->name = __('商品设置', 'goods');
+    }
 
 
     public function handle()
@@ -92,8 +86,16 @@ class GoodsSetting extends ComponentAbstract
             ['code' => 'image_height', 'value' => '1200', 'options' => ['type' => 'text']],
             ['code' => 'thumb_width', 'value' => '240', 'options' => ['type' => 'text']],
             ['code' => 'thumb_height', 'value' => '240', 'options' => ['type' => 'text']],
+            ['code' => 'bgcolor', 'value' => '#FFFFFF', 'options' => ['type' => 'text']],
             ['code' => 'goods_name_length', 'value' => '100', 'options' => ['type' => 'text']],
 
+
+            //废弃配置项
+//            ['code' => 'page_style', 'value' => '1', 'options' => ['type' => 'select', 'store_range' => '0,1']],
+//            ['code' => 'sort_order_type', 'value' => '0', 'options' => ['type' => 'select', 'store_range' => '0,1,2']],
+//            ['code' => 'sort_order_method', 'value' => '0', 'options' => ['type' => 'select', 'store_range' => '0,1']],
+//            ['code' => 'show_order_type', 'value' => '1', 'options' => ['type' => 'select', 'store_range' => '0,1,2']],
+//            ['code' => 'top10_time', 'value' => '0', 'options' => ['type' => 'select', 'store_range' => '0,1,2,3,4']],
 
         ];
 
@@ -194,6 +196,13 @@ class GoodsSetting extends ComponentAbstract
             ],
 
             [
+                'cfg_code' => 'bgcolor',
+                'cfg_name' => __('缩略图背景色', 'goods'),
+                'cfg_desc' => __('颜色请以#FFFFFF格式填写', 'goods'),
+                'cfg_range' => '',
+            ],
+
+            [
                 'cfg_code' => 'goods_name_length',
                 'cfg_name' => __('商品名称的长度', 'goods'),
                 'cfg_desc' => '',
@@ -202,11 +211,78 @@ class GoodsSetting extends ComponentAbstract
 
 
 
+
+            //废弃配置项
+            [
+                'cfg_code' => 'page_style',
+                'cfg_name' => __('分页样式', 'goods'),
+                'cfg_desc' => '',
+                'cfg_range' => array(
+                    '0' => __('默认经典', 'goods'),
+                    '1' => __('流行页码', 'goods'),
+                ),
+            ],
+
+            [
+                'cfg_code' => 'sort_order_type',
+                'cfg_name' => __('商品分类页默认排序类型', 'goods'),
+                'cfg_desc' => '',
+                'cfg_range' => array(
+                    '0' => __('按上架时间', 'goods'),
+                    '1' => __('按商品价格', 'goods'),
+                    '2' => __('按最后更新时间', 'goods'),
+                ),
+            ],
+
+            [
+                'cfg_code' => 'sort_order_method',
+                'cfg_name' => __('商品分类页默认排序方式', 'goods'),
+                'cfg_desc' => '',
+                'cfg_range' => array(
+                    '0' => __('降序排列', 'goods'),
+                    '1' => __('升序排列', 'goods'),
+                ),
+            ],
+
+            [
+                'cfg_code' => 'show_order_type',
+                'cfg_name' => __('商品分类页默认显示方式', 'goods'),
+                'cfg_desc' => '',
+                'cfg_range' => array(
+                    '0' => __('列表显示', 'goods'),
+                    '1' => __('表格显示', 'goods'),
+                    '2' => __('文本显示', 'goods'),
+                ),
+            ],
+
+            [
+                'cfg_code' => 'goodsattr_style',
+                'cfg_name' => __('商品属性显示样式', 'goods'),
+                'cfg_desc' => '',
+                'cfg_range' => array(
+                    '0' => __('下拉列表', 'goods'),
+                    '1' => __('单选按钮', 'goods'),
+                ),
+            ],
+
+            [
+                'cfg_code' => 'top10_time',
+                'cfg_name' => __('排行统计的时间', 'goods'),
+                'cfg_desc' => '',
+                'cfg_range' => array(
+                    '0' => __('所有', 'goods'),
+                    '1' => __('一年', 'goods'),
+                    '2' => __('半年', 'goods'),
+                    '3' => __('三个月', 'goods'),
+                    '4' => __('一个月', 'goods'),
+                ),
+            ],
+
+
         ];
 
         return $config;
     }
-
 
 
 }

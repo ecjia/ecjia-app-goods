@@ -105,36 +105,10 @@ return array(
 
 
 
-    [
-        'cfg_code' => 'integral_name',
-        'cfg_name' => __('消费积分名称', 'goods'),
-        'cfg_desc' => __('您可以将消费积分重新命名。例如：烧币<br>消费积分功能本名叫“积分”，未填写直接显示本名，只影响到前台用户端的显示，不会对后台功能名称作影响', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'integral_scale',
-        'cfg_name' => __('积分换算比例', 'goods'),
-        'cfg_desc' => __('每100积分可抵多少元现金', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'integral_percent',
-        'cfg_name' => __('积分支付比例', 'goods'),
-        'cfg_desc' => __('每100元商品最多可以使用多少元积分', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'enable_order_check',
-        'cfg_name' => __('是否开启新订单提醒', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('否', 'goods'),
-            '1' => __('是', 'goods'),
-        ),
-    ],
+
 
 
 
@@ -164,54 +138,17 @@ return array(
 
 
 
-    [
-        'cfg_code' => 'user_notice',
-        'cfg_name' => __('用户中心公告', 'goods'),
-        'cfg_desc' => __('该信息将在用户中心欢迎页面显示', 'goods'),
-        'cfg_range' => '',
-    ],
 
 
 
-    [
-        'cfg_code' => 'shop_reg_closed',
-        'cfg_name' => __('是否关闭注册', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('否', 'goods'),
-            '1' => __('是', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'send_mail_on',
-        'cfg_name' => __('是否开启自动发送邮件', 'goods'),
-        'cfg_desc' => __('启用该选项登录后台时，会自动发送邮件队列中尚未发送的邮件', 'goods'),
-        'cfg_range' => array(
-            '0' => __('关闭', 'goods'),
-            '1' => __('开启', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'member_email_validate',
-        'cfg_name' => __('是否开启会员邮件验证', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('关闭', 'goods'),
-            '1' => __('开启', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'send_verify_email',
-        'cfg_name' => __('用户注册时自动发送验证邮件', 'goods'),
-        'cfg_desc' => __('“是否开启会员邮件验证”设为开启时才可使用此功能', 'goods'),
-        'cfg_range' => array(
-            '0' => __('关闭', 'goods'),
-            '1' => __('开启', 'goods'),
-        ),
-    ],
+
+
+
+
+
 
     [
         'cfg_code' => 'message_board',
@@ -233,25 +170,8 @@ return array(
         ),
     ],
 
-    [
-        'cfg_code' => 'store_identity_certification',
-        'cfg_name' => __('商家强制认证', 'goods'),
-        'cfg_desc' => __('设置是否需要认证商家资质，如果开启则认证通过后的商家才能开店和显示', 'goods'),
-        'cfg_range' => array(
-            '0' => __('否', 'goods'),
-            '1' => __('是', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'order_ship_note',
-        'cfg_name' => __('设置订单为“已发货”时', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('无需填写备注', 'goods'),
-            '1' => __('必须填写备注', 'goods'),
-        ),
-    ],
+
 
     [
         'cfg_code' => 'when_dec_storage',
@@ -264,112 +184,14 @@ return array(
     ],
 
 
-    [
-        'cfg_code' => 'order_cancel_note',
-        'cfg_name' => __('取消订单时', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('无需填写备注', 'goods'),
-            '1' => __('必须填写备注', 'goods'),
-        ),
-    ],
-
-
-
-    [
-        'cfg_code' => 'page_style',
-        'cfg_name' => __('分页样式', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('默认经典', 'goods'),
-            '1' => __('流行页码', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'sort_order_type',
-        'cfg_name' => __('商品分类页默认排序类型', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('按上架时间', 'goods'),
-            '1' => __('按商品价格', 'goods'),
-            '2' => __('按最后更新时间', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'sort_order_method',
-        'cfg_name' => __('商品分类页默认排序方式', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('降序排列', 'goods'),
-            '1' => __('升序排列', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'show_order_type',
-        'cfg_name' => __('商品分类页默认显示方式', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('列表显示', 'goods'),
-            '1' => __('表格显示', 'goods'),
-            '2' => __('文本显示', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'register_points',
-        'cfg_name' => __('会员注册赠送积分', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
 
 
 
 
-    [
-        'cfg_code' => 'show_brand',
-        'cfg_name' => __('是否显示品牌', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不显示', 'goods'),
-            '1' => __('显示', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'goodsattr_style',
-        'cfg_name' => __('商品属性显示样式', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('下拉列表', 'goods'),
-            '1' => __('单选按钮', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'test_mail_address',
-        'cfg_name' => __('邮件地址', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'send',
-        'cfg_name' => __('发送测试邮件', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
 
-    [
-        'cfg_code' => 'email_content',
-        'cfg_name' => __('您好！这是一封检测邮件服务器设置的测试邮件。收到此邮件，意味着您的邮件服务器设置正确！您可以进行其它邮件发送的操作了！', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
+
 
     [
         'cfg_code' => 'sms',
@@ -378,80 +200,23 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'sms_shop_mobile',
-        'cfg_name' => __('商家的手机号码', 'goods'),
-        'cfg_desc' => __('请先注册手机短信服务再填写手机号码', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'sms_order_placed',
-        'cfg_name' => __('客户下订单时是否给商家发短信', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不发短信', 'goods'),
-            '1' => __('发短信', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'sms_order_payed',
-        'cfg_name' => __('客户付款时是否给商家发短信', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不发短信', 'goods'),
-            '1' => __('发短信', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'sms_order_shipped',
-        'cfg_name' => __('商家发货时是否给客户发短信', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('不发短信', 'goods'),
-            '1' => __('发短信', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'attr_related_number',
-        'cfg_name' => __('属性关联的商品数量', 'goods'),
-        'cfg_desc' => __('在商品详情页面显示多少个属性关联的商品。', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'top10_time',
-        'cfg_name' => __('排行统计的时间', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('所有', 'goods'),
-            '1' => __('一年', 'goods'),
-            '2' => __('半年', 'goods'),
-            '3' => __('三个月', 'goods'),
-            '4' => __('一个月', 'goods'),
-        ),
-    ],
 
 
 
 
 
-    [
-        'cfg_code' => 'search_keywords',
-        'cfg_name' => __('首页搜索的关键字', 'goods'),
-        'cfg_desc' => __('首页显示的搜索关键字,请用半角逗号(,)分隔多个关键字', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'bgcolor',
-        'cfg_name' => __('缩略图背景色', 'goods'),
-        'cfg_desc' => __('颜色请以#FFFFFF格式填写', 'goods'),
-        'cfg_range' => '',
-    ],
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -463,70 +228,7 @@ return array(
 
     //与底部语言合并
 
-    [
-        'cfg_code' => 'mail_service',
-        'cfg_name' => __('邮件服务', 'goods'),
-        'cfg_desc' => __('如果您选择了采用服务器内置的 Mail 服务，您不需要填写下面的内容。', 'goods'),
-        'cfg_range' => array(
-            '0' => __('采用服务器内置的 Mail 服务', 'goods'),
-            '1' => __('采用其他的 SMTP 服务', 'goods'),
-        ),    ],
 
-    [
-        'cfg_code' => 'smtp_host',
-        'cfg_name' => __('发送邮件服务器地址(SMTP)', 'goods'),
-        'cfg_desc' => __('邮件服务器主机地址。如果本机可以发送邮件则设置为localhost', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'smtp_port',
-        'cfg_name' => __('服务器端口', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'smtp_user',
-        'cfg_name' => __('邮件发送帐号', 'goods'),
-        'cfg_desc' => __('发送邮件所需的认证帐号，如果没有就为空着', 'goods'),
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'smtp_pass',
-        'cfg_name' => __('帐号密码', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'smtp_mail',
-        'cfg_name' => __('邮件回复地址', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
-
-    [
-        'cfg_code' => 'mail_charset',
-        'cfg_name' => __('邮件编码', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            'UTF8' => __('国际化编码（utf8）', 'goods'),
-            'GB2312' => __('简体中文', 'goods'),
-            'BIG5' => __('繁体中文', 'goods'),
-        ),
-    ],
-
-    [
-        'cfg_code' => 'smtp_ssl',
-        'cfg_name' => __('邮件服务器是否要求加密连接(SSL)', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => array(
-            '0' => __('否', 'goods'),
-            '1' => __('是', 'goods'),
-        ),
-    ],
 
     [
         'cfg_code' => 'wap',
@@ -535,95 +237,19 @@ return array(
         'cfg_range' => '',
     ],
 
-    [
-        'cfg_code' => 'wap_config',
-        'cfg_name' => __('是否使用H5应用功能', 'goods'),
-        'cfg_desc' => __('此功能不仅可以在APP中内嵌使用，还可以在微信公众号中作为微信商城使用。', 'goods'),
-        'cfg_range' => array(
-            '0' => __('关闭', 'goods'),
-            '1' => __('开启', 'goods'),
-        ),
-    ],
 
-    [
-        'cfg_code' => 'map_qq_referer',
-        'cfg_name' => __('腾讯地图应用名称', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'map_qq_key',
-        'cfg_name' => __('腾讯地图KEY', 'goods'),
-        'cfg_desc' => __('使用QQ账号，进行<a target="_blank" href="http://lbs.qq.com/key.html">开发密钥申请</a>，填写应用名及应用描述即可申请。一个账号可以申请多个key。', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'wap_logo',
-        'cfg_name' => __('H5 LOGO上传', 'goods'),
-        'cfg_desc' => __('适用于收藏夹图标，为了更好地兼容各种手机类型，LOGO 最好为png图片', 'goods'),
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'mobile_touch_qrcode',
-        'cfg_name' => __('H5 访问二维码', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'mobile_touch_url',
-        'cfg_name' => __('H5 商城URL', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'wap_app_download_show',
-        'cfg_name' => __('是否推广APP下载', 'goods'),
-        'cfg_desc' => __('在H5首页底部推广您的APP，增加下载量。', 'goods'),
-        'cfg_range' => array(
-            '0' => '关闭',
-            '1' => '开启',
-        ),
-    ],
 
-    [
-        'cfg_code' => 'wap_app_download_img',
-        'cfg_name' => __('推广APP下载图片', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'mobile_iphone_download',
-        'cfg_name' => __('iPhone下载地址', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'mobile_android_download',
-        'cfg_name' => __('Android下载地址', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'shop_app_icon',
-        'cfg_name' => __('APP图标', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
 
-    [
-        'cfg_code' => 'mobile_app_description',
-        'cfg_name' => __('移动应用简介', 'goods'),
-        'cfg_desc' => '',
-        'cfg_range' => '',
-    ],
+
+
 
     [
         'cfg_code' => 'comment',
