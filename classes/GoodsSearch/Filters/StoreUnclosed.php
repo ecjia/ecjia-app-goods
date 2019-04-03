@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品价格大于等于某个值条件
+ * 商品所属店铺条件
  * @author Administrator
  *
  */
-class ShopPriceMoreThan implements FilterInterface
+class StoreUnclosed implements FilterInterface
 {
 
     /**
@@ -29,9 +29,11 @@ class ShopPriceMoreThan implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if ($value && $value > 0) {
-    		return $builder->where('shop_price', '>=', $value);
-    	}
+    	return $builder->whereHas('store', function($query) use ($value) {
+    		$query->where('shop_close', $value);
+    	});
+    	
+    	
     }
 
 }

@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品上架的
+ * 促销商品
  * @author Administrator
  *
  */
-class GoodsOnSale implements FilterInterface
+class Promotion implements FilterInterface
 {
 
     /**
@@ -29,7 +29,8 @@ class GoodsOnSale implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('is_on_sale', $value);//$value=1
+    	$time = \RC_Time::gmtime();
+    	return $builder->where('promote_price', '>', $value)->where('promote_start_date', '<=', $time)->where('promote_end_date', '>=', $time);
     }
 
 }

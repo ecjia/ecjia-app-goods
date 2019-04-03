@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 店铺未关闭的
+ * 商品单独销售的
  * @author Administrator
  *
  */
-class StoreFranchisee implements FilterInterface
+class IsAloneSale implements FilterInterface
 {
 
     /**
@@ -29,8 +29,7 @@ class StoreFranchisee implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-    	$dbview->where(RC_DB::raw('sf.shop_close'), 0);
+    	return $builder->where('is_alone_sale', $value);
     }
 
 }

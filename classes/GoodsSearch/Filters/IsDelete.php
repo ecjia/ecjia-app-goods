@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品单独销售的
+ * 商品未删除的
  * @author Administrator
  *
  */
-class GoodsAloneSale implements FilterInterface
+class IsDelete implements FilterInterface
 {
 
     /**
@@ -29,7 +29,7 @@ class GoodsAloneSale implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('is_alone_sale', $value);
+    	return $builder->where('is_delete', $value);//$value=0
     }
 
 }

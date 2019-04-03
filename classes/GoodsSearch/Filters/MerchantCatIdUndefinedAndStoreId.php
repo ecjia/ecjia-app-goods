@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品价格大于等于某个值条件
+ * 商家商品分类（未分类的），兼容PC店铺未分类筛选
  * @author Administrator
  *
  */
-class ShopPriceMoreThan implements FilterInterface
+class MerchantCatIdUndefinedAndStoreId implements FilterInterface
 {
 
     /**
@@ -29,9 +29,8 @@ class ShopPriceMoreThan implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if ($value && $value > 0) {
-    		return $builder->where('shop_price', '>=', $value);
-    	}
+		$merchant_cat_id = $value['0'];
+		return	$builder->where('merchant_cat_id', $merchant_cat_id);
     }
 
 }

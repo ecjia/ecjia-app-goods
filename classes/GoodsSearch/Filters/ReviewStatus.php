@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品价格大于等于某个值条件
+ * 商品审核通过和无需审核的
  * @author Administrator
  *
  */
-class ShopPriceMoreThan implements FilterInterface
+class ReviewStatus implements FilterInterface
 {
 
     /**
@@ -29,9 +29,7 @@ class ShopPriceMoreThan implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if ($value && $value > 0) {
-    		return $builder->where('shop_price', '>=', $value);
-    	}
+    	return $builder->where('review_status', '>', $value);//$value=2
     }
 
 }

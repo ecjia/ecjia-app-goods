@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品未删除的
+ * 商家推荐商品
  * @author Administrator
  *
  */
-class GoodsUndeleted implements FilterInterface
+class StoreBest implements FilterInterface
 {
 
     /**
@@ -29,7 +29,7 @@ class GoodsUndeleted implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('is_delete', $value);//$value=0
+    	return $builder->where('store_best', $value);
     }
 
 }

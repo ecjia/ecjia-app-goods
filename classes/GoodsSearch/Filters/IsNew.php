@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商家商品分类（未分类的），兼容PC店铺未分类筛选
+ * 平台推荐新品商品
  * @author Administrator
  *
  */
-class MerchantGoodsCategoryUndefined implements FilterInterface
+class IsNew implements FilterInterface
 {
 
     /**
@@ -29,14 +29,7 @@ class MerchantGoodsCategoryUndefined implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-    	
-    	if (!empty($filter['merchant_cat_id']) && $filter['merchant_cat_id'] == 'undefined' && !empty($filter['store_id'])){  //未分类，兼容pc未分类
-			$children_cat = 0;
-			//$where[] = "merchant_cat_id IN (" . $children_cat.")";
-			$dbview->where(RC_DB::raw('g.merchant_cat_id'), $children_cat);
-		}
-    	
+    	return $builder->where('is_new', $value);
     }
 
 }

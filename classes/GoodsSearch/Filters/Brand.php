@@ -29,8 +29,6 @@ class Brand implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-    	//$dbview->where(RC_DB::raw('g.brand_id'), $filter['brand']);
     	return $builder->where('brand_id', $value);
     }
 

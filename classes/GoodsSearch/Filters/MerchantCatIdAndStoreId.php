@@ -17,7 +17,7 @@ use Royalcms\Component\Database\Eloquent\Builder;
  * @author Administrator
  *
  */
-class MerchantGoodsCategory implements FilterInterface
+class MerchantCatIdAndStoreId implements FilterInterface
 {
 
     /**
@@ -29,15 +29,13 @@ class MerchantGoodsCategory implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-    	
-    	if (isset($filter['merchant_cat_id']) && !empty($filter['merchant_cat_id']) && isset($filter['store_id']) && !empty($filter['store_id']) ) {
-    	
-    		$children_cat = self::get_children_cat($filter['merchant_cat_id'], $filter['store_id']);
-    		//$where[] = "merchant_cat_id IN (" . $children_cat.")";
-    		$dbview->whereIn(RC_DB::raw('g.merchant_cat_id'), $children_cat);
+    	if (is_array($value)) {
+    		$merchant_cat_id = $value['0'];
+    		$store_id = $value['1'];
+    		if (!empty($merchant_cat_id) && !empty($store_id)) {
+    			return	$builder->whereIn('merchant_cat_id', $merchant_cat_id);
+    		}
     	}
-    	
     }
 
 }

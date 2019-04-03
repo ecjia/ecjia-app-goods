@@ -29,10 +29,6 @@ class ShopPriceLessThan implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//return $builder->where('city', $value);
-//     	if (isset($filter['max']) && $filter['max'] > 0) {
-// 			$dbview->where(RC_DB::raw('g.shop_price'), '<=', $filter['max']);
-// 		}
 		if ($value && $value > 0) {
 			return $builder->where('shop_price', '<=', $value);
 		}
