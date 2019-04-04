@@ -11,7 +11,6 @@ namespace Ecjia\App\Goods\GoodsSearch\Filters;
 
 use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
-use PhpParser\Node\Stmt\ElseIf_;
 
 /**
  * 商家商品分类条件

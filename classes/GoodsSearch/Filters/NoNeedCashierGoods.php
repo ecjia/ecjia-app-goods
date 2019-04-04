@@ -30,7 +30,7 @@ class NoNeedCashierGoods implements FilterInterface
     public static function apply(Builder $builder, $value)
     {
     	if ($value) {
-    		return $builder->where('extension_code', '!=', 'bulk'); //$value=bulk
+    		return $builder->whereRaw("(extension_code is null or extension_code ='')"); 
     	}
     	return $builder;
     }

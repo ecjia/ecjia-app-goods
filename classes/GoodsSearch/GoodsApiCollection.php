@@ -65,19 +65,16 @@ class GoodsApiCollection
 
 //     	$aa = MerchantGoodsCategory::getChildrenCategoryId('16', '63');
 
-        $input = [
-            'store_id' => 62,
-            'product' => true,
-            'page' => 1,
-
-//             'keywords' => '开心果',
+//         $input = [
+//             'store_id' => 63,
+//             'product' => true,
+//             'keywords' => '西马渔场东星斑',
 //         	'store_unclosed' => 0,
 //         	'is_delete'		=> 0,
 //         	'is_on_sale'	=> 1,
 //         	'is_alone_sale'	=> 1,
 //         	'review_status' => 2,
-//         	'merchant_cat_id_and_store_id' => [$aa, '63'],
-//         	'merchant_cat_id_undefined_and_store_id' => ['0', '63'],
+//         	'merchant_cat_id_and_store_id' => [$aa, '63'],  //PC未定义分类$aa传0
 // 			'store_best' => 1,
 //         	'store_hot' => 1,
 //         	'store_new' => 1,
@@ -88,13 +85,14 @@ class GoodsApiCollection
 //            'cat_id' => 1032,
 //            'shop_price_less_than' => 10,
 //            'shop_price_more_than' => 5,
-// 			'no_need_cashier_goods' => 'bulk',
+// 			'no_need_cashier_goods' => true,
+//         	'page' => 1,
 
-        ];
+//         ];
 
-        $collection = (new GoodsApiCollection($input))->getData();
+//         $collection = (new GoodsApiCollection($input))->getData();
 
-        return $collection;
+//         return $collection;
     }
 
 }
