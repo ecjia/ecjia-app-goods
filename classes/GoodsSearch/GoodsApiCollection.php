@@ -30,31 +30,33 @@ class GoodsApiCollection
 
         $count = GoodsSearch::applyCount($this->request);
 
-        $page = $this->request->input('page');
-        $size = 15;
+        $page = $this->request->input('page', 1);
 
-        $ecjia_page = new \ecjia_page($count, $size, $page);
-        $start = $ecjia_page->start_id - 1;
+        if ($page) {
+            $size = 15;
+            $ecjia_page = new \ecjia_page($count, $size, $page);
+            $start = $ecjia_page->start_id - 1;
 
-        $input['page'] = [$start, $size];
+            $input = $this->request->input();
+            $input['page'] = [$start, $size];
 
-        $this->request->replace($input);
+            $this->request->replace($input);
+
+            $pager = array(
+                'total' => $ecjia_page->total_records,
+                'count' => $ecjia_page->total_records,
+                'more'  => $ecjia_page->total_pages <= $page ? 0 : 1,
+            );
+        }
 
         $collection = GoodsSearch::apply($this->request);
         $collection = $collection->map(function($item) {
             return (new GoodsApiFormatted($item))->toArray();
         });
+
         $data = $collection->toArray();
 
-
-        $pager = array(
-            'total' => $ecjia_page->total_records,
-            'count' => $ecjia_page->total_records,
-            'more'  => $ecjia_page->total_pages <= $page ? 0 : 1,
-        );
-
         return ['goods_list' => $data, 'pager' => $pager];
-
     }
 
 
