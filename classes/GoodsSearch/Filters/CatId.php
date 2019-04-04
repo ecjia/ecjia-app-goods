@@ -47,6 +47,8 @@ class CatId implements FilterInterface
     			$builder->whereIn('goods_id', $extension_goods_id);
     		}
     	} 
+    	
+    	return $builder;
     }
 
 }

@@ -29,11 +29,16 @@ class StoreId implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if (is_array($value)) {
-    		return $builder->whereIn('store_id', $value);
-    	} else {
-    		return $builder->where('store_id', $value);
+    	if (!empty($value)) {
+    		if (is_array($value)) {
+    			return $builder->whereIn('store_id', $value);
+    		} else {
+    			return $builder->where('store_id', $value);
+    		}
     	}
+    	
+    	return $builder;
+    	
     }
 
 }

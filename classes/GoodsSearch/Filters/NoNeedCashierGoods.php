@@ -29,9 +29,10 @@ class NoNeedCashierGoods implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	//$dbview->whereRaw(" (g.extension_code is null or g.extension_code ='') ");
-    	
-    	return $builder->where('extension_code', '!=', $value); //$value=bulk
+    	if ($value) {
+    		return $builder->where('extension_code', '!=', 'bulk'); //$value=bulk
+    	}
+    	return $builder;
     }
 
 }

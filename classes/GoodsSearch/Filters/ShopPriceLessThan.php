@@ -32,6 +32,7 @@ class ShopPriceLessThan implements FilterInterface
 		if ($value && $value > 0) {
 			return $builder->where('shop_price', '<=', $value);
 		}
+		return $builder;
     }
 
 }
