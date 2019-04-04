@@ -83,6 +83,7 @@ class GoodsDisplaySetting extends ComponentAbstract
             ['code' => 'show_addtime', 'value' => '0', 'options' => ['type' => 'select', 'store_range' => '1,0']],
             ['code' => 'show_marketprice', 'value' => '1', 'options' => ['type' => 'select', 'store_range' => '1,0']],
             ['code' => 'show_brand', 'value' => '1', 'options' => ['type' => 'select', 'store_range' => '1,0']],
+            ['code' => 'show_product', 'value' => '1', 'options' => ['type' => 'select', 'store_range' => '1,0']],
 
             ['code' => 'best_number', 'value' => '', 'options' => ['type' => 'text']],
             ['code' => 'new_number', 'value' => '', 'options' => ['type' => 'text']],
@@ -202,6 +203,16 @@ class GoodsDisplaySetting extends ComponentAbstract
                     '0' => __('不显示', 'goods'),
                     '1' => __('显示', 'goods'),
                 ),
+            ],
+            
+            [
+	            'cfg_code' => 'show_product',
+	            'cfg_name' => __('商品列表是否显示货品', 'goods'),
+	            'cfg_desc' => '',
+	            'cfg_range' => array(
+	            		'0' => __('不显示', 'goods'),
+	            		'1' => __('显示', 'goods'),
+	            ),
             ],
 
             [

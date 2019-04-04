@@ -17,7 +17,7 @@ use Royalcms\Component\Database\Eloquent\Builder;
  * @author Administrator
  *
  */
-class MerchantCatIdAndStoreId implements FilterInterface
+class StoreIdAndMerchantCatId implements FilterInterface
 {
 
     /**
@@ -29,13 +29,16 @@ class MerchantCatIdAndStoreId implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if (is_array($value)) {
-    		$merchant_cat_id = $value['0'];
-    		$store_id = $value['1'];
-    		if (!empty($merchant_cat_id) && !empty($store_id)) {
+    	if (is_array($value) && !empty($value)) {
+    		list($merchant_cat_id, $store_id) = $value;
+    		if (!empty($merchant_cat_id) && is_array($merchant_cat_id) && !empty($store_id)) {
     			return	$builder->whereIn('merchant_cat_id', $merchant_cat_id);
+    		}elseif ($merchant_cat_id == 0 && !empty($store_id)) {
+    			return	$builder->where('merchant_cat_id', $merchant_cat_id);
     		}
-    	}
+    	} 
+    	
+    	return $builder;
     }
 
 }

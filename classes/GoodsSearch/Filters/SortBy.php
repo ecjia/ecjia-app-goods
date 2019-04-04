@@ -12,7 +12,12 @@ namespace Ecjia\App\Goods\GoodsSearch\Filters;
 use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
-class City implements FilterInterface
+/**
+ * 商品列表排序
+ * @author Administrator
+ *
+ */
+class SortBy implements FilterInterface
 {
 
     /**
@@ -24,7 +29,13 @@ class City implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-        return $builder->where('city', $value);
+    	if (!empty($value) && is_array($value)) {
+    		foreach ($value as $sort) {
+    			
+    		}
+    		//return $builder->where('store_new', $value);
+    	}
+    	return $builder;
     }
 
 }
