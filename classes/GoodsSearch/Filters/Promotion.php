@@ -29,8 +29,11 @@ class Promotion implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	$time = \RC_Time::gmtime();
-    	return $builder->where('promote_price', '>', $value)->where('promote_start_date', '<=', $time)->where('promote_end_date', '>=', $time);
+    	if ($value) {
+    		$time = \RC_Time::gmtime();
+    		return $builder->where('goods.promote_start_date', '<=', $time)->where('goods.promote_end_date', '>=', $time);
+    	}
+    	return $builder;
     }
 
 }

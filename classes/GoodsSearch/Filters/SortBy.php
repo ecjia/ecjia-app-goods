@@ -30,10 +30,9 @@ class SortBy implements FilterInterface
     public static function apply(Builder $builder, $value)
     {
     	if (!empty($value) && is_array($value)) {
-    		foreach ($value as $sort) {
-    			
+    		foreach ($value as $by => $sort) {
+    			return $builder->orderBy($by, $sort);
     		}
-    		//return $builder->where('store_new', $value);
     	}
     	return $builder;
     }

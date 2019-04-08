@@ -30,24 +30,25 @@ class CatId implements FilterInterface
      * @return Builder $builder
      */
     public static function apply(Builder $builder, $value)
-    {    	
-    	$children = GoodsCategory::getChildrenCategoryId($value);
-    	
-    	if (!empty($children) && is_array($children)) {
-    		$extension_goods_id = GoodsCategory::getExtensionGoods($children);
-    		if (!empty($extension_goods_id)) {    			
-    			$subQuery = $builder->where(function ($query) use ($children, $extension_goods_id) {
-    				$query->whereIn('cat_id', $children)
-    				->orWhere(function ($query) use ($extension_goods_id) {
-    					$query->whereIn('goods_id', $extension_goods_id);
+    {    
+    	if (!empty($value)) {
+    		$children = GoodsCategory::getChildrenCategoryId($value);
+    		 
+    		if (!empty($children) && is_array($children)) {
+    			$extension_goods_id = GoodsCategory::getExtensionGoods($children);
+    			if (!empty($extension_goods_id)) {
+    				$subQuery = $builder->where(function ($query) use ($children, $extension_goods_id) {
+    					$query->whereIn('cat_id', $children)
+    					->orWhere(function ($query) use ($extension_goods_id) {
+    						$query->whereIn('goods_id', $extension_goods_id);
+    					});
     				});
-    			});
-    			return $subQuery;
-    		}else {
-    			$builder->whereIn('goods_id', $extension_goods_id);
+    				return $subQuery;
+    			}else {
+    				$builder->whereIn('goods_id', $extension_goods_id);
+    			}
     		}
-    	} 
-    	
+    	}	
     	return $builder;
     }
 

@@ -12,8 +12,6 @@ use RC_Model;
 use RC_Loader;
 use RC_Time;
 use RC_DB;
-use Ecjia\App\Goods\Models\GoodsModel;
-use Ecjia\App\Goods\Models\GoodsTypeModel;
 
 class GoodsFunction
 {
@@ -196,8 +194,8 @@ class GoodsFunction
      */
     public static function get_goods_properties($goods_id) {
     	/* 对属性进行重新排序和分组 */
-    	$goods_type = GoodsModel::where('goods_id', $goods_id)->pluck('goods_type');
-    	$grp        = GoodsTypeModel::where('cat_id', $goods_type)->pluck('attr_group');
+    	$db_good_type = RC_DB::table('goods_type as gt')->leftJoin('goods as g', RC_DB::raw('gt.cat_id'), '=', RC_DB::raw('g.goods_type'));
+    	$grp = $db_good_type->select(RC_DB::raw('gt.attr_group'))->where(RC_DB::raw('g.goods_id'), $goods_id)->first();
     	
     	$grp = $grp['attr_group'];
     	if (! empty ( $grp )) {

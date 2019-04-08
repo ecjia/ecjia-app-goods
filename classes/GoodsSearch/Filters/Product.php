@@ -32,7 +32,8 @@ class Product implements FilterInterface
                 'products.goods_attr as product_goods_attr',
                 'products.product_id',
                 'products.product_sn',
-                'products.product_number'
+                'products.product_number',
+            	'products.promote_price as product_promote_price'
             );
         }
 
