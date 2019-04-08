@@ -31,14 +31,16 @@ class GoodsApiCollection
         $count = GoodsSearch::applyCount($this->request);
 
         $page = $this->request->input('page', 1);
+        $size = $this->request->input('size', 15);
 
         if ($page) {
-            $size = 15;
+            $input = $this->request->input();
+            unset($input['size']);
+            
             $ecjia_page = new \ecjia_page($count, $size, $page);
             $start = $ecjia_page->start_id - 1;
 
-            $input = $this->request->input();
-            $input['page'] = [$start, $size];
+            $input['current_page'] = [$start, $size];
 
             $this->request->replace($input);
 
