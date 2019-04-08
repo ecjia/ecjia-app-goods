@@ -103,7 +103,7 @@ class GoodsPriceSetting extends ComponentAbstract
             [
                 'cfg_code'  => 'price_format',
                 'cfg_name'  => __('商品价格显示规则', 'goods'),
-                'cfg_desc'  => '',
+                'cfg_desc'  => __('如果设置先四舍五入不保留小数的话，商品价格是 59.9元，前台显示的就会是 60元', 'goods'),
                 'cfg_range' => array(
                     '0' => __('不处理', 'goods'),
                     '1' => __('保留不为 0 的尾数', 'goods'),

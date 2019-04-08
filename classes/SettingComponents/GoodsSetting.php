@@ -119,13 +119,13 @@ class GoodsSetting extends ComponentAbstract
             [
                 'cfg_code' => 'sn_prefix',
                 'cfg_name' => __('商品货号前缀', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('可输入前缀，默认是ECS，你可以按自己的情况修改，之后新建的产品就会按新的前缀生成货号', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'use_storage',
-                'cfg_name' => __('是否启用库存管理', 'goods'),
+                'cfg_name' => __('是否显示库存管理', 'goods'),
                 'cfg_desc' => '',
                 'cfg_range' => array(
                     '0' => __('否', 'goods'),
@@ -136,21 +136,21 @@ class GoodsSetting extends ComponentAbstract
             [
                 'cfg_code' => 'default_storage',
                 'cfg_name' => __('默认库存', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('添加商品的时候，商品库存会按这里输入的数值调用，避免出现缺货情况', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'no_picture',
-                'cfg_name' => __('商品的默认图片', 'goods'),
-                'cfg_desc' => '',
+                'cfg_name' => __('商品默认图片', 'goods'),
+                'cfg_desc' => __('上传一张默认图片，用来表示没有上传图片的商品', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'auto_generate_gallery',
                 'cfg_name' => __('上传商品是否自动生成相册图', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('选择“是”上传商品图片的时候，自动生成一张相册图，如果选择“否”，则不生成相册图', 'goods'),
                 'cfg_range' => array(
                     '0' => __('否', 'goods'),
                     '1' => __('是', 'goods'),
@@ -160,7 +160,7 @@ class GoodsSetting extends ComponentAbstract
             [
                 'cfg_code' => 'retain_original_img',
                 'cfg_name' => __('上传商品时是否保留原图', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('我们建议设置"是"，上传新商品后自动保留原图', 'goods'),
                 'cfg_range' => array(
                     '0' => __('否', 'goods'),
                     '1' => __('是', 'goods'),
@@ -184,7 +184,7 @@ class GoodsSetting extends ComponentAbstract
             [
                 'cfg_code' => 'thumb_width',
                 'cfg_name' => __('缩略图宽度', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('设置后，影响的是商品缩略图的商品尺寸，也就是首页，商品分类页，与商品搜索页的商品', 'goods'),
                 'cfg_range' => '',
             ],
 
@@ -205,7 +205,7 @@ class GoodsSetting extends ComponentAbstract
             [
                 'cfg_code' => 'goods_name_length',
                 'cfg_name' => __('商品名称的长度', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('设置后，用户端查看商品时，商品名称长度需按照设置的长度显示', 'goods'),
                 'cfg_range' => '',
             ],
 

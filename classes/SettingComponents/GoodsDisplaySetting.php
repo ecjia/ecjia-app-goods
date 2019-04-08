@@ -110,7 +110,7 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'page_size',
                 'cfg_name' => __('商品分类页列表的数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('设置商品列表页商品显示数量，如设置10，则列表只能显示10件', 'goods'),
                 'cfg_range' => '',
             ],
 
@@ -124,14 +124,14 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'related_goods_number',
                 'cfg_name' => __('关联商品显示数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端商品详情关联商品模块的商品显示数量','goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'goods_gallery_number',
                 'cfg_name' => __('商品详情页相册图片数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制商品详请页商品相册的显示数量','goods'),
                 'cfg_range' => '',
             ],
 
@@ -148,7 +148,7 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'show_goodssn',
                 'cfg_name' => __('是否显示货号', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端商品详情页货号显示开关，设置“不显示”，商品详情不需要显示货号', 'goods'),
                 'cfg_range' => array(
                     '0' => __('不显示', 'goods'),
                     '1' => __('显示', 'goods'),
@@ -158,7 +158,7 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'show_goodsweight',
                 'cfg_name' => __('是否显示重量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端商品详情页重量显示开关，设置“不显示”，商品详情不需要显示重量', 'goods'),
                 'cfg_range' => array(
                     '0' => __('不显示', 'goods'),
                     '1' => __('显示', 'goods'),
@@ -168,7 +168,7 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'show_goodsnumber',
                 'cfg_name' => __('是否显示库存', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端商品详情页库存显示开关，设置“不显示”，商品详情不需要显示库存', 'goods'),
                 'cfg_range' => array(
                     '0' => __('不显示', 'goods'),
                     '1' => __('显示', 'goods'),
@@ -178,7 +178,7 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'show_addtime',
                 'cfg_name' => __('是否显示上架时间', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端商品详情页上架时间显示开关，设置“不显示”，商品详情不需要显示上架时间', 'goods'),
                 'cfg_range' => array(
                     '0' => __('不显示', 'goods'),
                     '1' => __('显示', 'goods'),
@@ -188,7 +188,7 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'show_marketprice',
                 'cfg_name' => __('是否显示市场价格', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端商品详情页市场价格显示开关，设置“不显示”，商品详情不需要显示市场价格', 'goods'),
                 'cfg_range' => array(
                     '0' => __('不显示', 'goods'),
                     '1' => __('显示', 'goods'),
@@ -218,35 +218,35 @@ class GoodsDisplaySetting extends ComponentAbstract
             [
                 'cfg_code' => 'best_number',
                 'cfg_name' => __('精品推荐数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端精品推荐商品显示数量', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'new_number',
                 'cfg_name' => __('新品推荐数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端新品推荐商品显示数量', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'hot_number',
                 'cfg_name' => __('热销商品数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端热销商品显示数量', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'promote_number',
                 'cfg_name' => __('促销商品的数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端促销商品显示数量', 'goods'),
                 'cfg_range' => '',
             ],
 
             [
                 'cfg_code' => 'group_goods_number',
                 'cfg_name' => __('团购商品的数量', 'goods'),
-                'cfg_desc' => '',
+                'cfg_desc' => __('此设置项，控制用户端团购商品显示数量', 'goods'),
                 'cfg_range' => '',
             ],
 
