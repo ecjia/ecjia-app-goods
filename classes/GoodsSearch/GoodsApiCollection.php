@@ -32,11 +32,21 @@ class GoodsApiCollection
 
         $page = $this->request->input('page', 1);
         $size = $this->request->input('size', 15);
-
+        
+        $user_rank_discount = $this->request->input('user_rank_discount', 1);
+        $user_rank = $this->request->input('user_rank', 0);
+        
         if ($page) {
             $input = $this->request->input();
-            unset($input['size']);
-            
+            if (array_key_exists('size', $input)) {
+            	unset($input['size']);
+            }
+            if (array_key_exists('user_rank_discount', $input)) {
+            	unset($input['user_rank_discount']);
+            }
+            if (array_key_exists('user_rank', $input)) {
+            	unset($input['user_rank']);
+            }
             $ecjia_page = new \ecjia_page($count, $size, $page);
             $start = $ecjia_page->start_id - 1;
 
@@ -52,8 +62,8 @@ class GoodsApiCollection
         }
 
         $collection = GoodsSearch::apply($this->request);
-        $collection = $collection->map(function($item) {
-            return (new GoodsApiFormatted($item))->toArray();
+        $collection = $collection->map(function($item) use ($user_rank_discount, $user_rank) {
+            return (new GoodsApiFormatted($item, $user_rank_discount, $user_rank))->toArray();
         });
 
         $data = $collection->toArray();
