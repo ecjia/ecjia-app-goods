@@ -103,9 +103,9 @@ class GoodsApiFormatted
 			
             //picture info
 	        'img' => array(
-	        		'thumb'   => $this->model->goods_img ? \RC_Upload::upload_url($this->model->goods_img) : '',
+	        		'thumb'   => $this->model->goods_thumb ? \RC_Upload::upload_url($this->model->goods_thumb) : '',
 	        		'url'     => $this->model->original_img ? \RC_Upload::upload_url($this->model->original_img) : '',
-	        		'small'   => $this->model->goods_thumb ? \RC_Upload::upload_url($this->model->goods_thumb) : '',
+	        		'small'   => $this->model->goods_img ? \RC_Upload::upload_url($this->model->goods_img) : '',
 	        ),
 			
         ];
