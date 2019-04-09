@@ -5,14 +5,14 @@ msgstr ""
 "Project-Id-Version: Ecjia App goods 1.28.0\n"
 "Report-Msgid-Bugs-To: https://make.ecjia.com/polyglots/\n"
 "POT-Creation-Date: 2019-04-03 15:47+0800\n"
-"PO-Revision-Date: 2019-04-03 16:40+0800\n"
+"PO-Revision-Date: 2019-04-08 17:17+0800\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <ecjia@ecjia.com>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: admin.php:149 admin.php:150 admin.php:219 admin.php:324 admin.php:343
@@ -2499,15 +2499,15 @@ msgstr "請選擇店鋪商品分類"
 
 #: merchant.php:765
 msgid "进行中"
-msgstr ""
+msgstr "進行中"
 
 #: merchant.php:768
 msgid "即将开始"
-msgstr ""
+msgstr "即將開始"
 
 #: merchant.php:771
 msgid "已结束"
-msgstr ""
+msgstr "已結束"
 
 #: merchant.php:1101
 msgid "请进入入驻商后台进行操作"
@@ -3055,7 +3055,7 @@ msgstr "按市場價計算"
 #: content/apps/goods/templates/admin/preview.dwt.php:47
 #: content/apps/goods/templates/merchant/preview.dwt.php:52
 msgid "市场售价"
-msgstr "按市場價計算"
+msgstr "市場售價"
 
 #: content/apps/goods/templates/admin/goods_list.dwt.php:68
 #: content/apps/goods/templates/admin/goods_info.dwt.php:76
@@ -4485,19 +4485,19 @@ msgstr "選擇店鋪商品分類"
 
 #: content/apps/goods/templates/merchant/goods_info.dwt.php:371
 msgid "活动状态："
-msgstr ""
+msgstr "活動狀態："
 
 #: content/apps/goods/templates/merchant/goods_info.dwt.php:380
 msgid "活动时间："
-msgstr ""
+msgstr "活動時間："
 
 #: content/apps/goods/templates/merchant/goods_info.dwt.php:389
 msgid "查看促销"
-msgstr ""
+msgstr "查看促銷"
 
 #: content/apps/goods/templates/merchant/goods_info.dwt.php:395
 msgid "添加促销"
-msgstr ""
+msgstr "添加促銷"
 
 #: content/apps/goods/templates/merchant/goods_type_list.dwt.php:32
 msgid "请输入商品规格关键字"
