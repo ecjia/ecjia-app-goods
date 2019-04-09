@@ -391,10 +391,6 @@ class goods_detail_module extends api_front implements api_interface {
             
             $store_config = array(
                 'shop_kf_mobile'            => '', // 客服手机号码
-//                 'shop_kf_email'             => '', // 客服邮件地址
-//                 'shop_kf_qq'                => '', // 客服QQ号码
-//                 'shop_kf_ww'                => '', // 客服淘宝旺旺
-//                 'shop_kf_type'              => '', // 客服样式
                 'shop_logo'                 => '', // 默认店铺页头部LOGO
                 'shop_banner_pic'           => '', // banner图
                 'shop_trade_time'           => '', // 营业时间
@@ -429,13 +425,9 @@ class goods_detail_module extends api_front implements api_interface {
         			'comment_goods' 	=> '100%',
         			'comment_server'	=> '100%',
         			'comment_delivery'	=> '100%',
-// 					'comment_goods'		=> $comment['count'] > 0 && $comment['comment_rank'] > 0 ? round($comment['comment_rank']/$comment['count']*100).'%' : '100%',
-//         			'comment_server'	=> $comment['count'] > 0 && $comment['comment_server'] > 0  ? round($comment['comment_server']/$comment['count']*100).'%' : '100%',
-//         			'comment_delivery'	=> $comment['count'] > 0 && $comment['comment_delivery'] > 0  ? round($comment['comment_delivery']/$comment['count']*100).'%' : '100%',
         		)
         	);
         }
-        // $data['is_warehouse'] = null;
         $data['seller_name'] = $info['merchants_name'];
         $shop_name = empty($info['merchants_name']) ? ecjia::config('shop_name') : $info['merchants_name'];
         $data['server_desc'] = sprintf(__('由%s发货并提供售后服务', 'goods'), $shop_name);
