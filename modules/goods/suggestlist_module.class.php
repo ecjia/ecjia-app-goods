@@ -146,7 +146,6 @@ class goods_suggestlist_module extends api_front implements api_interface {
 						$filters['goods_promotion'] = true;
 					}
 				}
-				
 			}
 		}
 		//排序
