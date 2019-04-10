@@ -89,7 +89,7 @@
 
                                     <div class="form-group">
                                         <label class="control-label col-lg-3">{t domain="goods"}商品货号：{/t}</label>
-                                        <div class="col-lg-9">
+                                        <div class="controls col-lg-9">
                                             <input class="form-control" name="product_sn" type="text" value="{$info.product_sn|escape}" />
                                             <span class="help-block">{t domain="goods"}非必填，系统默认自动生成{/t}</span>
                                         </div>
@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-lg-3">{t domain="goods"}条形码：{/t}</label>
-                                        <div class="col-lg-9">
+                                        <div class="controls col-lg-9">
                                             <input class="form-control" name="product_bar_code" type="text" value="{$info.product_bar_code|escape}" />
                                             <span class="help-block">{t domain="goods"}非必填，可手动输入或修改{/t}</span>
                                         </div>

@@ -1816,10 +1816,8 @@ class merchant extends ecjia_merchant {
         $product_name 	= !empty($_POST['product_name']) 		? $_POST['product_name'] 				: '';
         $shop_price 	= !empty($_POST['product_shop_price']) 		? $_POST['product_shop_price'] 				: 0;
 
-        $product_number 	= isset($_POST['product_number']) 	? $_POST['product_number'] 	: 0;
+        $product_number = isset($_POST['product_number']) 	? $_POST['product_number'] 	: 0;
         $product_bar_code = isset($_POST['product_bar_code']) 	? $_POST['product_bar_code'] 	: '';
-
-        $goods_name 		= htmlspecialchars($_POST['goods_name']);
 
 
         $data = array(
@@ -1832,7 +1830,7 @@ class merchant extends ecjia_merchant {
         RC_DB::table('products')->where('product_id', $product_id)->update($data);
 
         /* 记录日志 */
-        ecjia_merchant::admin_log($_POST['goods_name'], 'edit', 'goods');
+        ecjia_merchant::admin_log($_POST['product_name'], 'edit', 'goods');
         //为更新用户购物车数据加标记
         RC_Api::api('cart', 'mark_cart_goods', array('product_id' => $product_id));
 
