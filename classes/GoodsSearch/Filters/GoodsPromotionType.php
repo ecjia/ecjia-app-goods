@@ -17,7 +17,7 @@ use Royalcms\Component\Database\Eloquent\Builder;
  * @author Administrator
  *
  */
-class PromotionType implements FilterInterface
+class GoodsPromotionType implements FilterInterface
 {
 
     /**
@@ -32,15 +32,16 @@ class PromotionType implements FilterInterface
     	if ($value) {
     		if ($value == 'today') {
     			$date = \RC_Time::local_date('Y-m-d', \RC_Time::gmtime());
-    			$time = \RC_Time::local_strtotime($date);
+    			$time_start = \RC_Time::local_strtotime($date);
     		} elseif ($value == 'tomorrow') {
     			$date = \RC_Time::local_date("Y-m-d",\RC_Time::local_strtotime("+1 day"));
-    			$time = \RC_Time::local_strtotime($date);
+    			$time_start = \RC_Time::local_strtotime($date);
     		} elseif ($value == 'aftertheday') {
     			$date = \RC_Time::local_date("Y-m-d",\RC_Time::local_strtotime("+2 day"));
-    			$time = \RC_Time::local_strtotime($date);
+    			$time_start = \RC_Time::local_strtotime($date);
     		}
-    		return $builder->where('goods.promote_start_date', '>=', $time);
+    		$time_end   = $time_start + 86399;
+    		return $builder->where('goods.promote_start_date', '>=', $time_start)->where('goods.promote_start_date', '<=', $time_end);
     	}
     	return $builder;
     }

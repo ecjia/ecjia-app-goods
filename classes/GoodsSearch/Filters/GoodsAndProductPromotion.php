@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 促销商品
+ * 促销商品（显示货品的条件，商品促销条件满足或货品促销条件满足）
  * @author Administrator
  *
  */
-class Promotion implements FilterInterface
+class GoodsAndProductPromotion implements FilterInterface
 {
 
     /**
@@ -31,7 +31,16 @@ class Promotion implements FilterInterface
     {
     	if ($value) {
     		$time = \RC_Time::gmtime();
-    		return $builder->where('goods.promote_start_date', '<=', $time)->where('goods.promote_end_date', '>=', $time);
+    		$subQuery = $builder
+	    		->where('goods.promote_start_date', '<=', $time)
+	    		->where('goods.promote_end_date', '>=', $time)
+    			->where(function ($query){
+	    			$query->where(function ($query) {
+	    				$query->where('products.is_promote', 1)
+	    				->orWhere('goods.promote_price', '>', 0);
+	    			});
+    			});
+    		return $subQuery;
     	}
     	return $builder;
     }
