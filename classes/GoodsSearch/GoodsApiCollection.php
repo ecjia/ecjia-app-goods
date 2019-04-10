@@ -44,14 +44,19 @@ class GoodsApiCollection
             if (array_key_exists('user_rank', $input)) {
             	unset($input['user_rank']);
             }
+            if (array_key_exists('page', $input)) {
+            	unset($input['page']);
+            }
             $count = GoodsSearch::applyCount($this->request);
-            $ecjia_page = new \ecjia_page($count, $size, $page);
+       
+            $ecjia_page = new \ecjia_page($count, $size, 6, '', $page);
+            
             $start = $ecjia_page->start_id - 1;
-
+			
             $input['current_page'] = [$start, $size];
 
             $this->request->replace($input);
-
+            
             $pager = array(
                 'total' => $ecjia_page->total_records,
                 'count' => $ecjia_page->total_records,
