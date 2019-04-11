@@ -99,7 +99,7 @@ class GoodsApiFormatted
             'saving_price'  			=> sprintf("%.2f", $saving_price),
             'formatted_saving_price'    => $saving_price > 0 ? sprintf(__('已省%s元', 'goods'), $saving_price) : '',
 			'properties'				=> $pro,
-			'specification'				=> array_values($properties['spe']),
+			'specification'				=> $this->model->product_id > 0 ? [] : array_values($properties['spe']),
 			
             //picture info
 	        'img' => array(
