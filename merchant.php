@@ -1758,6 +1758,7 @@ class merchant extends ecjia_merchant {
 
         $product_id = !empty($_POST['product_id']) ? intval($_POST['product_id']) : 0;
         $info = RC_DB::table('products')->where('product_id', $product_id)->first();
+        $goods = RC_DB::table('goods')->where('goods_id', $info['goods_id'])->first();
 
         /* 检查货号是否重复 */
         if (trim($_POST['product_sn'])) {
@@ -1807,24 +1808,32 @@ class merchant extends ecjia_merchant {
         $goods_thumb 	= ''; // 初始化商品缩略图
         $img_original	= ''; // 初始化原始图片
 
-        /* 如果没有输入商品货号则自动生成一个商品货号 */
-        /*if (empty($_POST['goods_sn'])) {
-            $goods_sn = generate_goods_sn($goods_id);
-        } else {
-            $goods_sn = trim($_POST['goods_sn']);
-        }*/
-
         /* 处理商品数据 */
         $product_name 	= !empty($_POST['product_name']) 		? trim($_POST['product_name']) 				: '';
-        $shop_price 	= !empty($_POST['product_shop_price']) 	? $_POST['product_shop_price'] 				: '';
+        $shop_price 	= $_POST['product_shop_price'] != '' 	? $_POST['product_shop_price'] 				: NULL;
+        $product_sn     = !empty($_POST['product_sn'])          ? trim($_POST['product_sn'])                : '';
 
-        $product_number = isset($_POST['product_number']) 	    ? intval($_POST['product_number']) 	: 0;
+        $use_storage = ecjia::config('use_storage');
+        $product_number = $_POST['product_number'] == ''  ? (empty($use_storage) ? 0 : ecjia::config('default_storage')) : intval($_POST['product_number']); //库存
         $product_bar_code = isset($_POST['product_bar_code']) 	? trim($_POST['product_bar_code']) 	: '';
+        //货品号不为空
+        if (!empty($product_sn)) {
+            /* 检测：货品货号是否在商品表和货品表中重复 */
+            if (check_goods_sn_exist($product_sn, $info['goods_id'])) {
+                return $this->showmessage(__('货品号已存在，请修改', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+            if (check_product_sn_exist($product_sn, $product_id)) {
+                return $this->showmessage(__('货品号已存在，请修改', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+        } else {
+            //货品号为空 自动补货品号
+            $product_sn = $goods['goods_sn'] . "g_p" . $product_id;
+        }
 
-
+        /* 更新货品表 */
         $data = array(
             'product_name'				=> rc_stripslashes($product_name),
-            'product_sn'			  	=> trim($_POST['product_sn']),
+            'product_sn'			  	=> $product_sn,
             'product_shop_price'		=> $shop_price,
             'product_bar_code'		  	=> $product_bar_code,
             'product_number'		  	=> $product_number,
@@ -1834,7 +1843,7 @@ class merchant extends ecjia_merchant {
         /* 记录日志 */
         $log_object = $product_name;
         if(empty($log_object)) {
-            $log_object = RC_DB::table('goods')->where('goods_id', $info['goods_id'])->pluck('goods_name');
+            $log_object = $goods['goods_name'];
         }
         ecjia_merchant::admin_log($log_object, 'edit', 'product');
         //为更新用户购物车数据加标记
@@ -2140,9 +2149,13 @@ class merchant extends ecjia_merchant {
 	
 		$product_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
 		$product = get_product_info($product_id, 'product_number, goods_id');
-	
+
+        $image_data = new product_image_data('', '', '', 0, $product_id);
+        $image_data->delete_images();
 		$result = RC_DB::table('products')->where('product_id', $product_id)->delete();
 		if ($result) {
+            $image_data->delete_gallery();
+            RC_DB::table('goods_gallery')->where('product_id', $product_id)->delete();
 			/* 修改商品库存 */
 			if (update_goods_stock($product['goods_id'], -$product['product_number'])) {
 				//记录日志

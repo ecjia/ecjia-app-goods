@@ -262,6 +262,41 @@ class product_image_data {
 	    return $data;
 	}
 
+    public function delete_gallery() {
+        $list = RC_DB::table('goods_gallery')->where('product_id', $this->product_id)->get();
+        if($list) {
+            foreach ($list as $row) {
+                if ($row['img_url']) {
+                    goods_imageutils::deleteImage(goods_imageutils::getAbsolutePath($row['img_url']));
+                }
+                if ($row['thumb_url']) {
+                    goods_imageutils::deleteImage(goods_imageutils::getAbsolutePath($row['thumb_url']));
+                }
+                if ($row['img_original']) {
+                    $row['img_original'] = explode('?', $row['img_original']);
+                    goods_imageutils::deleteImage(goods_imageutils::getAbsolutePath($row['img_original'][0]));
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public function delete_images() {
+        $info = RC_DB::table('products')->where('product_id', $this->product_id)->first();
+        if ($info['product_thumb']) {
+            goods_imageutils::deleteImage(goods_imageutils::getAbsolutePath($info['product_thumb']));
+        }
+        if ($info['product_img']) {
+            goods_imageutils::deleteImage(goods_imageutils::getAbsolutePath($info['product_img']));
+        }
+        if ($info['product_original_img']) {
+            goods_imageutils::deleteImage(goods_imageutils::getAbsolutePath($info['product_original_img']));
+        }
+
+        return true;
+    }
+
 }
 
 // end

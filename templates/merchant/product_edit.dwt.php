@@ -113,7 +113,7 @@
                                         <label class="control-label col-lg-3">{t domain="goods"}库存数量：{/t}</label>
                                         <div class="controls col-lg-8">
                                             <input class="form-control" name="product_number" type="text" value="{$info.product_number}" />
-                                            <span class="help-block">{t domain="goods"}非必填，默认0，若不设置，用户无法购买{/t}</span>
+                                            <span class="help-block">{t domain="goods"}非必填，若不设置，用户无法购买{/t}</span>
                                         </div>
                                     </div>
                                     <div class="form-group">
