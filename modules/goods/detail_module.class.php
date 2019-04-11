@@ -332,6 +332,13 @@ class goods_detail_module extends api_front implements api_interface {
 			$data['add_time'] = '';
 		}
 		
+		//判断货品，是货品，替换部分基本信息字段
+		if ($product_id > 0) {
+			$data = $this->_formate_data($product_id, $data);
+		}
+		
+		
+		
         return $data;
     }
 	
@@ -559,6 +566,28 @@ class goods_detail_module extends api_front implements api_interface {
 			}
 		}
 		return $row;
+	}
+	
+	private function _formate_data($product_id, $data)
+	{
+		$product_specification = $data['product_specification'];
+		if (!empty($product_specification)) {
+			foreach ($product_specification as $val) {
+				if ($product_id == $val['product_id']) {
+					$product_info = $val;
+				}
+			}
+			$data['goods_sn'] 				= $product_info['product_sn'] ?: $data['goods_sn'];
+			$data['goods_name'] 			= $product_info['product_name'] ?: $data['goods_name'];
+			$data['goods_number'] 			= $product_info['product_number'] ?: $data['goods_number'];
+			$data['shop_price'] 			= $product_info['formatted_product_shop_price'] ?: $data['shop_price'];
+			$data['unformatted_shop_price'] = $product_info['product_shop_price'] ?: $data['unformatted_shop_price'];
+			$data['promote_user_limited']   = $product_info['promote_user_limited'] ?: $data['promote_user_limited'];
+			$data['promote_price'] 			= $product_info['promote_price'] ?: $data['shop_price'];
+			$data['formated_promote_price'] = $product_info['formatted_promote_price'] ?: $data['formated_promote_price'];
+			$data['promote_user_limited']   = $product_info['promote_user_limited'] ?: $data['promote_user_limited'];
+		}
+		return $data;
 	}
 }
 
