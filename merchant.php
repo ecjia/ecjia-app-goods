@@ -1813,9 +1813,9 @@ class merchant extends ecjia_merchant {
         $shop_price 	= !empty($_POST['product_shop_price']) 	? $_POST['product_shop_price'] 				: '';
         $product_sn     = !empty($_POST['product_sn'])          ? trim($_POST['product_sn'])                : '';
 
-        $product_number = isset($_POST['product_number']) 	    ? intval($_POST['product_number']) 	: 0;
+        $use_storage = ecjia::config('use_storage');
+        $product_number = $_POST['product_number'] == ''  ? (empty($use_storage) ? 0 : ecjia::config('default_storage')) : intval($_POST['product_number']); //库存
         $product_bar_code = isset($_POST['product_bar_code']) 	? trim($_POST['product_bar_code']) 	: '';
-
         //货品号不为空
         if (!empty($product_sn)) {
             /* 检测：货品货号是否在商品表和货品表中重复 */
