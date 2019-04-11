@@ -27,12 +27,9 @@ class GoodsApiCollection
 
     public function getData()
     {
-
-        $count = GoodsSearch::applyCount($this->request);
-
-        $page = $this->request->input('page', 1);
-        $size = $this->request->input('size', 15);
-        
+    	$page = $this->request->input('page', 1);
+    	$size = $this->request->input('size', 15);
+    	
         $user_rank_discount = $this->request->input('user_rank_discount', 1);
         $user_rank = $this->request->input('user_rank', 0);
         
@@ -47,13 +44,19 @@ class GoodsApiCollection
             if (array_key_exists('user_rank', $input)) {
             	unset($input['user_rank']);
             }
-            $ecjia_page = new \ecjia_page($count, $size, $page);
+            if (array_key_exists('page', $input)) {
+            	unset($input['page']);
+            }
+            $count = GoodsSearch::applyCount($this->request);
+       
+            $ecjia_page = new \ecjia_page($count, $size, 6, '', $page);
+            
             $start = $ecjia_page->start_id - 1;
-
+			
             $input['current_page'] = [$start, $size];
 
             $this->request->replace($input);
-
+            
             $pager = array(
                 'total' => $ecjia_page->total_records,
                 'count' => $ecjia_page->total_records,

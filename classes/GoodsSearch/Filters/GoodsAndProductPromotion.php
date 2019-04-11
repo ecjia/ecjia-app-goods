@@ -36,8 +36,8 @@ class GoodsAndProductPromotion implements FilterInterface
 	    		->where('goods.promote_end_date', '>=', $time)
     			->where(function ($query){
 	    			$query->where(function ($query) {
-	    				$query->where('products.is_promote', 1)
-	    				->orWhere('goods.promote_price', '>', 0);
+	    				$query->where('products.is_promote', '=', 1)
+	    				->orWhere('goods.is_promote', '=', 1);
 	    			});
     			});
     		return $subQuery;

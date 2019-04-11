@@ -412,8 +412,20 @@ class admin extends ecjia_admin {
 			unset($goods['promote_start_date']);
 			unset($goods['promote_end_date']);
 		} else {
-			$goods['promote_start_date'] = RC_Time::local_date('Y-m-d', $goods['promote_start_date']);
-			$goods['promote_end_date'] = RC_Time::local_date('Y-m-d', $goods['promote_end_date']);
+			$time = RC_Time::gmtime();
+            if ($goods['promote_start_date'] < $time && $goods['promote_end_date'] > $time) {
+                $goods['promote_status']       = 'on_sale';
+                $goods['promote_status_label'] = __('进行中', 'goods');
+            } elseif ($goods['promote_start_date'] > $time) {
+                $goods['promote_status']       = 'coming';
+                $goods['promote_status_label'] = __('即将开始', 'goods');
+            } elseif ($goods['promote_end_date'] < $time) {
+                $goods['promote_status']       = 'finished';
+                $goods['promote_status_label'] = __('已结束', 'goods');
+            }
+
+			$goods['promote_start_date'] = RC_Time::local_date('Y-m-d H:i', $goods['promote_start_date']);
+			$goods['promote_end_date'] = RC_Time::local_date('Y-m-d H:i', $goods['promote_end_date']);
 		}
 		/* 扩展分类 */
 		$getCol = $this->db_goods_cat->field('cat_id')->where(array('goods_id' => $_REQUEST['goods_id']))->select();
