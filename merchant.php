@@ -2431,15 +2431,6 @@ class merchant extends ecjia_merchant {
 					$attr_list[$row['attr_id']] = $row['attr_index'];
 				}
 			}
-			//调用视图查询
-// 			$this->db_goods_attr_view->view = array(
-// 				'attribute' => array(
-// 					'type'  => Component_Model_View::TYPE_LEFT_JOIN,
-// 					'alias' => 'a',
-// 					'field' => 'ga.*,a.attr_type',
-// 					'on'	=> 'a.attr_id = ga.attr_id'
-// 				)
-// 			);
 			$query = $this->db_goods_attr_view->where(array('ga.goods_id' => $goods_id))->select();
 			if (is_array($query)) {
 				foreach ($query as $key => $row) {
@@ -2470,7 +2461,6 @@ class merchant extends ecjia_merchant {
 			$this->db_goods->join(null)->where(array('goods_id' => $goods_id))->update($data);
 
 			$data_insert = array();
-			$data_update = array();
 			/* 插入、更新、删除数据 */
 			$goods_type = isset($_POST['goods_type']) ? $_POST['goods_type'] : 0;
 			foreach ($goods_attr_list as $attr_id => $attr_value_list) {
@@ -2490,7 +2480,12 @@ class merchant extends ecjia_merchant {
 							$this->db_goods_attr->where(array('goods_attr_id' => $info['goods_attr_id']))->update($data);
 						}
 					} else {
-						$this->db_goods_attr->goods_attr_delete(array('goods_attr_id' => $info['goods_attr_id']));
+					    //查询要删除的属性是否存在对应货品
+                        $count = RC_DB::table('products')->where('goods_id', $goods_id)->whereRaw(RC_DB::raw(" CONCAT('|', goods_attr, '|') like '%|".$info['goods_attr_id']."|%' "))->count();
+						if($count) {
+                            return $this->showmessage(__('请先删除关联的货品再修改规格属性', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+                        }
+                        $this->db_goods_attr->goods_attr_delete(array('goods_attr_id' => $info['goods_attr_id']));
 					}
 				}
 			}
