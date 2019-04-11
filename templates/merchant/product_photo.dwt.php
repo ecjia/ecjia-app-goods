@@ -54,7 +54,7 @@
 
                     <div class="panel-body panel-body-small">
                         <div class="row">
-                            <div class="col-lg-12">{t domain="goods"}注：相册非必填项，若不上传，默认使用主商品相册图。{/t}</div>
+                            <div class="col-lg-12"><span class="help-block">{t domain="goods"}注：相册非必填项，若不上传，默认使用主商品相册图。{/t}</span></div>
                             <div class="col-lg-12">
                                 <div class="panel">
                                     <div class="panel-body fileupload" data-action="{$form_action}" data-remove="{url path='goods/mh_gallery_product/drop_image'}"></div>
@@ -83,7 +83,7 @@
                                     <div class="panel-body">
                                         <div class="{if !$img_list} hide{/if}">
                                             <div class="goods-photo-list">
-                                                <div class="m_b20"><span class="help-inline">{t domain="goods"}最多上传5张图相册图，上传后，可左右拖拽排序，排序后，请点击“保存排序”{/t}</span></div>
+                                                <div class="m_b20"><span class="help-block">{t domain="goods"}上传后，可左右拖拽排序，排序后，请点击“保存排序”{/t}</span></div>
                                                 <div class="wmk_grid ecj-wookmark wookmark_list">
                                                     <ul class="wookmark-goods-photo move-mod nomove p_l5">
                                                         <!-- {foreach from=$img_list item=img} -->

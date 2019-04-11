@@ -1813,11 +1813,11 @@ class merchant extends ecjia_merchant {
         }*/
 
         /* 处理商品数据 */
-        $product_name 	= !empty($_POST['product_name']) 		? $_POST['product_name'] 				: '';
-        $shop_price 	= !empty($_POST['product_shop_price']) 		? $_POST['product_shop_price'] 				: 0;
+        $product_name 	= !empty($_POST['product_name']) 		? trim($_POST['product_name']) 				: '';
+        $shop_price 	= !empty($_POST['product_shop_price']) 	? $_POST['product_shop_price'] 				: '';
 
-        $product_number = isset($_POST['product_number']) 	? $_POST['product_number'] 	: 0;
-        $product_bar_code = isset($_POST['product_bar_code']) 	? $_POST['product_bar_code'] 	: '';
+        $product_number = isset($_POST['product_number']) 	    ? intval($_POST['product_number']) 	: 0;
+        $product_bar_code = isset($_POST['product_bar_code']) 	? trim($_POST['product_bar_code']) 	: '';
 
 
         $data = array(

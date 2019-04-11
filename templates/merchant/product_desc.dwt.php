@@ -55,7 +55,7 @@
                     </div>
                     <div class="panel-body panel-body-small">
                         <form class="form-horizontal" enctype="multipart/form-data" action="{$form_action}" method="post" name="theForm">
-                            <div class="row-fluid control-group m_b20">{t domain="goods"}注：图文详情非必填项，若不设置，默认使用主商品图文详情内容。{/t}</div>
+                            <div class="row-fluid control-group m_b20"><span class="help-block">{t domain="goods"}注：图文详情非必填项，若不设置，默认使用主商品图文详情内容。{/t}</span></div>
                             <div class="row-fluid control-group">
                                 <div class="span12">
                                     {ecjia:editor content=$info.product_desc textarea_name='product_desc' is_teeny=0}
