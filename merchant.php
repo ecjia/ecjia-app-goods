@@ -1861,17 +1861,8 @@ class merchant extends ecjia_merchant {
             }
         }
 
-        $code = '';
-        $link = array();
-        $link[1] = list_merchant_link($code);
-
-        for ($i = 0; $i < count($link); $i++) {
-            $key_array[] = $i;
-        }
-        krsort($link);
-        $link = array_combine($key_array, $link);
-
-        return $this->showmessage(__('编辑商品成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'max_id' => $goods_id));
+        $pjaxurl = RC_Uri::url('goods/merchant/product_edit', "id=$product_id&goods_id=".$info['goods_id']);
+        return $this->showmessage(__('编辑货品成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 
     }
     /**
