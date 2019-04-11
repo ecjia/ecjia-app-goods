@@ -73,7 +73,7 @@
                                                     </span>
                                                     <input class="hide" type="file" name="thumb_img" onchange="ecjia.merchant.goods_info.previewImage(this)" />
                                                 </div>
-                                                <div><span class="help-inline">{t domain="goods"}非必填，若不上传则默认使用商品图片，点击更换。{/t}</span></div>
+                                                <div><span class="help-block">{t domain="goods"}非必填，若不上传则默认使用商品图片，点击更换。{/t}</span></div>
                                             </div>
                                         </div>
                                     </div>
@@ -113,9 +113,8 @@
                                         <label class="control-label col-lg-3">{t domain="goods"}库存数量：{/t}</label>
                                         <div class="controls col-lg-8">
                                             <input class="form-control" name="product_number" type="text" value="{$info.product_number}" />
-                                            <span class="help-block">{t domain="goods"}必填项，若不设置，用户无法购买{/t}</span>
+                                            <span class="help-block">{t domain="goods"}非必填，默认0，若不设置，用户无法购买{/t}</span>
                                         </div>
-                                        <span class="input-must">*</span>
                                     </div>
                                     <div class="form-group">
                                         <input name="product_id" type="hidden" value="{$info.product_id}">
