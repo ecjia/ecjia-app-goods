@@ -2140,9 +2140,13 @@ class merchant extends ecjia_merchant {
 	
 		$product_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
 		$product = get_product_info($product_id, 'product_number, goods_id');
-	
+
+        $image_data = new product_image_data('', '', '', 0, $product_id);
+        $image_data->delete_images();
 		$result = RC_DB::table('products')->where('product_id', $product_id)->delete();
 		if ($result) {
+            $image_data->delete_gallery();
+            RC_DB::table('goods_gallery')->where('product_id', $product_id)->delete();
 			/* 修改商品库存 */
 			if (update_goods_stock($product['goods_id'], -$product['product_number'])) {
 				//记录日志
