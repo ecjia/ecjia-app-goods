@@ -543,13 +543,18 @@ class goods_detail_module extends api_front implements api_interface {
 	
 	private function _getGoodsGallery($goods_id, $product_id = 0)
 	{
-		$db_goods_gallery = RC_DB::table('goods_gallery');
 		if (!empty($product_id)) {
-			$db_goods_gallery->where('product_id', $product_id);
-		} else {
-			$db_goods_gallery->where('product_id', 0);
+			$p_row = RC_DB::table('goods_gallery')->where('goods_id', $goods_id)->where('product_id', $product_id)->select('img_id', 'img_url', 'thumb_url', 'img_desc', 'img_original', 'product_id')->where('goods_id', $goods_id)->take(ecjia::config('goods_gallery_number'))->get();
 		}
-		$row = $db_goods_gallery->select('img_id', 'img_url', 'thumb_url', 'img_desc', 'img_original', 'product_id')->where('goods_id', $goods_id)->take(ecjia::config('goods_gallery_number'))->get();
+		
+		$g_row = RC_DB::table('goods_gallery')->where('product_id', 0)->select('img_id', 'img_url', 'thumb_url', 'img_desc', 'img_original', 'product_id')->where('goods_id', $goods_id)->take(ecjia::config('goods_gallery_number'))->get();
+		
+		$row = $g_row;
+		
+		if (!empty($p_row)) {
+			$row = $p_row;
+		} 
+		
 		$img_list_sort = $img_list_id = array();
 		if (!empty($row)) {
 			foreach ($row as $key => $gallery_img) {
@@ -576,6 +581,9 @@ class goods_detail_module extends api_front implements api_interface {
 				if ($product_id == $val['product_id']) {
 					$product_info = $val;
 				}
+				unset($val['img']);
+				unset($val['product_name']);
+				$arr[] = $val;
 			}
 			$data['goods_sn'] 				= $product_info['product_sn'] ?: $data['goods_sn'];
 			$data['goods_name'] 			= $product_info['product_name'] ?: $data['goods_name'];
@@ -586,6 +594,8 @@ class goods_detail_module extends api_front implements api_interface {
 			$data['promote_price'] 			= $product_info['promote_price'] ?: $data['shop_price'];
 			$data['formated_promote_price'] = $product_info['formatted_promote_price'] ?: $data['formated_promote_price'];
 			$data['promote_user_limited']   = $product_info['promote_user_limited'] ?: $data['promote_user_limited'];
+			$data['img']   					= $product_info['img'] ?: $data['img'];
+			$data['product_specification']  = $arr;
 		}
 		return $data;
 	}
