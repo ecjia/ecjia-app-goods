@@ -72,6 +72,8 @@ class merchant extends ecjia_merchant {
 
 	public function __construct() {
 		parent::__construct();
+
+        Ecjia\App\Goods\Helper::assign_adminlog_content();
 		
 		$this->db_link_goods 		= RC_Model::model('goods/link_goods_model');
 		$this->db_group_goods 		= RC_Model::model('goods/group_goods_model');
@@ -1830,7 +1832,11 @@ class merchant extends ecjia_merchant {
         RC_DB::table('products')->where('product_id', $product_id)->update($data);
 
         /* 记录日志 */
-        ecjia_merchant::admin_log($_POST['product_name'], 'edit', 'goods');
+        $log_object = $product_name;
+        if(empty($log_object)) {
+            $log_object = RC_DB::table('goods')->where('goods_id', $info['goods_id'])->pluck('goods_name');
+        }
+        ecjia_merchant::admin_log($log_object, 'edit', 'product');
         //为更新用户购物车数据加标记
         RC_Api::api('cart', 'mark_cart_goods', array('product_id' => $product_id));
 
@@ -1944,7 +1950,11 @@ class merchant extends ecjia_merchant {
         RC_DB::table('products')->where('product_id', $product_id)->where('goods_id', $goods_id)->update($data);
 
         /* 记录日志 */
-        ecjia_merchant::admin_log($goods['goods_name'], 'edit', 'goods');
+        $log_object = $info['product_name'];
+        if(empty($log_object)) {
+            $log_object = $goods['goods_name'];
+        }
+        ecjia_merchant::admin_log($log_object, 'edit', 'product');
 
         /* 提示页面 */
 
