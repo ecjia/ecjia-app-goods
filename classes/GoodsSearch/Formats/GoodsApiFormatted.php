@@ -144,7 +144,7 @@ class GoodsApiFormatted
      */
     protected function filterGoodsName($goods_name)
     {
-        return $goods_name;
+        return $this->model->product_name ?: $goods_name;
     }
 
     /**
