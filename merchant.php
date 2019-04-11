@@ -1810,7 +1810,7 @@ class merchant extends ecjia_merchant {
 
         /* 处理商品数据 */
         $product_name 	= !empty($_POST['product_name']) 		? trim($_POST['product_name']) 				: '';
-        $shop_price 	= !empty($_POST['product_shop_price']) 	? $_POST['product_shop_price'] 				: '';
+        $shop_price 	= $_POST['product_shop_price'] != '' 	? $_POST['product_shop_price'] 				: NULL;
         $product_sn     = !empty($_POST['product_sn'])          ? trim($_POST['product_sn'])                : '';
 
         $use_storage = ecjia::config('use_storage');
