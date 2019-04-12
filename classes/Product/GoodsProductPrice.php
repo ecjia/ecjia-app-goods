@@ -138,22 +138,19 @@ class GoodsProductPrice
     {
     	//商品会员等级价格
     	$user_price = \RC_DB::table('member_price')->where('goods_id', $this->model->goods_id)->where('user_rank', $this->getUserRank())->pluck('user_price');
-		
+    
     	//商品促销价格
-    	$goods_promote_price = $this->filterPromotePrice($this->goods_info->shop_price, $this->goods_info->is_promote);
+    	$promote_price = $this->filterPromotePrice($this->goods_info->shop_price, $this->goods_info->is_promote);
     	
 		if (in_array($attr_id, $product_attr_ids)) { //有货品情况
 			//获取货品信息
 			$product_info = $this->products_model->where('goods_id', $this->goods_id)->where('goods_attr', $attr_id)->first();
 			
-			$product_shop_price = $product_info->product_shop_price;
 			//货品会员等级价格
-			$product_shop_price = $product_shop_price > 0 ? $product_shop_price*$this->user_rank_discount : $user_price;
+			$product_shop_price = $product_shop_price*$this->user_rank_discount;
 			
 			//货品促销价
 			$product_promote_price = $this->filterPromotePrice($product_info->promote_price, $product_info->is_promote);
-			//货品促销价格存在，替换商品促销价格
-			$promote_price = $product_promote_price > 0 ? $product_promote_price : $goods_promote_price;
 			
 			//商品设置是SKU价格（商品价格 + 属性货品价格）
 			if (\ecjia::config('sku_price_mode') == 'goods_sku') {
@@ -164,9 +161,23 @@ class GoodsProductPrice
 					$total_attr_price += $attr['attr_price'];
 				}
 				if ($total_attr_price > 0) {
-					$product_shop_price += $total_attr_price;
-					$promote_price = ($promote_price > 0) ? ($promote_price + $total_attr_price) : 0;
+					//货品未设置自定义价格
+					if ($product_shop_price <= 0) {
+						$product_shop_price += $total_attr_price;
+					} else {
+						$product_shop_price = $user_price > 0 ? $user_price : $this->goods_info->shop_price*$this->user_rank_discount;
+					}
+					//货品设置自定义促销价
+					if ($product_promote_price > 0) {
+						$promote_price = $product_promote_price;
+					} else {
+						$promote_price = ($promote_price > 0) ? ($promote_price + $total_attr_price) : 0;
+					}
 				}
+			} else {
+				//货品一组价格设置时
+				$user_price = $user_price > 0 ? $user_price : $this->goods_info->shop_price*$this->user_rank_discount;
+				$product_shop_price = $product_shop_price > 0 ? $product_shop_price : $user_price;
 			}
 			
 			$data = [
@@ -192,9 +203,6 @@ class GoodsProductPrice
 			$product_shop_price = $this->goods_info->shop_price;
 			//会员等级价格
 			$product_shop_price = $user_price > 0 ? $user_price : $product_shop_price*$this->user_rank_discount;
-			
-			//促销价
-			$promote_price = $goods_promote_price;
 			
 			//商品设置是SKU价格（商品价格 + 属性货品价格）
 			if (\ecjia::config('sku_price_mode') == 'goods_sku') {
