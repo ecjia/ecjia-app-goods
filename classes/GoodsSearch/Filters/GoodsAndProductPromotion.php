@@ -31,9 +31,11 @@ class GoodsAndProductPromotion implements FilterInterface
     {
     	if ($value) {
     		$time = \RC_Time::gmtime();
+    		$one_month  = \RC_Time::local_date('Y-m-d', \RC_Time::local_strtotime("+1months",\RC_Time::local_strtotime($time)));
+    		
     		$subQuery = $builder
-	    		->where('goods.promote_start_date', '<=', $time)
-	    		->where('goods.promote_end_date', '>=', $time)
+	    		->where('goods.promote_start_date', '>', $time)
+	    		->where('goods.promote_start_date', '<=', $one_month)
     			->where(function ($query){
 	    			$query->where(function ($query) {
 	    				$query->where('products.is_promote', '=', 1)
