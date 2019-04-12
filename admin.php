@@ -813,7 +813,7 @@ class admin extends ecjia_admin {
             //复制图片-重命名
             copy_goods_desc($id, $new_id, $goods_info['goods_desc']);
         }
-        $goods_gallery = RC_DB::table('goods_gallery')->where('goods_id', $id)->get();
+        $goods_gallery = RC_DB::table('goods_gallery')->where('goods_id', $id)->where('product_id', 0)->get();
         if (!empty($goods_gallery)) {
             //复制图片-重命名
             copy_goods_gallery($id, $new_id, $goods_gallery);
@@ -866,9 +866,40 @@ class admin extends ecjia_admin {
                 }
                 $new_product['goods_attr'] = implode('|', $new_attr_id);
                 $new_product['product_sn'] = '';
-                
-                $product_id = RC_DB::table('goodslib_products')->insertGetId($new_product);
-                RC_DB::table('goodslib_products')->where('product_id', $product_id)->update(array('product_sn' => $goods['goods_sn'] . '_p' . $product_id));
+                if($product['product_name']) {
+                    $new_product['product_name'] = $product['product_name'];
+                }
+                if($product['product_shop_price']) {
+                    $new_product['product_shop_price'] = $product['product_shop_price'];
+                }
+                if($product['product_bar_code']) {
+                    $new_product['product_bar_code'] = $product['product_bar_code'];
+                }
+                if($product['product_desc']) {
+                    $new_product['product_desc'] = $product['product_desc'];
+                }
+
+                $product_id_new = RC_DB::table('goodslib_products')->insertGetId($new_product);
+                RC_DB::table('goodslib_products')->where('product_id', $product_id_new)->update(array('product_sn' => $goods['goods_sn'] . '_p' . $product_id_new));
+
+                if(!empty($product['product_img'])) {
+                    //复制图片-重命名
+                    $img_data = array(
+                        'product_img' => $product['product_img'],
+                        'product_thumb' => $product['product_thumb'],
+                        'product_original_img' => $product['product_original_img']
+                    );
+                    copy_product_images($product['product_id'], $product_id_new, $img_data);
+                }
+                if(!empty($product['product_desc'])) {
+                    //复制图片-重命名
+                    copy_product_desc($product['product_id'], $product_id_new, $product['product_desc']);
+                }
+                $product_gallery = RC_DB::table('goods_gallery')->where('goods_id', $goods_id)->where('product_id', $product['product_id'])->get();
+                if (!empty($product_gallery)) {
+                    //复制图片-重命名
+                    copy_product_gallery($product['product_id'], $product_id_new, $new_product['goods_id'], $product_gallery);
+                }
             }
             
         }
