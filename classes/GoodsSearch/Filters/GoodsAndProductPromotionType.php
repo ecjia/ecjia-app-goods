@@ -43,8 +43,8 @@ class GoodsAndProductPromotionType implements FilterInterface
     		
     		if ($value == 'today') {
     			$subQuery = $builder
-    			->where('goods.promote_start_date', '>=', $time_start)
-    			->where('goods.promote_end_date', '<=', $time_end)
+    			->where('goods.promote_start_date', '<=', $time_start)
+    			->where('goods.promote_end_date', '>=', $time_end)
     			->where(function ($query) {
     				$query->where(function ($query) {
     					$query->where('products.is_promote', 1)
