@@ -147,7 +147,7 @@ class GoodsProductPrice
 			$product_info = $this->products_model->where('goods_id', $this->goods_id)->where('goods_attr', $attr_id)->first();
 			
 			//货品会员等级价格
-			$product_shop_price = $product_shop_price*$this->user_rank_discount;
+			$product_shop_price = $product_info->product_shop_price*$this->user_rank_discount;
 			
 			//货品促销价
 			$product_promote_price = $this->filterPromotePrice($product_info->promote_price, $product_info->is_promote);
@@ -162,11 +162,9 @@ class GoodsProductPrice
 				}
 				if ($total_attr_price > 0) {
 					//货品未设置自定义价格
-					if ($product_shop_price <= 0) {
-						$product_shop_price += $total_attr_price;
-					} else {
+					if (empty($product_info->product_shop_price)) {
 						$product_shop_price = $user_price > 0 ? $user_price : $this->goods_info->shop_price*$this->user_rank_discount;
-					}
+					} 
 					//货品设置自定义促销价
 					if ($product_promote_price > 0) {
 						$promote_price = $product_promote_price;
@@ -177,7 +175,7 @@ class GoodsProductPrice
 			} else {
 				//货品一组价格设置时
 				$user_price = $user_price > 0 ? $user_price : $this->goods_info->shop_price*$this->user_rank_discount;
-				$product_shop_price = $product_shop_price > 0 ? $product_shop_price : $user_price;
+				$product_shop_price = !empty($product_info->product_shop_price) ? $product_shop_price : $user_price;
 			}
 			
 			$data = [

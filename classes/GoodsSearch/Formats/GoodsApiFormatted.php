@@ -56,7 +56,7 @@ class GoodsApiFormatted
     			}
     			if ($total_attr_price > 0) {
     				//是货品，但未设置自定义货品价格；默认按商品基本价格相加
-    				if ($product_shop_price <= 0) {
+    				if (empty($this->model->product_shop_price)) {
     					$market_price += $total_attr_price;
     					$shop_price += $total_attr_price;
     				} else {
@@ -72,7 +72,7 @@ class GoodsApiFormatted
     		}
     	} else {
             
-            $shop_price = $this->model->product_shop_price > 0 ? $this->model->product_shop_price*$this->user_rank_discount : $shop_price;
+            $shop_price = !empty($this->model->product_shop_price) ? $this->model->product_shop_price*$this->user_rank_discount : $shop_price;
         }
     	
     	$activity_type = ($this->model->shop_price > $promote_price && $promote_price > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
