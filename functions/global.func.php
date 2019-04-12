@@ -1890,12 +1890,13 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
 			if ($product_id > 0) {
 				//商品SKU价格模式：商品价格 + 属性货品价格
 				if (ecjia::config('sku_price_mode') == 'goods_sku') {
-					$spec_price = self::spec_price ( $spec );
+					$spec_price = spec_price ( $spec );
 					$final_price += $spec_price;
 				}
 			}
 		}
 	}
+	
 	// 返回商品最终购买价格
 	return $final_price;
 }
