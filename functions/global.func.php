@@ -1838,7 +1838,7 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
 		if (ecjia::config('sku_price_mode') == 'goods_sku') {
 			//货品促销价存在，替换商品促销价
 			if ($product_info ['promote_price'] > 0 && $product_info['is_promote'] == '1') {
-				$promote_price = self::bargain_price ($product_info['promote_price'], $goods['promote_start_date'], $goods['promote_end_date'] );
+				$promote_price = Ecjia\App\Goods\GoodsFunction::bargain_price ($product_info['promote_price'], $goods['promote_start_date'], $goods['promote_end_date'] );
 			}else {
 				$promote_price = 0;
 			}
