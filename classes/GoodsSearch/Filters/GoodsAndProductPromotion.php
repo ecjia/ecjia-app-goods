@@ -41,10 +41,13 @@ class GoodsAndProductPromotion implements FilterInterface
 	    		->where('goods.promote_start_date', '>', $time_start)
 	    		->where('goods.promote_start_date', '<=', $time_end)
     			->where(function ($query){
-	    			$query->where(function ($query) {
-	    				$query->where('products.is_promote', '=', 1)
-	    				->orWhere('goods.is_promote', '=', 1);
-	    			});
+    				$query->where(function ($query) {
+    					$query->where('products.is_promote', 1)
+    					->orWhere(function ($query) {
+    						$query->where('goods.is_promote', 1)
+    							  ->whereRaw("(product_id is null)");
+    					});
+    				});
     			});
     		return $subQuery;
     	}

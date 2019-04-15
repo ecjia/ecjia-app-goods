@@ -146,6 +146,8 @@ class goods_suggestlist_module extends api_front implements api_interface {
 						$filters['goods_promotion'] = true;
 					}
 				}
+				//促销，排序默认结束时间升序
+				$order_by = array('goods.promote_end_date' => 'asc', 'goods.sort_order' => 'asc', 'goods_id' => 'desc');
 			}
 		}
 		//排序
