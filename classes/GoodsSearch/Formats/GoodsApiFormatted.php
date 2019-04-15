@@ -54,11 +54,11 @@ class GoodsApiFormatted
         	
         	$market_price += $total_attr_price;
 
-        	//货品未设置自定义价格
-        	if (empty($this->model->product_shop_price)) {
-        		$shop_price += $total_attr_price;
-        	} else {
+        	//货品有设置自定义价格
+        	if ($this->model->product_shop_price > 0) {
         		$shop_price = $product_shop_price;
+        	} else {
+        		$shop_price += $total_attr_price;
         	}
 
         	$promote_price = $product_promote_price;
