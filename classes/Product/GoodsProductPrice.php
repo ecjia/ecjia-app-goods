@@ -148,8 +148,9 @@ class GoodsProductPrice
         $market_price = $this->goods_info->market_price;
 
     	//商品会员等级价格
-    	$user_price = \RC_DB::table('member_price')->where('goods_id', $this->model->goods_id)->where('user_rank', $this->getUserRank())->pluck('user_price');
-        $shop_price = $user_price > 0 ? $user_price : $this->goods_info->shop_price*$this->user_rank_discount;
+    	$user_price = \RC_DB::table('member_price')->where('goods_id', $this->goods_id)->where('user_rank', $this->getUserRank())->pluck('user_price');
+        
+    	$shop_price = $user_price > 0 ? $user_price : $this->goods_info->shop_price*$this->user_rank_discount;
 
     	//商品促销价格
     	$promote_price = $this->filterPromotePrice($this->goods_info->shop_price, $this->goods_info->is_promote);
@@ -194,11 +195,12 @@ class GoodsProductPrice
 			];
 		} else {
 			//没有货品，但有规格情况，价格处理
+			
             if ($total_attr_price > 0) {
                 $shop_price += $total_attr_price;
                 $promote_price = ($promote_price > 0) ? ($promote_price + $total_attr_price) : 0;
             }
-
+            
 			$data = [
 				'product_id' 					=> 0,
 				'product_name'					=> '',
@@ -213,6 +215,7 @@ class GoodsProductPrice
 				'formatted_promote_price'		=> $promote_price > 0 ? ecjia_price_format($promote_price, false) : '',
 				'img'							=> [],
 			];
+			
 		}
     	
 		return $data;

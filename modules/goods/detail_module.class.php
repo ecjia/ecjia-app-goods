@@ -159,9 +159,12 @@ class goods_detail_module extends api_front implements api_interface {
         
         $data['unformatted_shop_price'] = $goods['shop_price'];
         
+        
+        
         /*如果用户登录，获取该会员的等级对应的商品的shop_price*/
         if ($_SESSION['user_id'] > 0 && !empty($user_rank_prices)) {
         	$user_info = RC_DB::table('users')->where('user_id', $_SESSION['user_id'])->first();
+        	
         	/* 取得用户等级 */
         	if ($user_info['user_rank'] == 0) {
         		// 非特殊等级，根据成长值计算用户等级（注意：不包括特殊等级）
@@ -170,11 +173,19 @@ class goods_detail_module extends api_front implements api_interface {
         		// 特殊等级
         		$user_rank_info = RC_DB::table('user_rank')->where('rank_id', $user_info['user_rank'])->first();
         	}
-        	foreach ($user_rank_prices as $key => $val) {
-        		if ($key == $user_rank_info['rank_id']) {
-        			$data['shop_price'] = $val['price'];
-        			$data['unformatted_shop_price'] = $val['unformatted_price'];
-        			break;
+        	
+        	$user_member_price = RC_DB::table('member_price')->where('goods_id', $goods_id)->where('user_rank', $user_rank_info['rank_id'])->pluck('user_price');
+        	
+        	if ($user_member_price > 0) {
+        		$data['shop_price'] = ecjia_price_format($user_member_price, false);
+        		$data['unformatted_shop_price'] = $user_member_price;
+        	} else {
+        		foreach ($user_rank_prices as $key => $val) {
+        			if ($key == $user_rank_info['rank_id']) {
+        				$data['shop_price'] = $val['price'];
+        				$data['unformatted_shop_price'] = $val['unformatted_price'];
+        				break;
+        			}
         		}
         	}
         }
