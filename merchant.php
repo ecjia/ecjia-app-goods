@@ -1679,15 +1679,46 @@ class merchant extends ecjia_merchant {
 			}
 		}
 		$attribute_count = count($_attribute);
-
-        if (empty($attribute_count)) {
-        	$links[] = array('text' => __('商品属性', 'goods'), 'href' => RC_Uri::url('goods/merchant/edit_goods_attr', array('goods_id' => $goods_id)));
-        	$links[] = array('text' => __('返回商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init'));
-            return $this->showmessage(__('请先添加库存属性，再到货品管理中设置货品库存', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => $links));
-        }
+		//商品规格对应的属性数量
+		if (empty($attribute_count)) {
+			$this->assign('goods_attribute', 'no');
+		} else {
+			$this->assign('goods_attribute', 'yes');
+		}
+		
+		
+//         if (empty($attribute_count)) {
+//         	$links[] = array('text' => __('商品属性', 'goods'), 'href' => RC_Uri::url('goods/merchant/edit_goods_attr', array('goods_id' => $goods_id)));
+//         	$links[] = array('text' => __('返回商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init'));
+//             return $this->showmessage(__('请先添加库存属性，再到货品管理中设置货品库存', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => $links));
+//         }
 
 		/* 取商品的货品 */
 		$product = product_list($goods_id, '');
+		
+		//商品所有规格属性id
+		$goods_attr_ids = RC_DB::table('goods_attr')->where('goods_id', $goods_id)->lists('goods_attr_id');
+		//货品是否有效
+		if (!empty($product['product'])) {
+			foreach ($product['product'] as $key => $val) {
+				if (empty($goods_attr_ids)) {
+					$val['product_is_avaliable'] = 'no';
+				} else {
+					$goods_attr_str_arr = explode('|', $val['goods_attr_str']);
+					//当前货品对应的属性id与该商品所有属性id的交集
+					$same_goodsattr_id = array_intersect($goods_attr_str_arr, $goods_attr_ids);
+					//当前货品对应的属性id与此交集的差集
+					$diff = array_diff($same_goodsattr_id, $goods_attr_str_arr);
+					if (!empty($diff)) {
+						$val['product_is_avaliable'] = 'no';
+					} else {
+						$val['product_is_avaliable'] = 'yes';
+					}
+				}
+				$product_arr[] = $val;
+			}
+		}
+		$product['product'] = $product_arr;
 		
 		$this->assign('tags',              	$this->tags);
 		$this->assign('goods_name', 		sprintf(__('商品名称：%s', 'goods'), $goods['goods_name']));
@@ -2385,6 +2416,13 @@ class merchant extends ecjia_merchant {
 		$_attribute = get_goods_specifications_list($goods['goods_id']);
 		$goods['_attribute'] = empty($_attribute) ? '' : 1;
 
+		//商品当前有没选择规格；如果已经选择设置过规格，不允许再切换规格
+		if ($goods['goods_type'] > 0) {
+			$this->assign('has_goods_type', 1);
+			$goods_type_name = RC_DB::table('goods_type')->where('cat_id', $goods['goods_type'])->pluck('cat_name');
+			$this->assign('goods_type_name', $goods_type_name);
+		}
+		
 		//设置选中状态,并分配标签导航
 		$this->tags['edit_goods_attr']['active'] = 1;
 		$this->assign('tags', $this->tags);

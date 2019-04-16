@@ -50,6 +50,7 @@
 	                                    <!--  {/foreach} -->
 	                                    <th class="product_sn">{t domain="goods"}货号{/t}</th>
 	                                    <th>{t domain="goods"}库存{/t}</th>
+	                                    <th>{t domain="goods"}货品是否有效{/t}</th>
 	                                    <th class="w100">{t domain="goods"}操作{/t}</th>
 	                                </tr>
 	                            </thead>
@@ -71,38 +72,47 @@
 	                                    	</span>
 	                                    </td>
 	                                    <td>
+	                                    	{if $product.product_is_avaliable eq 'no'}无效{else}有效{/if}
+	                                    </td>
+	                                    <td>
                                             <a class="data-pjax btn btn-primary btn-xs" href='{url path="goods/merchant/product_edit" args="id={$product.product_id}&goods_id={$goods_id}"}' title="{t domain="goods"}编辑{/t}"><i class="fa fa-pencil"></i></a>
                                             <a class="btn btn-danger btn-xs" data-toggle="ajaxremove" data-msg="{t domain="goods"}您确定要把该货品删除吗？{/t}" href='{url path="goods/merchant/product_remove" args="id={$product.product_id}"}' title="{t domain="goods"}删除{/t}"><i class="fa fa-trash-o"></i></a>
                                         </td>
 	                                </tr>
 	                                <!-- {/foreach} -->
 	                                
-	                                <tr class="attr_row">
-	                                    <!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
-	                                    <td>
-	                                        <select name="attr[{$attribute_value.attr_id}][]" class="form-control">
-	                                            <option value="0" selected>{t domain="goods"}请选择...{/t}</option>
-	                                            <!-- {foreach from=$attribute_value.attr_values item=value} -->
-	                                                <option value="{$value}">{$value}</option>
-	                                            <!-- {/foreach} -->
-	                                        </select>
-	                                    </td>
-	                                    <!-- {/foreach} -->
-	                                    <td><div class="col-lg-4"><input class="form-control" type="text" name="product_sn[]" value="" size="20"/></div></td>
-	                                    <td><div class="col-lg-4"><input class="form-control" type="text" name="product_number[]" value="" size="10"/></div></td>
-	                                    <td><a class="no-underline ecjiafc-red" data-toggle="remove_product" data-parent=".attr_row" href="javascript:;"><i class="fa fa-times"></i></a></td>
-	                                </tr>
+	                                {if $goods_attribute eq 'yes'}
+		                                <tr class="attr_row">
+		                                    <!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
+		                                    <td>
+		                                        <select name="attr[{$attribute_value.attr_id}][]" class="form-control">
+		                                            <option value="0" selected>{t domain="goods"}请选择...{/t}</option>
+		                                            <!-- {foreach from=$attribute_value.attr_values item=value} -->
+		                                                <option value="{$value}">{$value}</option>
+		                                            <!-- {/foreach} -->
+		                                        </select>
+		                                    </td>
+		                                    <!-- {/foreach} -->
+		                                    <td><div class="col-lg-4"><input class="form-control" type="text" name="product_sn[]" value="" size="20"/></div></td>
+		                                    <td><div class="col-lg-4"><input class="form-control" type="text" name="product_number[]" value="" size="10"/></div></td>
+		                                    <td><a class="no-underline ecjiafc-red" data-toggle="remove_product" data-parent=".attr_row" href="javascript:;"><i class="fa fa-times"></i></a></td>
+		                                </tr>
+	                                {/if}
 	                            </tbody>
 	                        </table>
 	                    </div>
-	                    <a class="m_l5 l_h30 add_item" href="javascript:;">{t domain="goods"}再添加一项{/t}</a>
+	                    {if $goods_attribute eq 'yes'}
+	                   		<a class="m_l5 l_h30 add_item" href="javascript:;">{t domain="goods"}再添加一项{/t}</a>
+	                    {/if}
 	                </div>
 	                <div class="t_c">
 	                	{if $step}
 	                	<input type="hidden" name="step" value="{$step}" />
 	                	<input type="submit" name="submit" value="{t domain="goods"}完成{/t}" class="btn btn-info" />
 	                	{else}
-	                	<input type="submit" name="submit" value="{t domain="goods"}保存{/t}" class="btn btn-info" />
+	                	{if $goods_attribute eq 'yes'}
+	                		<input type="submit" name="submit" value="{t domain="goods"}保存{/t}" class="btn btn-info" />
+	                	{/if}
 	                	{/if}
 	                	<input type="hidden" name="goods_id" value="{$goods_id}" />
 	                	<input type="hidden" name="act" value="product_add_execute" />
