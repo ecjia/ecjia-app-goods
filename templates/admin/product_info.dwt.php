@@ -83,6 +83,7 @@
 	                                    <!-- {/foreach} --></td>
 	                                    <td><input class="w130" type="text" name="product_sn[]" value="" size="20"/></td>
 	                                    <td><input class="w100" type="text" name="product_number[]" value="" size="10"/></td>
+                                        <td></td>
 	                                    <td><a class="no-underline ecjiafc-red" data-toggle="remove_product" data-parent=".attr_row" href="javascript:;"><i class="fontello-icon-minus"></i></a></td>
 	                                </tr>
 	                            {/if}

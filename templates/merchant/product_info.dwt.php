@@ -85,18 +85,19 @@
 	                                
 	                                {if $goods_attribute eq 'yes'}
 		                                <tr class="attr_row">
-		                                    <!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
-		                                    <td>
+                                            <td><!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
+		                                    <div class="f_l m_r5">
 		                                        <select name="attr[{$attribute_value.attr_id}][]" class="form-control">
 		                                            <option value="0" selected>{t domain="goods"}请选择...{/t}</option>
 		                                            <!-- {foreach from=$attribute_value.attr_values item=value} -->
 		                                                <option value="{$value}">{$value}</option>
 		                                            <!-- {/foreach} -->
 		                                        </select>
-		                                    </td>
-		                                    <!-- {/foreach} -->
+                                            </div>
+		                                    <!-- {/foreach} --></td>
 		                                    <td><div class="col-lg-4"><input class="form-control" type="text" name="product_sn[]" value="" size="20"/></div></td>
 		                                    <td><div class="col-lg-4"><input class="form-control" type="text" name="product_number[]" value="" size="10"/></div></td>
+                                            <td></td>
 		                                    <td><a class="no-underline ecjiafc-red" data-toggle="remove_product" data-parent=".attr_row" href="javascript:;"><i class="fa fa-times"></i></a></td>
 		                                </tr>
 	                                {/if}
