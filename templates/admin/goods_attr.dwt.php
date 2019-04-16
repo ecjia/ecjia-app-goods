@@ -28,18 +28,27 @@
 			{/if}
 			<form class="form-horizontal" action="{$form_action}" method="post" name="theForm">
 				<fieldset>
-					<div class="control-group formSep">
-						<label class="control-label">{t domain="goods"}商品规格：{/t}</label>
-						<div class="controls">
-							<select name="goods_type" autocomplete="off" data-toggle="get_attr_list" data-url='{url path="goods/admin/get_attr" args="goods_id={$goods_id}"}'>
-								<option value="0">{t domain="goods"}请选择商品规格{/t}</option>
-								<!-- {$goods_type_list} -->
-							</select>
-							<br/>
-							<br/>
-							<span class="help-block">{t domain="goods"}请选择商品的所属规格，进而完善此商品的属性{/t}</span>
+					{if $has_goods_type eq 1}
+						<div class="control-group formSep">
+							<label class="control-label">{t domain="goods"}商品规格：{/t}</label>
+							<div class="controls l_h30">
+								{$goods_type_name}
+							</div>
 						</div>
-					</div>
+					{else}
+						<div class="control-group formSep">
+							<label class="control-label">{t domain="goods"}商品规格：{/t}</label>
+							<div class="controls">
+								<select name="goods_type" autocomplete="off" data-toggle="get_attr_list" data-url='{url path="goods/admin/get_attr" args="goods_id={$goods_id}"}'>
+									<option value="0">{t domain="goods"}请选择商品规格{/t}</option>
+									<!-- {$goods_type_list} -->
+								</select>
+								<br/>
+								<br/>
+								<span class="help-block">{t domain="goods"}请选择商品的所属规格，进而完善此商品的属性{/t}</span>
+							</div>
+						</div>
+					{/if}
 					<div id="tbody-goodsAttr">
 						<!-- {if $goods_attr_html}{$goods_attr_html}{/if}  -->
 					</div>
