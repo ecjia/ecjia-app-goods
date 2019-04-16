@@ -45,9 +45,11 @@
 	                        <table class="table table-striped table-hide-edit product_list">
 	                            <thead>
 	                                <tr>
-	                                    <!-- {foreach from=$attribute item=attribute_value} -->
-	                                    <th class="w110">{$attribute_value.attr_name}</th>
+                                        <th>
+                                        <!-- {foreach from=$attribute item=attribute_value} -->
+	                                    {$attribute_value.attr_name} {if $attribute_value@last}{else}/{/if}
 	                                    <!--  {/foreach} -->
+                                        </th>
 	                                    <th class="product_sn">{t domain="goods"}货号{/t}</th>
 	                                    <th>{t domain="goods"}库存{/t}</th>
 	                                    <th>{t domain="goods"}货品是否有效{/t}</th>
@@ -58,9 +60,9 @@
 	                            <tbody>
 	                                <!-- {foreach from=$product_list item=product} -->
 	                                <tr>
-	                                    <!-- {foreach from=$product.goods_attr item=goods_attr} -->
-	                                    <td>{$goods_attr}</td>
-	                                    <!-- {/foreach} -->
+                                        <td><!-- {foreach from=$product.goods_attr item=goods_attr} -->
+	                                    {$goods_attr} {if $goods_attr@last}{else}/{/if}
+	                                    <!-- {/foreach} --></td>
 	                                    <td class="product_sn">
 		                                    <span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_product_sn')}" data-name="edit_product_sn" data-pk="{$product.product_id}" data-title="{t domain="goods"}编辑货品货号{/t}">
 		                                    {$product.product_sn}
