@@ -1900,6 +1900,7 @@ class admin extends ecjia_admin {
 		//商品当前有没选择规格；如果已经选择设置过规格，不允许再切换规格
 		if ($goods['goods_type'] > 0) {
 			$this->assign('has_goods_type', 1);
+			$this->assign('goods_type', $goods['goods_type']);
 			$goods_type_name = RC_DB::table('goods_type')->where('cat_id', $goods['goods_type'])->pluck('cat_name');
 			$this->assign('goods_type_name', $goods_type_name);
 		}

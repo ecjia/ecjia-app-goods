@@ -52,6 +52,7 @@
 										<div class="col-lg-4 l_h30">
 											{$goods_type_name}
 										</div>
+										<input type="hidden" name="goods_type" value="{$goods_type}" />
 									</div>
 								{else}
 									<div class="form-group">
