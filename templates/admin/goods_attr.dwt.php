@@ -95,7 +95,7 @@
 								<tr>
 									<td>{$attr.attr_value}</td>
 									<td>{$attr.attr_price}</td>
-									<td><a class="ecjiafc-red ajax-remove" data-toggle="ajaxremove" data-msg="{t domain="goods"}您确定要把该属性删除吗？{/t}" href='{url path="goods/admin/remove_goods_attr" args="goods_attr_id={$attr.goods_attr_id}"}' title="{t domain="goods"}删除无效属性{/t}"><i class="fontello-icon-trash ecjiafc-red"></i></a></td>
+									<td><a class="ecjiafc-red ajax-remove" data-toggle="ajaxremove" data-msg='{t domain="goods"}您确定要把该属性删除吗？{/t}' href='{url path="goods/admin/remove_goods_attr" args="goods_attr_id={$attr.goods_attr_id}"}' title='{t domain="goods"}删除无效属性{/t}'>{t domain="goods"}移除{/t}</a></td>
 								</tr>
 								{/foreach}
 							</tbody>

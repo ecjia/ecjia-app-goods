@@ -1667,6 +1667,14 @@ class merchant extends ecjia_merchant {
         if (empty($goods)) {
         	return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')))));
         }
+        
+        //商品当前有没选择规格；
+        if ($goods['goods_type'] > 0) {
+        	$this->assign('has_goods_type', 1);
+        } else {
+        	$this->assign('has_goods_type', 0);
+        }
+        
 		//获得商品已经添加的规格列表
 		$attribute = get_goods_specifications_list($goods_id);
 
@@ -2403,6 +2411,48 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')))));
 		}
 		
+		//查询商品规格对应属性；只按商品id查
+		$goods_attr_list = RC_DB::table('goods_attr')->where('goods_id', $goods_id)->get();
+		if (!empty($goods_attr_list)) {
+			foreach ($goods_attr_list as $val) {
+				$goods_attr_all_ids[] =  $val['goods_attr_id'];
+			}
+			//当前商品有属性数据且有规格，判断商品全部的属性除去当前规格对应的属性外的视为无效属性
+			if ($goods['goods_type'] > 0) {
+				//当前规格对应的属性id
+				$attr_ids = RC_DB::table('attribute')->where('cat_id', $goods['goods_type'])->lists('attr_id');
+				if (!empty($attr_ids)) {
+					$carrent_goods_type_attr_list = RC_DB::table('goods_attr')->where('goods_id', $goods_id)->whereIn('attr_id', $attr_ids)->get();
+					if ($carrent_goods_type_attr_list) {
+						foreach ($carrent_goods_type_attr_list as $v) {
+							$carrent_goods_type_attr_ids[] = $v['goods_attr_id'];
+						}
+						//全部和当前的差集
+						$diff = array_diff($goods_attr_all_ids, $carrent_goods_type_attr_ids);
+		
+						if (!empty($diff)) {
+							foreach ($goods_attr_list as $attr) {
+								if (in_array($attr['goods_attr_id'], $diff)) {
+									$invaliable_goods_attr_list[] = $attr;
+								}
+							}
+							$this->assign('goods_attr_list', $invaliable_goods_attr_list);
+							$this->assign('invaliable_goods_attr_list', true);
+						}
+		
+					}
+				}
+			} else {
+				//当前商品有属性数据且没有规格；这些商品属性均为无效属性
+				if (!empty($goods_attr_list)) {
+					$this->assign('goods_attr_list', $goods_attr_list);
+					$this->assign('invaliable_goods_attr_list', true);
+				}
+			}
+		} else {
+			$this->assign('invaliable_goods_attr_list', false);
+		}
+		
 		if (empty($goods) === true) {
 			$goods = array('goods_type' => 0); 	// 商品类型
 		}
@@ -2565,6 +2615,20 @@ class merchant extends ecjia_merchant {
 		}
 	}
 
+	
+	/**
+	 * 删除无效属性
+	 */
+	public function remove_goods_attr()
+	{
+		$goods_attr_id = intval($_GET['goods_attr_id']);
+	
+		RC_DB::table('goods_attr')->where('goods_attr_id', $goods_attr_id)->delete();
+	
+		return $this->showmessage(__('成功移除无效属性', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+	}
+	
+	
 	/**
 	 * 关联商品
 	 */
