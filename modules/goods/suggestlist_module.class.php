@@ -120,6 +120,7 @@ class goods_suggestlist_module extends api_front implements api_interface {
 // 		if (ecjia::config('show_product') == 1) {
 // 			$filters['product'] = true;
 // 		}
+		
 		//定位附近店铺id
 		if (!empty($store_ids)) {
 			$filters['store_id'] = $store_ids;
@@ -146,6 +147,7 @@ class goods_suggestlist_module extends api_front implements api_interface {
 // 						$filters['goods_promotion'] = true;
 // 					}
 // 				}
+				$filters['product'] = true;
 				if (!empty($promotion_type)) {
 					$filters['goods_and_product_promotion_type'] = $promotion_type;
 				} else {
