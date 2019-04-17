@@ -139,6 +139,7 @@ class goods_detail_module extends api_front implements api_interface {
         $favourable_list = $this->get_favourable_list($goods, $rec_type);
 
         $data = ecjia_api::transformerData('GOODS', $data);
+        $data['product_id'] = 0;
         //商品货品信息
         if (!empty($data['specification'])) {
         	$GoodsProductPrice = new \Ecjia\App\Goods\Product\GoodsProductPrice($goods_id);
@@ -604,7 +605,6 @@ class goods_detail_module extends api_front implements api_interface {
 				$activity_type = 'GENERAL_GOODS';
 			}
 			$data['goods_sn'] 				= $product_info['product_sn'] ?: $data['goods_sn'];
-			$data['goods_id'] 				= $data['id'] ?: 0;
 			$data['product_id'] 			= $product_info['product_id'] ?: 0;
 			$data['goods_name'] 			= $product_info['product_name'] ?: $data['goods_name'];
 			$data['goods_number'] 			= $product_info['product_number'] ?: $data['goods_number'];
