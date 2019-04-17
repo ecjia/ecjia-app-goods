@@ -68,6 +68,41 @@
 					<input type="hidden" id="type" value="{$link.type}"/>
 				</fieldset>
 			</form>
+			{if $invaliable_goods_attr_list}
+				<div class="accordion-group" style="margin-top:35px;">
+					<div class="accordion-heading">
+						<a class="accordion-toggle acc-in move-mod-head" data-toggle="collapse">
+							<strong>{t domain="goods"}无效规格属性{/t}</strong>
+						</a>
+					</div>
+					<div class="accordion-body in collapse">
+						<table class="table table-striped m_b0">
+							<thead>
+								<tr>
+									<th class="w250">
+										<strong>{t domain="goods"}属性名{/t}</strong>
+									</th>
+									<th class="w180">
+										<strong>{t domain="goods"}属性价格{/t}</strong>
+									</th>
+									<th class="w180">
+										<strong>{t domain="goods"}操作{/t}</strong>
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								{foreach from=$goods_attr_list item=attr}
+								<tr>
+									<td>{$attr.attr_value}</td>
+									<td>{$attr.attr_price}</td>
+									<td><a class="ecjiafc-red ajax-remove" data-toggle="ajaxremove" data-msg="{t domain="goods"}您确定要把该属性删除吗？{/t}" href='{url path="goods/admin/remove_goods_attr" args="goods_attr_id={$attr.goods_attr_id}"}' title="{t domain="goods"}删除无效属性{/t}"><i class="fontello-icon-trash ecjiafc-red"></i></a></td>
+								</tr>
+								{/foreach}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

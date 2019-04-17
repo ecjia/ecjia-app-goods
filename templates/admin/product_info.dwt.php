@@ -69,9 +69,8 @@
                                     <td><a class="ecjiafc-red ajax-remove" data-toggle="ajaxremove" data-msg="{t domain="goods"}您确定要把该货品删除吗？{/t}" href='{url path="goods/admin/product_remove" args="id={$product.product_id}"}' title="{t domain="goods"}删除{/t}"><i class="fontello-icon-trash ecjiafc-red"></i></a></td>
                                 </tr>
                                 {/foreach}
-                                {if $goods_attribute eq 'yes'}
-	                                <tr class="attr_row">
-	                                    <td><!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
+								<tr class="attr_row">
+	                                 <td><!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
 	                                        <div class="f_l m_r5">
 	                                        <select name="attr[{$attribute_value.attr_id}][]" class="w100">
 	                                            <option value="0" selected>{t domain="goods"}请选择...{/t}</option>
@@ -81,25 +80,22 @@
 	                                        </select>
 	                                        </div>
 	                                    <!-- {/foreach} --></td>
-	                                    <td><input class="w130" type="text" name="product_sn[]" value="" size="20"/></td>
-	                                    <td><input class="w100" type="text" name="product_number[]" value="" size="10"/></td>
-                                        <td></td>
-	                                    <td><a class="no-underline ecjiafc-red" data-toggle="remove_product" data-parent=".attr_row" href="javascript:;"><i class="fontello-icon-minus"></i></a></td>
-	                                </tr>
-	                            {/if}
+	                                 <td><input class="w130" type="text" name="product_sn[]" value="" size="20"/></td>
+	                                 <td><input class="w100" type="text" name="product_number[]" value="" size="10"/></td>
+                                     <td></td>
+	                                 <td><a class="no-underline ecjiafc-red" data-toggle="remove_product" data-parent=".attr_row" href="javascript:;"><i class="fontello-icon-minus"></i></a></td>
+	                            </tr>	                          
                             </tbody>
                         </table>
                     </div>
-                    {if $goods_attribute eq 'yes'}
-                    	<a class="m_l5 l_h30 add_item" href="javascript:;">再添加一项</a>
-                    {/if}
+                    <a class="m_l5 l_h30 add_item" href="javascript:;">再添加一项</a>
                 </div>
                 <div class="t_c">
                 	{if $step}
                 	<input type="hidden" name="step" value="{$step}" />
                 	<input type="submit" name="submit" value="{t domain="goods"}完成{/t}" class="btn btn-gebo" />
                 	{else}
-                	{if $goods_attribute eq 'yes'}
+                	{if $goods_attribute eq 'yes' && $has_goods_type eq '1'}
                 		<input type="submit" name="submit" value="{t domain="goods"}保存{/t}" class="btn btn-gebo" />
                 	{/if}
                 	{/if}
