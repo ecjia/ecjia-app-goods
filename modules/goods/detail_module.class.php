@@ -604,6 +604,8 @@ class goods_detail_module extends api_front implements api_interface {
 				$activity_type = 'GENERAL_GOODS';
 			}
 			$data['goods_sn'] 				= $product_info['product_sn'] ?: $data['goods_sn'];
+			$data['goods_id'] 				= $data['id'] ?: 0;
+			$data['product_id'] 			= $product_info['product_id'] ?: 0;
 			$data['goods_name'] 			= $product_info['product_name'] ?: $data['goods_name'];
 			$data['goods_number'] 			= $product_info['product_number'] ?: $data['goods_number'];
 			$data['shop_price'] 			= $product_info['formatted_product_shop_price'] ?: $data['shop_price'];
