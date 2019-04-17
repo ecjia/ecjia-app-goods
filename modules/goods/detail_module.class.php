@@ -597,6 +597,12 @@ class goods_detail_module extends api_front implements api_interface {
 				unset($val['product_name']);
 				$arr[] = $val;
 			}
+			
+			if ($product_info['product_shop_price'] > $product_info['promote_price'] && $product_info['promote_price'] > 0) {
+				$activity_type =  'PROMOTE_GOODS';
+			} else {
+				$activity_type = 'GENERAL_GOODS';
+			}
 			$data['goods_sn'] 				= $product_info['product_sn'] ?: $data['goods_sn'];
 			$data['goods_name'] 			= $product_info['product_name'] ?: $data['goods_name'];
 			$data['goods_number'] 			= $product_info['product_number'] ?: $data['goods_number'];
@@ -608,6 +614,8 @@ class goods_detail_module extends api_front implements api_interface {
 			$data['promote_limited']   		= $product_info['promote_limited'];
 			$data['img']   					= $product_info['img'] ?: $data['img'];
 			$data['product_specification']  = $arr;
+			$data['rec_type'] 				= $activity_type;
+			$data['activity_type'] 			= $activity_type;
 		}
 		return $data;
 	}
