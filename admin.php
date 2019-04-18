@@ -1475,23 +1475,42 @@ class admin extends ecjia_admin {
 		/* 取商品的货品 */
 		$product = product_list($goods_id, '');
 		
-		//商品所有规格属性id
-		$goods_attr_ids = RC_DB::table('goods_attr')->where('goods_id', $goods_id)->lists('goods_attr_id');
+		/*获得商品的规格和属性*/
+		$properties = Ecjia\App\Goods\GoodsFunction::get_goods_properties($goods_id);
+		
+		$properties = Ecjia\App\Goods\GoodsFunction::handle_spec($properties);
+		//商品规格
+		$product_goods_attrs = [];
+		$specification = $properties['spe'];
+		if (!empty($specification)) {
+			//商品规格分组
+			foreach ($specification as $key => $val)  {
+				if ($val['value']) {
+					foreach ($val['value'] as $spec) {
+						$arr[$key][] = $spec['id'];
+					}
+				}
+			}
+			//商品规格属性id重组处理
+			$spec_combine_arr = $this->_combination($arr);
+			foreach ($spec_combine_arr as $goods_attr) {
+				$goods_attr_string = implode('|', $goods_attr);
+				$product_goods_attrs[] = $goods_attr_string;
+			}
+		}
+		
+		
 		//货品是否有效
 		if (!empty($product['product'])) {
 			foreach ($product['product'] as $key => $val) {
-				if (empty($goods_attr_ids)) {
+				if (empty($product_goods_attrs)) {
 					$val['product_is_avaliable'] = 'no';
 				} else {
 					$goods_attr_str_arr = explode('|', $val['goods_attr_str']);
-					//当前货品对应的属性id与该商品所有属性id的交集
-					$same_goodsattr_id = array_intersect($goods_attr_str_arr, $goods_attr_ids);
-					//当前货品对应的属性id与此交集的差集
-					$diff = array_diff($same_goodsattr_id, $goods_attr_str_arr);
-					if (!empty($diff)) {
-						$val['product_is_avaliable'] = 'no';
-					} else {
+					if (in_array($val['goods_attr_str'], $product_goods_attrs)) {
 						$val['product_is_avaliable'] = 'yes';
+					} else {
+						$val['product_is_avaliable'] = 'no';
 					}
 				}
 				$product_arr[] = $val;
@@ -2427,6 +2446,46 @@ class admin extends ecjia_admin {
 			}
 		}
 		return $this->showmessage(__('新商品分类添加成功！', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $cat_select, 'opt' => $arr));
+	}
+	
+	
+	/**
+	 * 商品规格重组集合
+	 * @param array $options
+	 * @return array
+	 */
+	private function _combination(array $options)
+	{
+		$rows = [];
+	
+		foreach ($options as $option => $items) {
+			if (count($rows) > 0) {
+				// 2、将第一列作为模板
+				$clone = $rows;
+	
+				// 3、置空当前列表，因为只有第一列的数据，组合是不完整的
+				$rows = [];
+	
+				// 4、遍历当前列，追加到模板中，使模板中的组合变得完整
+				foreach ($items as $item) {
+					$tmp = $clone;
+					foreach ($tmp as $index => $value) {
+						$value[$option] = $item;
+						$tmp[$index] = $value;
+					}
+	
+					// 5、将完整的组合拼回原列表中
+					$rows = array_merge($rows, $tmp);
+				}
+			} else {
+				// 1、先计算出第一列
+				foreach ($items as $item) {
+					$rows[][$option] = $item;
+				}
+			}
+		}
+	
+		return $rows;
 	}
 }
 
