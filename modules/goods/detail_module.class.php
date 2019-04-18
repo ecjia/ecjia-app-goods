@@ -345,7 +345,7 @@ class goods_detail_module extends api_front implements api_interface {
 		} else {
 			$data['add_time'] = '';
 		}
-		
+		$data['product_goods_attr'] = '';
 		
 		//判断货品，是货品，替换部分基本信息字段
 		if ($product_id > 0) {
@@ -615,6 +615,7 @@ class goods_detail_module extends api_front implements api_interface {
 			$data['formated_promote_price'] = $product_info['formatted_promote_price'];
 			$data['promote_user_limited']   = $product_info['promote_user_limited'];
 			$data['promote_limited']   		= $product_info['promote_limited'];
+			$data['product_goods_attr']		= $product_info['product_goods_attr'] ?: $data['product_goods_attr'];
 			$data['img']   					= $product_info['img'] ?: $data['img'];
 			$data['product_specification']  = $arr;
 			$data['rec_type'] 				= $activity_type;
