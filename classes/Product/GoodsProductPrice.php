@@ -186,6 +186,7 @@ class GoodsProductPrice
 				'product_shop_price'			=> sprintf("%.2f", $shop_price),
 				'formatted_product_shop_price'	=> ecjia_price_format($shop_price, false),
 				'promote_price'					=> $promote_price > 0 ? sprintf("%.2f", $promote_price) : 0,
+				'is_promote'					=> $promote_price > 0 ? 1 : 0,
 				'formatted_promote_price'		=> $promote_price > 0 ? ecjia_price_format($promote_price, false) : '',
 				'img'							=> [
 														'thumb' =>  $product_info->product_thumb ? \RC_Upload::upload_url($product_info->product_thumb) : '',

@@ -611,6 +611,7 @@ class goods_detail_module extends api_front implements api_interface {
 			$data['shop_price'] 			= $product_info['formatted_product_shop_price'] ?: $data['shop_price'];
 			$data['unformatted_shop_price'] = $product_info['product_shop_price'] ?: $data['unformatted_shop_price'];
 			$data['promote_price'] 			= $product_info['promote_price'];
+			$data['is_promote']				= $product_info['is_promote'];
 			$data['formated_promote_price'] = $product_info['formatted_promote_price'];
 			$data['promote_user_limited']   = $product_info['promote_user_limited'];
 			$data['promote_limited']   		= $product_info['promote_limited'];
