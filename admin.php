@@ -1587,7 +1587,9 @@ class admin extends ecjia_admin {
     		        $id_list[$attr_key] = $attr_key;
     		    }
     		    $goods_attr_id = handle_goods_attr($product['goods_id'], $id_list, $is_spec_list, $value_price_list);
-    		
+    			//排序
+    		    sort($goods_attr_id);
+    		    
     		    /* 是否为重复规格的货品 */
     		    $goods_attr = sort_goods_attr_id_array($goods_attr_id);
     		    $goods_attr = implode('|', $goods_attr['sort']);

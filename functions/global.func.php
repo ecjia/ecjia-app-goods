@@ -1659,9 +1659,9 @@ function sort_goods_attr_id_array($goods_attr_id_array, $sort = 'asc') {
 		})
 		->select(RC_DB::raw('a.attr_type, v.attr_value, v.goods_attr_id'))
 		->whereIn(RC_DB::raw('v.goods_attr_id'), $goods_attr_id_array)
-		->orderby(RC_DB::raw('a.attr_id'), $sort)
+		->orderby(RC_DB::raw('v.goods_attr_id'), $sort)
 		->get();
-	 
+		
 	$return_arr = array();
 	if (! empty($row)) {
 		foreach ($row as $value) {
