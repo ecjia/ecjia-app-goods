@@ -64,7 +64,7 @@
                                     	</span>
                                     </td>
                                     <td>
-                                    	{if $product.product_is_avaliable eq 'no'}无效{else}有效{/if}
+                                    	{if $product.product_is_avaliable eq 'no'}<apan class="ecjiafc-red">无效</apan>{else}有效{/if}
                                     </td>
                                     <td><a class="ecjiafc-red ajax-remove" data-toggle="ajaxremove" data-msg="{t domain="goods"}您确定要把该货品删除吗？{/t}" href='{url path="goods/admin/product_remove" args="id={$product.product_id}"}' title="{t domain="goods"}删除{/t}"><i class="fontello-icon-trash ecjiafc-red"></i></a></td>
                                 </tr>

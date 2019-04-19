@@ -74,7 +74,7 @@
 	                                    	</span>
 	                                    </td>
 	                                    <td>
-	                                    	{if $product.product_is_avaliable eq 'no'}无效{else}有效{/if}
+	                                    	{if $product.product_is_avaliable eq 'no'}<span class="ecjiafc-red">无效</span>{else}有效{/if}
 	                                    </td>
 	                                    <td>
                                             <a class="data-pjax btn btn-primary btn-xs" href='{url path="goods/merchant/product_edit" args="id={$product.product_id}&goods_id={$goods_id}"}' title="{t domain="goods"}编辑{/t}"><i class="fa fa-pencil"></i></a>
