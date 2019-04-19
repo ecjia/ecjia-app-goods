@@ -117,9 +117,9 @@ class goods_suggestlist_module extends api_front implements api_interface {
 			'no_need_cashier_goods'	=> true, //不需要收银台商品和散装商品
 		];
 		//是否展示货品
-// 		if (ecjia::config('show_product') == 1) {
-// 			$filters['product'] = true;
-// 		}
+		if (ecjia::config('show_product') == 1) {
+			$filters['product'] = true;
+		}
 		
 		//定位附近店铺id
 		if (!empty($store_ids)) {

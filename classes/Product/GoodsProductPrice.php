@@ -223,6 +223,11 @@ class GoodsProductPrice
 		return $data;
     }
     
+    /**
+     * 商品规格重组集合
+     * @param array $options
+     * @return array
+     */
     public function _combination(array $options)
     {
     	$rows = [];
@@ -258,7 +263,7 @@ class GoodsProductPrice
     }
     
     
-/**
+	/**
 	 * 促销价处理
 	 * @param unknown $promote_price
 	 * @return Ambigous <number, float>
