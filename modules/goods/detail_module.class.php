@@ -212,7 +212,7 @@ class goods_detail_module extends api_front implements api_interface {
         } else {
         	/* 判断是否有促销价格*/
         	$price = ($data['unformatted_shop_price'] > $goods['promote_price_org'] && $goods['promote_price_org'] > 0) ? $goods['promote_price_org'] : $data['unformatted_shop_price'];
-        	$activity_type = ($data['unformatted_shop_price'] > $goods['promote_price_org'] && $goods['promote_price_org'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
+        	$activity_type = ($goods['promote_price_org'] > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
         }
         $data['groupbuy_info'] = $groupbuy_info;
 
@@ -235,6 +235,9 @@ class goods_detail_module extends api_front implements api_interface {
         $data['object_id'] = empty($object_id) ? 0 : $object_id;
         $data['promote_user_limited'] = $activity_type == 'PROMOTE_GOODS' ? $goods['promote_user_limited'] : 0;
         $data['promote_limited'] = $activity_type == 'PROMOTE_GOODS' ? $goods['promote_limited'] : 0;
+        //会员价和促销价对比；促销价高于会员价时促销价覆盖会员价
+        $data['unformatted_shop_price'] = $data['promote_price'] > 0 ? min($data['promote_price'], $data['unformatted_shop_price']) : $data['unformatted_shop_price'];
+        $data['shop_price']				= ecjia_price_format($data['unformatted_shop_price'], false);
         
         if (ecjia_config::has('mobile_touch_url')) {
         	$data['goods_url'] = ecjia::config('mobile_touch_url').'index.php?m=goods&c=index&a=show&goods_id='.$goods_id.'&hidenav=1&hidetab=1';
@@ -599,7 +602,7 @@ class goods_detail_module extends api_front implements api_interface {
 				$arr[] = $val;
 			}
 			
-			if ($product_info['product_shop_price'] > $product_info['promote_price'] && $product_info['promote_price'] > 0) {
+			if ($product_info['promote_price'] > 0) {
 				$activity_type =  'PROMOTE_GOODS';
 			} else {
 				$activity_type = 'GENERAL_GOODS';
