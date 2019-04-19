@@ -39,6 +39,9 @@ class GoodsApiFormatted
     	
     	//商品促销价格
     	$promote_price = $this->filterPromotePrice($this->model->promote_price, $this->model->is_promote);
+    	
+    	//市场价最终价
+    	$final_shop_price = $promote_price > 0 ? min($shop_price, $promote_price) : $shop_price;
     	 
         if ($this->model->product_id > 0) {
         	$total_attr_price = 0;
@@ -62,9 +65,11 @@ class GoodsApiFormatted
         	}
 
         	$promote_price = $product_promote_price;
+        	//市场价最终价
+        	$final_shop_price = $promote_price > 0 ? min($shop_price, $promote_price) : $shop_price;
         }
 
-    	$activity_type = ($shop_price > $promote_price && $promote_price > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
+    	$activity_type = ($promote_price > 0) ? 'PROMOTE_GOODS' : 'GENERAL_GOODS';
     	/* 计算节约价格*/
     	$saving_price = ($this->model->shop_price > $promote_price && $promote_price > 0) ? $this->model->shop_price - $promote_price : (($this->model->market_price > 0 && $this->model->market_price > $this->model->shop_price) ? $this->model->market_price - $this->model->shop_price : 0);
     	
@@ -90,8 +95,8 @@ class GoodsApiFormatted
             'goods_sn' 					=> $this->filterGoodsSn($this->model->goods_sn),
             'market_price'				=> ecjia_price_format($market_price, false),
             'unformatted_market_price'  => sprintf("%.2f", $market_price),
-            'shop_price'				=> ecjia_price_format($shop_price, false),
-            'unformatted_shop_price'    => sprintf("%.2f", $shop_price),
+            'shop_price'				=> ecjia_price_format($final_shop_price, false),
+            'unformatted_shop_price'    => sprintf("%.2f", $final_shop_price),
             'promote_price' 			=> $promote_price > 0 ? ecjia_price_format($promote_price, false) : '',
             'promote_start_date'        => \RC_Time::local_date('Y/m/d H:i:s O', $this->model->promote_start_date),
             'promote_end_date'          => \RC_Time::local_date('Y/m/d H:i:s O', $this->model->promote_end_date),
