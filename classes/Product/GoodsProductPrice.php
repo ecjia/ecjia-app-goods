@@ -155,6 +155,9 @@ class GoodsProductPrice
     	//商品促销价格
     	$promote_price = $this->filterPromotePrice($this->goods_info->shop_price, $this->goods_info->is_promote);
     	
+    	//市场价最终价
+    	$final_shop_price = $promote_price > 0 ? min($shop_price, $promote_price) : $shop_price;
+    	
 		if (in_array($attr_id, $product_attr_ids)) { //有货品情况
 			//获取货品信息
 			$product_info = $this->products_model->where('goods_id', $this->goods_id)->where('goods_attr', $attr_id)->first();
@@ -175,6 +178,8 @@ class GoodsProductPrice
 
             $promote_price = $product_promote_price;
 
+            $final_shop_price = $promote_price > 0 ? min($shop_price, $promote_price) : $shop_price;
+            
 			$data = [
 				'product_id' 					=> $product_info->product_id,
 				'product_name' 					=> $product_info->product_name ? $product_info->product_name : '',
@@ -183,8 +188,8 @@ class GoodsProductPrice
 				'product_number'				=> $product_info->product_number,
 				'promote_user_limited'			=> $promote_price > 0 ? $product_info->promote_user_limited : 0,
 				'promote_limited'				=> $promote_price > 0 ? $product_info->promote_limited : 0,
-				'product_shop_price'			=> sprintf("%.2f", $shop_price),
-				'formatted_product_shop_price'	=> ecjia_price_format($shop_price, false),
+				'product_shop_price'			=> sprintf("%.2f", $final_shop_price),
+				'formatted_product_shop_price'	=> ecjia_price_format($final_shop_price, false),
 				'promote_price'					=> $promote_price > 0 ? sprintf("%.2f", $promote_price) : 0,
 				'is_promote'					=> $promote_price > 0 ? 1 : 0,
 				'formatted_promote_price'		=> $promote_price > 0 ? ecjia_price_format($promote_price, false) : '',
@@ -196,7 +201,6 @@ class GoodsProductPrice
 			];
 		} else {
 			//没有货品，但有规格情况，价格处理
-			
             if ($total_attr_price > 0) {
                 $shop_price += $total_attr_price;
                 $promote_price = ($promote_price > 0) ? ($promote_price + $total_attr_price) : 0;
@@ -210,8 +214,8 @@ class GoodsProductPrice
 				'product_number'				=> 0,
 				'promote_user_limited'			=> $promote_price > 0 ? $this->goods_info->promote_user_limited : 0,
 				'promote_limited'				=> $promote_price > 0 ? $this->goods_info->promote_limited : 0,
-				'product_shop_price'			=> sprintf("%.2f", $shop_price),
-				'formatted_product_shop_price'	=> ecjia_price_format($shop_price, false),	
+				'product_shop_price'			=> sprintf("%.2f", $final_shop_price),
+				'formatted_product_shop_price'	=> ecjia_price_format($final_shop_price, false),	
 				'promote_price'					=> $promote_price > 0 ? sprintf("%.2f", $promote_price) : 0,
 				'is_promote'					=> $promote_price > 0 ? 1 : 0,
 				'formatted_promote_price'		=> $promote_price > 0 ? ecjia_price_format($promote_price, false) : '',
