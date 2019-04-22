@@ -607,22 +607,24 @@ class goods_detail_module extends api_front implements api_interface {
 			} else {
 				$activity_type = 'GENERAL_GOODS';
 			}
-			$data['goods_sn'] 				= $product_info['product_sn'] ?: $data['goods_sn'];
-			$data['product_id'] 			= $product_info['product_id'] ?: 0;
-			$data['goods_name'] 			= $product_info['product_name'] ?: $data['goods_name'];
-			$data['goods_number'] 			= $product_info['product_number'] ?: $data['goods_number'];
-			$data['shop_price'] 			= $product_info['formatted_product_shop_price'] ?: $data['shop_price'];
-			$data['unformatted_shop_price'] = $product_info['product_shop_price'] ?: $data['unformatted_shop_price'];
-			$data['promote_price'] 			= $product_info['promote_price'];
-			$data['is_promote']				= $product_info['is_promote'];
-			$data['formated_promote_price'] = $product_info['formatted_promote_price'];
-			$data['promote_user_limited']   = $product_info['promote_user_limited'];
-			$data['promote_limited']   		= $product_info['promote_limited'];
-			$data['product_goods_attr']		= $product_info['product_goods_attr'] ?: $data['product_goods_attr'];
-			$data['img']   					= $product_info['img'] ?: $data['img'];
-			$data['product_specification']  = $arr;
-			$data['rec_type'] 				= $activity_type;
-			$data['activity_type'] 			= $activity_type;
+			$data['goods_sn'] 					= $product_info['product_sn'] ?: $data['goods_sn'];
+			$data['product_id'] 				= $product_info['product_id'] ?: 0;
+			$data['goods_name'] 				= $product_info['product_name'] ?: $data['goods_name'];
+			$data['goods_number'] 				= $product_info['product_number'] ?: $data['goods_number'];
+			$data['shop_price'] 				= $product_info['formatted_product_shop_price'] ?: $data['shop_price'];
+			$data['unformatted_shop_price'] 	= $product_info['product_shop_price'] ?: $data['unformatted_shop_price'];
+			$data['promote_price'] 				= $product_info['promote_price'];
+			$data['is_promote']					= $product_info['is_promote'];
+			$data['formated_promote_price'] 	= $product_info['formatted_promote_price'];
+			$data['promote_user_limited']   	= $product_info['promote_user_limited'];
+			$data['promote_limited']   			= $product_info['promote_limited'];
+			$data['market_price']   			= $product_info['formatted_product_market_price']  ?: $data['market_price'];
+			$data['unformatted_market_price']   = $product_info['product_market_price']  ?: $data['unformatted_market_price'];
+			$data['product_goods_attr']			= $product_info['product_goods_attr'] ?: $data['product_goods_attr'];
+			$data['img']   						= $product_info['img'] ?: $data['img'];
+			$data['product_specification']  	= $arr;
+			$data['rec_type'] 					= $activity_type;
+			$data['activity_type'] 				= $activity_type;
 		}
 		return $data;
 	}
