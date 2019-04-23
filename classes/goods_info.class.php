@@ -156,15 +156,18 @@ class goods_info {
 		if (!empty($product_id)) {
 			$product_info = RC_DB::table('products')->where('product_id', $product_id)->first();
 			//货品促销价存在，替换商品促销价
-			if ($product_info ['promote_price'] > 0 && $product_info['is_promote'] == '1') {
-				$promote_price = self::bargain_price ($product_info['promote_price'], $goods['promote_start_date'], $goods['promote_end_date'] );
+			if ($product_info ['promote_price'] > 0 && $product_info['is_promote'] == '1' && $product_info['promote_limited'] > 0) {
+				$promote_price = self::bargain_price ($product_info['promote_price'], $goods['promote_start_date'], $goods['promote_end_date'], $product_info['promote_limited']);
 			}else {
 				$promote_price = 0;
 			}
+			
+			$product_shop_price = $product_info['product_shop_price'] > 0 ? $product_info['product_shop_price']*$_SESSION['discount'] : 0;
 			//货品会员价格存在替换商品会员等级价
-			$product_user_price = $product_info['product_shop_price'] > 0 ? $product_info['product_shop_price']*$_SESSION['discount'] : $user_price;
+			$product_user_price = $product_shop_price > 0 ? $product_shop_price : $user_price;
 			$user_price = $product_user_price; 
 		}
+		
 		
 		//商品促销限购数量判断（有没超过用户限购数， 有没超过活动限购数）；超过限购按商品原价处理
 		//if ($promote_price > 0) {
@@ -208,7 +211,7 @@ class goods_info {
 			if (! empty ( $spec )) {
 				if ($product_id > 0) {
 					//货品未设置自定义价格的话，按商品价格加上属性价格;商品价格 + 属性货品价格
-					if ($product_user_price < 0) {
+					if ($product_shop_price <= 0) {
 						$spec_price = self::spec_price ( $spec );
 						$final_price += $spec_price;
 					}
