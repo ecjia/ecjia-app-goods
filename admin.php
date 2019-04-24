@@ -87,7 +87,7 @@ class admin extends ecjia_admin {
 		//$this->db_term_relationship = RC_Model::model('goods/term_relationship_model');
 		$this->db_term_meta 		= RC_Loader::load_sys_model('term_meta_model');
 		
-		$this->orm_goods_db = RC_Model::model('goods/orm_goods_model');
+		$this->orm_goods_db = new \Ecjia\App\Goods\Models\GoodsModel();
 		
 		RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/goods_list.js', __FILE__), array('ecjia-utils', 'smoke', 'jquery-validate', 'jquery-form', 'bootstrap-placeholder', 'jquery-wookmark', 'jquery-imagesloaded', 'jquery-colorbox'), false, 1);
 		RC_Script::enqueue_script('jquery-dropper', RC_Uri::admin_url('/statics/lib/dropper-upload/jquery.fs.dropper.js'), array(), false, 1);
