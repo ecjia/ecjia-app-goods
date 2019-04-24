@@ -15,7 +15,7 @@ use Ecjia\App\Goods\Models\GoodsModel;
 use RC_DB;
 use Royalcms\Component\Support\Collection;
 
-class CategoryList
+class CategoryCollection
 {
 
     protected $category_id;

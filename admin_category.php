@@ -103,7 +103,7 @@ class admin_category extends ecjia_admin {
 		$cat_id = intval($this->request->input('cat_id', 0));
 		$this->assign('cat_id', $cat_id);
 
-        $cat_list = (new \Ecjia\App\Goods\Category\CategoryList($cat_id))->getCategories();
+        $cat_list = (new \Ecjia\App\Goods\Category\CategoryCollection($cat_id))->getCategories();
 		$cat_list = $cat_list->all();
 
 		$this->assign('cat_list', $cat_list);
