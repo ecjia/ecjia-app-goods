@@ -165,12 +165,14 @@ class CategoryCollection
          * @var $collection2 \Royalcms\Component\Database\Eloquent\Collection
          */
         $collection1 = GoodsModel::select(RC_DB::raw('cat_id, COUNT(*) as goods_num'))
+            ->where('is_delete', 0)
             ->groupBy('cat_id')
             ->get()
             ->keyBy('cat_id');
 
         $collection2 = GoodsCatModel::select('goods_cat.cat_id', RC_DB::raw('count(*) as goods_num'))
             ->leftJoin('goods', 'goods.goods_id', '=', 'goods_cat.goods_id')
+            ->where('goods.is_delete', 0)
             ->groupBy('goods_cat.cat_id')
             ->get()
             ->keyBy('cat_id');
