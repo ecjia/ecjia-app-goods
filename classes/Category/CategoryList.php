@@ -33,14 +33,20 @@ class CategoryList
      */
     protected function queryAllCategories()
     {
-        $collection = CategoryModel::leftJoin('category as sc', 'category.cat_id', '=', RC_DB::raw('`sc`.`parent_id`'))
-            ->select('category.cat_id', 'category.cat_name', 'category.measure_unit', 'category.parent_id', 'category.is_show', 'category.show_in_nav', 'category.grade', 'category.sort_order', RC_DB::raw('COUNT(sc.cat_id) AS has_children'))
-            ->groupBy('category.cat_id')
-            ->orderBy('category.parent_id', 'asc')
-            ->orderBy('category.sort_order', 'asc')
-            ->get()
-            ->groupBy('parent_id');
-        
+        $collection = ecjia_cache('goods')->get('query_all_categories');
+
+        if (empty($collection)) {
+            $collection = CategoryModel::leftJoin('category as sc', 'category.cat_id', '=', RC_DB::raw('`sc`.`parent_id`'))
+                ->select('category.cat_id', 'category.cat_name', 'category.measure_unit', 'category.parent_id', 'category.is_show', 'category.show_in_nav', 'category.grade', 'category.sort_order', RC_DB::raw('COUNT(sc.cat_id) AS has_children'))
+                ->groupBy('category.cat_id')
+                ->orderBy('category.parent_id', 'asc')
+                ->orderBy('category.sort_order', 'asc')
+                ->get()
+                ->groupBy('parent_id');
+
+            ecjia_cache('goods')->put('query_all_categories', $collection, 60);
+        }
+
         return $collection;
     }
 
