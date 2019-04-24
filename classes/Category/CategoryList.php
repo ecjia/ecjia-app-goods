@@ -98,6 +98,25 @@ class CategoryList
     }
 
     /**
+     * 获取分类列表，不带子级项目的
+     * @return \Royalcms\Component\Support\Collection
+     */
+    public function getCategoriesWithoutChildren()
+    {
+        $allcollection = collect();
+        $collection = $this->queryParentCategories();
+
+        $top_levels = $collection->get($this->category_id);
+
+        $goods_num = self::getGoodsNumberWithCatId();
+
+        $top_levels = $this->recursiveCategroy($top_levels, $allcollection, $goods_num);
+
+        return $top_levels;
+    }
+
+
+    /**
      * 递归分类数据
      * @param $categories \Royalcms\Component\Support\Collection
      * @param $collection \Royalcms\Component\Support\Collection
