@@ -52,13 +52,21 @@
 				<!-- {else} -->
 				<i class="fontello-icon-angle-circled-right cursor_pointer ecjiafc-blue" /></i>
 				<!-- {/if} -->
-				<span><a href='{url path="goods/admin/init" args="cat_id={$cat.cat_id}"}'>{$cat.cat_name}</a></span>
-				<!-- {if $cat.cat_image} -->
+                {if $cat.has_children > 0}
+				<span><a href='{url path='goods/admin_category/init' args="cat_id={$cat.cat_id}"}'>{$cat.cat_name}</a></span>
+				{else}
+                <span>{$cat.cat_name}</span>
+                {/if}
+                <!-- {if $cat.cat_image} -->
 				<img src="../{$cat.cat_image}" border="0" style="vertical-align:middle;" width="60px" height="21px">
 				<!-- {/if} -->
 			</td>
 			<td>
-				{$cat.goods_num}
+                {if $cat.goods_num > 0}
+                <a href='{url path="goods/admin/init" args="cat_id={$cat.cat_id}"}'>{$cat.goods_num}</a>
+                {else}
+                {$cat.goods_num}
+                {/if}
 			</td>
 			<td>
 				<span {if $cat.measure_unit}class="cursor_pointer" data-trigger="editable" data-url="{url path='goods/admin_category/edit_measure_unit'}" data-name="edit_grade" data-pk="{$cat.cat_id}" data-title="{t domain="goods"}请输入数量单位{/t}"{/if}>
@@ -79,8 +87,10 @@
 				<i class="{if $cat.is_show eq '1'}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{url path='goods/admin_category/toggle_is_show'}" data-id="{$cat.cat_id}"></i>
 			</td>
 			<td>
+                {if $cat.has_children > 0}
 				<a class="data-pjax no-underline" title="{t domain="goods"}进入{/t}" href="{url path='goods/admin_category/init' args="cat_id={$cat.cat_id}"}"><i class="fontello-icon-login"></i></a>
-				<a class="data-pjax no-underline" href='{url path="goods/admin_category/edit" args="cat_id={$cat.cat_id}"}' title="{t domain="goods"}编辑{/t}"><i class="fontello-icon-edit"></i></a>
+				{/if}
+                <a class="data-pjax no-underline" href='{url path="goods/admin_category/edit" args="cat_id={$cat.cat_id}"}' title="{t domain="goods"}编辑{/t}"><i class="fontello-icon-edit"></i></a>
 				<a class="ajaxremove no-underline" data-toggle="ajaxremove" data-msg="{t domain="goods"}您确定要删除该分类吗？{/t}" href='{url path="goods/admin_category/remove" args="id={$cat.cat_id}"}' {t domain="goods"}删除{/t}><i class="fontello-icon-trash"></i></a>
 			</td>
 			{/if}

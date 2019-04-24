@@ -100,11 +100,12 @@ class admin_category extends ecjia_admin {
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品分类#.E5.95.86.E5.93.81.E5.88.86.E7.B1.BB.E5.88.97.E8.A1.A8" target="_blank">关于商品分类列表帮助文档</a>', 'goods') . '</p>'
 		);
 		
-		$cat_id = !empty($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
+		$cat_id = intval($this->request->input('cat_id', 0));
 		$this->assign('cat_id', $cat_id);
-		
-		$cat_list = cat_list($cat_id, 0, false);
-		unset($cat_list[$cat_id]);
+
+        $cat_list = (new \Ecjia\App\Goods\Category\CategoryList($cat_id))->getCategories();
+		$cat_list = $cat_list->all();
+
 		$this->assign('cat_list', $cat_list);
 		
 		$cat_info = get_cat_info($cat_id);
