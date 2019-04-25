@@ -48,12 +48,12 @@ class GoodsFunction
         }
         // 取得商品促销价格列表
         //$goods = $dbview->join ('member_price')->find (array('g.goods_id' => $goods_id, 'g.is_delete' => 0));
-        $field = "g.promote_price, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . $_SESSION['discount'] . "') AS shop_price";
+        $field = "g.promote_price, g.is_promote, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . $_SESSION['discount'] . "') AS shop_price";
         // 取得商品促销价格列表
         $goods = $dbview->join(array('member_price'))->field($field)->where(array('g.goods_id' => $goods_id, 'g.is_delete' => 0))->find();
 
         /* 计算商品的促销价格 */
-        if ($goods ['promote_price'] > 0) {
+        if ($goods ['promote_price'] > 0 && $goods['is_promote'] == '1') {
             $promote_price = self::bargain_price( $goods ['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
         } else {
             $promote_price = 0;
@@ -108,6 +108,14 @@ class GoodsFunction
         }
         $final_price =  ($final_price > $mobilebuy_ext_info['price'] && !empty($mobilebuy_ext_info['price'])) ? $mobilebuy_ext_info['price'] : $final_price;
 
+        
+        \RC_Logger::getLogger('error')->info('test111');
+        \RC_Logger::getLogger('error')->info($spec);
+        \RC_Logger::getLogger('error')->info($is_spec_price);
+        \RC_Logger::getLogger('error')->info($product_shop_price);
+        \RC_Logger::getLogger('error')->info('test111');
+        
+        
         // 如果需要加入规格价格
         if ($is_spec_price) {
             if (! empty ( $spec )) {
@@ -116,6 +124,11 @@ class GoodsFunction
                 	if ($product_shop_price <= 0) {
                 		$spec_price = self::spec_price ( $spec );
                 		$final_price += $spec_price;
+                		
+                		\RC_Logger::getLogger('error')->info('test333');
+                		\RC_Logger::getLogger('error')->info($spec_price);
+                		\RC_Logger::getLogger('error')->info($final_price);
+                		\RC_Logger::getLogger('error')->info('test444');
                 	}
                 }
             }
@@ -183,26 +196,27 @@ class GoodsFunction
      * 获得指定的规格的价格
      *
      * @access public
-     * @param mixed $spec 规格ID的数组或者逗号分隔的字符串
-     * @return float
+     * @param mix $spec
+     *        	规格ID的数组或者逗号分隔的字符串
+     * @return void
      */
-    public static function spec_price($spec, $goods_id = 0) {
-        $db_goods = RC_Model::model('goods/goods_model');
-        $db = RC_Model::model('goods/goods_attr_model');
-        if (! empty ( $spec )) {
-            if (is_array ( $spec )) {
-                foreach ( $spec as $key => $val ) {
-                    $spec [$key] = addslashes ( $val );
-                }
-            } else {
-                $spec = addslashes ( $spec );
-            }
-            $price = $db->in(array('goods_attr_id' => $spec))->sum('`attr_price`|attr_price');
-        } else {
-            $price = 0;
-        }
-
-        return $price;
+    public static function spec_price($spec) {
+    	if (! empty ( $spec )) {
+    		if (is_array ( $spec )) {
+    			foreach ( $spec as $key => $val ) {
+    				$spec [$key] = addslashes ( $val );
+    			}
+    		} else {
+    			$spec = addslashes ( $spec );
+    		}
+    		$db = RC_DB::table('goods_attr');
+    		$rs = $db->whereIn('goods_attr_id', $spec)->select(RC_DB::raw('sum(attr_price) as attr_price'))->first();
+    		$price = $rs['attr_price'];
+    	} else {
+    		$price = 0;
+    	}
+    
+    	return $price;
     }
     
     
