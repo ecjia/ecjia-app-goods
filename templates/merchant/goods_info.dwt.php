@@ -79,6 +79,14 @@
 		                          	<button class="btn btn-primary" type="button" data-toggle="integral_market_price">{t domain="goods"}取整数{/t}</button>
 								</div>
 	              			</div>
+	              			
+	              			<div class="form-group">
+	              				<label class="control-label col-lg-2">{t domain="goods"}成本价：{/t}</label>
+	              				<div class="col-lg-7">
+	                            	<input class="form-control" name="cost_price" type="text" value="{$goods.cost_price}" />
+	                            	<span class="help-block">设置单品的销售成本，作为统计利润的依据，单位（元）</span>
+	                          	</div>
+	              			</div>
 		              			
 	              			<div class="form-group">
 	              				<label class="control-label col-lg-2">{t domain="goods"}库存数量：{/t}</label>

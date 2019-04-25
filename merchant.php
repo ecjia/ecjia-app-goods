@@ -393,6 +393,7 @@ class merchant extends ecjia_merchant {
 			'shop_price'			=> 0,
 			'promote_price'			=> 0,
 			'market_price'			=> 0,
+			'cost_price'			=> 0,
 			'integral'				=> 0,
 			'goods_number'			=> ecjia::config('default_storage'),
 			'warn_number'			=> 1,
@@ -513,6 +514,7 @@ class merchant extends ecjia_merchant {
 		/* 处理商品数据 */
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
+		$cost_price 	= !empty($_POST['cost_price'])      ? $_POST['cost_price']              : 0;
 //		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
 //		$is_promote 	= empty($promote_price) 			? 0 								: 1;
 
@@ -567,6 +569,7 @@ class merchant extends ecjia_merchant {
 			'brand_id'              => $brand_id,
 			'shop_price'            => $shop_price,
 			'market_price'          => $market_price,
+			'cost_price'            => $cost_price,
 //			'is_promote'            => $is_promote,
 //			'promote_price'         => $promote_price,
 //			'promote_start_date'    => $promote_start_date,
@@ -733,6 +736,7 @@ class merchant extends ecjia_merchant {
 				'other_cat'				=> array(), // 扩展分类
 //				'goods_type'			=> 0,	   	// 商品类型
 				'shop_price'			=> 0,
+				'cost_price'			=> 0,
 				'promote_price'			=> 0,
 				'market_price'			=> 0,
 				'integral'				=> 0,
@@ -909,6 +913,7 @@ class merchant extends ecjia_merchant {
 		/* 处理商品数据 */
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
+		$cost_price 	= !empty($_POST['cost_price'])      ? $_POST['cost_price'] 				: 0;
 //		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
 //		$is_promote 	= empty($_POST['is_promote']) 		? 0 								: 1;
 //
@@ -964,6 +969,7 @@ class merchant extends ecjia_merchant {
 		  	'brand_id'			  		=> $brand_id,
 		  	'shop_price'				=> $shop_price,
 		  	'market_price'		  		=> $market_price,
+			'cost'						=> $cost_price,	
 //		  	'is_promote'				=> $is_promote,
 //		  	'promote_price'		 		=> $promote_price,
 //		  	'promote_start_date'		=> $promote_start_date,
