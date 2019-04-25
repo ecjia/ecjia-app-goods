@@ -26,7 +26,7 @@ class GoodsFunction
      *
      * @return 商品最终购买价格
      */
-    public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array())
+    public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array(), $product_id = 0)
     {
         $dbview = RC_Model::model('goods/sys_goods_member_viewmodel');
         RC_Loader::load_app_func('admin_goods', 'goods');
@@ -61,6 +61,22 @@ class GoodsFunction
 
         // 取得商品会员价格列表
         $user_price = $goods ['shop_price'];
+        
+        //是货品情况
+        if (!empty($product_id)) {
+        	$product_info = RC_DB::table('products')->where('product_id', $product_id)->first();
+        	//货品促销价存在，替换商品促销价
+        	if ($product_info ['promote_price'] > 0 && $product_info['is_promote'] == '1' && $product_info['promote_limited'] > 0) {
+        		$promote_price = self::bargain_price ($product_info['promote_price'], $goods['promote_start_date'], $goods['promote_end_date'], $product_info['promote_limited']);
+        	}else {
+        		$promote_price = 0;
+        	}
+        		
+        	$product_shop_price = $product_info['product_shop_price'] > 0 ? $product_info['product_shop_price']*$_SESSION['discount'] : 0;
+        	//货品会员价格存在替换商品会员等级价
+        	$product_user_price = $product_shop_price > 0 ? $product_shop_price : $user_price;
+        	$user_price = $product_user_price;
+        }
 
         // 比较商品的促销价格，会员价格，优惠价格
         if (empty ( $volume_price ) && empty ( $promote_price )) {
@@ -95,8 +111,13 @@ class GoodsFunction
         // 如果需要加入规格价格
         if ($is_spec_price) {
             if (! empty ( $spec )) {
-                $spec_price = self::spec_price( $spec );
-                $final_price += $spec_price;
+                if ($product_id > 0) {
+                	//货品未设置自定义价格的话，按商品价格加上属性价格;商品价格 + 属性货品价格
+                	if ($product_shop_price <= 0) {
+                		$spec_price = self::spec_price ( $spec );
+                		$final_price += $spec_price;
+                	}
+                }
             }
         }
         // 返回商品最终购买价格
