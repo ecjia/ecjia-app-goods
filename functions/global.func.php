@@ -1843,9 +1843,11 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
 				$promote_price = 0;
 			}
 		}
+		$product_shop_price = $product_info['product_shop_price'] > 0 ? $product_info['product_shop_price']*$_SESSION['discount'] : 0;
 		//货品会员价格存在替换商品会员等级价
-		$product_user_price = $product_info['product_shop_price'] > 0 ? $product_info['product_shop_price']*$_SESSION['discount'] : $user_price;
+		$product_user_price = $product_shop_price > 0 ? $product_shop_price : $user_price;
 		$user_price = $product_user_price;
+		
 	}
 	
 	//商品促销限购数量判断（有没超过用户限购数， 有没超过活动限购数）；超过限购按商品原价处理
@@ -1891,6 +1893,13 @@ function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $s
 				//商品SKU价格模式：商品价格 + 属性货品价格
 				if (ecjia::config('sku_price_mode') == 'goods_sku') {
 					$spec_price = spec_price ( $spec );
+					$final_price += $spec_price;
+				}
+			}
+			if ($product_id > 0) {
+				//货品未设置自定义价格的话，按商品价格加上属性价格;商品价格 + 属性货品价格
+				if ($product_shop_price <= 0) {
+					$spec_price = self::spec_price ( $spec );
 					$final_price += $spec_price;
 				}
 			}
