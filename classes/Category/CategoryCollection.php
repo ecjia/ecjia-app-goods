@@ -186,7 +186,7 @@ class CategoryCollection
                 }
 
                 if ($collection2->get($item)) {
-                    $value2 = $collection1->get($item);
+                    $value2 = $collection2->get($item);
                 }
 
                 return [
@@ -194,7 +194,7 @@ class CategoryCollection
                 ];
             }
         });
-        dd($collection);
+
         return $collection;
     }
 
