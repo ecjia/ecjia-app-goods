@@ -10,8 +10,6 @@ namespace Ecjia\App\Goods\Category;
 
 
 use Ecjia\App\Goods\Models\CategoryModel;
-use Ecjia\App\Goods\Models\GoodsCatModel;
-use Ecjia\App\Goods\Models\GoodsModel;
 use RC_DB;
 use Royalcms\Component\Support\Collection;
 
