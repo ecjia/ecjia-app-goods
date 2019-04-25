@@ -144,7 +144,7 @@ class admin extends ecjia_admin {
 	public function init() {
 	    $this->admin_priv('goods_manage');
 	    
-		$cat_id = empty($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
+		$cat_id = intval($this->request->input('cat_id', 0));
 		
 		$this->assign('ur_here', __('商品列表', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods')));
@@ -174,7 +174,7 @@ class admin extends ecjia_admin {
 
         $input = [
             'is_delete'		=> 0,
-            'cat_id' => 1036,
+            'cat_id' => $cat_id,
             'page' => 1,
         ];
 		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();;
