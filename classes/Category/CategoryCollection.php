@@ -194,7 +194,7 @@ class CategoryCollection
                 ];
             }
         });
-
+        dd($collection);
         return $collection;
     }
 
@@ -241,7 +241,7 @@ class CategoryCollection
                 ];
             }
         });
-        dd($collection);
+
         return $collection;
     }
 
