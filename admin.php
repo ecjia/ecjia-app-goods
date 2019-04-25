@@ -177,7 +177,7 @@ class admin extends ecjia_admin {
             'cat_id' => $cat_id,
             'page' => 1,
         ];
-		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();;
+		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 //        dd($goods_list);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('filter', $goods_list['filter']);
