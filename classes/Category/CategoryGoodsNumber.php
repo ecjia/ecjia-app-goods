@@ -11,8 +11,6 @@ namespace Ecjia\App\Goods\Category;
 
 use Ecjia\App\Goods\Models\GoodsCatModel;
 use Ecjia\App\Goods\Models\GoodsModel;
-use RC_DB;
-use Royalcms\Component\Http\Request;
 
 class CategoryGoodsNumber
 {
@@ -22,7 +20,7 @@ class CategoryGoodsNumber
      *
      * @return \Royalcms\Component\Support\Collection
      */
-    public static function getGoodsNumberWithCatId($category_id = 1040)
+    public static function getGoodsNumberWithCatId()
     {
         $cache_key = 'query_all_categories_every_goods_count';
 
