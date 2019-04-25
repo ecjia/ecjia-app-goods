@@ -11,16 +11,20 @@ namespace Ecjia\App\Goods\GoodsSearch;
 use Ecjia\App\Goods\Models\GoodsModel;
 use Royalcms\Component\Database\Eloquent\Builder;
 use Royalcms\Component\Http\Request;
+use Closure;
 
 class GoodsSearch
 {
 
-    public static function apply(Request $filters)
+    public static function apply(Request $filters, Closure $callback = null)
     {
 
         $query = (new GoodsModel())->newQuery();
-
         $query = static::applyDecoratorsFromRequest($filters, $query);
+
+        if ($callback instanceof Closure) {
+            $callback($query);
+        }
 
         // 返回搜索结果
         return static::getResults($query);
