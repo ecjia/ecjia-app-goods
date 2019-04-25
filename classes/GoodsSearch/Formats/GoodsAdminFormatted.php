@@ -30,12 +30,11 @@ class GoodsAdminFormatted
     public function toArray()
     {
 
-
-
         return [
             //store info
             'store_id' 					=> $this->model->store_id,
             'store_name'				=> $this->model->store->merchants_name,
+            'merchants_name'			=> $this->model->store->merchants_name,
             'manage_mode' 				=> $this->model->store->manage_mode,
 
             //goods info
@@ -43,8 +42,19 @@ class GoodsAdminFormatted
             'goods_name' 				=> $this->filterGoodsName($this->model->goods_name),
             'goods_sn' 					=> $this->filterGoodsSn($this->model->goods_sn),
             'goods_barcode' 			=> $this->filterGoodsBarcode($this->model->goods_barcode),
-
-            
+            'goods_type'                => $this->model->goods_type,
+            'shop_price'                => $this->model->shop_price,
+            'market_price'              => $this->model->market_price,
+            'goods_thumb'               => $this->model->goods_thumb,
+            'is_on_sale'                => $this->model->is_on_sale,
+            'is_best'                   => $this->model->is_best,
+            'is_new'                    => $this->model->is_new,
+            'is_hot'                    => $this->model->is_hot,
+            'sort_order'                => $this->model->sort_order,
+            'goods_number'              => $this->model->goods_number,
+            'integral'                  => $this->model->integral,
+            'is_promote'                => $this->model->is_promote,
+            'review_status'             => $this->model->review_status,
         ];
     }
 
