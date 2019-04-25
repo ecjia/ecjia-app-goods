@@ -69,7 +69,8 @@ class mh_category extends ecjia_merchant
         // input file 长传
         RC_Style::enqueue_style('bootstrap-fileupload', RC_App::apps_url('statics/assets/bootstrap-fileupload/bootstrap-fileupload.css', __FILE__), array());
         RC_Script::enqueue_script('bootstrap-fileupload', RC_App::apps_url('statics/assets/bootstrap-fileupload/bootstrap-fileupload.js', __FILE__), array(), false, 1);
-
+        
+        RC_Script::enqueue_script('clipboard.min', RC_App::apps_url('statics/js/clipboard.min.js', __FILE__), array(), false, 1);
 
         RC_Script::enqueue_script('goods_category', RC_App::apps_url('statics/js/merchant_goods_category.js', __FILE__), array(), false, 1);
         RC_Script::localize_script('goods_category', 'js_lang', config('app-goods::jslang.category_page'));
