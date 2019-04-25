@@ -10,6 +10,7 @@ namespace Ecjia\App\Goods\GoodsSearch\Formats;
 
 
 use Ecjia\App\Goods\Models\GoodsModel;
+use RC_Upload;
 
 class GoodsAdminFormatted
 {
@@ -45,7 +46,7 @@ class GoodsAdminFormatted
             'goods_type'                => $this->model->goods_type,
             'shop_price'                => $this->model->shop_price,
             'market_price'              => $this->model->market_price,
-            'goods_thumb'               => $this->model->goods_thumb,
+            'goods_thumb'               => RC_Upload::upload_url($this->model->goods_thumb),
             'is_on_sale'                => $this->model->is_on_sale,
             'is_best'                   => $this->model->is_best,
             'is_new'                    => $this->model->is_new,
