@@ -74,7 +74,7 @@ class CategoryCollection
      */
     public function getTopCategories()
     {
-        $goods_num = self::getGoodsNumberWithCatId();
+        $goods_num = CategoryGoodsNumber::getGoodsNumberWithCatId();
 
         $collection = $this->queryAllCategories();
 
@@ -96,7 +96,7 @@ class CategoryCollection
 
         $top_levels = $collection->get($this->category_id);
 
-        $goods_num = self::getGoodsNumberWithCatId();
+        $goods_num = CategoryGoodsNumber::getGoodsNumberWithCatId();
 
         $top_levels = $this->recursiveCategroy($top_levels, $allcollection, $goods_num);
 
@@ -114,7 +114,7 @@ class CategoryCollection
 
         $top_levels = $collection->get($this->category_id);
 
-        $goods_num = self::getGoodsNumberWithCatId();
+        $goods_num = CategoryGoodsNumber::getGoodsNumberWithCatId();
 
         $top_levels = $this->recursiveCategroy($top_levels, $allcollection, $goods_num);
 
@@ -151,98 +151,6 @@ class CategoryCollection
         });
 
         return $categories;
-    }
-
-    /**
-     * 获取每个分类下的商品数量
-     *
-     * @return \Royalcms\Component\Support\Collection
-     */
-    public static function getGoodsNumberWithCatId()
-    {
-        /**
-         * @var $collection1 \Royalcms\Component\Database\Eloquent\Collection
-         * @var $collection2 \Royalcms\Component\Database\Eloquent\Collection
-         */
-        $collection1 = GoodsModel::select(RC_DB::raw('cat_id, COUNT(*) as goods_num'))
-            ->where('is_delete', 0)
-            ->groupBy('cat_id')
-            ->get()
-            ->keyBy('cat_id');
-
-        $collection2 = GoodsCatModel::select('goods_cat.cat_id', RC_DB::raw('count(*) as goods_num'))
-            ->leftJoin('goods', 'goods.goods_id', '=', 'goods_cat.goods_id')
-            ->where('goods.is_delete', 0)
-            ->groupBy('goods_cat.cat_id')
-            ->get()
-            ->keyBy('cat_id');
-
-        $keys = array_merge($collection1->keys()->all(), $collection2->keys()->all());
-
-        $collection = collect($keys)->mapWithKeys(function($item) use ($collection1, $collection2) {
-            if ($item > 0) {
-                if ($collection1->get($item)) {
-                    $value1 = $collection1->get($item);
-                }
-
-                if ($collection2->get($item)) {
-                    $value2 = $collection2->get($item);
-                }
-
-                return [
-                    $item => $value1['goods_num'] + $value2['goods_num']
-                ];
-            }
-        });
-
-        return $collection;
-    }
-
-    /**
-     * 获取在销售的每个分类下的商品数量
-     *
-     * @return \Royalcms\Component\Support\Collection
-     */
-    public static function getOnsaleGoodsNumberWithCatId()
-    {
-        /**
-         * @var $collection1 \Royalcms\Component\Database\Eloquent\Collection
-         * @var $collection2 \Royalcms\Component\Database\Eloquent\Collection
-         */
-        $collection1 = GoodsModel::select(RC_DB::raw('cat_id, COUNT(*) as goods_num'))
-            ->where('is_delete', 0)
-            ->where('is_on_sale', 1)
-            ->groupBy('cat_id')
-            ->get()
-            ->keyBy('cat_id');
-
-        $collection2 = GoodsCatModel::select('goods_cat.cat_id', RC_DB::raw('count(*) as goods_num'))
-            ->leftJoin('goods', 'goods.goods_id', '=', 'goods_cat.goods_id')
-            ->where('goods.is_delete', 0)
-            ->where('goods.is_on_sale', 1)
-            ->groupBy('goods_cat.cat_id')
-            ->get()
-            ->keyBy('cat_id');
-
-        $keys = array_merge($collection1->keys()->all(), $collection2->keys()->all());
-
-        $collection = collect($keys)->mapWithKeys(function($item) use ($collection1, $collection2) {
-            if ($item > 0) {
-                if ($collection1->get($item)) {
-                    $value1 = $collection1->get($item);
-                }
-
-                if ($collection2->get($item)) {
-                    $value2 = $collection1->get($item);
-                }
-
-                return [
-                    $item => $value1['goods_num'] + $value2['goods_num']
-                ];
-            }
-        });
-
-        return $collection;
     }
 
 }
