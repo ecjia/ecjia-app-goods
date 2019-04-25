@@ -28,6 +28,13 @@ class GoodsFunction
      */
     public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array(), $product_id = 0)
     {
+    	\RC_Logger::getLogger('error')->info('testaaa');
+    	\RC_Logger::getLogger('error')->info($spec);
+    	\RC_Logger::getLogger('error')->info($is_spec_price);
+    	\RC_Logger::getLogger('error')->info($product_id);
+    	\RC_Logger::getLogger('error')->info('testbbb');
+    	
+    	
         $dbview = RC_Model::model('goods/sys_goods_member_viewmodel');
         RC_Loader::load_app_func('admin_goods', 'goods');
 
