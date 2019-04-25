@@ -176,6 +176,7 @@
 					              				<label class="control-label col-lg-2 p_l0">{t domain="goods"}商家备注：{/t}</label>
 					              				<div class="col-lg-9 p_l0">
 					                            	<textarea class="form-control" name="seller_note" cols="40" rows="3">{$goods.seller_note}</textarea>
+					                            	<span class="help-block">此备注仅限商家管理员可见，主要用于记录特殊商品信息，方便管理员管理</span>
 					                          	</div>
 					              			</div>
 				              			</div>
