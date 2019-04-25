@@ -969,7 +969,7 @@ class merchant extends ecjia_merchant {
 		  	'brand_id'			  		=> $brand_id,
 		  	'shop_price'				=> $shop_price,
 		  	'market_price'		  		=> $market_price,
-			'cost'						=> $cost_price,	
+			'cost_price'				=> $cost_price,	
 //		  	'is_promote'				=> $is_promote,
 //		  	'promote_price'		 		=> $promote_price,
 //		  	'promote_start_date'		=> $promote_start_date,
