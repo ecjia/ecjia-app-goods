@@ -121,6 +121,21 @@ class CategoryCollection
         return $top_levels;
     }
 
+    /**
+     * 获取指定分类ID下的所有子分类ID，包含自己
+     * @param $category_id
+     */
+    public function getChildrenCategoryIds()
+    {
+        $children = $this->getCategories()->pluck('children_ids');
+        $cat_ids = $this->getCategories()->pluck('cat_id');
+        $cat_ids = array_merge($cat_ids->all(), $children->collapse()->all());
+
+        array_unshift($cat_ids, $this->category_id);
+
+        return $cat_ids;
+    }
+
 
     /**
      * 递归分类数据
@@ -131,6 +146,10 @@ class CategoryCollection
      */
     protected function recursiveCategroy($categories, $collection, $goods_num)
     {
+        if (empty($categories)) {
+            return null;
+        }
+
         $categories = $categories->map(function ($model) use ($collection, $goods_num) {
 
             $item = $model->toArray();
