@@ -50,7 +50,7 @@ class GoodsCollection
             }
             $count = GoodsSearch::applyCount($this->request);
 
-            $ecjia_page = new \ecjia_page($count, $size, 6, '', $page);
+            $ecjia_page = new \ecjia_page($count, $size, null, '', $page);
 
             $start = $ecjia_page->start_id - 1;
 
@@ -58,11 +58,11 @@ class GoodsCollection
 
             $this->request->replace($input);
 
-            $pager = array(
-                'total' => $ecjia_page->total_records,
-                'count' => $ecjia_page->total_records,
-                'more'  => $ecjia_page->total_pages <= $page ? 0 : 1,
-            );
+//            $pager = array(
+//                'total' => $ecjia_page->total_records,
+//                'count' => $ecjia_page->total_records,
+//                'more'  => $ecjia_page->total_pages <= $page ? 0 : 1,
+//            );
         }
 
         $collection = GoodsSearch::apply($this->request, function($query) {
@@ -74,7 +74,12 @@ class GoodsCollection
 
         $data = $collection->toArray();
 
-        return ['goods' => $data, 'pager' => $pager];
+        return [
+            'goods'     => $data,
+            'filter'	=> $this->request->all(),
+            'page'		=> $ecjia_page->show(2),
+            'desc'		=> $ecjia_page->page_desc()
+        ];
     }
 
     public static function test()
