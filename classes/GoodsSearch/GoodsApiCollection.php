@@ -64,10 +64,31 @@ class GoodsApiCollection
             );
         }
 
-        $collection = GoodsSearch::apply($this->request);
+        //$collection = GoodsSearch::apply($this->request);
+        $collection = GoodsSearch::apply($this->request, function($query) use ($user_rank) {
+            $query->with(
+                            [
+                                'store', 
+            					'member_price',
+								'store.merchants_config',
+//             					'store.merchants_config' => function ($query) {
+//                                         $query->select('value')->where('code', '=', 'shop_logo');
+//                                     },
+//                                 'member_price' => function ($query) use ($user_rank) {
+//                                         $query->select('user_price')->where('member_price.user_rank', '=', $user_rank);
+//                                     },
+                                 
+
+                            ]
+
+                );
+        });
+        
         $collection = $collection->map(function($item) use ($user_rank_discount, $user_rank) {
             return (new GoodsApiFormatted($item, $user_rank_discount, $user_rank))->toArray();
         });
+        
+      
 
         $data = $collection->toArray();
 

@@ -116,7 +116,7 @@ class GoodsModel extends Model
      */
     public function store()
     {
-        return $this->belongsTo('Ecjia\App\Merchant\Models\StoreFranchiseeModel', 'store_id', 'store_id');
+        return $this->belongsTo('Ecjia\App\Goods\Models\StoreFranchiseeModel', 'store_id', 'store_id');
     }
     
     /**
@@ -124,7 +124,7 @@ class GoodsModel extends Model
      */
     public function member_price()
     {
-    	return $this->hasMany('Ecjia\App\User\Models\MemberPriceModel', 'goods_id', 'goods_id');
+    	return $this->hasMany('Ecjia\App\Goods\Models\MemberPriceModel', 'goods_id', 'goods_id');
     }
     
     /**

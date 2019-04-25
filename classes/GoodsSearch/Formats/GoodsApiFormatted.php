@@ -29,12 +29,25 @@ class GoodsApiFormatted
 
     public function toArray()
     {
-    	$store_logo = \Ecjia\App\Store\StoreFranchisee::StoreLogo($this->model->store_id);
+        //店铺logo
+    	if ($this->model->store->merchants_config) {
+    		$shop_logo_group = $this->model->store->merchants_config->where('code', 'shop_logo')->first();
+    		$store_logo = $shop_logo_group ? $shop_logo_group->value : '';
+    	} else {
+    		$store_logo = '';
+    	}
+    	
     	//市场价
     	$market_price = $this->model->market_price;
     	
-    	//会员等级价格
-    	$user_price = \RC_DB::table('member_price')->where('goods_id', $this->model->goods_id)->where('user_rank', $this->user_rank)->pluck('user_price');
+    	//会员等级价
+    	if ($this->model->member_price) {
+    		$member_price = $this->model->member_price->where('goods_id', $this->model->goods_id)->where('user_rank', $this->user_rank)->first();
+    		$user_price = $member_price ? $member_price->user_price : 0;
+    	} else {
+    		$user_price = 0;
+    	}
+    	
     	$shop_price = $user_price > 0 ? $user_price : $this->model->shop_price*$this->user_rank_discount;
     	
     	//商品促销价格
@@ -82,11 +95,11 @@ class GoodsApiFormatted
             //store info
             'store_id' 					=> $this->model->store_id,
             'store_name'				=> $this->model->store->merchants_name,
-            'store_logo'				=> $store_logo,
+            'store_logo'				=> !empty($store_logo) ? \RC_Upload::upload_url($store_logo) : '',
             'manage_mode' 				=> $this->model->store->manage_mode,
             'seller_id'					=> $this->model->store_id,
             'seller_name'				=> $this->model->store->merchants_name,
-            'seller_logo'				=> $store_logo,
+            'seller_logo'				=> !empty($store_logo) ? \RC_Upload::upload_url($store_logo) : '',
             //goods info
             'goods_id' 					=> $this->model->goods_id,
             'goods_name' 				=> $this->filterGoodsName($this->model->goods_name),
