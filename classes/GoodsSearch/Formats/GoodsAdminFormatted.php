@@ -85,22 +85,6 @@ class GoodsAdminFormatted
     	return $img;
     }
     
-	/**
-	 * 促销价处理
-	 * @param unknown $promote_price
-	 * @return Ambigous <number, float>
-	 */
-    protected function filterPromotePrice($promote_price, $is_promote = 0)
-    {
-    	if ($promote_price > 0 && $is_promote == 1) {
-    		$promote_price = \Ecjia\App\Goods\BargainPrice::bargain_price($promote_price, $this->model->promote_start_date, $this->model->promote_end_date);
-    	} else {
-    		$promote_price = 0;
-    	}
-    	
-    	return $promote_price;
-    }
-    
     protected function filterGoodsBarcode($goods_barcode)
     {
         return $goods_barcode;
@@ -121,63 +105,4 @@ class GoodsAdminFormatted
         return $this->model->product_name ?: $goods_name;
     }
 
-    /**
-     * 过滤product_id
-     * @param $product_id
-     * @return int
-     */
-    protected function filterProductId($product_id)
-    {
-        return $product_id ?: 0;
-    }
-    
-    /**
-     * 过滤货品属性id
-     * @param $product_goods_attr
-     * @return string
-     */
-    protected function filterProductGoodsAttr($product_goods_attr)
-    {
-    	return $product_goods_attr ?: '';
-    }
-    
-    /**
-     * 处理商品属性
-     * @param $pro
-     * @return array
-     */
-    protected function formatProperties($pro)
-    {
-    	$outData = [];
-    	if (!empty($pro)) {
-    		foreach ($pro as $key => $value) {
-    			// 处理分组
-    			foreach ($value as $k => $v) {
-    				$v['value']                 = strip_tags($v['value']);
-    				$outData[]				    = $v;
-    			}
-    		}
-    	}
-    	return $outData;
-    }
-    
-    /**
-     * 处理商品规格
-     * @param $pro
-     * @return array
-     */
-    protected function formatSpecification($spe)
-    {
-    	$outData = [];
-    	if (!empty($spe)) {
-    		foreach ($spe as $key => $value) {
-    			if (!empty($value['values'])) {
-    				$value['value'] = $value['values'];
-    				unset($value['values']);
-    			}
-    			$outData[] = $value;
-    		}
-    	}
-    	return $outData;
-    }
 }
