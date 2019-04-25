@@ -170,7 +170,14 @@ class admin extends ecjia_admin {
 //		$goods_list = goods::goods_list(0, 1, $conditions);
 //        dd($goods_list);
 
-		$goods_list = \Ecjia\App\Goods\GoodsSearch\GoodsCollection::test();
+//		$goods_list = \Ecjia\App\Goods\GoodsSearch\GoodsCollection::test();
+
+        $input = [
+            'is_delete'		=> 0,
+            'cat_id' => 1036,
+            'page' => 1,
+        ];
+		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();;
 //        dd($goods_list);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('filter', $goods_list['filter']);
