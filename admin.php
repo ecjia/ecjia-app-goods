@@ -203,10 +203,25 @@ class admin extends ecjia_admin {
             $is_on_sale = null;
         }
 
+        $where = [];
+
+        /* 推荐类型 */
+        switch ($intro_type) {
+            case 'is_best' :
+                $where['is_best'] = 1;
+                break;
+            case 'is_hot' :
+                $where['is_hot'] = 1;
+                break;
+            case 'is_new' :
+                $where['is_new'] = 1;
+                break;
+        }
+
         $input = [
             'is_delete'		    => 0,
             'cat_id'            => $cat_id,
-            'brand_id'          => $brand_id,
+            'brand'             => $brand_id,
             'intro_type'        => $intro_type,
             'merchant_keywords' => $merchant_keywords,
             'keywords'          => $keywords,
@@ -214,7 +229,7 @@ class admin extends ecjia_admin {
             'store_id'          => $store_id,
             'page'              => $page,
         ];
-        $input = collect($input)->filter()->all();
+        $input = collect($input)->merge($where)->filter()->all();
 
         if (!is_null($is_on_sale)) {
             $input['is_on_sale'] = $is_on_sale;
