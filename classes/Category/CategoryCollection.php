@@ -153,10 +153,21 @@ class CategoryCollection
             $item = $model->toArray();
             $item['childrens'] = $collection->get($model->cat_id);
 
+            if ($item['parent_id'] === 0) {
+                $item['level'] = 0;
+            }
+
+
             $only = [$model->cat_id];
             $item['goods_num'] = $goods_num->only($only)->sum();
 
             if ($item['childrens'] instanceof Collection) {
+                $level = $item['level'];
+                $item['childrens'] = $item['childrens']->map(function($item) use ($level) {
+                    $item['level'] = ++$level;
+                    return $item;
+                });
+
                 $item['childrens'] = $this->recursiveCategroy($item['childrens'], $collection, $goods_num);
 
                 $item['children_ids'] = $item['childrens']->pluck('cat_id')->all();
