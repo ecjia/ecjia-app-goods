@@ -122,10 +122,10 @@ class admin extends ecjia_admin {
 		RC_Loader::load_app_func('global');
 		RC_Loader::load_app_func('admin_goods');
 		RC_Loader::load_app_func('global', 'goodslib');
-		
 		RC_Loader::load_app_func('admin_user', 'user');
+
 		$goods_list_jslang = array(
-			'user_rank_list'	=> get_rank_list(),
+			'user_rank_list'	=> \Ecjia\App\User\UserRank\UserRankCollection::queryAllRanks(),
 			'marketPriceRate'	=> ecjia::config('market_price_rate'),
 			'integralPercent'	=> ecjia::config('integral_percent'),
 		);
@@ -146,6 +146,13 @@ class admin extends ecjia_admin {
 	    
 		$cat_id = intval($this->request->input('cat_id', 0));
         $page = intval($this->request->input('page', 1));
+        $brand_id = intval($this->request->input('brand_id', 0));
+        $intro_type = trim($this->request->input('intro_type'));
+        $merchant_keywords = trim($this->request->input('merchant_keywords'));
+        $keywords = trim($this->request->input('keywords'));
+        $review_status = intval($this->request->input('review_status', 0));
+        $store_id = intval($this->request->input('store_id', 0));
+        $list_type = intval($this->request->input('type', 0));
 
 		$this->assign('ur_here', __('商品列表', 'goods'));
 
@@ -174,6 +181,8 @@ class admin extends ecjia_admin {
 //        dd(get_brand_list());
 //        dd(\Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 
+
+
 		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
 
@@ -185,27 +194,82 @@ class admin extends ecjia_admin {
 
 //		$goods_list = \Ecjia\App\Goods\GoodsSearch\GoodsCollection::test();
 
+        /* 是否上架 */
+        if ($list_type == 1) {
+            $is_on_sale = 1;
+        } elseif ($list_type == 2) {
+            $is_on_sale = 0;
+        } else {
+            $is_on_sale = null;
+        }
+
         $input = [
-            'is_delete'		=> 0,
-            'cat_id' => $cat_id,
-            'page' => $page,
+            'is_delete'		    => 0,
+            'cat_id'            => $cat_id,
+            'brand_id'          => $brand_id,
+            'intro_type'        => $intro_type,
+            'merchant_keywords' => $merchant_keywords,
+            'keywords'          => $keywords,
+            'review_status'     => $review_status,
+            'store_id'          => $store_id,
+            'page'              => $page,
         ];
+        $input = collect($input)->filter()->all();
+
+        if (!is_null($is_on_sale)) {
+            $input['is_on_sale'] = $is_on_sale;
+        }
+
 		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 //        dd($goods_list);
+//        $link_param = http_build_query($input);
+//        dd($link_param);
+
+        unset($input['is_on_sale']);
+        $count_link = [
+            'count_goods_num' => [
+                'label' => __('全部', 'goods'),
+                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
+                'type' => 0,
+            ],
+            'count_on_sale' => [
+                'label' => __('已上架', 'goods'),
+                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
+                'type' => 1,
+            ],
+            'count_not_sale' => [
+                'label' => __('未上架', 'goods'),
+                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
+                'type' => 2,
+            ],
+        ];
+
+        $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
+        $goods_count = $goods_count->map(function($count, $key) use ($count_link) {
+
+            $item = $count_link[$key];
+            $item['count'] = $count;
+
+            return $item;
+        });
+//        dd($goods_count);
+
+		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
+		$this->assign('goods_count', $goods_count);
+
 		$this->assign('filter', $goods_list['filter']);
 		
-		$specifications = get_goods_type_specifications();
-		$this->assign('specifications', $specifications);
+//		$specifications = get_goods_type_specifications();
+//		$this->assign('specifications', $specifications);
 		
-		$db_store_franchisee = RC_DB::table('store_franchisee');
-		$type = !empty($_GET['type']) ? $_GET['type'] : '';
-		if (!empty($type) && $type == 'self') {
-			$db_store_franchisee->where('manage_mode', 'self');
-		}
-//		$store_list = $db_store_franchisee->select('store_id', 'merchants_name')->get();
+//		$db_store_franchisee = RC_DB::table('store_franchisee');
+//		$type = !empty($_GET['type']) ? $_GET['type'] : '';
+//		if (!empty($type) && $type == 'self') {
+//			$db_store_franchisee->where('manage_mode', 'self');
+//		}
+
         $store_list = \Ecjia\App\Store\Stores\StoreCollection::getStoreNameKeyBy();
-//		dd($store_list);
 		$this->assign('store_list', $store_list);
 		
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
