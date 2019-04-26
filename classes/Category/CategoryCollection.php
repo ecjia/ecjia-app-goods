@@ -125,12 +125,16 @@ class CategoryCollection
      */
     public function getChildrenCategoryIds()
     {
-        $children = $this->getCategories()->pluck('children_ids');
-        $cat_ids = $this->getCategories()->pluck('cat_id');
-        $cat_ids = array_merge($cat_ids->all(), $children->collapse()->all());
-
-        array_unshift($cat_ids, $this->category_id);
-
+    	if ($this->getCategories()) {
+    		$children = $this->getCategories()->pluck('children_ids');
+    		$cat_ids = $this->getCategories()->pluck('cat_id');
+    		$cat_ids = array_merge($cat_ids->all(), $children->collapse()->all());
+    		
+    		array_unshift($cat_ids, $this->category_id);
+    	} else {
+    		$cat_ids = [$this->category_id];
+    	}
+       
         return $cat_ids;
     }
 
