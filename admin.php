@@ -192,8 +192,6 @@ class admin extends ecjia_admin {
 //		$goods_list = goods::goods_list(0, 1, $conditions);
 //        dd($goods_list);
 
-//		$goods_list = \Ecjia\App\Goods\GoodsSearch\GoodsCollection::test();
-
         /* 是否上架 */
         if ($list_type == 1) {
             $is_on_sale = 1;
@@ -236,35 +234,39 @@ class admin extends ecjia_admin {
         }
 
 		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-//        dd($goods_list);
-//        $link_param = http_build_query($input);
-//        dd($link_param);
 
         unset($input['is_on_sale']);
-        $count_link = [
-            'count_goods_num' => [
-                'label' => __('全部', 'goods'),
-                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
-                'type' => 0,
-            ],
-            'count_on_sale' => [
-                'label' => __('已上架', 'goods'),
-                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
-                'type' => 1,
-            ],
-            'count_not_sale' => [
-                'label' => __('未上架', 'goods'),
-                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
-                'type' => 2,
-            ],
-        ];
+
+        $count_link = function ($input, $where) {
+            $input = collect($input)->except(array_keys($where))->all();
+
+            $links = [
+                'count_goods_num' => [
+                    'label' => __('全部', 'goods'),
+                    'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
+                    'type' => 0,
+                ],
+                'count_on_sale' => [
+                    'label' => __('已上架', 'goods'),
+                    'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
+                    'type' => 1,
+                ],
+                'count_not_sale' => [
+                    'label' => __('未上架', 'goods'),
+                    'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
+                    'type' => 2,
+                ],
+            ];
+
+            return $links;
+        };
+
+        $count_link = $count_link($input, $where);
 
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
         $goods_count = $goods_count->map(function($count, $key) use ($count_link) {
-
             $item = $count_link[$key];
             $item['count'] = $count;
-
             return $item;
         });
 //        dd($goods_count);
