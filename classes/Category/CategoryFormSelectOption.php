@@ -61,4 +61,11 @@ class CategoryFormSelectOption
 
     }
 
+    public static function buildTopCategorySelectOption()
+    {
+        $cat_list = (new \Ecjia\App\Goods\Category\CategoryCollection())->getTopCategories();
+
+        return new static($cat_list);
+    }
+
 }
