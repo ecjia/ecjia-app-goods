@@ -162,9 +162,12 @@ class admin extends ecjia_admin {
 
 
         $cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+        $this->assign('cat_list_option', $cat_list_option);
+
 //		dd($cat_list_select);
 //		$this->assign('cat_list', $cat_list); //cat_list(0, $cat_id, false)
-		$this->assign('cat_list_option', $cat_list_option); //cat_list(0, $cat_id, false)
+		 //cat_list(0, $cat_id, false)
+
 		$this->assign('brand_list', get_brand_list());
 		$this->assign('intro_list', goods::intro_list());
 
