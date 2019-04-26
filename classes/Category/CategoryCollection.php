@@ -31,7 +31,9 @@ class CategoryCollection
      */
     protected function queryAllCategories()
     {
-        $collection = ecjia_cache('goods')->get('query_all_categories');
+        $cache_key = 'query_all_categories';
+
+        $collection = ecjia_cache('goods')->get($cache_key);
 
         if (empty($collection)) {
             $collection = CategoryModel::leftJoin('category as sc', 'category.cat_id', '=', RC_DB::raw('`sc`.`parent_id`'))
@@ -42,7 +44,7 @@ class CategoryCollection
                 ->get()
                 ->groupBy('parent_id');
 
-            ecjia_cache('goods')->put('query_all_categories', $collection, 60);
+            ecjia_cache('goods')->put($cache_key, $collection, 60);
         }
 
         return $collection;
