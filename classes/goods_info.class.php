@@ -127,7 +127,7 @@ class goods_info {
 		$volume_price	= 0; // 商品优惠价格
 		$promote_price	= 0; // 商品促销价格
 		$user_price		= 0; // 商品会员价格
-
+		
 		// 取得商品优惠价格列表
 		$price_list = self::get_volume_price_list ($goods_id, '1');
 
@@ -138,13 +138,13 @@ class goods_info {
 				}
 			}
 		}
-		$field = "g.promote_price, g.is_promote, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . $_SESSION['discount'] . "') AS shop_price";
+		$field = "g.promote_limited, g.promote_price, g.is_promote, g.promote_start_date, g.promote_end_date,IFNULL(mp.user_price, g.shop_price * '" . $_SESSION['discount'] . "') AS shop_price";
 		// 取得商品促销价格列表
 		$goods = $db_goodsview->join(array('member_price'))->field($field)->where(array('g.goods_id' => $goods_id, 'g.is_delete' => 0))->find();
 
 		/* 计算商品的促销价格 */
-		if ($goods['promote_price'] > 0 && $goods['is_promote']  == '1') {
-			$promote_price = self::bargain_price ($goods['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'] );
+		if ($goods['promote_price'] > 0 && $goods['is_promote']  == '1' && $goods['promote_limited'] > 0) {
+			$promote_price = self::bargain_price ($goods['promote_price'], $goods ['promote_start_date'], $goods ['promote_end_date'], $goods['promote_limited']);
 		} else {
 			$promote_price = 0;
 		}
@@ -336,12 +336,12 @@ class goods_info {
 	 *        	促销结束日期
 	 * @return float 如果还在促销期则返回促销价，否则返回0
 	 */
-	private static function bargain_price($price, $start, $end) {
+	private static function bargain_price($price, $start, $end, $promote_limited = 0) {
 		if ($price == 0) {
 			return 0;
 		} else {
 			$time = RC_Time::gmtime ();
-			if ($time >= $start && $time <= $end) {
+			if ($time >= $start && $time <= $end && $promote_limited > 0) {
 				return $price;
 			} else {
 				return 0;
