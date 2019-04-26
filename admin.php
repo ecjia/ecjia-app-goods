@@ -176,21 +176,12 @@ class admin extends ecjia_admin {
         $cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
         $this->assign('cat_list_option', $cat_list_option);
 
-//		dd($cat_list_select);
-//		$this->assign('cat_list', $cat_list); //cat_list(0, $cat_id, false)
-		 //cat_list(0, $cat_id, false)
-
-//        dd(get_brand_list());
-//        dd(\Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
-
-
-
 		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
 
 
-		$conditions = '';
-		$conditions .= " AND (g.extension_code is null or g.extension_code='')";
+//		$conditions = '';
+//		$conditions .= " AND (g.extension_code is null or g.extension_code='')";
 //		$goods_list = goods::goods_list(0, 1, $conditions);
 //        dd($goods_list);
 
@@ -220,6 +211,7 @@ class admin extends ecjia_admin {
 
         $input = [
             'is_delete'		    => 0,
+            'is_real'		    => 1,
             'cat_id'            => $cat_id,
             'brand'             => $brand_id,
             'intro_type'        => $intro_type,
@@ -242,6 +234,8 @@ class admin extends ecjia_admin {
 
         $count_link = function ($input, $where) {
             $input = collect($input)->except(array_keys($where))->all();
+
+            unset($input['is_real']);
 
             $input['sort_order'] = array_values($input['sort_by'])[0];
             $input['sort_by'] = array_keys($input['sort_by'])[0];
