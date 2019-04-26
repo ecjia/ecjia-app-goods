@@ -42,9 +42,9 @@ class GoodsPromotionType implements FilterInterface
     		$time_end   = $time_start + 86399;
     		
     		if ($value == 'today') {
-    			return $builder->where('goods.promote_start_date', '<=', $time_start)->where('goods.promote_end_date', '>=', $time_end);
+    			return $builder->where('goods.promote_limited', '>', 0)->where('goods.promote_start_date', '<=', $time_start)->where('goods.promote_end_date', '>=', $time_end);
     		} else {
-    			return $builder->where('goods.promote_start_date', '>=', $time_start)->where('goods.promote_start_date', '<=', $time_end);
+    			return $builder->where('goods.promote_limited', '>', 0)->where('goods.promote_start_date', '>=', $time_start)->where('goods.promote_start_date', '<=', $time_end);
     		}
     		
     	}

@@ -153,7 +153,7 @@ class GoodsProductPrice
     	$shop_price = $user_price > 0 ? $user_price : $this->goods_info->shop_price*$this->user_rank_discount;
 
     	//商品促销价格
-    	$promote_price = $this->filterPromotePrice($this->goods_info->shop_price, $this->goods_info->is_promote);
+    	$promote_price = $this->filterPromotePrice($this->goods_info->shop_price, $this->goods_info->is_promote, $this->goods_info->promote_limited);
     	
     	//市场价最终价
     	$final_shop_price = $promote_price > 0 ? min($shop_price, $promote_price) : $shop_price;
@@ -166,7 +166,7 @@ class GoodsProductPrice
 			$product_shop_price = $product_info->product_shop_price*$this->user_rank_discount;
 			
 			//货品促销价
-			$product_promote_price = $this->filterPromotePrice($product_info->promote_price, $product_info->is_promote);
+			$product_promote_price = $this->filterPromotePrice($product_info->promote_price, $product_info->is_promote, $product_info->promote_limited);
             $market_price += $total_attr_price;
 
             //货品有设置自定义价格
@@ -276,15 +276,15 @@ class GoodsProductPrice
 	 * @param unknown $promote_price
 	 * @return Ambigous <number, float>
 	 */
-    protected function filterPromotePrice($promote_price, $is_promote = 0)
+    protected function filterPromotePrice($promote_price, $is_promote = 0, $promote_limited)
     {
-    	if ($promote_price > 0 && $is_promote == 1) {
-    		$promote_price = \Ecjia\App\Goods\BargainPrice::bargain_price($promote_price, $this->goods_info->promote_start_date, $this->goods_info->promote_end_date);
+    	if ($promote_price > 0 && $is_promote == 1 && $promote_limited > 0) {
+    		$promote_price = \Ecjia\App\Goods\BargainPrice::bargain_price($promote_price, $this->goods_info->promote_start_date, $this->goods_info->promote_end_date, $promote_limited);
     	} else {
     		$promote_price = 0;
     	}
     	
     	return $promote_price;
     }
-
+    
 }

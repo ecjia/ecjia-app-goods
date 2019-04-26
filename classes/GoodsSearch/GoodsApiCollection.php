@@ -66,11 +66,11 @@ class GoodsApiCollection
 
         //$collection = GoodsSearch::apply($this->request);
         $collection = GoodsSearch::apply($this->request, function($query) use ($user_rank) {
-            $query->with(
-                            [
+            $query->with([
                                 'store', 
             					'member_price',
 								'store.merchants_config',
+            					'goods_attr'
 //             					'store.merchants_config' => function ($query) {
 //                                         $query->select('value')->where('code', '=', 'shop_logo');
 //                                     },

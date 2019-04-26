@@ -142,6 +142,14 @@ class GoodsModel extends Model
     {
     	return $this->belongsTo('Ecjia\App\Goods\Models\MerchantCategoryModel', 'merchant_cat_id', 'cat_id');
     }
+    
+    /**
+     * 商品属性信息
+     */
+    public function goods_attr()
+    {
+    	return $this->hasMany('Ecjia\App\Goods\Models\GoodsAttrModel', 'goods_id', 'goods_id');
+    }
 
 
     /**
