@@ -153,6 +153,8 @@ class admin extends ecjia_admin {
         $review_status = intval($this->request->input('review_status', 0));
         $store_id = intval($this->request->input('store_id', 0));
         $list_type = intval($this->request->input('type', 0));
+        $sort_by = trim($this->request->input('sort_by', 'goods_id'));
+        $sort_order = trim($this->request->input('sort_order', 'DESC'));
 
 		$this->assign('ur_here', __('商品列表', 'goods'));
 
@@ -174,25 +176,8 @@ class admin extends ecjia_admin {
         $cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
         $this->assign('cat_list_option', $cat_list_option);
 
-//		dd($cat_list_select);
-//		$this->assign('cat_list', $cat_list); //cat_list(0, $cat_id, false)
-		 //cat_list(0, $cat_id, false)
-
-//        dd(get_brand_list());
-//        dd(\Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
-
-
-
 		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
-
-
-		$conditions = '';
-		$conditions .= " AND (g.extension_code is null or g.extension_code='')";
-//		$goods_list = goods::goods_list(0, 1, $conditions);
-//        dd($goods_list);
-
-//		$goods_list = \Ecjia\App\Goods\GoodsSearch\GoodsCollection::test();
 
         /* 是否上架 */
         if ($list_type == 1) {
@@ -203,71 +188,87 @@ class admin extends ecjia_admin {
             $is_on_sale = null;
         }
 
+        $where = [];
+
+        /* 推荐类型 */
+        switch ($intro_type) {
+            case 'is_best' :
+                $where['is_best'] = 1;
+                break;
+            case 'is_hot' :
+                $where['is_hot'] = 1;
+                break;
+            case 'is_new' :
+                $where['is_new'] = 1;
+                break;
+        }
+
         $input = [
             'is_delete'		    => 0,
+            'is_real'		    => 1,
             'cat_id'            => $cat_id,
-            'brand_id'          => $brand_id,
+            'brand'             => $brand_id,
             'intro_type'        => $intro_type,
             'merchant_keywords' => $merchant_keywords,
             'keywords'          => $keywords,
             'review_status'     => $review_status,
             'store_id'          => $store_id,
+            'sort_by'           => [$sort_by => $sort_order],
             'page'              => $page,
         ];
-        $input = collect($input)->filter()->all();
+        $input = collect($input)->merge($where)->filter()->all();
 
         if (!is_null($is_on_sale)) {
             $input['is_on_sale'] = $is_on_sale;
         }
 
 		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-//        dd($goods_list);
-//        $link_param = http_build_query($input);
-//        dd($link_param);
 
         unset($input['is_on_sale']);
-        $count_link = [
-            'count_goods_num' => [
-                'label' => __('全部', 'goods'),
-                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
-                'type' => 0,
-            ],
-            'count_on_sale' => [
-                'label' => __('已上架', 'goods'),
-                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
-                'type' => 1,
-            ],
-            'count_not_sale' => [
-                'label' => __('未上架', 'goods'),
-                'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
-                'type' => 2,
-            ],
-        ];
+
+        $count_link = function ($input, $where) {
+            $input = collect($input)->except(array_keys($where))->all();
+
+            unset($input['is_real']);
+
+            $input['sort_order'] = array_values($input['sort_by'])[0];
+            $input['sort_by'] = array_keys($input['sort_by'])[0];
+
+            $links = [
+                'count_goods_num' => [
+                    'label' => __('全部', 'goods'),
+                    'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
+                    'type' => 0,
+                ],
+                'count_on_sale' => [
+                    'label' => __('已上架', 'goods'),
+                    'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
+                    'type' => 1,
+                ],
+                'count_not_sale' => [
+                    'label' => __('未上架', 'goods'),
+                    'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
+                    'type' => 2,
+                ],
+            ];
+
+            return $links;
+        };
+
+        $count_link = $count_link($input, $where);
 
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
         $goods_count = $goods_count->map(function($count, $key) use ($count_link) {
-
             $item = $count_link[$key];
             $item['count'] = $count;
-
             return $item;
         });
-//        dd($goods_count);
 
 		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('goods_count', $goods_count);
 
 		$this->assign('filter', $goods_list['filter']);
-		
-//		$specifications = get_goods_type_specifications();
-//		$this->assign('specifications', $specifications);
-		
-//		$db_store_franchisee = RC_DB::table('store_franchisee');
-//		$type = !empty($_GET['type']) ? $_GET['type'] : '';
-//		if (!empty($type) && $type == 'self') {
-//			$db_store_franchisee->where('manage_mode', 'self');
-//		}
 
         $store_list = \Ecjia\App\Store\Stores\StoreCollection::getStoreNameKeyBy();
 		$this->assign('store_list', $store_list);

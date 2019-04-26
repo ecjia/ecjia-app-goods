@@ -33,20 +33,4 @@ class BrandModel extends Model
     ];
 
 
-//    /**
-//     * 获取商品店铺信息
-//     */
-//    public function parentCategory()
-//    {
-//        return $this->belongsTo('Ecjia\App\Goods\Models\CategoryModel', 'parent_id', 'cat_id');
-//    }
-//
-//    /**
-//     * 商品会员等级价信息
-//     */
-//    public function childCategories()
-//    {
-//        return $this->hasMany('Ecjia\App\Goods\Models\CategoryModel', 'cat_id', 'parent_id');
-//    }
-
 }

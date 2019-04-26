@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品列表排序
+ * 平台推荐商品
  * @author Administrator
  *
  */
-class SortBy implements FilterInterface
+class IsBest implements FilterInterface
 {
 
     /**
@@ -29,13 +29,7 @@ class SortBy implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if (!empty($value) && is_array($value)) {
-    		foreach ($value as $by => $sort) {
-    		    $builder->orderBy($by, $sort);
-    		}
-    	}
-
-    	return $builder;
+    	return $builder->where('is_promote', $value);
     }
 
 }

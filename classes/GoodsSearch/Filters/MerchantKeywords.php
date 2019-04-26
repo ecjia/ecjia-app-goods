@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品列表排序
+ * 商家名称关键字条件
  * @author Administrator
  *
  */
-class SortBy implements FilterInterface
+class MerchantKeywords implements FilterInterface
 {
 
     /**
@@ -29,13 +29,12 @@ class SortBy implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if (!empty($value) && is_array($value)) {
-    		foreach ($value as $by => $sort) {
-    		    $builder->orderBy($by, $sort);
-    		}
-    	}
 
-    	return $builder;
+        $builder->whereHas('store', function($query) use ($value) {
+            $query->where('merchants_name', 'like', '%' . ecjia_mysql_like_quote($value) . '%');
+        });
+
+        return $builder;
     }
 
 }

@@ -13,11 +13,11 @@ use Ecjia\App\Goods\GoodsSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品列表排序
+ * 是否真实商品
  * @author Administrator
  *
  */
-class SortBy implements FilterInterface
+class IsReal implements FilterInterface
 {
 
     /**
@@ -29,13 +29,11 @@ class SortBy implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	if (!empty($value) && is_array($value)) {
-    		foreach ($value as $by => $sort) {
-    		    $builder->orderBy($by, $sort);
-    		}
-    	}
+        if ($value > -1) {
+            return $builder->where('is_real', $value);
+        }
 
-    	return $builder;
+        return $builder;
     }
 
 }
