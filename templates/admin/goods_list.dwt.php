@@ -11,80 +11,6 @@
 <!-- {/block} -->
 
 <!-- {block name="main_content"} -->
-<div class="modal hide fade" id="movetype">
-	<div class="modal-header">
-		<button class="close" data-dismiss="modal">×</button>
-		<h3>{t domain="goods"}转移商品至分类{/t}</h3>
-	</div>
-	<div class="modal-body h300">
-		<div class="row-fluid ecjiaf-tac">
-			<div>
-				<select class="noselect w200" size="15" name="target_cat">
-					<option value="0">{t domain="goods"}所有分类{/t}</option>
-					<!-- {foreach from=$cat_list item=cat} -->
-					<option value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
-					<!-- {/foreach} -->
-				</select>
-			</div>
-			<div>
-				<a class="btn btn-gebo m_l5" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=move_to&" data-msg="{t domain="goods"}是否将选中商品转移至分类？{/t}" data-noSelectMsg="{t domain="goods"}请选择要转移的商品{/t}" href="javascript:;" name="move_cat_ture">{t domain="goods"}开始转移{/t}</a>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="modal hide fade" id="insertGoods">
-	<div class="modal-header">
-		<button class="close" data-dismiss="modal">×</button>
-		<h3 class="modal-title">{t domain="goods"}导入商品{/t}</h3>
-	</div>
-	<div class="modal-body" style="height:auto;">
-		<form class="form-horizontal" action="{$form_action_insert}" method="post" name="insertForm">
-  			<div class="control-group control-group-small formSep">
-				<label class="control-label">{t domain="goods"}商品名称{/t}</label>
-				<div class="controls">
-					<input class="form-control" name="goods_name" type="text" value="" />
-					<span class="input-must m_l15">*</span>
-				</div>
-			</div>
-			<div class="control-group control-group-small formSep">
-				<label class="control-label">{t domain="goods"}商品货号{/t}</label>
-				<div class="controls">
-					<input class="form-control" name="goods_sn" type="text" value="" />
-				</div>
-			</div>
-			<div class="control-group control-group-small formSep">
-				<label class="control-label">{t domain="goods"}本店售价{/t}</label>
-				<div class="controls">
-					<input class="form-control" name="shop_price" type="text" value="" />
-					<a class="btn" data-toggle="marketPriceSetted">{t domain="goods"}按市场价计算{/t}</a>
-					<span class="input-must">*</span>
-				</div>
-			</div>
-			<div class="control-group control-group-small formSep">
-				<label class="control-label">{t domain="goods"}市场售价{/t}</label>
-				<div class="controls">
-					<input class="form-control" name="market_price" type="text" value="" />
-					<a class="btn" data-toggle="integral_market_price">{t domain="goods"}取整数{/t}</a>
-				</div>
-			</div>
-			<div class="control-group control-group-small formSep">
-				<label class="control-label">{t domain="goods"}上架{/t}</label>
-				<div class="controls chk_radio">
-					<input type="checkbox" name="is_display" value="1" style="opacity: 0;" checked="checked">
-					<span>{t domain="goods"}打勾表示商家可见此商品，并允许商家将此商品导入店铺{/t}</span>
-				</div>
-			</div>
-											
-          	<input type="hidden" name="goods_id" value="" />
-          	
-			<div class="form-group t_c">
-				<a class="btn btn-gebo insertSubmit" href="javascript:;">{t domain="goods"}开始导入{/t}</a>
-			</div>
-		</form>
-   </div>
-</div>
-
 <div>
 	<h3 class="heading"> 
 		<!-- {if $ur_here}{$ur_here}{/if} --> 
@@ -396,4 +322,79 @@
 		<!-- {$goods_list.page} -->
 	</div>
 </div>
+
+<div class="modal hide fade" id="movetype">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">×</button>
+        <h3>{t domain="goods"}转移商品至分类{/t}</h3>
+    </div>
+    <div class="modal-body h300">
+        <div class="row-fluid ecjiaf-tac">
+            <div>
+                <select class="noselect w200" size="15" name="target_cat">
+                    <option value="0">{t domain="goods"}所有分类{/t}</option>
+                    <!-- {foreach from=$cat_list item=cat} -->
+                    <option value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
+                    <!-- {/foreach} -->
+                </select>
+            </div>
+            <div>
+                <a class="btn btn-gebo m_l5" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=move_to&" data-msg="{t domain="goods"}是否将选中商品转移至分类？{/t}" data-noSelectMsg="{t domain="goods"}请选择要转移的商品{/t}" href="javascript:;" name="move_cat_ture">{t domain="goods"}开始转移{/t}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide fade" id="insertGoods">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">×</button>
+        <h3 class="modal-title">{t domain="goods"}导入商品{/t}</h3>
+    </div>
+    <div class="modal-body" style="height:auto;">
+        <form class="form-horizontal" action="{$form_action_insert}" method="post" name="insertForm">
+            <div class="control-group control-group-small formSep">
+                <label class="control-label">{t domain="goods"}商品名称{/t}</label>
+                <div class="controls">
+                    <input class="form-control" name="goods_name" type="text" value="" />
+                    <span class="input-must m_l15">*</span>
+                </div>
+            </div>
+            <div class="control-group control-group-small formSep">
+                <label class="control-label">{t domain="goods"}商品货号{/t}</label>
+                <div class="controls">
+                    <input class="form-control" name="goods_sn" type="text" value="" />
+                </div>
+            </div>
+            <div class="control-group control-group-small formSep">
+                <label class="control-label">{t domain="goods"}本店售价{/t}</label>
+                <div class="controls">
+                    <input class="form-control" name="shop_price" type="text" value="" />
+                    <a class="btn" data-toggle="marketPriceSetted">{t domain="goods"}按市场价计算{/t}</a>
+                    <span class="input-must">*</span>
+                </div>
+            </div>
+            <div class="control-group control-group-small formSep">
+                <label class="control-label">{t domain="goods"}市场售价{/t}</label>
+                <div class="controls">
+                    <input class="form-control" name="market_price" type="text" value="" />
+                    <a class="btn" data-toggle="integral_market_price">{t domain="goods"}取整数{/t}</a>
+                </div>
+            </div>
+            <div class="control-group control-group-small formSep">
+                <label class="control-label">{t domain="goods"}上架{/t}</label>
+                <div class="controls chk_radio">
+                    <input type="checkbox" name="is_display" value="1" style="opacity: 0;" checked="checked">
+                    <span>{t domain="goods"}打勾表示商家可见此商品，并允许商家将此商品导入店铺{/t}</span>
+                </div>
+            </div>
+
+            <input type="hidden" name="goods_id" value="" />
+
+            <div class="form-group t_c">
+                <a class="btn btn-gebo insertSubmit" href="javascript:;">{t domain="goods"}开始导入{/t}</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- {/block} -->
