@@ -148,6 +148,7 @@ class admin extends ecjia_admin {
         $page = intval($this->request->input('page', 1));
 
 		$this->assign('ur_here', __('商品列表', 'goods'));
+
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods')));
 		ecjia_screen::get_current_screen()->add_help_tab(array(
 			'id'		=> 'overview',
@@ -168,7 +169,11 @@ class admin extends ecjia_admin {
 //		$this->assign('cat_list', $cat_list); //cat_list(0, $cat_id, false)
 		 //cat_list(0, $cat_id, false)
 
-		$this->assign('brand_list', get_brand_list());
+//        dd(get_brand_list());
+//        dd(\Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
+
+
+		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 		$this->assign('intro_list', goods::intro_list());
 
 		$use_storage = ecjia::config('use_storage');
@@ -198,7 +203,9 @@ class admin extends ecjia_admin {
 		if (!empty($type) && $type == 'self') {
 			$db_store_franchisee->where('manage_mode', 'self');
 		}
-		$store_list = $db_store_franchisee->select('store_id', 'merchants_name')->get();
+//		$store_list = $db_store_franchisee->select('store_id', 'merchants_name')->get();
+        $store_list = \Ecjia\App\Store\Stores\StoreCollection::getStoreNameKeyBy();
+//		dd($store_list);
 		$this->assign('store_list', $store_list);
 		
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
