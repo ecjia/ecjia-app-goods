@@ -153,6 +153,8 @@ class admin extends ecjia_admin {
         $review_status = intval($this->request->input('review_status', 0));
         $store_id = intval($this->request->input('store_id', 0));
         $list_type = intval($this->request->input('type', 0));
+        $sort_by = trim($this->request->input('sort_by', 'goods_id'));
+        $sort_order = trim($this->request->input('sort_order', 'DESC'));
 
 		$this->assign('ur_here', __('商品列表', 'goods'));
 
@@ -225,6 +227,7 @@ class admin extends ecjia_admin {
             'keywords'          => $keywords,
             'review_status'     => $review_status,
             'store_id'          => $store_id,
+            'sort_by'           => [$sort_by => $sort_order],
             'page'              => $page,
         ];
         $input = collect($input)->merge($where)->filter()->all();
@@ -239,6 +242,9 @@ class admin extends ecjia_admin {
 
         $count_link = function ($input, $where) {
             $input = collect($input)->except(array_keys($where))->all();
+
+            $input['sort_order'] = array_values($input['sort_by'])[0];
+            $input['sort_by'] = array_keys($input['sort_by'])[0];
 
             $links = [
                 'count_goods_num' => [
