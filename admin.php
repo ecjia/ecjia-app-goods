@@ -179,12 +179,6 @@ class admin extends ecjia_admin {
 		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
 
-
-//		$conditions = '';
-//		$conditions .= " AND (g.extension_code is null or g.extension_code='')";
-//		$goods_list = goods::goods_list(0, 1, $conditions);
-//        dd($goods_list);
-
         /* 是否上架 */
         if ($list_type == 1) {
             $is_on_sale = 1;
@@ -269,22 +263,12 @@ class admin extends ecjia_admin {
             $item['count'] = $count;
             return $item;
         });
-//        dd($goods_count);
 
 		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('goods_count', $goods_count);
 
 		$this->assign('filter', $goods_list['filter']);
-		
-//		$specifications = get_goods_type_specifications();
-//		$this->assign('specifications', $specifications);
-		
-//		$db_store_franchisee = RC_DB::table('store_franchisee');
-//		$type = !empty($_GET['type']) ? $_GET['type'] : '';
-//		if (!empty($type) && $type == 'self') {
-//			$db_store_franchisee->where('manage_mode', 'self');
-//		}
 
         $store_list = \Ecjia\App\Store\Stores\StoreCollection::getStoreNameKeyBy();
 		$this->assign('store_list', $store_list);
