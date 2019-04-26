@@ -75,19 +75,19 @@ class goods_suggestlist_module extends api_front implements api_interface {
     	
 		switch ($sort_type) {
 			case 'goods_id' :
-				$order_by = array('goods_id' => 'desc');
+				$order_by = array('goods.goods_id' => 'desc');
 				break;
 			case 'shop_price_desc' :
-				$order_by = array('shop_price' => 'desc', 'sort_order' => 'asc');
+				$order_by = array('goods.shop_price' => 'desc', 'goods.sort_order' => 'asc');
 				break;
 			case 'shop_price_asc' :
-				$order_by = array('shop_price' => 'asc', 'sort_order' => 'asc');
+				$order_by = array('goods.shop_price' => 'asc', 'goods.sort_order' => 'asc');
 	    		break;
 			case 'last_update' :
-				$order_by = array('last_update' => 'desc');
+				$order_by = array('goods.last_update' => 'desc');
 				break;
 			default :
-				$order_by = array('sort_order' => 'asc', 'goods_id' => 'desc');
+				$order_by = array('goods.sort_order' => 'asc', 'goods.goods_id' => 'desc');
 				break;
 		}
 		
