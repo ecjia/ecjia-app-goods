@@ -30,7 +30,7 @@ class GoodsSearch
         return static::getResults($query);
     }
 
-    public static function applyCount(Request $filters)
+    public static function applyCount(Request $filters, Closure $callback = null)
     {
 
         $filters->replace($filters->except('page'));
@@ -39,11 +39,30 @@ class GoodsSearch
 
         $query = static::applyDecoratorsFromRequest($filters, $query);
 
+        if ($callback instanceof Closure) {
+            $callback($query);
+        }
+
         // 返回搜索结果
         return static::getCount($query);
     }
 
+    public static function applyFirst(Request $filters, Closure $callback = null)
+    {
 
+        $filters->replace($filters->except('page'));
+
+        $query = (new GoodsModel())->newQuery();
+
+        $query = static::applyDecoratorsFromRequest($filters, $query);
+
+        if ($callback instanceof Closure) {
+            $callback($query);
+        }
+
+        // 返回搜索结果
+        return static::getFirst($query);
+    }
 
     private static function applyDecoratorsFromRequest(Request $request, Builder $query)
     {
@@ -79,6 +98,16 @@ class GoodsSearch
     private static function getCount(Builder $query)
     {
         return $query->count('goods.goods_id');
+    }
+
+    /**
+     * 获取条数
+     * @param Builder $query
+     * @return mixed
+     */
+    private static function getFirst(Builder $query)
+    {
+        return $query->first();
     }
 
     /**

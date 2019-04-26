@@ -57,12 +57,6 @@ class GoodsCollection
             $input['current_page'] = [$start, $size];
 
             $this->request->replace($input);
-
-//            $pager = array(
-//                'total' => $ecjia_page->total_records,
-//                'count' => $ecjia_page->total_records,
-//                'more'  => $ecjia_page->total_pages <= $page ? 0 : 1,
-//            );
         }
 
         $collection = GoodsSearch::apply($this->request, function($query) {
