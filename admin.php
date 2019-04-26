@@ -160,7 +160,11 @@ class admin extends ecjia_admin {
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表" target="_blank">关于商品列表帮助文档</a>', 'goods') . '</p>'
 		);
 
-		$this->assign('cat_list', cat_list(0, $cat_id, false));
+
+        $cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+//		dd($cat_list_select);
+//		$this->assign('cat_list', $cat_list); //cat_list(0, $cat_id, false)
+		$this->assign('cat_list_option', $cat_list_option); //cat_list(0, $cat_id, false)
 		$this->assign('brand_list', get_brand_list());
 		$this->assign('intro_list', goods::intro_list());
 

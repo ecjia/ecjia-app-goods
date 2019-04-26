@@ -216,9 +216,7 @@
 			<div class="f_l m_r5">
 				<select class="w150" name="cat_id">
 					<option value="0">{t domain="goods"}所有分类{/t}</option>
-					<!-- {foreach from=$cat_list item=cat} -->
-					<option value="{$cat.cat_id}" {if $cat.cat_id == $smarty.get.cat_id}selected{/if} {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
-					<!-- {/foreach} -->
+                    {$cat_list_option}
 				</select>
 			</div>
 			<!-- 品牌 -->
