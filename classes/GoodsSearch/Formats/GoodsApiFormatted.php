@@ -30,23 +30,13 @@ class GoodsApiFormatted
     public function toArray()
     {
         //店铺logo
-    	if ($this->model->store->merchants_config) {
-    		$shop_logo_group = $this->model->store->merchants_config->where('code', 'shop_logo')->first();
-    		$store_logo = $shop_logo_group ? $shop_logo_group->value : '';
-    	} else {
-    		$store_logo = '';
-    	}
+    	$store_logo = $this->storeLogo();
     	
     	//市场价
     	$market_price = $this->model->market_price;
     	
     	//会员等级价
-    	if ($this->model->member_price) {
-    		$member_price = $this->model->member_price->where('goods_id', $this->model->goods_id)->where('user_rank', $this->user_rank)->first();
-    		$user_price = $member_price ? $member_price->user_price : 0;
-    	} else {
-    		$user_price = 0;
-    	}
+    	$user_price = $this->userPrice();
     	
     	$shop_price = $user_price > 0 ? $user_price : $this->model->shop_price*$this->user_rank_discount;
     	
@@ -59,10 +49,11 @@ class GoodsApiFormatted
         if ($this->model->product_id > 0) {
         	$total_attr_price = 0;
         	$product_goods_attr = explode('|', $this->model->product_goods_attr);
-        	$attr_list = \RC_DB::table('goods_attr')->select('attr_value', 'attr_price')->whereIn('goods_attr_id', $product_goods_attr)->get();
-        	foreach ($attr_list AS $attr) {
-        		$total_attr_price += $attr['attr_price'];
+        	//货品没自定义价格时计算货品属性价格的和
+        	if ($this->model->product_shop_price < 0) {
+        		$total_attr_price = $this->totalAttrPrice($product_goods_attr);
         	}
+        	
         	//货品会员等级价
         	$product_shop_price = $this->model->product_shop_price*$this->user_rank_discount;
         	//货品促销价格
@@ -123,7 +114,6 @@ class GoodsApiFormatted
             'formatted_saving_price'    => $saving_price > 0 ? sprintf(__('已省%s元', 'goods'), $saving_price) : '',
 			'properties'				=> $pro,
 			'specification'				=> $this->model->product_id > 0 ? [] : array_values($properties['spe']),
-			
             //picture info
 	        'img' 						=> $this->filterGoodsImg($this->model->product_id),
 			
@@ -251,5 +241,53 @@ class GoodsApiFormatted
     		}
     	}
     	return $outData;
+    }
+    
+    /**
+     * 获取货品属性价的和
+     * @param array $product_goods_attr
+     * @return float
+     */
+    protected function totalAttrPrice($product_goods_attr)
+    {
+    	if ($this->model->goods_attr) {
+    		$total_attr_price = $this->model->goods_attr->map(function ($item, $key) use ($product_goods_attr) {
+    			if (in_array($item->goods_attr_id, $product_goods_attr)) {
+    				return $attr_price += $item->attr_price;
+    			}
+    		})->sum();
+    	}
+    	return $total_attr_price;
+    }
+    
+    /**
+     * 店铺logo
+     * @return string
+     */
+    protected function storeLogo()
+    {
+    	if ($this->model->store->merchants_config) {
+    		$shop_logo_group = $this->model->store->merchants_config->where('code', 'shop_logo')->first();
+    		$store_logo = $shop_logo_group ? $shop_logo_group->value : '';
+    	} else {
+    		$store_logo = '';
+    	}
+    	
+    	return $store_logo;
+    }
+    
+    /**
+     * 商品会员价
+     * @return number
+     */
+    protected function userPrice()
+    {
+    	if ($this->model->member_price) {
+    		$member_price = $this->model->member_price->where('goods_id', $this->model->goods_id)->where('user_rank', $this->user_rank)->first();
+    		$user_price = $member_price ? $member_price->user_price : 0;
+    	} else {
+    		$user_price = 0;
+    	}
+    	return $user_price;
     }
 }
