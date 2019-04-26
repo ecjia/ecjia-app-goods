@@ -161,6 +161,8 @@ class admin extends ecjia_admin {
 			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表" target="_blank">关于商品列表帮助文档</a>', 'goods') . '</p>'
 		);
 
+        $use_storage = ecjia::config('use_storage');
+        $this->assign('use_storage', empty($use_storage) ? 0 : 1);
 
         $cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
         $this->assign('cat_list_option', $cat_list_option);
@@ -172,12 +174,10 @@ class admin extends ecjia_admin {
 //        dd(get_brand_list());
 //        dd(\Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 
-
 		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
-		$this->assign('intro_list', goods::intro_list());
+		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
 
-		$use_storage = ecjia::config('use_storage');
-		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
+
 		$conditions = '';
 		$conditions .= " AND (g.extension_code is null or g.extension_code='')";
 //		$goods_list = goods::goods_list(0, 1, $conditions);

@@ -203,8 +203,8 @@
 			<div class="f_l m_r5">
 				<select class="w150" name="store_id">
 					<option value="0">{t domain="goods"}请选择商家{/t}</option>
-					<!-- {foreach from=$store_list item=val} -->
-					<option value="{$val.store_id}" {if $filter.store_id eq $val.store_id}selected{/if}>{$val.merchants_name}</option>
+					<!-- {foreach from=$store_list item=store_name key=store_id} -->
+					<option value="{$store_id}" {if $filter.store_id eq $store_id}selected{/if}>{$store_name}</option>
 					<!-- {/foreach} -->
 				</select>
 			</div>
