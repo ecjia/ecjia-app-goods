@@ -28,13 +28,6 @@ class GoodsFunction
      */
     public static function get_final_price($goods_id, $goods_num = '1', $is_spec_price = false, $spec = array(), $product_id = 0)
     {
-    	\RC_Logger::getLogger('error')->info('testxxx');
-    	\RC_Logger::getLogger('error')->info($spec);
-    	\RC_Logger::getLogger('error')->info($is_spec_price);
-    	\RC_Logger::getLogger('error')->info($product_id);
-    	\RC_Logger::getLogger('error')->info('testyyy');
-    	
-    	
         $dbview = RC_Model::model('goods/sys_goods_member_viewmodel');
         RC_Loader::load_app_func('admin_goods', 'goods');
 
@@ -114,15 +107,6 @@ class GoodsFunction
             $mobilebuy_ext_info = unserialize($mobilebuy['ext_info']);
         }
         $final_price =  ($final_price > $mobilebuy_ext_info['price'] && !empty($mobilebuy_ext_info['price'])) ? $mobilebuy_ext_info['price'] : $final_price;
-
-        
-        \RC_Logger::getLogger('error')->info('test111');
-        \RC_Logger::getLogger('error')->info($spec);
-        \RC_Logger::getLogger('error')->info($is_spec_price);
-        \RC_Logger::getLogger('error')->info($product_shop_price);
-        \RC_Logger::getLogger('error')->info('test222');
-        
-        
         // 如果需要加入规格价格
         if ($is_spec_price) {
             if (! empty ( $spec )) {
@@ -131,11 +115,6 @@ class GoodsFunction
                 	if ($product_shop_price <= 0) {
                 		$spec_price = self::spec_price ( $spec );
                 		$final_price += $spec_price;
-                		
-                		\RC_Logger::getLogger('error')->info('test333');
-                		\RC_Logger::getLogger('error')->info($spec_price);
-                		\RC_Logger::getLogger('error')->info($final_price);
-                		\RC_Logger::getLogger('error')->info('test444');
                 	}
                 }
             }
