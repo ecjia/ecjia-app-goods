@@ -203,7 +203,9 @@ class admin extends ecjia_admin {
 		if (!empty($type) && $type == 'self') {
 			$db_store_franchisee->where('manage_mode', 'self');
 		}
-		$store_list = $db_store_franchisee->select('store_id', 'merchants_name')->get();
+//		$store_list = $db_store_franchisee->select('store_id', 'merchants_name')->get();
+        $store_list = \Ecjia\App\Store\Stores\StoreCollection::getStoreNameKeyBy();
+//		dd($store_list);
 		$this->assign('store_list', $store_list);
 		
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
