@@ -29,7 +29,7 @@ class Brand implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('brand_id', $value);
+    	return $builder->where('goods.brand_id', $value);
     }
 
 }

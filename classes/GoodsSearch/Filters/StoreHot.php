@@ -29,7 +29,7 @@ class StoreHot implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('store_hot', $value);
+    	return $builder->where('goods.store_hot', $value);
     }
 
 }

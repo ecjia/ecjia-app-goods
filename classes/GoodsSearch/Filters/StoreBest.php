@@ -29,7 +29,7 @@ class StoreBest implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('store_best', $value);
+    	return $builder->where('goods.store_best', $value);
     }
 
 }

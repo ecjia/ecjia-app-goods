@@ -31,9 +31,9 @@ class StoreId implements FilterInterface
     {
     	if (!empty($value)) {
     		if (is_array($value)) {
-    			return $builder->whereIn('store_id', $value);
+    			return $builder->whereIn('goods.store_id', $value);
     		} else {
-    			return $builder->where('store_id', $value);
+    			return $builder->where('goos.store_id', $value);
     		}
     	}
     	

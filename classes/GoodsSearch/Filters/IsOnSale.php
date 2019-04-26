@@ -29,7 +29,7 @@ class IsOnSale implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('is_on_sale', $value);//$value=1
+    	return $builder->where('goods.is_on_sale', $value);//$value=1
     }
 
 }

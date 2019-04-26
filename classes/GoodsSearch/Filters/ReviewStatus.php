@@ -29,7 +29,7 @@ class ReviewStatus implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('review_status', '>', $value);//$value=2
+    	return $builder->where('goods.review_status', '>', $value);//$value=2
     }
 
 }
