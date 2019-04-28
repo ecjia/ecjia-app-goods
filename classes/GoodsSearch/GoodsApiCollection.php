@@ -70,15 +70,15 @@ class GoodsApiCollection
                                 'store', 
             					'member_price',
 								'store.merchants_config',
-            					'goods_attr'
-//             					'store.merchants_config' => function ($query) {
-//                                         $query->select('value')->where('code', '=', 'shop_logo');
-//                                     },
-//                                 'member_price' => function ($query) use ($user_rank) {
-//                                         $query->select('user_price')->where('member_price.user_rank', '=', $user_rank);
-//                                     },
-                                 
-
+            					'goodsType',
+            					'goods_attr',
+            					'goods_attr.attribute'
+            					//'store.merchants_config' => function ($query) {
+                                //        $query->select('value')->where('code', '=', 'shop_logo');
+                                //    },
+                                //'member_price' => function ($query) use ($user_rank) {
+                                //        $query->select('user_price')->where('member_price.user_rank', '=', $user_rank);
+                                //    },
                             ]
 
                 );

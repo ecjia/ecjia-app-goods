@@ -78,9 +78,7 @@ class GoodsApiFormatted
     	$saving_price = ($this->model->shop_price > $promote_price && $promote_price > 0) ? $this->model->shop_price - $promote_price : (($this->model->market_price > 0 && $this->model->market_price > $this->model->shop_price) ? $this->model->market_price - $this->model->shop_price : 0);
     	
     	//商品规格属性
-    	$properties = \Ecjia\App\Goods\GoodsFunction::get_goods_properties($this->model->goods_id);
-    	$pro = empty($properties['pro']) ? [] : $this->formatProperties($properties['pro']);
-    	$spe = empty($properties['specification']) ? [] : $this->formatSpecification($properties['spe']);
+    	list($properties, $specification) = $this->goodsProperties();
     	
         return [
             //store info
@@ -112,8 +110,8 @@ class GoodsApiFormatted
             'object_id'     			=> 0,
             'saving_price'  			=> sprintf("%.2f", $saving_price),
             'formatted_saving_price'    => $saving_price > 0 ? sprintf(__('已省%s元', 'goods'), $saving_price) : '',
-			'properties'				=> $pro,
-			'specification'				=> $this->model->product_id > 0 ? [] : array_values($properties['spe']),
+			'properties'				=> $properties,
+			'specification'				=> $this->model->product_id > 0 ? [] : $specification,
             //picture info
 	        'img' 						=> $this->filterGoodsImg($this->model->product_id),
 			
@@ -290,4 +288,81 @@ class GoodsApiFormatted
     	}
     	return $user_price;
     }
+    
+    protected function goodsProperties()
+    {
+    	$properties = ['pro' => [], 'spe' => [], 'lnk' => []];
+    	if ($this->model->goodsType) {
+    		$grp = $this->model->goodsType->attr_group;
+    		if (! empty ( $grp )) {
+    			$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
+    		}
+    		if ($this->model->goods_attr) {
+    			$res = $this->model->goods_attr->map(function ($item) {
+    				if ($item->attribute) {
+    					$attribute = $item->attribute->map(function ($v, $k) use($item) {
+    						  return  [
+    									'goods_attr_id' => $item->goods_attr_id,
+    									'attr_value'	=> $item->attr_value,
+    									'attr_price'	=> $item->attr_price,
+    									'attr_id'		=> $v->attr_id,
+    									'attr_name'		=> $v->attr_name,
+    									'attr_group'	=> $v->attr_group,
+    									'is_linked'		=> $v->is_linked,
+    									'attr_type'		=> $v->attr_type
+    								];
+    					});
+    				}
+    				return $attribute;
+    			})->map(function ($val, $key) {
+    				return $val['0'];
+    			});
+    			
+    			$properties = $this->formatGoodsProperties($groups, $res);
+    		}
+    	}
+    	
+    	$pro = empty($properties['pro']) ? [] : $this->formatProperties($properties['pro']);
+    	$spe = empty($properties['spe']) ? [] : $this->formatSpecification($properties['spe']);
+    	
+    	return [$pro, $spe];
+    }
+    
+    
+    protected function formatGoodsProperties($groups, $res)
+    {
+    	$arr ['pro'] = array (); // 属性
+    	$arr ['spe'] = array (); // 规格
+    	$arr ['lnk'] = array (); // 关联的属性
+    	
+    	foreach ( $res as $row ) {
+    		$row ['attr_value'] = str_replace ( "\n", '<br />', $row ['attr_value'] );
+    	
+    		if ($row ['attr_type'] == 0) {
+    			$group = (isset ( $groups [$row ['attr_group']] )) ? $groups [$row ['attr_group']] : __('商品属性', 'goods');
+    	
+    			$arr ['pro'] [$group] [$row ['attr_id']] ['name'] = $row ['attr_name'];
+    			$arr ['pro'] [$group] [$row ['attr_id']] ['value'] = $row ['attr_value'];
+    		} else {
+    			$attr_price = $row['attr_price'];
+    	
+    			$arr ['spe'] [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
+    			$arr ['spe'] [$row ['attr_id']] ['name'] = $row ['attr_name'];
+    			$arr ['spe'] [$row ['attr_id']] ['value'] [] = array (
+    					'label' => $row ['attr_value'],
+    					'price' => $row ['attr_price'],
+    					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
+    					'id' => $row ['goods_attr_id']
+    			);
+    		}
+    	
+    		if ($row ['is_linked'] == 1) {
+    			/* 如果该属性需要关联，先保存下来 */
+    			$arr ['lnk'] [$row ['attr_id']] ['name'] = $row ['attr_name'];
+    			$arr ['lnk'] [$row ['attr_id']] ['value'] = $row ['attr_value'];
+    		}
+    	}
+    	return $arr;
+    }
+    
 }

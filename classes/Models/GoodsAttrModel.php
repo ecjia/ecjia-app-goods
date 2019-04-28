@@ -43,7 +43,7 @@ class GoodsAttrModel extends Model
     public $timestamps = false;
     
     /**
-     * 商品规格信息
+     * 商品规格属性信息
      */
     public function attribute()
     {
