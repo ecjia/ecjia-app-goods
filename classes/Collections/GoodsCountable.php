@@ -10,7 +10,6 @@ namespace Ecjia\App\Goods\Collections;
 
 
 use Ecjia\App\Goods\GoodsSearch\GoodsSearch;
-use Ecjia\App\Goods\Models\GoodsModel;
 use Royalcms\Component\Http\Request;
 use RC_DB;
 
@@ -34,7 +33,10 @@ class GoodsCountable
 
     public function getData()
     {
-        $model = GoodsSearch::applyFirst($this->request, function($query) {
+        $model = GoodsSearch::singleton()->applyFirst($this->request, function($query) {
+            /**
+             * @var \Royalcms\Component\Database\Schema\Builder $query
+             */
             $query->select(RC_DB::raw('count(`goods_id`) as `count_goods_num`'),
                 RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`'),
                 RC_DB::raw('SUM(IF(`is_on_sale` = 0, 1, 0)) as `count_not_sale`')
