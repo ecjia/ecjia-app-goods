@@ -10,6 +10,7 @@ namespace Ecjia\App\Goods\GoodsSearch;
 
 
 use Ecjia\App\Goods\GoodsSearch\Formats\GoodsAdminFormatted;
+use Royalcms\Component\Database\Eloquent\Builder;
 use Royalcms\Component\Http\Request;
 
 class GoodsCollection
@@ -48,7 +49,7 @@ class GoodsCollection
             if (array_key_exists('page', $input)) {
                 unset($input['page']);
             }
-            $count = GoodsSearch::applyCount($this->request);
+            $count = GoodsSearch::singleton()->applyCount($this->request);
 
             $ecjia_page = new \ecjia_page($count, $size, null, '', $page);
 
@@ -59,7 +60,10 @@ class GoodsCollection
             $this->request->replace($input);
         }
 
-        $collection = GoodsSearch::apply($this->request, function($query) {
+        $collection = GoodsSearch::singleton()->apply($this->request, function($query) {
+            /**
+             * @var Builder $query
+             */
             $query->with('store');
         });
         $collection = $collection->map(function($item) use ($user_rank_discount, $user_rank) {
@@ -79,34 +83,31 @@ class GoodsCollection
     public static function test()
     {
 
-
          $input = [
-//             'store_id' => 63,
-//             'product' => true,
-//             'keywords' => '西马渔场东星斑',
-//             'store_unclosed' => 0,
-         	 'is_delete'		=> 0,
-//         	 'is_on_sale'	=> 1,
-//         	 'is_alone_sale'	=> 1,
-//         	 'review_status' => 2,
-// 			 'store_best' => 1,
-//         	 'store_hot' => 1,
-//         	 'store_new' => 1,
-//         	 'promotion' => 0,
-//         	 'is_best'		=> 1,
-//         	 'is_hot'		=> 1,
-//         	 'is_new'		=> 1,
-             'cat_id' => 1036,
-//             'shop_price_less_than' => 10,
-//             'shop_price_more_than' => 5,
-// 			 'no_need_cashier_goods' => true,
-         	 'page' => 1,
-
+             'store_id'             => 63,
+             'product'              => true,
+             'keywords'             => '西马渔场东星斑',
+             'store_unclosed'       => 0,
+         	 'is_delete'		    => 0,
+         	 'is_on_sale'	        => 1,
+         	 'is_alone_sale'	    => 1,
+         	 'review_status'        => 2,
+ 			 'store_best'           => 1,
+         	 'store_hot'            => 1,
+         	 'store_new'            => 1,
+         	 'promotion'            => 0,
+         	 'is_best'		        => 1,
+         	 'is_hot'		        => 1,
+         	 'is_new'		        => 1,
+             'cat_id'               => 1036,
+             'shop_price_less_than' => 10,
+             'shop_price_more_than' => 5,
+ 			 'no_need_cashier_goods' => true,
+         	 'page'                 => 1,
          ];
 
          $collection = (new GoodsCollection($input))->getData();
 
-//         dd($collection);
          return $collection;
     }
 

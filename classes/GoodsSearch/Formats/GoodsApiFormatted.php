@@ -14,6 +14,9 @@ use Ecjia\App\Goods\Models\GoodsModel;
 class GoodsApiFormatted
 {
 
+    /**
+     * @var GoodsModel
+     */
     protected $model;
     
     protected $user_rank_discount;

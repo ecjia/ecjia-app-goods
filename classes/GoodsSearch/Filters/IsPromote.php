@@ -9,7 +9,7 @@
 namespace Ecjia\App\Goods\GoodsSearch\Filters;
 
 
-use Ecjia\App\Goods\GoodsSearch\FilterInterface;
+use Ecjia\System\Frameworks\SuperSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
@@ -17,7 +17,7 @@ use Royalcms\Component\Database\Eloquent\Builder;
  * @author Administrator
  *
  */
-class IsBest implements FilterInterface
+class IsPromote implements FilterInterface
 {
 
     /**

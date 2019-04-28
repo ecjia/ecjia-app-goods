@@ -15,6 +15,9 @@ use RC_Upload;
 class GoodsAdminFormatted
 {
 
+    /**
+     * @var GoodsModel
+     */
     protected $model;
     
     protected $user_rank_discount;
