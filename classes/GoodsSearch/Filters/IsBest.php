@@ -29,7 +29,7 @@ class IsBest implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('is_best', $value);
+    	return $builder->where('goods.is_best', $value);
     }
 
 }

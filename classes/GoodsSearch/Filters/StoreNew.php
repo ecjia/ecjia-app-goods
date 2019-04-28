@@ -29,7 +29,7 @@ class StoreNew implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('store_new', $value);
+    	return $builder->where('goods.store_new', $value);
     }
 
 }

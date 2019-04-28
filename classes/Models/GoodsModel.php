@@ -144,13 +144,21 @@ class GoodsModel extends Model
     }
     
     /**
-     * 商品属性信息
+     * 商品规格的属性信息
      */
     public function goods_attr()
     {
     	return $this->hasMany('Ecjia\App\Goods\Models\GoodsAttrModel', 'goods_id', 'goods_id');
     }
-
+    
+    /**
+     * 商品规格信息
+     */
+    public function goodsType()
+    {
+    	return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'goods_type', 'cat_id');
+    }
+    
 
     /**
      * 将缓存数组添加至创建缓存数组（用于商品列表）
