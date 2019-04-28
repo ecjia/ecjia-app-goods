@@ -30,9 +30,9 @@
             	<div class="form edit-page">
               		<form class="form-horizontal tasi-form" method="post" action="{$form_action}" name="theForm">
               			<div class="form-group">
-              				<label class="control-label col-lg-2">{t domain="goods"}规格名称：{/t}</label>
+              				<label class="control-label col-lg-2">{t domain="goods"}参数模板名称：{/t}</label>
               				<div class="controls col-lg-6">
-                            	<input class="form-control" name="cat_name" type="text" value="{$goods_type.cat_name|escape}" />
+                            	<input class="form-control" name="cat_name" type="text" value="{$parameter_template_info.cat_name}" />
                           	</div>
                           	<span class="input-must">*</span>
               			</div>
@@ -40,25 +40,26 @@
               			<div class="form-group">
               				<label class="control-label col-lg-2">{t domain="goods"}状态：{/t}</label>
                      		<div class="col-lg-6">
-                     			<input type="radio" id="enabled_2" name="enabled" value="1" {if $goods_type.enabled eq 1} checked {/if}>
+                     			<input type="radio" id="enabled_2" name="enabled" value="0" {if $parameter_template_info.enabled eq 0} checked {/if}>
                       			<label for="enabled_2">{t domain="goods"}启用{/t}</label>
                       			
-                  				<input type="radio" id="enabled_1" name="enabled" value="0" {if $goods_type.enabled eq 0} checked {/if}>
+                  				<input type="radio" id="enabled_1" name="enabled" value="1" {if $parameter_template_info.enabled eq 1} checked {/if}>
                       			<label for="enabled_1">{t domain="goods"}禁用{/t}</label>
         					</div> 
               			</div>
               			
               			<div class="form-group">
-              				<label class="control-label col-lg-2">{t domain="goods"}属性分组：{/t}</label>
+              				<label class="control-label col-lg-2">{t domain="goods"}参数分组：{/t}</label>
               				<div class="col-lg-6">
-                            	<textarea class="form-control" name="attr_group" rows="5">{$goods_type.attr_group|escape}</textarea>
+                            	<textarea class="form-control" name="attr_group" rows="5">{$parameter_template_info.attr_group}</textarea>
+                                <span class="help-block">多个参数组时，换行输入，排序也将按照自然顺序排序。</span>
                           	</div>
               			</div>
               			
               			<div class="form-group">
               				<div class="col-lg-offset-2 col-lg-6">
                       			<button class="btn btn-info" type="submit">{t domain="goods"}确定{/t}</button>
-                             	<input type="hidden" name="cat_id" value="{$goods_type.cat_id}" />
+                             		<input type="hidden" name="cat_id" value="{$parameter_template_info.cat_id}" />
                          	</div>
               			</div>
               		</form>

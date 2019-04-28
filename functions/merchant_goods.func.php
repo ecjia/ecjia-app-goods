@@ -396,7 +396,7 @@ function get_merchant_where_sql($filter) {
  * @param   boolean     $show_all   是否显示平台规格
  * @return  string
  */
-function goods_enable_type_list($selected, $enabled = false, $show_all = false) {
+function goods_enable_type_list($selected, $type, $enabled = false, $show_all = false) {
 	$db_goods_type = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id']);
 
 	if ($enabled) {
@@ -410,7 +410,7 @@ function goods_enable_type_list($selected, $enabled = false, $show_all = false) 
 			$db_goods_type->orWhere('store_id', 0);
 		}
 	}
-	$data = $db_goods_type->select('cat_id', 'cat_name')->get();
+	$data = $db_goods_type->select('cat_id', 'cat_name')->where('cat_type', $type)->get();
 	
 	$opt = '';
 	if (!empty($data)) {
