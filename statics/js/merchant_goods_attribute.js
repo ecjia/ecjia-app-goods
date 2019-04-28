@@ -54,7 +54,9 @@
 
 	app.goods_arrt = {
 		init: function() {
+		
 			app.goods_arrt.change_attr();
+			app.goods_arrt.color_values();
 		},
 
 		change_attr: function() {
@@ -63,6 +65,29 @@
 					url = $this.attr('data-url') + $this.val();
 				ecjia.pjax(url);
 			});
+		},
+		
+		color_values: function() {
+            $("a[data-toggle='modal']").off('click').on('click', function (e) {
+            	e.preventDefault();
+            	
+                var $this = $(this);
+                var attr_id = $this.attr('attr-id');
+                var url = $this.attr('attr-url');
+                $.post(url, {'attr_id': attr_id}, function (data) {
+                	$('.modal').html(data.data);
+                	$('.colorpicker-default').colorpicker({
+                		showOn: "button",
+        			    format: 'hex'
+        			})
+        			.on("changeColor", function(ev){
+//        				$(this).prev().css('color', ev.color.toHex());
+        				$(this).css('color', ev.color.toHex());
+                	});
+                	$('.colorpicker').css('z-index', 2000);
+                }, 'json');
+			})
+        
 		}
 	};
 

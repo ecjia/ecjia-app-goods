@@ -89,9 +89,8 @@ class GoodsAttr {
     //属性是否可选 数组
     public static function getAttrType() {
         $typeArr = [
-            0 => __('唯一属性', 'goods'),
-            1 => __('单选属性', 'goods'),
-            2 => __('复选属性', 'goods'),
+            0 => __('唯一参数', 'goods'),
+            2 => __('复选参数', 'goods'),
         ];
 
         return $typeArr;
