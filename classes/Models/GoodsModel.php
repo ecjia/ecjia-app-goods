@@ -10,8 +10,12 @@ namespace Ecjia\App\Goods\Models;
 
 use Royalcms\Component\Database\Eloquent\Model;
 use RC_Cache;
+use Royalcms\Component\DataExport\Contracts\ExportsCustomizeData;
+use Royalcms\Component\DataExport\CustomizeDataSelection;
+use Royalcms\Component\DataExport\Exceptions\CouldNotAddToCustomizeDataSelection;
+use Royalcms\Component\Support\Str;
 
-class GoodsModel extends Model
+class GoodsModel extends Model implements ExportsCustomizeData
 {
 
     protected $table = 'goods';
@@ -206,6 +210,46 @@ class GoodsModel extends Model
     public function delete_cache_item($cache_key)
     {
         return RC_Cache::app_cache_delete($cache_key, 'goods');
+    }
+
+    public function selectPersonalData(PersonalDataSelection $personalDataSelection) {
+
+    }
+
+    /**
+     * @param \Royalcms\Component\DataExport\CustomizeDataSelection $customizeDataSelection
+     * @return void
+     */
+    public function selectCustomizeData(CustomizeDataSelection $customizeDataSelection)
+    {
+        try {
+            $customizeDataSelection
+                ->add('user.json', $this->toArray())
+                ->addFile(\RC_Upload::upload_path($this->goods_thumb))
+                ->addFile(\RC_Upload::upload_path($this->goods_img))
+                ->addFile(\RC_Upload::upload_path($this->original_img));
+        }
+        catch (CouldNotAddToCustomizeDataSelection $e) {
+            dd($e);
+        }
+
+    }
+
+    /**
+     * @return string
+     */
+    public function customizeDataExportName()
+    {
+        $name = Str::slug($this->goods_sn);
+
+        return "export-data-{$name}.zip";
+    }
+
+    public function getKey()
+    {
+        $name = Str::slug($this->goods_sn);
+
+        return $name;
     }
 
 }
