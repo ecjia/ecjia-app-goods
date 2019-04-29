@@ -134,19 +134,6 @@ class goods_suggestlist_module extends api_front implements api_interface {
 			} elseif ($action_type == 'hot') {
 				$filters['is_hot'] = 1;
 			} elseif ($action_type == 'promotion') {
-// 				if (array_key_exists('product', $filters)) { //列表显示货品，促销条件调整（货品促销条件和商品商品促销条件）
-// 					if (!empty($promotion_type)) {
-// 						$filters['goods_and_product_promotion_type'] = $promotion_type;
-// 					} else {
-// 						$filters['goods_and_product_promotion'] = true;
-// 					}
-// 				} else {
-// 					if (!empty($promotion_type)) {
-// 						$filters['goods_promotion_type'] = $promotion_type;
-// 					} else {
-// 						$filters['goods_promotion'] = true;
-// 					}
-// 				}
 				$filters['product'] = true;
 				if (!empty($promotion_type)) {
 					$filters['goods_and_product_promotion_type'] = $promotion_type;
