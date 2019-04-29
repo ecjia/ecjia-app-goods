@@ -84,12 +84,12 @@ class mh_parameter extends ecjia_merchant {
 		$this->assign('ur_here', __('商品参数模板', 'goods'));
 		$this->assign('action_link', array('text' => __('参数模板', 'goods'), 'href' => RC_Uri::url('goods/mh_parameter/add')));
 		
-		$parameter_template_list = get_merchant_goods_type($type = 'parameter');
+		$parameter_template_list = Ecjia\App\Goods\MerchantGoodsFunction::get_merchant_goods_type_list('parameter');
 		$this->assign('parameter_template_list',	$parameter_template_list);
 		
-		$this->assign('filter',				$parameter_template_list['filter']);
+		$this->assign('filter',	$parameter_template_list['filter']);
 
-		$this->assign('form_search',  		RC_Uri::url('goods/mh_parameter/init'));
+		$this->assign('form_search', RC_Uri::url('goods/mh_parameter/init'));
 		
 		$this->display('parameter_template_list.dwt');
 	}
@@ -146,18 +146,19 @@ class mh_parameter extends ecjia_merchant {
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑参数模板', 'goods')));
 		$this->assign('ur_here', __('编辑参数模板', 'goods'));
+		$this->assign('action_link', array('href'=>RC_Uri::url('goods/mh_parameter/init'), 'text' => __('商品参数模板', 'goods')));
 		
 		$parameter_template_info = RC_DB::table('goods_type')->where('cat_id', intval($_GET['cat_id']))->where('store_id', $_SESSION['store_id'])->first();
 		$this->assign('parameter_template_info', $parameter_template_info);
-		
-		$this->assign('action_link', array('href'=>RC_Uri::url('goods/mh_parameter/init'), 'text' => __('商品参数模板', 'goods')));
 		
 		$this->assign('form_action', RC_Uri::url('goods/mh_parameter/update'));
 		
 		$this->display('parameter_template_info.dwt');
 	}
 	
-	
+	/**
+	 * 编辑参数模板数据处理
+	 */
 	public function update() {
 		$this->admin_priv('goods_parameter_template_update');
 		
@@ -215,7 +216,7 @@ class mh_parameter extends ecjia_merchant {
 	}
 	
 	/**
-	 * 删除商品类型
+	 * 删除商品参数模板
 	 */
 	public function remove() {
 		$this->admin_priv('goods_parameter_template_delete');
@@ -233,12 +234,12 @@ class mh_parameter extends ecjia_merchant {
 			}
 			return $this->showmessage(__('删除成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 		} else {
-			return $this->showmessage(__('删除失败', 'goods'),  ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => __('删除失败', 'goods')));
+			return $this->showmessage(__('删除失败', 'goods'),  ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
 	/**
-	 * 修改商品类型名称
+	 * 修改参数模板名称
 	 */
 	public function edit_type_name() {
 		$this->admin_priv('goods_parameter_template_update');

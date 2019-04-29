@@ -40,7 +40,6 @@
 							<label class="control-label col-lg-3">{t domain="goods"}所属参数模板：{/t}</label>
 							<div class="controls col-lg-6">
 								<select class="form-control" name="cat_id" data-url="{url path= 'goods/mh_parameter_attribute/get_attr_group'}">
-									<option value="0">{t domain="goods"}请选择...{/t}</option>
 									{$goods_type_list}
 								</select>
 							</div>

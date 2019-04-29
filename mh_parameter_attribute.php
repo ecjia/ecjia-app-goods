@@ -50,7 +50,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * ECJIA 商品参数管理
  * songqianqian
  */
-use Ecjia\App\Goods\GoodsAttr;
 
 class mh_parameter_attribute extends ecjia_merchant {
 	public function __construct() {
@@ -102,7 +101,7 @@ class mh_parameter_attribute extends ecjia_merchant {
 		}
 		$this->assign('attr_list', $attr_list);
 		
-		$this->assign('goods_type_list', goods_enable_type_list($cat_id, $type = 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'parameter'));
 	
 		$this->assign('form_action', RC_Uri::url('goods/mh_parameter_attribute/batch'));
 		
@@ -119,10 +118,10 @@ class mh_parameter_attribute extends ecjia_merchant {
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('参数列表', 'goods'), RC_Uri::url('goods/mh_parameter_attribute/init', array('cat_id' => $cat_id))));
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('添加参数', 'goods')));
 
-		$this->assign('ur_here', __('添加属性', 'goods'));
+		$this->assign('ur_here', __('添加参数', 'goods'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_parameter_attribute/init', array('cat_id' => $cat_id)), 'text' => __('参数列表', 'goods')));
 		
-		$this->assign('goods_type_list', goods_enable_type_list($cat_id, $type = 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'parameter'));
 		
 		$this->assign('attr_groups', get_attr_groups($cat_id));
 		
@@ -190,9 +189,8 @@ class mh_parameter_attribute extends ecjia_merchant {
 		
 		$this->assign('attr_groups', get_attr_groups($attr_info['cat_id']));
 
-		$this->assign('goods_type_list', goods_enable_type_list($attr_info['cat_id'], $type = 'parameter'));
-	
-
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($attr_info['cat_id'], 'parameter'));
+		
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_parameter_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('参数列表', 'goods')));
 		
 		$this->assign('form_action', RC_Uri::url('goods/mh_parameter_attribute/update'));

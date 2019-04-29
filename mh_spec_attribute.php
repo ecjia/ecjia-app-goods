@@ -104,7 +104,7 @@ class mh_spec_attribute extends ecjia_merchant {
 		}
 		$this->assign('attr_list', $attr_list);
 		
-		$this->assign('goods_type_list', goods_enable_type_list($cat_id, $type = 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'specification'));
 		
 		$this->assign('form_action', RC_Uri::url('goods/mh_spec_attribute/batch'));
 		
@@ -124,7 +124,7 @@ class mh_spec_attribute extends ecjia_merchant {
 		$this->assign('ur_here', __('添加属性', 'goods'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_spec_attribute/init', array('cat_id' => $cat_id)), 'text' => __('商品属性列表', 'goods')));
 		
-		$this->assign('goods_type_list', goods_enable_type_list($cat_id, $type = 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'specification'));
 			
 		$this->assign('form_action', RC_Uri::url('goods/mh_spec_attribute/insert'));
 	
@@ -140,11 +140,11 @@ class mh_spec_attribute extends ecjia_merchant {
 		$cat_id = isset($_POST['spec_cat_id']) ? intval($_POST['spec_cat_id']) : 0;
 
 		if (empty($cat_id)) {
-			return $this->showmessage(__('请选择属规格模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			return $this->showmessage(__('请选择规格模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
 		$count = RC_DB::table('attribute')->where('attr_name', trim($_POST['attr_name']))->where('cat_id', $cat_id)->count();
-		if ($count) {
+		if ($count > 0) {
 			return $this->showmessage(__('属性名称在当前规格模板下已存在，请您换一个名称', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
@@ -166,7 +166,7 @@ class mh_spec_attribute extends ecjia_merchant {
 			ecjia_merchant::admin_log($_POST['attr_name'], 'add', 'attribute');
 			return $this->showmessage(sprintf(__('添加规格属性 [%s] 成功', 'goods'), $attr['attr_name']), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/mh_spec_attribute/edit', array('attr_id' => $attr_id))));
 		} else {
-			return $this->showmessage(sprintf(__('添加规格属性 [%s] 失败', 'goods'), $attr['attr_name']), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+			return $this->showmessage(sprintf(__('添加规格属性 [%s] 失败', 'goods'), $attr['attr_name']), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	}
 
@@ -183,13 +183,12 @@ class mh_spec_attribute extends ecjia_merchant {
 		$attr_info = RC_DB::table('attribute')->where('attr_id', intval($_GET['attr_id']))->first();
 		$this->assign('attr', $attr_info);
 		
-		$this->assign('goods_type_list', goods_enable_type_list($attr_info['cat_id'], $type = 'specification'));
-
+		$this->assign('goods_type_list',  Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($attr_info['cat_id'], 'specification'));
+		
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_spec_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('商品属性列表', 'goods')));
 		
 		$this->assign('form_action', RC_Uri::url('goods/mh_spec_attribute/update'));
 	
-		
 		$this->display('spec_attribute_info.dwt');
 	}
 	
@@ -290,8 +289,7 @@ class mh_spec_attribute extends ecjia_merchant {
 	public function edit_sort_order() {
 		$this->admin_priv('goods_spec_attr_update');
 	
-		$id = intval($_POST['pk']);
-		
+		$id  = intval($_POST['pk']);
 		$val = trim($_POST['value']);
 	
 		if (!is_numeric($val) || $val < 0 || strpos($val, '.') > 0) {

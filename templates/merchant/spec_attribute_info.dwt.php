@@ -10,9 +10,7 @@
 <!-- {block name="home-content"} -->
 <div class="page-header">
 	<div class="pull-left">
-		<h2>
-			<!-- {if $ur_here}{$ur_here}{/if} -->
-		</h2>	
+		<h2><!-- {if $ur_here}{$ur_here}{/if} --></h2>	
 	</div>	
 	<div class="pull-right">
 		<!-- {if $action_link} -->

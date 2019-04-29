@@ -1575,15 +1575,14 @@ function update_attribute_group($cat_id, $old_group, $new_group) {
  * @access  public
  * @return  array
  */
-function get_merchant_goods_type($type) {
+function get_merchant_goods_type() {
 	$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
 
 	$_SESSION['store_id'] = !empty($_SESSION['store_id']) ? $_SESSION['store_id'] : 0;
 
 	$db_goods_type = RC_DB::table('goods_type as gt')
 		->leftJoin('store_franchisee as s', RC_DB::raw('s.store_id'), '=', RC_DB::raw('gt.store_id'))
-		->where(RC_DB::raw('gt.store_id'), $_SESSION['store_id'])
-		->where(RC_DB::raw('gt.cat_type'), $type);
+		->where(RC_DB::raw('gt.store_id'), $_SESSION['store_id']);
 	
 	if (!empty($filter['keywords'])) {
 		$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
