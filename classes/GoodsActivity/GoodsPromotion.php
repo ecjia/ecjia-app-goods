@@ -257,8 +257,8 @@ class GoodsPromotion
     {
     	//满足商品促销且促销限购剩余数量大于0
     	if ($this->model->is_promote == '1' && $this->model->promote_price > 0 && $this->model->promote_limited > 0) {
-    		//用户限购数大于0
-    		if ($this->model->promote_user_limited > 0) {
+    		//用户限购数大于0且下单用户存在
+    		if ($this->model->promote_user_limited > 0 && $this->user_id > 0) {
     			//更新购买记录表
     			$goodsActivityRecords = $this->goodsActivityRecordsInfo();
     			//已经购买的数量  + 现在下单订单数小于等于用户限购数时更新
@@ -293,8 +293,8 @@ class GoodsPromotion
     	//满足促销且促销限购剩余数量大于0
     	if ($this->products->is_promote == '1' && $this->products->promote_price > 0 && $this->products->promote_limited > 0) {
     		
-    		//用户限购数大于0
-    		if ($this->products->promote_user_limited > 0) {
+    		//用户限购数大于0且下单用户存在
+    		if ($this->products->promote_user_limited > 0 && $this->user_id > 0) {
     			//更新购买记录表
     			$goodsActivityRecords = $this->goodsActivityRecordsInfo();
     			
