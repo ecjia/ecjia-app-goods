@@ -358,26 +358,30 @@ class GoodsPromotion
     {
     	//满足促销且用户限购
     	if ($this->model->is_promote == '1' && $this->model->promote_price > 0 && $this->model->promote_limited > 0) {
-    		$goods_activity_records = $this->goodsActivityRecords();
-    		//找到数据，说明在有效时间内
-    		if (!empty($goods_activity_records)) {
-    			//限定时间已购买的次数
-    			$has_buyed_count = $goods_promotion_limit->buy_num;
+    		//限购总数大于等于购买的数，用户限购数大于等于购买数
+    		if ($this->model->promote_limited >= $goods_num && $this->model->promote_user_limited >= $goods_num) {
+    			$goods_activity_records = $this->goodsActivityRecords();
+    			//找到数据，说明在有效时间内
+    			if (!empty($goods_activity_records)) {
+    				//限定时间已购买的次数
+    				$has_buyed_count = $goods_activity_records->buy_num;
+    			}
+    			//找不到数据，说明活动已经过有效时间，可以重置购买时间和购买次数
+    			else {
+    				$this->resetPromotionLimitOverCount();
+    					
+    				$has_buyed_count = 0;
+    			}
+    			//剩余可购买的次数
+    			$left_num = $this->model->promote_user_limited - $has_buyed_count;
+    			
+    			$left_num = max(0, $left_num);
+    		} elseif ($this->model->promote_limited >= $goods_num && $this->model->promote_user_limited == '0') {
+    			//用户不限购时，剩余可购买限购数等于限购总数
+    			$left_num = $this->model->promote_limited; 
     		}
-    		//找不到数据，说明活动已经过有效时间，可以重置购买时间和购买次数
-    		else {
-    			$this->resetPromotionLimitOverCount();
-    	
-    			$has_buyed_count = 0;
-    		}
-    	
-    		//剩余可购买的次数
-    		$left_num = $this->model->promote_user_limited - $has_buyed_count;
-    	
-    		$left_num = max(0, $left_num);
-    	
     	} else {
-    		$left_num = -1; //无限次
+    		$left_num = -1; //没限制（按普通商品购买）
     	}
     	
     	return $left_num;
@@ -409,14 +413,16 @@ class GoodsPromotion
     			
     				$has_buyed_count = 0;
     			}
-    			 
     			//剩余可购买的次数
     			$left_num = $this->products->promote_user_limited - $has_buyed_count;
     			
     			$left_num = max(0, $left_num);
-    		} 
+    		} elseif ($this->products->promote_limited >= $goods_num && $this->products->promote_user_limited == '0') {
+    			//用户不限购时，剩余可购买限购数等于限购总数
+    			$left_num = $this->products->promote_limited; 
+    		}
     	} else {
-    		$left_num = -1; //没限制
+    		$left_num = -1; //没限制（按普通商品购买）
     	}
     	
     	return $left_num;
