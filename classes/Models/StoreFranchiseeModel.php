@@ -73,9 +73,9 @@ class StoreFranchiseeModel extends Model
     public $timestamps = false;
 
     /**
-     * 商品货品信息
+     * 店铺设置集合信息
      */
-    public function merchants_config()
+    public function merchants_config_collection()
     {
     	return $this->hasMany('Ecjia\App\Goods\Models\MerchantConfigModel', 'store_id', 'store_id');
     }

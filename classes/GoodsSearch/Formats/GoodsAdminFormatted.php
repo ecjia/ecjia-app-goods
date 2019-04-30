@@ -37,9 +37,9 @@ class GoodsAdminFormatted
         return [
             //store info
             'store_id' 					=> $this->model->store_id,
-            'store_name'				=> $this->model->store->merchants_name,
-            'merchants_name'			=> $this->model->store->merchants_name,
-            'manage_mode' 				=> $this->model->store->manage_mode,
+            'store_name'				=> $this->model->store_franchisee_model->merchants_name,
+            'merchants_name'			=> $this->model->store_franchisee_model->merchants_name,
+            'manage_mode' 				=> $this->model->store_franchisee_model->manage_mode,
 
             //goods info
             'goods_id' 					=> $this->model->goods_id,

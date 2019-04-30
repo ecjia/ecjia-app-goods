@@ -114,7 +114,7 @@ class GoodsModel extends Model
     /**
      * 获取商品店铺信息
      */
-    public function store()
+    public function store_franchisee_model()
     {
         return $this->belongsTo('Ecjia\App\Goods\Models\StoreFranchiseeModel', 'store_id', 'store_id');
     }
@@ -122,7 +122,7 @@ class GoodsModel extends Model
     /**
      * 商品会员等级价信息
      */
-    public function member_price()
+    public function member_price_collection()
     {
     	return $this->hasMany('Ecjia\App\Goods\Models\MemberPriceModel', 'goods_id', 'goods_id');
     }
@@ -130,7 +130,7 @@ class GoodsModel extends Model
     /**
      * 商品货品信息
      */
-    public function products()
+    public function products_collection()
     {
     	return $this->hasMany('Ecjia\App\Cart\Models\ProductsModel', 'goods_id', 'goods_id');
     }
@@ -146,7 +146,7 @@ class GoodsModel extends Model
     /**
      * 商品规格的属性信息
      */
-    public function goods_attr()
+    public function goods_attr_collection()
     {
     	return $this->hasMany('Ecjia\App\Goods\Models\GoodsAttrModel', 'goods_id', 'goods_id');
     }
@@ -154,7 +154,7 @@ class GoodsModel extends Model
     /**
      * 商品规格信息
      */
-    public function goodsType()
+    public function goods_type_model()
     {
     	return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'goods_type', 'cat_id');
     }

@@ -29,7 +29,7 @@ class StoreUnclosed implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->whereHas('store', function($query) use ($value) {
+    	return $builder->whereHas('store_franchisee_model', function($query) use ($value) {
     		$query->where('shop_close', $value);
     	});
     	

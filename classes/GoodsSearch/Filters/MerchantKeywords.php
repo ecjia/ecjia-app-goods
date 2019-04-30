@@ -30,7 +30,7 @@ class MerchantKeywords implements FilterInterface
     public static function apply(Builder $builder, $value)
     {
 
-        $builder->whereHas('store', function($query) use ($value) {
+        $builder->whereHas('store_franchisee_model', function($query) use ($value) {
             $query->where('merchants_name', 'like', '%' . ecjia_mysql_like_quote($value) . '%');
         });
 
