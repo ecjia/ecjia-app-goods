@@ -39,11 +39,10 @@ class GoodsExport implements ExportsCustomizeData
             //主表信息
             $customizeDataSelection->add($this->model->goods_sn.'/goods.json', $this->model->toArray());
 
-
             //主图信息
-            $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->goods_thumb), $this->model->goods_thumb)
-                ->addFile(\RC_Upload::upload_path($this->model->goods_img), $this->model->goods_img)
-                ->addFile(\RC_Upload::upload_path($this->model->original_img), $this->model->original_img);
+            $this->model->goods_thumb and $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->goods_thumb), $this->model->goods_thumb);
+            $this->model->goods_img and $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->goods_img), $this->model->goods_img);
+            $this->model->original_img and $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->original_img), $this->model->original_img);
 
             //商品描述中的图片
 
@@ -71,11 +70,13 @@ class GoodsExport implements ExportsCustomizeData
 
                     try {
 
-                        $model->img_original = Str::before($model->img_original, '?');
+                        $model->img_url and $customizeDataSelection->addFile(\RC_Upload::upload_path($model->img_url), $model->img_url);
+                        $model->thumb_url and $customizeDataSelection->addFile(\RC_Upload::upload_path($model->thumb_url), $model->thumb_url);
 
-                        $customizeDataSelection->addFile(\RC_Upload::upload_path($model->img_url), $model->img_url)
-                            ->addFile(\RC_Upload::upload_path($model->thumb_url), $model->thumb_url)
-                            ->addFile(\RC_Upload::upload_path($model->img_original), $model->img_original);
+                        if ($model->img_original) {
+                            $model->img_original = Str::before($model->img_original, '?');
+                            $customizeDataSelection->addFile(\RC_Upload::upload_path($model->img_original), $model->img_original);
+                        }
 
                         return true;
                     }
