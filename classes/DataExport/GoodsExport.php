@@ -12,6 +12,8 @@ use Ecjia\App\Goods\Models\GoodsModel;
 use Royalcms\Component\DataExport\Contracts\ExportsCustomizeData;
 use Royalcms\Component\DataExport\CustomizeDataSelection;
 use Royalcms\Component\DataExport\Exceptions\CouldNotAddToCustomizeDataSelection;
+use Royalcms\Component\Support\Str;
+
 //use Royalcms\Component\Support\Collection;
 //use Royalcms\Component\Support\Str;
 
@@ -68,6 +70,9 @@ class GoodsExport implements ExportsCustomizeData
                 $this->model->goods_gallery_collection->map(function($model) use ($customizeDataSelection) {
 
                     try {
+
+                        $model->img_original = Str::before($model->img_original, '?');
+
                         $customizeDataSelection->addFile(\RC_Upload::upload_path($model->img_url), $model->img_url)
                             ->addFile(\RC_Upload::upload_path($model->thumb_url), $model->thumb_url)
                             ->addFile(\RC_Upload::upload_path($model->img_original), $model->img_original);
