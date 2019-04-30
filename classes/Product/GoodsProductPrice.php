@@ -24,7 +24,7 @@ class GoodsProductPrice
 
     protected $model;
     
-    protected $products_model;
+    protected $productsModel;
     
     protected $user_rank;
     
@@ -38,7 +38,7 @@ class GoodsProductPrice
     {
         $this->goods_id = $goods_id;
         $this->model = new GoodsModel();
-        $this->products_model = new ProductsModel();
+        $this->productsModel = new ProductsModel();
     }
     
     
@@ -75,7 +75,7 @@ class GoodsProductPrice
     
     public function getGoodsProducts()
     {
-    	$goods_product = $this->products_model->where('goods_id', $this->goods_id)->get();
+    	$goods_product = $this->productsModel->where('goods_id', $this->goods_id)->get();
     	
     	$this->goods_products = !empty($goods_product) ? $goods_product : [];
     	
@@ -160,7 +160,7 @@ class GoodsProductPrice
     	
 		if (in_array($attr_id, $product_attr_ids)) { //有货品情况
 			//获取货品信息
-			$product_info = $this->products_model->where('goods_id', $this->goods_id)->where('goods_attr', $attr_id)->first();
+			$product_info = $this->productsModel->where('goods_id', $this->goods_id)->where('goods_attr', $attr_id)->first();
 			
 			//货品会员等级价格
 			$product_shop_price = $product_info->product_shop_price*$this->user_rank_discount;

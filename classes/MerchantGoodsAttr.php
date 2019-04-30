@@ -172,7 +172,7 @@ class MerchantGoodsAttr {
 	
 		if (!empty($row)) {
 			foreach ($row AS $key => $val) {
-// 				$row[$key]['attr_input_type_desc'] = Ecjia\App\Goods\GoodsAttr::getAttrInputTypeLabel($val['attr_input_type']);
+				$row[$key]['attr_input_type_desc'] = self::getAttrInputTypeLabel($val['attr_input_type']);
 				$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
 			}
 		}
@@ -194,6 +194,78 @@ class MerchantGoodsAttr {
 		} else {
 			return array();
 		}
+	}
+	
+	//能否进行检索 数组
+	public static function getAttrIndex() {
+		$indexArr = [
+		0 => __('不需要检索', 'goods'),
+		1 => __('关键字检索', 'goods'),
+		2 => __('范围检索', 'goods'),
+		];
+	
+		return $indexArr;
+	
+	}
+	
+	//能否进行检索 名称
+	public static function getAttrIndexLabel($indexValue) {
+		$indexArr = self::getAttrIndex();
+	
+		if(! array_key_exists($indexValue, $indexArr)) {
+			return __('未知', 'goods');
+		}
+	
+		return array_get($indexArr, $indexValue);
+	
+	}
+	
+	//属性是否可选 数组
+	public static function getAttrType() {
+		$typeArr = [
+		0 => __('唯一参数', 'goods'),
+		2 => __('复选参数', 'goods'),
+		];
+	
+		return $typeArr;
+	
+	}
+	
+	//属性是否可选 名称
+	public static function getAttrTypeLabel($typeValue) {
+		$typeArr = self::getAttrType();
+	
+		if(! array_key_exists($typeValue, $typeArr)) {
+			return __('未知', 'goods');
+		}
+	
+		return array_get($typeArr, $typeValue);
+	
+	}
+	
+	//属性值的录入方式 数组
+	public static function getAttrInputType() {
+		$typeArr = [
+		ATTR_TEXT     => __('手工录入', 'goods'),
+		ATTR_OPTIONAL => __('从下面的列表中选择（一行代表一个可选值）', 'goods'),
+		ATTR_TEXTAREA => __('多行文本框', 'goods'),
+		];
+	
+		return $typeArr;
+	
+	}
+	
+	//属性值的录入方式 名称
+	public static function getAttrInputTypeLabel($inputTypeValue) {
+		$typeArr = self::getAttrInputType();
+		$typeArr[ATTR_OPTIONAL] = __('从列表中选择', 'goods');
+	
+		if(! array_key_exists($inputTypeValue, $typeArr)) {
+			return __('未知', 'goods');
+		}
+	
+		return array_get($typeArr, $inputTypeValue);
+	
 	}
 	
 }

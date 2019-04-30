@@ -45,7 +45,7 @@ class GoodsAttrModel extends Model
     /**
      * 商品规格属性信息
      */
-    public function attribute()
+    public function attribute_collection()
     {
     	return $this->hasMany('Ecjia\App\Goods\Models\AttributeModel', 'attr_id', 'attr_id');
     }

@@ -66,10 +66,9 @@
                                 {/foreach}
                                 <span class="help-block" id="noticeAttrType">{t domain="goods" escape=no}选择"唯一参数"时，商品的该参数值只能设置一个值，用户只能查看该值。<br/>选择"复选参数"时，可以对商品该参数设置多个值。{/t}</span>
 							</div>
-
 						</div>
 						
-						<div class="form-group">
+						<div class="form-group attr_input_type" {if $attr.attr_type eq 2}style="display: none;"{/if}>
 							<label class="control-label col-lg-3">{t domain="goods"}该参数值的录入方式：{/t}</label>
 							<div class="col-lg-9">
                                 {foreach from=$attr_input_types item=value key=key}

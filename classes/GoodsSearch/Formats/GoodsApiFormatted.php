@@ -86,11 +86,11 @@ class GoodsApiFormatted
         return [
             //store info
             'store_id' 					=> $this->model->store_id,
-            'store_name'				=> $this->model->store->merchants_name,
+            'store_name'				=> $this->model->store_franchisee_model->merchants_name,
             'store_logo'				=> !empty($store_logo) ? \RC_Upload::upload_url($store_logo) : '',
-            'manage_mode' 				=> $this->model->store->manage_mode,
+            'manage_mode' 				=> $this->model->store_franchisee_model->manage_mode,
             'seller_id'					=> $this->model->store_id,
-            'seller_name'				=> $this->model->store->merchants_name,
+            'seller_name'				=> $this->model->store_franchisee_model->merchants_name,
             'seller_logo'				=> !empty($store_logo) ? \RC_Upload::upload_url($store_logo) : '',
             //goods info
             'goods_id' 					=> $this->model->goods_id,
@@ -267,8 +267,8 @@ class GoodsApiFormatted
      */
     protected function storeLogo()
     {
-    	if ($this->model->store->merchants_config) {
-    		$shop_logo_group = $this->model->store->merchants_config->where('code', 'shop_logo')->first();
+    	if ($this->model->store_franchisee_model->merchants_config_collection) {
+    		$shop_logo_group = $this->model->store_franchisee_model->merchants_config_collection->where('code', 'shop_logo')->first();
     		$store_logo = $shop_logo_group ? $shop_logo_group->value : '';
     	} else {
     		$store_logo = '';
@@ -283,8 +283,8 @@ class GoodsApiFormatted
      */
     protected function userPrice()
     {
-    	if ($this->model->member_price) {
-    		$member_price = $this->model->member_price->where('goods_id', $this->model->goods_id)->where('user_rank', $this->user_rank)->first();
+    	if ($this->model->member_price_collection) {
+    		$member_price = $this->model->member_price_collection->where('goods_id', $this->model->goods_id)->where('user_rank', $this->user_rank)->first();
     		$user_price = $member_price ? $member_price->user_price : 0;
     	} else {
     		$user_price = 0;
@@ -295,15 +295,15 @@ class GoodsApiFormatted
     protected function goodsProperties()
     {
     	$properties = ['pro' => [], 'spe' => [], 'lnk' => []];
-    	if ($this->model->goodsType) {
-    		$grp = $this->model->goodsType->attr_group;
+    	if ($this->model->goods_type_model) {
+    		$grp = $this->model->goods_type_model->attr_group;
     		if (! empty ( $grp )) {
     			$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
     		}
-    		if ($this->model->goods_attr) {
-    			$res = $this->model->goods_attr->map(function ($item) {
-    				if ($item->attribute) {
-    					$attribute = $item->attribute->map(function ($v, $k) use($item) {
+    		if ($this->model->goods_attr_collection) {
+    			$res = $this->model->goods_attr_collection->map(function ($item) {
+    				if ($item->attribute_collection) {
+    					$attribute = $item->attribute_collection->map(function ($v, $k) use($item) {
     						  return  [
     									'goods_attr_id' => $item->goods_attr_id,
     									'attr_value'	=> $item->attr_value,

@@ -66,7 +66,7 @@ class GoodsCollection
             /**
              * @var Builder $query
              */
-            $query->with('store');
+            $query->with('store_franchisee_model');
         });
 
         return $collection;

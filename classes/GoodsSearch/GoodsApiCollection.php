@@ -69,12 +69,12 @@ class GoodsApiCollection
              * @var \Royalcms\Component\Database\Eloquent\Builder $query
              */
             $query->with([
-                            'store',
-                            'member_price',
-                            'store.merchants_config',
-                            'goodsType',
-                            'goods_attr',
-                            'goods_attr.attribute'
+                            'store_franchisee_model',
+                            'member_price_collection',
+                            'store_franchisee_model.merchants_config_collection',
+                            'goods_type_model',
+                            'goods_attr_collection',
+                            'goods_attr_collection.attribute_collection'
                             //'store.merchants_config' => function ($query) {
                             //        $query->select('value')->where('code', '=', 'shop_logo');
                             //    },
