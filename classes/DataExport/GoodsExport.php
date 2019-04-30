@@ -66,7 +66,7 @@ class GoodsExport implements ExportsCustomizeData
             try {
                 $customizeDataSelection->add($this->model->goods_sn.'/goods_gallery.json', $this->model->goods_gallery_collection->toArray());
 
-                $this->model->goods_gallery_collection->map(function($model) use ($customizeDataSelection) {
+                $result = $this->model->goods_gallery_collection->map(function($model) use ($customizeDataSelection) {
 
                     try {
 
@@ -86,7 +86,7 @@ class GoodsExport implements ExportsCustomizeData
 
                 });
 
-                return true;
+                return $result;
             }
             catch (CouldNotAddToCustomizeDataSelection $e) {
                 return $e;
