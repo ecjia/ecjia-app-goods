@@ -100,8 +100,12 @@ class GoodsAttr {
     public static function get_goods_type_list($type) {
     	$filter['keywords'] 		= !empty($_GET['keywords']) 			? trim($_GET['keywords']) 			: '';
     
-    	$db_goods_type = RC_DB::table('goods_type as gt')->where(RC_DB::raw('gt.store_id'), 0)->where('cat_type', $type);
-    
+    	$db_goods_type = RC_DB::table('goods_type as gt')->where(RC_DB::raw('gt.store_id'), 0)->where(function ($query) use ($type) {
+            $query->where('cat_type', $type)->orWhere(function ($query) {
+                $query->whereNull('cat_type');
+            });
+        });
+
     	if (!empty($filter['keywords'])) {
     		$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
     	}
