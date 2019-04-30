@@ -222,7 +222,7 @@ class admin extends ecjia_admin {
             $input['is_on_sale'] = $is_on_sale;
         }
 
-		$goods_list = $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 
         unset($input['is_on_sale']);
 
@@ -278,6 +278,61 @@ class admin extends ecjia_admin {
 		
 		$this->display('goods_list.dwt');
 	}
+
+    /**
+     * 导出
+     */
+	public function export()
+    {
+        $this->admin_priv('goods_export');
+
+        $cat_id = intval($this->request->input('cat_id', 0));
+        $page = intval($this->request->input('page', 1));
+        $brand_id = intval($this->request->input('brand_id', 0));
+        $intro_type = trim($this->request->input('intro_type'));
+        $merchant_keywords = trim($this->request->input('merchant_keywords'));
+        $keywords = trim($this->request->input('keywords'));
+        $review_status = intval($this->request->input('review_status', 0));
+        $store_id = intval($this->request->input('store_id', 0));
+        $list_type = intval($this->request->input('type', 0));
+        $sort_by = trim($this->request->input('sort_by', 'goods_id'));
+        $sort_order = trim($this->request->input('sort_order', 'DESC'));
+
+        $where = [];
+
+        /* 推荐类型 */
+        switch ($intro_type) {
+            case 'is_best' :
+                $where['is_best'] = 1;
+                break;
+            case 'is_hot' :
+                $where['is_hot'] = 1;
+                break;
+            case 'is_new' :
+                $where['is_new'] = 1;
+                break;
+        }
+
+        $input = [
+            'is_delete'		    => 0,
+            'is_real'		    => 1,
+            'cat_id'            => $cat_id,
+            'brand'             => $brand_id,
+            'intro_type'        => $intro_type,
+            'merchant_keywords' => $merchant_keywords,
+            'keywords'          => $keywords,
+            'review_status'     => $review_status,
+            'store_id'          => $store_id,
+            'sort_by'           => [$sort_by => $sort_order],
+            'page'              => $page,
+        ];
+        $input = collect($input)->merge($where)->filter()->all();
+
+        $collection = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getCollection();
+        dispatch_now(new \Royalcms\Component\DataExport\Jobs\CreateCustomizeDataExportJob(
+            new \Ecjia\App\Goods\DataExport\GoodsCollectionExport($collection)
+        ));
+    }
 
 	/**
 	 * 预览

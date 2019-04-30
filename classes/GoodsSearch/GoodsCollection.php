@@ -20,6 +20,11 @@ class GoodsCollection
 
     protected $request;
 
+    /**
+     * @var \ecjia_page
+     */
+    protected $ecjia_page;
+
     public function __construct(array $input)
     {
         $this->input = $input;
@@ -27,13 +32,10 @@ class GoodsCollection
         $this->request = Request::create('', 'GET', $input);
     }
 
-    public function getData()
+    public function getCollection()
     {
         $page = $this->request->input('page', 1);
         $size = $this->request->input('size', 15);
-
-        $user_rank_discount = $this->request->input('user_rank_discount', 1);
-        $user_rank = $this->request->input('user_rank', 0);
 
         if ($page) {
             $input = $this->request->input();
@@ -51,9 +53,9 @@ class GoodsCollection
             }
             $count = GoodsSearch::singleton()->applyCount($this->request);
 
-            $ecjia_page = new \ecjia_page($count, $size, null, '', $page);
+            $this->ecjia_page = new \ecjia_page($count, $size, null, '', $page);
 
-            $start = $ecjia_page->start_id - 1;
+            $start = $this->ecjia_page->start_id - 1;
 
             $input['current_page'] = [$start, $size];
 
@@ -66,6 +68,18 @@ class GoodsCollection
              */
             $query->with('store');
         });
+
+        return $collection;
+    }
+
+    public function getData()
+    {
+
+        $collection = $this->getCollection();
+
+        $user_rank_discount = $this->request->input('user_rank_discount', 1);
+        $user_rank = $this->request->input('user_rank', 0);
+
         $collection = $collection->map(function($item) use ($user_rank_discount, $user_rank) {
             return (new GoodsAdminFormatted($item, $user_rank_discount, $user_rank))->toArray();
         });
@@ -75,8 +89,8 @@ class GoodsCollection
         return [
             'goods'     => $data,
             'filter'	=> $this->request->all(),
-            'page'		=> $ecjia_page->show(2),
-            'desc'		=> $ecjia_page->page_desc()
+            'page'		=> $this->ecjia_page->show(2),
+            'desc'		=> $this->ecjia_page->page_desc()
         ];
     }
 
