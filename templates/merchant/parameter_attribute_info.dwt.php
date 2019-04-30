@@ -70,7 +70,7 @@
 						</div>
 						
 						<div class="form-group">
-							<label class="control-label col-lg-3">{t domain="goods"}该属性值的录入方式：{/t}</label>
+							<label class="control-label col-lg-3">{t domain="goods"}该参数值的录入方式：{/t}</label>
 							<div class="col-lg-9">
                                 {foreach from=$attr_input_types item=value key=key}
 								<input name="attr_input_type" id="attr_input_type_{$key}" type="radio" value="{$key}" {if $attr.attr_input_type eq $key}checked{/if} autocomplete="off" />

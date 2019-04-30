@@ -53,7 +53,7 @@ use ecjia_merchant_page;
 
 defined('IN_ECJIA') or exit('No permission resources.');
 
-class MerchantGoodsFunction {
+class MerchantGoodsAttr {
 	
 	public function __construct()
 	{
@@ -142,4 +142,58 @@ class MerchantGoodsFunction {
 		}
 		return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
 	}
+	
+	
+	/**
+	 * 获取商家[属性/参数]列表数据
+	 *
+	 * @return  array
+	 */
+	public static function get_merchant_attr_list() {
+		$db_attribute = RC_DB::table('attribute as a');
+		
+		$filter = array();
+		$filter['cat_id'] 		= empty($_REQUEST['cat_id']) 		? 0 			: intval($_REQUEST['cat_id']);
+		$filter['sort_by'] 		= empty($_REQUEST['sort_by']) 		? 'sort_order' 	: trim($_REQUEST['sort_by']);
+		$filter['sort_order']	= empty($_REQUEST['sort_order']) 	? 'asc' 		: trim($_REQUEST['sort_order']);
+	
+		$where = (!empty($filter['cat_id'])) ? " a.cat_id = '".$filter['cat_id']."' " : '';
+		if (!empty($filter['cat_id'])) {
+			$db_attribute->whereRaw($where);
+		}
+		$count = $db_attribute->count('attr_id');
+		$page = new ecjia_merchant_page($count, 15, 5);
+	
+		$row = $db_attribute
+		->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))
+		->select(RC_DB::raw('a.*, t.cat_name'))
+		->orderby($filter['sort_by'], $filter['sort_order'])
+		->take(15)->skip($page->start_id-1)->get();
+	
+		if (!empty($row)) {
+			foreach ($row AS $key => $val) {
+// 				$row[$key]['attr_input_type_desc'] = Ecjia\App\Goods\GoodsAttr::getAttrInputTypeLabel($val['attr_input_type']);
+				$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
+			}
+		}
+		return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
+	}
+	
+	/**
+	 * 平台获得指定的参数模板下的参数分组
+	 *
+	 * @param   integer     $cat_id     参数模板id
+	 *
+	 * @return  array
+	 */
+	public static function get_attr_groups($cat_id) {
+		$data = RC_DB::table('goods_type')->where('cat_id', $cat_id)->pluck('attr_group');
+		$grp = str_replace("\r", '', $data);
+		if ($grp) {
+			return explode("\n", $grp);
+		} else {
+			return array();
+		}
+	}
+	
 }
