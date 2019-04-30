@@ -58,7 +58,6 @@ use ecjia_page;
 
 class GoodsAttr {
 
-
     public function __construct()
     {
     	
@@ -174,7 +173,7 @@ class GoodsAttr {
     
     	if (!empty($row)) {
     		foreach ($row AS $key => $val) {
-    			// 				$row[$key]['attr_input_type_desc'] = Ecjia\App\Goods\GoodsAttr::getAttrInputTypeLabel($val['attr_input_type']);
+    			$row[$key]['attr_input_type_desc'] = self::getAttrInputTypeLabel($val['attr_input_type']);
     			$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
     		}
     	}
@@ -223,8 +222,6 @@ class GoodsAttr {
         return array_get($indexArr, $indexValue);
 
     }
-
-
 
     //属性是否可选 数组
     public static function getAttrType() {
