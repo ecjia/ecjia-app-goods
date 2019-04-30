@@ -53,10 +53,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class mh_spec extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();
-
-		RC_Loader::load_app_func('admin_goods');
-		RC_Loader::load_app_func('merchant_goods');
-		RC_Loader::load_app_func('global');
 		
 		RC_Script::enqueue_script('jquery-form');
 		RC_Script::enqueue_script('smoke');
@@ -87,7 +83,7 @@ class mh_spec extends ecjia_merchant {
 		$this->assign('action_link',      	array('text' => __('规格模板', 'goods'), 'href' => RC_Uri::url('goods/mh_spec/add')));
 		$this->assign('form_search',  		RC_Uri::url('goods/mh_spec/init'));
 		
-		$spec_template_list = get_merchant_goods_type($type = 'specification');
+		$spec_template_list = Ecjia\App\Goods\MerchantGoodsFunction::get_merchant_goods_type_list('specification');
 		$this->assign('spec_template_list',	$spec_template_list);
 		
 		$this->assign('filter',	$spec_template_list['filter']);
@@ -109,6 +105,7 @@ class mh_spec extends ecjia_merchant {
 		$this->assign('action', 'add');
 		
 		$this->assign('spec_template_info', array('enabled' => 1));
+		
 		$this->assign('form_action',  RC_Uri::url('goods/mh_spec/insert'));
 
 		$this->display('spec_template_info.dwt');
@@ -144,8 +141,8 @@ class mh_spec extends ecjia_merchant {
 	public function edit() {
 		$this->admin_priv('goods_spec_template_update');
 		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑商品规格', 'goods')));
-		$this->assign('ur_here', __('编辑商品规格', 'goods'));
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑规格模板', 'goods')));
+		$this->assign('ur_here', __('编辑规格模板', 'goods'));
 		$this->assign('action_link', array('href'=>RC_Uri::url('goods/mh_spec/init'), 'text' => __('商品规格模板', 'goods')));
 		
 		$spec_template_info = RC_DB::table('goods_type')->where('cat_id', intval($_GET['cat_id']))->where('store_id', $_SESSION['store_id'])->first();
@@ -191,7 +188,7 @@ class mh_spec extends ecjia_merchant {
 	
 
 	/**
-	 * 修改商品类型名称
+	 * 修改商品规格模板名称
 	 */
 	public function edit_type_name() {
 		$this->admin_priv('goods_spec_template_update');
@@ -216,7 +213,7 @@ class mh_spec extends ecjia_merchant {
 	 * 删除商品规格模板
 	 */
 	public function remove() {
-		$this->admin_priv('goods_type_delete');
+		$this->admin_priv('goods_spec_template_delete');
 		
 		$cat_id = intval($_GET['id']);
 		$cat_name = RC_DB::table('goods_type')->where('cat_id', $cat_id)->pluck('cat_name');

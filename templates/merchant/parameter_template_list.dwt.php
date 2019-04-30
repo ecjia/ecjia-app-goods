@@ -48,7 +48,7 @@
 						<thead>
 							<tr>
 								<th class="w150">{t domain="goods"}商品规格名称{/t}</th>
-								<th class="w100">{t domain="goods"}属性分组{/t}</th>
+								<th>{t domain="goods"}属性分组{/t}</th>
 								<th class="w130">{t domain="goods"}属性统计{/t}</th>
 								<th class="w130">{t domain="goods"}商品数量{/t}</th>
 								<th class="w80">{t domain="goods"}状态{/t}</th>

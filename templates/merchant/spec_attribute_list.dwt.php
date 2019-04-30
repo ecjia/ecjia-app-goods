@@ -75,7 +75,7 @@
 								</div>
 							</td>
 							<td class="first-cell">
-								<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/mh_spec_attribute/edit_attr_name')}" data-name="edit_attr_name" data-pk="{$attr.attr_id}" data-title="{t domain="goods"}属性名称不能为空{/t}">
+								<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/mh_spec_attribute/edit_attr_name')}" data-name="edit_attr_name" data-pk="{$attr.attr_id}" data-title="{t domain='goods'}属性名称不能为空{/t}">
 									{$attr.attr_name}
 								</span>
 							</td>
