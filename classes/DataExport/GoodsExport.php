@@ -60,7 +60,32 @@ class GoodsExport implements ExportsCustomizeData
      */
     protected function exportGoodsGallery(CustomizeDataSelection $customizeDataSelection)
     {
+        if ($this->model->goods_gallery_collection->isNotEmpty()) {
 
+            try {
+                $customizeDataSelection->add($this->model->goods_sn.'/goods_gallery.json', $this->model->goods_gallery_collection->toArray());
+
+                $this->model->goods_gallery_collection->map(function($model) use ($customizeDataSelection) {
+
+                    try {
+                        $customizeDataSelection->addFile(\RC_Upload::upload_path($model->img_url), $model->img_url)
+                            ->addFile(\RC_Upload::upload_path($model->thumb_url), $model->thumb_url)
+                            ->addFile(\RC_Upload::upload_path($model->img_original), $model->img_original);
+
+                        return true;
+                    }
+                    catch (CouldNotAddToCustomizeDataSelection $e) {
+                        return $e;
+                    }
+
+                });
+
+                return true;
+            }
+            catch (CouldNotAddToCustomizeDataSelection $e) {
+                return $e;
+            }
+        }
     }
 
     /**
