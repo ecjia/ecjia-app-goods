@@ -83,7 +83,7 @@ class mh_spec extends ecjia_merchant {
 		$this->assign('action_link',      	array('text' => __('规格模板', 'goods'), 'href' => RC_Uri::url('goods/mh_spec/add')));
 		$this->assign('form_search',  		RC_Uri::url('goods/mh_spec/init'));
 		
-		$spec_template_list = Ecjia\App\Goods\MerchantGoodsFunction::get_merchant_goods_type_list('specification');
+		$spec_template_list = Ecjia\App\Goods\MerchantGoodsAttr::get_merchant_goods_type_list('specification');
 		$this->assign('spec_template_list',	$spec_template_list);
 		
 		$this->assign('filter',	$spec_template_list['filter']);

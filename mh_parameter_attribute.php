@@ -54,10 +54,6 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class mh_parameter_attribute extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();
-
-		RC_Loader::load_app_func('admin_goods');
-		RC_Loader::load_app_func('global');
-		RC_Loader::load_app_func('merchant_goods');
 		
 		RC_Script::enqueue_script('jquery-form');
 		RC_Script::enqueue_script('smoke');
@@ -96,12 +92,12 @@ class mh_parameter_attribute extends ecjia_merchant {
 		if (!empty($cat_id)) {
 			$goods_type_list = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id'])->where('cat_type', 'parameter')->lists('cat_id');
 			if (in_array($cat_id, $goods_type_list)) {
-				$attr_list = get_merchant_attr_list();
+				$attr_list = Ecjia\App\Goods\MerchantGoodsAttr::get_merchant_attr_list();
 			}
 		}
 		$this->assign('attr_list', $attr_list);
 		
-		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsAttr::goods_type_select_list($cat_id, 'parameter'));
 	
 		$this->assign('form_action', RC_Uri::url('goods/mh_parameter_attribute/batch'));
 		
@@ -121,9 +117,9 @@ class mh_parameter_attribute extends ecjia_merchant {
 		$this->assign('ur_here', __('添加参数', 'goods'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_parameter_attribute/init', array('cat_id' => $cat_id)), 'text' => __('参数列表', 'goods')));
 		
-		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsAttr::goods_type_select_list($cat_id, 'parameter'));
 		
-		$this->assign('attr_groups', get_attr_groups($cat_id));
+		$this->assign('attr_groups', Ecjia\App\Goods\MerchantGoodsAttr::get_attr_groups($cat_id));
 		
         $this->assign('attr_types', Ecjia\App\Goods\GoodsAttr::getAttrType());
         $this->assign('attr_input_types', Ecjia\App\Goods\GoodsAttr::getAttrInputType());
@@ -168,7 +164,6 @@ class mh_parameter_attribute extends ecjia_merchant {
 			'attr_input_type'	=> $attr_input_type,  
 			'attr_values'       => $attr_values,
 		);
-		
 		$attr_id  =RC_DB::table('attribute')->insertGetId($attr);
 		if ($attr_id) {
 			return $this->showmessage(sprintf(__('添加参数 [%s] 成功。', 'goods'), $attr['attr_name']), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/mh_parameter_attribute/edit', array('attr_id' => $attr_id))));
@@ -187,9 +182,9 @@ class mh_parameter_attribute extends ecjia_merchant {
 		$attr_info = RC_DB::table('attribute')->where('attr_id', $_GET['attr_id'])->first();
 		$this->assign('attr', $attr_info);
 		
-		$this->assign('attr_groups', get_attr_groups($attr_info['cat_id']));
+		$this->assign('attr_groups', Ecjia\App\Goods\MerchantGoodsAttr::get_attr_groups($attr_info['cat_id']));
 
-		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($attr_info['cat_id'], 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsAttr::goods_type_select_list($attr_info['cat_id'], 'parameter'));
 		
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_parameter_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('参数列表', 'goods')));
 		
@@ -285,7 +280,7 @@ class mh_parameter_attribute extends ecjia_merchant {
 		
 		if (!empty($val)) {
 			if (RC_DB::table('attribute')->where('attr_name', $val)->where('cat_id', $cat_id)->where('attr_id', '!=', $id)->count() != 0) {	
-				return $this->showmessage(__('该属性名称已存在，请您换一个名称。', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				return $this->showmessage(__('该参数名称已存在，请您换一个名称。', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
 			$data = array(
 				'attr_name' => $val
@@ -323,7 +318,7 @@ class mh_parameter_attribute extends ecjia_merchant {
 	public function get_attr_group() {
 		$cat_id = !empty($_POST['cat_id']) ? $_POST['cat_id'] : 0;
 	
-		$data = get_attr_groups($cat_id);
+		$data = Ecjia\App\Goods\GoodsFunction::get_attr_groups($cat_id);
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $data));
 	}
 }

@@ -55,10 +55,6 @@ class mh_spec_attribute extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();
 
-		RC_Loader::load_app_func('admin_goods');
-		RC_Loader::load_app_func('global');
-		RC_Loader::load_app_func('merchant_goods');
-		
 		RC_Script::enqueue_script('jquery-form');
 		RC_Script::enqueue_script('smoke');
 		RC_Style::enqueue_style('uniform-aristo');
@@ -99,12 +95,12 @@ class mh_spec_attribute extends ecjia_merchant {
 		if (!empty($cat_id)) {
 			$goods_type_list = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id'])->where('cat_type', 'specification')->lists('cat_id');
 			if (in_array($cat_id, $goods_type_list)) {
-				$attr_list = get_merchant_attr_list();
+				$attr_list = Ecjia\App\Goods\MerchantGoodsAttr::get_merchant_attr_list();
 			}
 		}
 		$this->assign('attr_list', $attr_list);
 		
-		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsAttr::goods_type_select_list($cat_id, 'specification'));
 		
 		$this->assign('form_action', RC_Uri::url('goods/mh_spec_attribute/batch'));
 		
@@ -124,7 +120,7 @@ class mh_spec_attribute extends ecjia_merchant {
 		$this->assign('ur_here', __('添加属性', 'goods'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_spec_attribute/init', array('cat_id' => $cat_id)), 'text' => __('商品属性列表', 'goods')));
 		
-		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($cat_id, 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsAttr::goods_type_select_list($cat_id, 'specification'));
 			
 		$this->assign('form_action', RC_Uri::url('goods/mh_spec_attribute/insert'));
 	
@@ -183,7 +179,7 @@ class mh_spec_attribute extends ecjia_merchant {
 		$attr_info = RC_DB::table('attribute')->where('attr_id', intval($_GET['attr_id']))->first();
 		$this->assign('attr', $attr_info);
 		
-		$this->assign('goods_type_list',  Ecjia\App\Goods\MerchantGoodsFunction::goods_type_select_list($attr_info['cat_id'], 'specification'));
+		$this->assign('goods_type_list',  Ecjia\App\Goods\MerchantGoodsAttr::goods_type_select_list($attr_info['cat_id'], 'specification'));
 		
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_spec_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('商品属性列表', 'goods')));
 		

@@ -53,13 +53,153 @@
  */
 namespace Ecjia\App\Goods;
 
+use RC_DB;
+use ecjia_page;
+
 class GoodsAttr {
 
 
     public function __construct()
-    {}
+    {
+    	
+    }
 
-
+    /**
+     * 获得平台商品[规格/参数]模板（下拉）
+     * @access  public
+     * @param   integer     $selected   选定的模板编号
+     * @param   string      $type       模板类型
+     * @param   boolean     $enabled    激活状态
+     * @return  string
+     */
+    public static function goods_type_select_list($selected, $type, $enabled = false) {
+    
+    	$db_goods_type = RC_DB::table('goods_type')->where('store_id', 0);
+    
+    	if ($enabled) {
+    		$db_goods_type->where('enabled', 1);
+    	}
+    
+    	$data = $db_goods_type->select('cat_id', 'cat_name')->where('cat_type', $type)->get();
+    
+    	$opt = '';
+    	if (!empty($data)) {
+    		foreach ($data as $row){
+    			$opt .= "<option value='$row[cat_id]'";
+    			$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+    			$opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+    		}
+    	}
+    	return $opt;
+    }
+    
+    /**
+     * 获得平台商品[规格/参数]模板列表数据
+     * @access  public
+     * @param   string $type 模板类型
+     */
+    public static function get_goods_type_list($type) {
+    	$filter['keywords'] 		= !empty($_GET['keywords']) 			? trim($_GET['keywords']) 			: '';
+    
+    	$db_goods_type = RC_DB::table('goods_type as gt')->where(RC_DB::raw('gt.store_id'), 0)->where('cat_type', $type);
+    
+    	if (!empty($filter['keywords'])) {
+    		$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
+    	}
+    
+    	$filter_count = $db_goods_type
+    	->select(RC_DB::raw('count(*) as count'))
+    	->first();
+    
+    	$filter['count']	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
+    
+    	$count = $db_goods_type->count();
+    	$page = new ecjia_page($count, 15, 5);
+    
+    	$field = 'gt.*, count(a.cat_id) as attr_count';
+    	$goods_type_list = $db_goods_type
+    	->leftJoin('attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+    	->select(RC_DB::raw($field))
+    	->groupBy(RC_DB::Raw('gt.cat_id'))
+    	->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
+    	->take(15)
+    	->skip($page->start_id-1)
+    	->get();
+    
+    	if (!empty($goods_type_list)) {
+    		foreach ($goods_type_list AS $key=>$val) {
+    			$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
+    		}
+    	}
+    	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
+    }
+    
+    /**
+     * 更新属性的分组
+     *
+     * @param   integer     $cat_id     商品类型ID
+     * @param   integer     $old_group
+     * @param   integer     $new_group
+     * @return  void
+     */
+    public static function update_attribute_group($cat_id, $old_group, $new_group) {
+    	$data = array('attr_group' => $new_group);
+    	RC_DB::table('goods_type')->where('cat_id', $cat_id)->where('attr_group', $old_group)->update($data);
+    }
+    
+    /**
+     * 获取平台[属性/参数]列表数据
+     * @return  array
+     */
+    public static function get_attr_list() {
+    	$db_attribute = RC_DB::table('attribute as a');
+    
+    	$filter = array();
+    	$filter['cat_id'] 		= empty($_REQUEST['cat_id']) 		? 0 			: intval($_REQUEST['cat_id']);
+    	$filter['sort_by'] 		= empty($_REQUEST['sort_by']) 		? 'sort_order' 	: trim($_REQUEST['sort_by']);
+    	$filter['sort_order']	= empty($_REQUEST['sort_order']) 	? 'asc' 		: trim($_REQUEST['sort_order']);
+    
+    	$where = (!empty($filter['cat_id'])) ? " a.cat_id = '".$filter['cat_id']."' " : '';
+    	if (!empty($filter['cat_id'])) {
+    		$db_attribute->whereRaw($where);
+    	}
+    	$count = $db_attribute->count('attr_id');
+    	$page = new ecjia_page($count, 15, 5);
+    
+    	$row = $db_attribute
+    	->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))
+    	->select(RC_DB::raw('a.*, t.cat_name'))
+    	->orderby($filter['sort_by'], $filter['sort_order'])
+    	->take(15)->skip($page->start_id-1)->get();
+    
+    	if (!empty($row)) {
+    		foreach ($row AS $key => $val) {
+    			// 				$row[$key]['attr_input_type_desc'] = Ecjia\App\Goods\GoodsAttr::getAttrInputTypeLabel($val['attr_input_type']);
+    			$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
+    		}
+    	}
+    	return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
+    }
+    
+    
+    /**
+     * 商家获得指定的参数模板下的参数分组
+     *
+     * @param   integer     $cat_id     参数模板id
+     *
+     * @return  array
+     */
+    public static function get_attr_groups($cat_id) {
+    	$data = RC_DB::table('goods_type')->where('cat_id', $cat_id)->pluck('attr_group');
+    	$grp = str_replace("\r", '', $data);
+    	if ($grp) {
+    		return explode("\n", $grp);
+    	} else {
+    		return array();
+    	}
+    }
+    
+   
     //能否进行检索 数组
     public static function getAttrIndex() {
         $indexArr = [
@@ -133,7 +273,5 @@ class GoodsAttr {
         return array_get($typeArr, $inputTypeValue);
 
     }
-
-
 }
 

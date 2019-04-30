@@ -54,10 +54,6 @@ class mh_parameter extends ecjia_merchant {
 	public function __construct() {
 		parent::__construct();
 
-		RC_Loader::load_app_func('admin_goods');
-		RC_Loader::load_app_func('merchant_goods');
-		RC_Loader::load_app_func('global');
-		
 		RC_Script::enqueue_script('jquery-form');
 		RC_Script::enqueue_script('smoke');
 		RC_Style::enqueue_style('uniform-aristo');
@@ -84,7 +80,7 @@ class mh_parameter extends ecjia_merchant {
 		$this->assign('ur_here', __('商品参数模板', 'goods'));
 		$this->assign('action_link', array('text' => __('参数模板', 'goods'), 'href' => RC_Uri::url('goods/mh_parameter/add')));
 		
-		$parameter_template_list = Ecjia\App\Goods\MerchantGoodsFunction::get_merchant_goods_type_list('parameter');
+		$parameter_template_list = Ecjia\App\Goods\MerchantGoodsAttr::get_merchant_goods_type_list('parameter');
 		$this->assign('parameter_template_list',	$parameter_template_list);
 		
 		$this->assign('filter',	$parameter_template_list['filter']);
@@ -146,7 +142,7 @@ class mh_parameter extends ecjia_merchant {
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑参数模板', 'goods')));
 		$this->assign('ur_here', __('编辑参数模板', 'goods'));
-		$this->assign('action_link', array('href'=>RC_Uri::url('goods/mh_parameter/init'), 'text' => __('商品参数模板', 'goods')));
+		$this->assign('action_link', array('href'=>RC_Uri::url('goods/mh_parameter/init'), 'text' => __('参数模板列表', 'goods')));
 		
 		$parameter_template_info = RC_DB::table('goods_type')->where('cat_id', intval($_GET['cat_id']))->where('store_id', $_SESSION['store_id'])->first();
 		$this->assign('parameter_template_info', $parameter_template_info);
@@ -167,7 +163,7 @@ class mh_parameter extends ecjia_merchant {
 		$parameter_template['enabled']		= intval($_POST['enabled']);
 		$parameter_template['attr_group']	= $_POST['attr_group'];
 		
-		$old_groups	= get_attr_groups($cat_id);
+		$old_groups	= Ecjia\App\Goods\GoodsFunction::get_attr_groups($cat_id);
 		$count = RC_DB::table('goods_type')
 			->where('cat_name', $parameter_template['cat_name'])
 			->where('cat_id', '!=', $cat_id)
@@ -187,11 +183,11 @@ class mh_parameter extends ecjia_merchant {
 					$found = array_search($val, $new_groups);
 					if ($found === NULL || $found === false) {
 						/* 老的分组没有在新的分组中找到 */
-						update_attribute_group($cat_id, $key, 0);
+						Ecjia\App\Goods\GoodsFunction::update_attribute_group($cat_id, $key, 0);
 					} else {
 						/* 老的分组出现在新的分组中了 */
 						if ($key != $found) {
-							update_attribute_group($cat_id, $key, $found); // 但是分组的key变了,需要更新属性的分组
+							Ecjia\App\Goods\GoodsFunction::update_attribute_group($cat_id, $key, $found); // 但是分组的key变了,需要更新属性的分组
 						}
 					}
 				}

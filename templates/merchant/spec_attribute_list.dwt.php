@@ -40,7 +40,7 @@
 				<div class="choose_list f_r">
 					<span class="l_h30">{t domain="goods"}按模板名称展示：{/t}</span>
 					<div class="pull-right">
-						<select class="w130" name="goods_type" data-url="{url path='goods/mh_spec_attribute/init' args='cat_id='}">
+						<select class="w180" name="goods_type" data-url="{url path='goods/mh_spec_attribute/init' args='cat_id='}">
 							{$goods_type_list}
 						</select>
 					</div>
