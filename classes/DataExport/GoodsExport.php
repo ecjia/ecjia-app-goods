@@ -62,6 +62,7 @@ class GoodsExport implements ExportsCustomizeData
      */
     private function exportContentImages($content, CustomizeDataSelection $customizeDataSelection)
     {
+        $content = rc_stripslashes($content);
 
         $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png|\.bmp|\.jpeg]))[\'|\"].*?[\/]?>/";
         preg_match_all($pattern, $content, $match);
@@ -69,6 +70,7 @@ class GoodsExport implements ExportsCustomizeData
         $images = $match[1];
 
         $result = collect($images)->map(function($img) use ($customizeDataSelection) {
+            dd($img);
             if (strpos($img, RC_Upload::upload_url()) !== false) {
                 try {
                     $filename = str_replace(RC_Upload::upload_url(), '', $img);
