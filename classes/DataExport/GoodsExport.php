@@ -70,7 +70,7 @@ class GoodsExport implements ExportsCustomizeData
         $images = $match[1];
 
         $result = collect($images)->map(function($img) use ($customizeDataSelection) {
-            dd($img);
+
             if (strpos($img, RC_Upload::upload_url()) !== false) {
                 try {
                     $filename = str_replace(RC_Upload::upload_url(), '', $img);
