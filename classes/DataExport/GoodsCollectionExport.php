@@ -11,10 +11,19 @@ namespace Ecjia\App\Goods\DataExport;
 use Royalcms\Component\DataExport\Contracts\ExportsCustomizeData;
 use Royalcms\Component\DataExport\CustomizeDataSelection;
 use Royalcms\Component\DataExport\Exceptions\CouldNotAddToCustomizeDataSelection;
+use Royalcms\Component\Support\Collection;
 use Royalcms\Component\Support\Str;
 
 class GoodsCollectionExport implements ExportsCustomizeData
 {
+
+    protected $collection;
+
+    public function __construct(Collection $collection)
+    {
+        $this->collection = $collection;
+
+    }
 
     /**
      * @param \Royalcms\Component\DataExport\CustomizeDataSelection $customizeDataSelection
@@ -22,17 +31,24 @@ class GoodsCollectionExport implements ExportsCustomizeData
      */
     public function selectCustomizeData(CustomizeDataSelection $customizeDataSelection)
     {
-        try {
-            $customizeDataSelection
-                ->add('user.json', $this->toArray())
-                ->addFile(\RC_Upload::upload_path($this->goods_thumb))
-                ->addFile(\RC_Upload::upload_path($this->goods_img))
-                ->addFile(\RC_Upload::upload_path($this->original_img));
-        }
-        catch (CouldNotAddToCustomizeDataSelection $e) {
-            dd($e);
-        }
 
+        $result = $this->collection->map(function($model) use ($customizeDataSelection) {
+            try {
+                $customizeDataSelection
+                    ->add($model->goods_sn.'/goods.json', $model->toArray())
+                    ->addFile(\RC_Upload::upload_path($model->goods_thumb), $model->goods_thumb)
+                    ->addFile(\RC_Upload::upload_path($model->goods_img), $model->goods_img)
+                    ->addFile(\RC_Upload::upload_path($model->original_img), $model->original_img);
+
+                return true;
+            }
+            catch (CouldNotAddToCustomizeDataSelection $e) {
+                return $e;
+            }
+        });
+
+
+//        dd($result);
     }
 
     /**
@@ -40,14 +56,15 @@ class GoodsCollectionExport implements ExportsCustomizeData
      */
     public function customizeDataExportName()
     {
-        $name = Str::slug($this->goods_sn);
-
+//        $name = Str::slug($this->goods_sn);
+        $name = 'goods_collection';
         return "export-data-{$name}.zip";
     }
 
     public function getKey()
     {
-        $name = Str::slug($this->goods_sn);
+//        $name = Str::slug($this->goods_sn);
+        $name = 'goods_collection';
 
         return $name;
     }
