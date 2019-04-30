@@ -33,11 +33,19 @@ class GoodsExport implements ExportsCustomizeData
     protected function exportGoodsInfo(CustomizeDataSelection $customizeDataSelection)
     {
         try {
-            $customizeDataSelection
-                ->add($this->model->goods_sn.'/goods.json', $this->model->toArray())
-                ->addFile(\RC_Upload::upload_path($this->model->goods_thumb), $this->model->goods_thumb)
+
+            //主表信息
+            $customizeDataSelection->add($this->model->goods_sn.'/goods.json', $this->model->toArray());
+
+
+            //主图信息
+            $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->goods_thumb), $this->model->goods_thumb)
                 ->addFile(\RC_Upload::upload_path($this->model->goods_img), $this->model->goods_img)
                 ->addFile(\RC_Upload::upload_path($this->model->original_img), $this->model->original_img);
+
+            //商品描述中的图片
+
+
 
             return true;
         }
