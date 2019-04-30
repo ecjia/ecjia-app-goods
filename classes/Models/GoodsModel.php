@@ -158,7 +158,14 @@ class GoodsModel extends Model
     {
     	return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'goods_type', 'cat_id');
     }
-    
+
+    /**
+     * 一对多 关联商品相册集合
+     */
+    public function goods_gallery_collection()
+    {
+        return $this->hasMany('Ecjia\App\Goods\Models\GoodsGalleryModel', 'goods_id', 'goods_id');
+    }
 
     /**
      * 将缓存数组添加至创建缓存数组（用于商品列表）
@@ -206,10 +213,6 @@ class GoodsModel extends Model
     public function delete_cache_item($cache_key)
     {
         return RC_Cache::app_cache_delete($cache_key, 'goods');
-    }
-
-    public function selectPersonalData(PersonalDataSelection $personalDataSelection) {
-
     }
 
 }
