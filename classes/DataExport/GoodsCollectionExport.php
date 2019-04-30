@@ -33,11 +33,11 @@ class GoodsCollectionExport implements ExportsCustomizeData
 
         $result = $this->collection->map(function($model) use ($customizeDataSelection) {
 
-            return (new GoodsExport($model))->$this->selectCustomizeData($customizeDataSelection);
+            return (new GoodsExport($model))->selectCustomizeData($customizeDataSelection);
 
         });
 
-
+        ecjia_log_info('export_goods_collection', $result, 'data-exprot');
 //        dd($result);
     }
 

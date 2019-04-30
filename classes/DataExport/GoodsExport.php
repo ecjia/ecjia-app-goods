@@ -94,16 +94,17 @@ class GoodsExport implements ExportsCustomizeData
 
     /**
      * @param \Royalcms\Component\DataExport\CustomizeDataSelection $customizeDataSelection
-     * @return void
+     * @return array
      */
     public function selectCustomizeData(CustomizeDataSelection $customizeDataSelection)
     {
-        $this->exportGoodsInfo($customizeDataSelection);
-        $this->exportGoodsGallery($customizeDataSelection);
-        $this->exportGoodsActivity($customizeDataSelection);
-        $this->exportGoodsAttr($customizeDataSelection);
-        $this->exportGoodsProduct($customizeDataSelection);
+        $result['export_goods_info'] = $this->exportGoodsInfo($customizeDataSelection);
+        $result['export_goods_gallery'] = $this->exportGoodsGallery($customizeDataSelection);
+        $result['export_goods_activity'] = $this->exportGoodsActivity($customizeDataSelection);
+        $result['export_goods_attr'] = $this->exportGoodsAttr($customizeDataSelection);
+        $result['export_goods_product'] = $this->exportGoodsProduct($customizeDataSelection);
 //        dd($result);
+        return $result;
     }
 
     /**
