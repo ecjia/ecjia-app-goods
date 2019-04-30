@@ -112,6 +112,7 @@ class GoodsModel extends Model
     public $timestamps = false;
 
     /**
+     * 一对一
      * 获取商品店铺信息
      */
     public function store_franchisee_model()
@@ -120,7 +121,8 @@ class GoodsModel extends Model
     }
     
     /**
-     * 商品会员等级价信息
+     * 一对多
+     * 商品会员等级价集合信息
      */
     public function member_price_collection()
     {
@@ -128,7 +130,8 @@ class GoodsModel extends Model
     }
     
     /**
-     * 商品货品信息
+     *  一对多
+     * 商品货品集合信息
      */
     public function products_collection()
     {
@@ -136,15 +139,17 @@ class GoodsModel extends Model
     }
     
     /**
+     * 一对一
      * 商品商家分类信息
      */
-    public function merchants_category()
+    public function merchants_category_model()
     {
     	return $this->belongsTo('Ecjia\App\Goods\Models\MerchantCategoryModel', 'merchant_cat_id', 'cat_id');
     }
     
     /**
-     * 商品规格的属性信息
+     * 一对多
+     * 商品规格的属性集合信息
      */
     public function goods_attr_collection()
     {
@@ -152,6 +157,7 @@ class GoodsModel extends Model
     }
     
     /**
+     * 一对一
      * 商品规格信息
      */
     public function goods_type_model()
