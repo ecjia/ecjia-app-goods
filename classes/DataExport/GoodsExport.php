@@ -13,6 +13,7 @@ use Royalcms\Component\DataExport\Contracts\ExportsCustomizeData;
 use Royalcms\Component\DataExport\CustomizeDataSelection;
 use Royalcms\Component\DataExport\Exceptions\CouldNotAddToCustomizeDataSelection;
 use Royalcms\Component\Support\Str;
+use RC_Upload;
 
 //use Royalcms\Component\Support\Collection;
 //use Royalcms\Component\Support\Str;
@@ -40,19 +41,50 @@ class GoodsExport implements ExportsCustomizeData
             $customizeDataSelection->add($this->model->goods_sn.'/goods.json', $this->model->toArray());
 
             //主图信息
-            $this->model->goods_thumb and $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->goods_thumb), $this->model->goods_thumb);
-            $this->model->goods_img and $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->goods_img), $this->model->goods_img);
-            $this->model->original_img and $customizeDataSelection->addFile(\RC_Upload::upload_path($this->model->original_img), $this->model->original_img);
+            $this->model->goods_thumb and $customizeDataSelection->addFile(RC_Upload::upload_path($this->model->goods_thumb), $this->model->goods_thumb);
+            $this->model->goods_img and $customizeDataSelection->addFile(RC_Upload::upload_path($this->model->goods_img), $this->model->goods_img);
+            $this->model->original_img and $customizeDataSelection->addFile(RC_Upload::upload_path($this->model->original_img), $this->model->original_img);
 
             //商品描述中的图片
+            $result['goods_desc'] = $this->exportContentImages($this->model->goods_desc, $customizeDataSelection);
 
-
-
-            return true;
+            return $result;
         }
         catch (CouldNotAddToCustomizeDataSelection $e) {
             return $e;
         }
+    }
+
+    /**
+     * 群发消息 内容上传图片（不是封面上传）
+     * @param  string $content
+     * @param \Royalcms\Component\DataExport\CustomizeDataSelection $customizeDataSelection
+     */
+    private function exportContentImages($content, CustomizeDataSelection $customizeDataSelection)
+    {
+
+        $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png|\.bmp|\.jpeg]))[\'|\"].*?[\/]?>/";
+        preg_match_all($pattern, $content, $match);
+
+        $images = $match[1];
+
+        $result = collect($images)->map(function($img) use ($customizeDataSelection) {
+            if (strpos($img, RC_Upload::upload_url()) !== false) {
+                try {
+                    $filename = str_replace(RC_Upload::upload_url(), '', $img);
+                    $customizeDataSelection->addFile(RC_Upload::upload_path($filename), $filename);
+
+                    return true;
+                }
+                catch (CouldNotAddToCustomizeDataSelection $e) {
+                    return $e;
+                }
+            }
+
+            return null;
+        });
+
+        return $result;
     }
 
     /**
@@ -70,12 +102,12 @@ class GoodsExport implements ExportsCustomizeData
 
                     try {
 
-                        $model->img_url and $customizeDataSelection->addFile(\RC_Upload::upload_path($model->img_url), $model->img_url);
-                        $model->thumb_url and $customizeDataSelection->addFile(\RC_Upload::upload_path($model->thumb_url), $model->thumb_url);
+                        $model->img_url and $customizeDataSelection->addFile(RC_Upload::upload_path($model->img_url), $model->img_url);
+                        $model->thumb_url and $customizeDataSelection->addFile(RC_Upload::upload_path($model->thumb_url), $model->thumb_url);
 
                         if ($model->img_original) {
                             $model->img_original = Str::before($model->img_original, '?');
-                            $customizeDataSelection->addFile(\RC_Upload::upload_path($model->img_original), $model->img_original);
+                            $customizeDataSelection->addFile(RC_Upload::upload_path($model->img_original), $model->img_original);
                         }
 
                         return true;
