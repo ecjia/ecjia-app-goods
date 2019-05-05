@@ -60,12 +60,12 @@ class goods_imageutils {
      */
 	public static function createImagesDirectory($path)
 	{
-	    RC_Filesystem::disk()->mkdir($path . 'source_img');
-	    RC_Filesystem::disk()->mkdir($path . 'goods_img');
-	    RC_Filesystem::disk()->mkdir($path . 'thumb_img');
-        RC_Filesystem::disk()->mkdir($path . 'product_source_img');
-        RC_Filesystem::disk()->mkdir($path . 'product_img');
-        RC_Filesystem::disk()->mkdir($path . 'product_thumb_img');
+        RC_Storage::disk()->mkdir($path . 'source_img');
+        RC_Storage::disk()->mkdir($path . 'goods_img');
+        RC_Storage::disk()->mkdir($path . 'thumb_img');
+        RC_Storage::disk()->mkdir($path . 'product_source_img');
+        RC_Storage::disk()->mkdir($path . 'product_img');
+        RC_Storage::disk()->mkdir($path . 'product_thumb_img');
 	}
 	
 	/**
@@ -146,8 +146,8 @@ class goods_imageutils {
      * @return boolean
      */
     public static function copyImage($source_path, $dest_path) {
-        if (is_file($source_path) && RC_Filesystem::disk()->is_writable(dirname($dest_path))) {
-            return RC_Filesystem::disk()->copy($source_path, $dest_path, true, FS_CHMOD_FILE);
+        if (is_file($source_path) && RC_Storage::disk()->is_writable(dirname($dest_path))) {
+            return RC_Storage::disk()->copy($source_path, $dest_path, true, FS_CHMOD_FILE);
         }
         return false;
     }
@@ -159,7 +159,7 @@ class goods_imageutils {
      * @return boolean
      */
     public static function deleteImage($img_path) {
-        return RC_Filesystem::disk()->delete($img_path);
+        return RC_Storage::disk()->delete($img_path);
     }
 
 }
