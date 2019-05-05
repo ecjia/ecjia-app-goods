@@ -60,6 +60,8 @@ class goods_imageutils {
      */
 	public static function createImagesDirectory($path)
 	{
+        $path = rtrim($path, "\\/") . '/';
+
         RC_Storage::disk()->mkdir($path . 'source_img');
         RC_Storage::disk()->mkdir($path . 'goods_img');
         RC_Storage::disk()->mkdir($path . 'thumb_img');
