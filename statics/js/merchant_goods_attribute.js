@@ -85,6 +85,33 @@
         				$(this).css('color', ev.color.toHex());
                 	});
                 	$('.colorpicker').css('z-index', 2000);
+                	
+                	$(".insertSubmit").on('click', function(e) {
+        				$("form[name='insertForm']").submit();
+        			});	
+                	
+        			$("form[name='insertForm']").on('submit', function(e) {
+        				e.preventDefault();
+        			});
+        			
+        			var $this = $('form[name="insertForm"]');
+        			var option = {
+        				submitHandler: function() {
+        					$this.ajaxSubmit({
+        						dataType: "json",
+        						success: function(data) {
+        							$('#insertGoods').modal('hide');
+        							$(".modal-backdrop").remove();
+        							ecjia.pjax(data.url, function() {
+        								ecjia.merchant.showmessage(data);
+        							})
+        						}
+        					});
+        				},
+        			};
+
+        			var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
+        			$this.validate(options);
                 }, 'json');
 			})
         
