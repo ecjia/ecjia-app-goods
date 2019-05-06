@@ -50,17 +50,29 @@ class StorageDisk
     }
 
     /**
-     * 生成缩略图
+     * 创建图片的缩略图
+     *
+     * @param string $img 原始图片的路径
+     * @param string $thumbname 生成图片的文件名
+     * @param int $thumb_width 缩略图宽度
+     * @param int $thumb_height 缩略图高度
+     * @return mixed 如果成功返回缩略图的路径，失败则返回false
      */
-    public function makeThumb()
+    public function makeThumb($path, $thumb_img, $thumb_width = 0, $thumb_height = 0)
     {
 
     }
 
     /**
-     * 添加水印
+     * 为图片增加水印
+     *
+     * @param       string      $path            原始图片文件名，包含完整路径
+     * @param       string      $newpath         加水印后的图片文件名，包含完整路径。如果为空则覆盖源文件
+     * @param       string      $watermark          水印图片的完整路径
+     * @param       int         $watermark_place    水印位置代码
+     * @return      mixed       如果成功则返回文件路径，否则返回false
      */
-    public function addWatermark()
+    public function addWatermark($path, $newpath, $watermark = null, $watermark_place = null, $watermark_alpha = 0.65)
     {
 
     }
@@ -72,7 +84,7 @@ class StorageDisk
      */
     public function getPath($path)
     {
-
+        return $this->disk->path($path);
     }
 
     /**
@@ -82,7 +94,7 @@ class StorageDisk
      */
     public function getUrl($path)
     {
-
+        return $this->disk->url($path);
     }
 
 
