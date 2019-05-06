@@ -41,9 +41,9 @@ ecjia.merchant.goods_category_list.init();
 	                    <div class="modal-body">
 		                   <div class="success-msg"></div>
 		                   <div class="error-msg"></div>
-	                           <textarea class="form-control" id="link_value"  name="link_value" disabled="disabled"></textarea>
-	                           <button id="copy_btn" class="btn btn-info m_t10">{t domain="goods"}复制{/t}</button>
-	                       </div>
+	                       <textarea class="form-control" id="link_value"  name="link_value" disabled="disabled"></textarea>
+	                       <button id="copy_btn" class="btn btn-info m_t10">{t domain="goods"}复制{/t}</button>
+	                    </div>
 	                    </div>
                     </div>
                 </div>

@@ -99,12 +99,16 @@ class MerchantGoodsAttr {
 		$_SESSION['store_id'] = !empty($_SESSION['store_id']) ? $_SESSION['store_id'] : 0;
 		
 		$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
-	
+		
 		$db_goods_type = RC_DB::table('goods_type as gt')
 		->leftJoin('store_franchisee as s', RC_DB::raw('s.store_id'), '=', RC_DB::raw('gt.store_id'))
 		->where(RC_DB::raw('gt.store_id'), $_SESSION['store_id'])
-		->where(RC_DB::raw('gt.cat_type'), $type);
-	
+		->where(function ($query) use ($type) {
+			$query->where('cat_type', $type)->orWhere(function ($query) {
+				$query->whereNull('cat_type');
+			});
+		});
+		
 		if (!empty($filter['keywords'])) {
 			$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
 		}

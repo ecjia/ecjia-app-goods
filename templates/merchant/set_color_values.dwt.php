@@ -10,15 +10,15 @@
 		<div class="modal-body">
 		   <div class="success-msg"></div>
 		   <div class="error-msg"></div>
-		   <form class="form-horizontal" method="post" name="actionForm" id="actionForm" action='{url path="goods/mh_spec_attribute/set_color_values_insert"}'>
-		  		<!-- {foreach from=$attr_values_list item=list key=key} --> 
+		   <form class="form-horizontal" method="post" name="insertForm" id="insertForm" action='{url path="goods/mh_spec_attribute/set_color_values_insert"}'>
+		  		<!-- {foreach from=$color_list_array key=key item=val} --> 
 		   		<div class="form-group">
 					<div class="col-lg-4">
-					   <input  class="form-control" type='text' name='attr_values[]' value="{$list}" />
+					   <input  class="form-control" type='text' name='attr_values[]' value="{$key}" />
 					</div>  
 					<pan>
 						<div class="col-lg-4">
-						   <input  class="form-control colorpicker-default" type="text" name="color_values[]" value="">
+						   <input class="form-control colorpicker-default" type="text" name="color_values[]" value="{$val}"  style="color:{$val};" >
 						</div> 
 					</pan> 
 				</div>
@@ -28,7 +28,7 @@
 	              <div class="col-lg-4">
 	                   <input  type="hidden" name="cat_id" value="{$cat_id}">
 	                   <input  type="hidden" name="attr_id" value="{$attr_id}">
-	                   <button type="submit" id="note_btn" class="btn btn-info">{t domain="goods"}确认{/t}</button>
+	                   <a class="btn btn-info insertSubmit" href="javascript:;">{t domain="goods"}确认{/t}</a>
 	              </div>
 	           	</div>
 		   </form>

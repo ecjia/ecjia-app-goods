@@ -162,6 +162,7 @@ class mh_parameter extends ecjia_merchant {
 		$parameter_template['cat_name']		= trim($_POST['cat_name']);
 		$parameter_template['enabled']		= intval($_POST['enabled']);
 		$parameter_template['attr_group']	= $_POST['attr_group'];
+		$parameter_template['cat_type']	    = 'parameter';
 		
 		$old_groups	= Ecjia\App\Goods\GoodsFunction::get_attr_groups($cat_id);
 		$count = RC_DB::table('goods_type')
