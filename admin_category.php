@@ -68,6 +68,8 @@ class admin_category extends ecjia_admin {
 		RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css');
 		// RC_Script::enqueue_script('ecjia-common');
 		
+		RC_Script::enqueue_script('clipboard.min', RC_App::apps_url('statics/js/clipboard.min.js', __FILE__), array(), false, 1);
+		
 		RC_Script::enqueue_script('goods_category_list', RC_App::apps_url('statics/js/goods_category_list.js',__FILE__), array(), false, 1);
 		RC_Script::localize_script('goods_category_list', 'js_lang', config('app-goods::jslang.category_page'));
 		RC_Style::enqueue_style('goods_category', RC_App::apps_url('statics/styles/goods_category.css', __FILE__), array());

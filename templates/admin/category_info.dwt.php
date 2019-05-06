@@ -49,7 +49,7 @@
 				<label class="control-label">{t domain="goods"}价格区间个数：{/t}</label>
 				<div class="controls">
 					<input class="w350" type="text" name="grade" value="{$cat_info.grade|default:0}" size="40" />
-					<span class="help-block" {if $help_open}style="display:block" {else} style="display:none" {/if} id="noticeGrade">{t domain="goods"}该选项表示该分类下商品最低价与最高价之间的划分的等级个数，填0表示不做分级，最多不能超过10个。{/t}</span>
+					<span class="help-block" id="noticeGrade">{t domain="goods"}表示该分类下商品最低价与最高价之间的划分的等级个数，填0表示不做分级，最多不能超过10个{/t}</span>
 				</div>
 			</div>
 

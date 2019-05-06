@@ -312,8 +312,12 @@ class mh_spec_attribute extends ecjia_merchant {
 		$this->assign('attr_id', $attribute_info['attr_id']);
 		$attr_values_list = explode("\n", $attribute_info['attr_values']);
 		$color_values_list = explode("\n", $attribute_info['color_values']);
-		$this->assign('attr_values_list', $attr_values_list);
-		$this->assign('color_values_list', $color_values_list);
+		
+		$color_list_array = array();
+		foreach ($attr_values_list as $key => $value){
+			$color_list_array[$value] = $color_values_list[$key];
+		}
+		$this->assign('color_list_array', $color_list_array);
 
 		$data = $this->fetch('set_color_values.dwt');
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));

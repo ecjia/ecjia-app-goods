@@ -47,10 +47,10 @@
 						<div class="form-group">
               				<label class="control-label col-lg-3">{t domain="goods"}属性类型：{/t}</label>
                      		<div class="col-lg-6">
-                     			<input type="radio" id="enabled_2" name="attr_cat_type" value="0" {if $spec_template_info.attr_cat_type eq 0} checked {/if}>
+                     			<input type="radio" id="enabled_2" name="attr_cat_type" value="0" {if $attr.attr_cat_type eq 0} checked {/if}>
                       			<label for="enabled_2">{t domain="goods"}普通{/t}</label>
                       			
-                  				<input type="radio" id="enabled_1" name="attr_cat_type" value="1" {if $spec_template_info.attr_cat_type eq 1} checked {/if}>
+                  				<input type="radio" id="enabled_1" name="attr_cat_type" value="1" {if $attr.attr_cat_type eq 1} checked {/if}>
                       			<label for="enabled_1">{t domain="goods"}颜色{/t}</label>
         					</div> 
               			</div>

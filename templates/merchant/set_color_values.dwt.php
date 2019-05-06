@@ -11,14 +11,14 @@
 		   <div class="success-msg"></div>
 		   <div class="error-msg"></div>
 		   <form class="form-horizontal" method="post" name="actionForm" id="actionForm" action='{url path="goods/mh_spec_attribute/set_color_values_insert"}'>
-		  		<!-- {foreach from=$attr_values_list item=list key=key} --> 
+		  		<!-- {foreach from=$color_list_array key=key item=val} --> 
 		   		<div class="form-group">
 					<div class="col-lg-4">
-					   <input  class="form-control" type='text' name='attr_values[]' value="{$list}" />
+					   <input  class="form-control" type='text' name='attr_values[]' value="{$key}" />
 					</div>  
 					<pan>
 						<div class="col-lg-4">
-						   <input  class="form-control colorpicker-default" type="text" name="color_values[]" value="">
+						   <input  class="form-control colorpicker-default" type="text" name="color_values[]" value="{$val}">
 						</div> 
 					</pan> 
 				</div>
