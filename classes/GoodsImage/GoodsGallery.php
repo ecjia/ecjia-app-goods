@@ -14,6 +14,11 @@ use Ecjia\App\Goods\GoodsImage\Format\GoodsGalleryFormatted;
 class GoodsGallery extends GoodsImage
 {
 
+    /**
+     * 设置是否自动生成缩略图
+     * @var bool
+     */
+    protected $auto_generate_thumb = true;
 
     public function __construct($id, $fileinfo = null)
     {

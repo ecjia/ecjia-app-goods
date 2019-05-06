@@ -31,6 +31,12 @@ class GoodsImage
 
     protected $disk;
 
+    /**
+     * 设置是否自动生成缩略图
+     * @var bool
+     */
+    protected $auto_generate_thumb = false;
+
 
     public function __construct($id, $fileinfo = null)
     {
@@ -79,8 +85,16 @@ class GoodsImage
         $img_path = $this->disk->getPath($this->image_format->getGoodsimgPostion());
         $original_path = $this->disk->getPath($this->image_format->getSourcePostion());
 
+        // 生成缩略图
+        if ($this->auto_generate_thumb) {
+            $this->saveThumbImageToDisk();
+        }
 
+        // 添加水印
+        $this->disk->addWatermark($this->getFilePath(), $img_path);
 
+        // 保存原图
+        $this->disk->writeForSourcePath($this->getFilePath(), $original_path);
     }
 
     /**
@@ -111,5 +125,16 @@ class GoodsImage
 
     }
 
+
+    /**
+     * 设置是否需要自动生成缩略图，默认为自动生成缩略图
+     * @param bool $bool
+     */
+    public function set_auto_thumb($bool)
+    {
+        if (is_bool($bool)) {
+            $this->auto_generate_thumb = $bool;
+        }
+    }
 
 }
