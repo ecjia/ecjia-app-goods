@@ -18,7 +18,7 @@
 					</div>  
 					<pan>
 						<div class="col-lg-4">
-						   <input  class="form-control colorpicker-default" type="text" name="color_values[]" value="{$val}">
+						   <input class="form-control colorpicker-default" type="text" name="color_values[]" value="{$val}"  style="color:{$val};" >
 						</div> 
 					</pan> 
 				</div>

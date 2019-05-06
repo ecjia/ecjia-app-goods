@@ -331,6 +331,7 @@ class mh_spec_attribute extends ecjia_merchant {
 	
 		$cat_id = intval($_POST['cat_id']);
 		$attr_id = intval($_POST['attr_id']);
+		
 		$data = array(
 			'attr_values'  => implode("\n", $_POST['attr_values']),
 			'color_values' => implode("\n", $_POST['color_values']),

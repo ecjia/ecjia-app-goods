@@ -63,7 +63,10 @@ class mh_spec extends ecjia_merchant {
 		
 		RC_Script::enqueue_script('goods_attribute', RC_App::apps_url('statics/js/merchant_goods_attribute.js', __FILE__) , array() , false, 1);
         RC_Script::localize_script('goods_attribute', 'js_lang', config('app-goods::jslang.attribute_page'));
-		
+        
+        RC_Script::enqueue_script('attribute-colorpicker-script', dirname(RC_App::app_dir_url(__FILE__)) . '/merchant/statics/assets/bootstrap-colorpicker/js/bootstrap-colorpicker.js', array(), false, 1);
+        RC_Style::enqueue_style('attribute-colorpicker-style', dirname(RC_App::app_dir_url(__FILE__)) . '/merchant/statics/assets/bootstrap-colorpicker/css/colorpicker.css', array(), false, false);
+        
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品管理', 'goods'), RC_Uri::url('goods/merchant/init')));
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品规格模板', 'goods'), RC_Uri::url('goods/mh_spec/init')));
 		
