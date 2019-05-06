@@ -29,6 +29,9 @@ class GoodsImage
     protected $image_format;
 
 
+    protected $disk;
+
+
     public function __construct($id, $fileinfo = null)
     {
         $this->id = $id;
@@ -37,6 +40,7 @@ class GoodsImage
 
         $this->image_format = new GoodsImageFormatted($this);
 
+        $this->disk = new StorageDisk();
     }
 
     /**
@@ -58,10 +62,24 @@ class GoodsImage
     }
 
     /**
+     * 获取上传后的文件原始路径
+     * @return string
+     */
+    public function getFilePath()
+    {
+        return $this->fileinfo['tmpname'];
+    }
+
+    /**
      *  保存图片到磁盘
      */
     public function saveImageToDisk()
     {
+        /* 重新格式化图片名称 */
+        $img_path = $this->disk->getPath($this->image_format->getGoodsimgPostion());
+        $original_path = $this->disk->getPath($this->image_format->getSourcePostion());
+
+
 
     }
 
@@ -78,6 +96,10 @@ class GoodsImage
      */
     public function saveThumbImageToDisk()
     {
+
+        $thumb_path = $this->disk->getPath($this->image_format->getThumbPostion());
+
+        $this->disk->makeThumb($this->getFilePath(), $thumb_path);
 
     }
 
