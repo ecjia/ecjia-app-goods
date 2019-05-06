@@ -28,7 +28,7 @@
 	              <div class="col-lg-4">
 	                   <input  type="hidden" name="cat_id" value="{$cat_id}">
 	                   <input  type="hidden" name="attr_id" value="{$attr_id}">
-	                   <a class="btn btn-info insertSubmit" href="javascript:;">{t domain="goodslib"}确认{/t}</a>
+	                   <a class="btn btn-info insertSubmit" href="javascript:;">{t domain="goods"}确认{/t}</a>
 	              </div>
 	           	</div>
 		   </form>
