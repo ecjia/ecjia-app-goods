@@ -24,5 +24,16 @@ class ProductImageFormatted extends GoodsImageFormatted
 
     }
 
+    /**
+     * 拼接文件名
+     */
+    protected function spliceFileName($is_thumb = false)
+    {
+        if ($is_thumb) {
+            return $this->goods_image->getProductId() . $this->goods_thumb_separator . $this->random_name . $this->goods_image->getExtensionName();
+        } else {
+            return $this->goods_image->getProductId() . $this->goods_separator . $this->random_name . $this->goods_image->getExtensionName();
+        }
+    }
 
 }

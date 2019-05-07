@@ -59,9 +59,13 @@ class GoodsImageFormatted
      */
     protected $random_name;
 
-    public function __construct($goods_image)
+    public function __construct($goods_image, $root_dir = null)
     {
         $this->goods_image = $goods_image;
+
+        if (is_null($root_dir)) {
+            $this->root_dir = $root_dir;
+        }
 
         $this->random_name = $this->generateRandomName();
 
@@ -85,9 +89,9 @@ class GoodsImageFormatted
     protected function spliceFileName($is_thumb = false)
     {
         if ($is_thumb) {
-            return $this->goods_image->getId() . $this->goods_thumb_separator . $this->random_name . $this->goods_image->getExtensionName();
+            return $this->goods_image->getGoodsId() . $this->goods_thumb_separator . $this->random_name . $this->goods_image->getExtensionName();
         } else {
-            return $this->goods_image->getId() . $this->goods_separator . $this->random_name . $this->goods_image->getExtensionName();
+            return $this->goods_image->getGoodsId() . $this->goods_separator . $this->random_name . $this->goods_image->getExtensionName();
         }
     }
 
