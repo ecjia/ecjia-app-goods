@@ -228,7 +228,15 @@ class admin extends ecjia_admin {
             return $links;
         };
         $count_link = $count_link($input, $where);
-        $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
+        $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+            /**
+             * @var \Royalcms\Component\Database\Query\Builder $query
+             */
+            $query->select(RC_DB::raw('count(`goods_id`) as `count_goods_num`'),
+                RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`'),
+                RC_DB::raw('SUM(IF(`is_on_sale` = 0, 1, 0)) as `count_not_sale`')
+            );
+        });
         $goods_count = $goods_count->map(function($count, $key) use ($count_link) {
             $item = $count_link[$key];
             $item['count'] = $count;
