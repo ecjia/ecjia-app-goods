@@ -172,6 +172,14 @@ class GoodsModel extends Model
     {
         return $this->hasMany('Ecjia\App\Goods\Models\GoodsGalleryModel', 'goods_id', 'goods_id');
     }
+    
+    /**
+     * 一对多 关联活动商品集合
+     */
+    public function goods_activity_collection()
+    {
+    	return $this->hasMany('Ecjia\App\Goods\Models\GoodsActivityModel', 'goods_id', 'goods_id');
+    }
 
     /**
      * 将缓存数组添加至创建缓存数组（用于商品列表）

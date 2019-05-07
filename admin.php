@@ -198,13 +198,29 @@ class admin extends ecjia_admin {
         ];
         $input = collect($input)->merge($where)->filter()->all();
         
+        
+        $input['is_real'] 	= 1;
         $input['is_on_sale'] = 1;
         $input['check_review_status'] = 3;
         $input['is_delete'] = 0;
         $input['is_real'] 	= 1;
-        
-		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-        $count_link = function ($input, $where) {
+        if ($list_type === 1) {
+        	$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData(function($query) {
+	    		/**
+	    		 * @var \Royalcms\Component\Database\Query\Builder $query
+	    		 */
+	    		$query->where(function($query){
+	    			$query->where('is_promote', 1)->orWhereHas('goods_activity_collection', function($query) {
+		    			$time = RC_Time::gmtime();
+		    			$query->where('start_time', '<=', $time)->where('end_time', '>=', $time);
+	    			});
+	    		});
+    		});
+        } else {
+        	$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+        }
+
+        $count_link = function ($input, $where, $goods_count, $goods_activity_count) {
             $input = collect($input)->except(array_keys($where))->all();
             unset($input['is_delete']);
             unset($input['is_real']);
@@ -218,30 +234,44 @@ class admin extends ecjia_admin {
 		            'label' => __('出售中', 'goods'),
 		            'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
 		            'type' => 0,
+		            'count'=> $goods_count['count_on_sale']
 	            ],
 	            'count_activity' => [
 		            'label' => __('参与活动', 'goods'),
 		            'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
 		            'type' => 1,
+		            'count'=> $goods_activity_count['count_activity']
 	            ]
             ];
             return $links;
         };
-        $count_link = $count_link($input, $where);
+      
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
             /**
              * @var \Royalcms\Component\Database\Query\Builder $query
              */
-            $query->select(RC_DB::raw('count(`goods_id`) as `count_goods_num`'),
-                RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`'),
-                RC_DB::raw('SUM(IF(`is_on_sale` = 0, 1, 0)) as `count_not_sale`')
+            $query->select(
+                RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`')
             );
         });
-        $goods_count = $goods_count->map(function($count, $key) use ($count_link) {
-            $item = $count_link[$key];
-            $item['count'] = $count;
-            return $item;
-        });
+        
+        
+    	$goods_activity_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+    		/**
+    		 * @var \Royalcms\Component\Database\Query\Builder $query
+    		 */
+    		$query->where(function($query){
+	    			$query->where('is_promote', 1)->orWhereHas('goods_activity_collection', function($query) {
+		    			$time = RC_Time::gmtime();
+		    			$query->where('start_time', '<=', $time)->where('end_time', '>=', $time);
+	    			});
+	    	})->select(
+    			RC_DB::raw('count(`goods_id`) as `count_activity`')
+    		);
+    	});
+        	
+        $goods_count = $count_link($input, $where, $goods_count, $goods_activity_count);
+
 		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('goods_count', $goods_count);
@@ -324,48 +354,7 @@ class admin extends ecjia_admin {
 		$input['is_real'] 	= 1;
 		
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-		
-		$count_link = function ($input, $where) {
-			$input = collect($input)->except(array_keys($where))->all();
-			unset($input['goods_number']);
-			unset($input['is_on_sale']);
-			unset($input['check_review_status']);
-			unset($input['is_delete']);
-			unset($input['is_real']);
-	
-			$input['sort_order'] = array_values($input['sort_by'])[0];
-			$input['sort_by'] = array_keys($input['sort_by'])[0];
-			$links = [
-				'count_goods_num' => [
-					'label' => __('全部', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
-					'type' => 0,
-				],
-				'count_on_sale' => [
-					'label' => __('已上架', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
-					'type' => 1,
-				],
-				'count_not_sale' => [
-					'label' => __('未上架', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
-					'type' => 2,
-				],
-			];
-			return $links;
-		};
-	
-		$count_link = $count_link($input, $where);
-	
-		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
-		$goods_count = $goods_count->map(function($count, $key) use ($count_link) {
-			$item = $count_link[$key];
-			$item['count'] = $count;
-			return $item;
-		});
-		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
-		$this->assign('goods_count', $goods_count);
 	
 		$this->assign('filter', $goods_list['filter']);
 	
@@ -447,47 +436,7 @@ class admin extends ecjia_admin {
 		
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 
-		$count_link = function ($input, $where) {
-			$input = collect($input)->except(array_keys($where))->all();
-			unset($input['goods_number']);
-			unset($input['is_on_sale']);
-			unset($input['check_review_status']);
-			unset($input['is_delete']);
-			unset($input['is_real']);
-	
-			$input['sort_order'] = array_values($input['sort_by'])[0];
-			$input['sort_by'] = array_keys($input['sort_by'])[0];
-			$links = [
-				'count_goods_num' => [
-					'label' => __('全部', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
-					'type' => 0,
-				],
-				'count_on_sale' => [
-					'label' => __('已上架', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
-					'type' => 1,
-				],
-				'count_not_sale' => [
-					'label' => __('未上架', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
-					'type' => 2,
-				],
-			];
-			return $links;
-		};
-	
-		$count_link = $count_link($input, $where);
-	
-		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
-		$goods_count = $goods_count->map(function($count, $key) use ($count_link) {
-			$item = $count_link[$key];
-			$item['count'] = $count;
-			return $item;
-		});
-		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
-		$this->assign('goods_count', $goods_count);
 	
 		$this->assign('filter', $goods_list['filter']);
 	
@@ -604,7 +553,15 @@ class admin extends ecjia_admin {
 	
 		$count_link = $count_link($input, $where);
 	
-		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
+		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+			/**
+			 * @var \Royalcms\Component\Database\Query\Builder $query
+			 */
+			$query->select(
+					RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`'),
+					RC_DB::raw('count(`goods_id`) as `count_activity`')
+			);
+		});
 		$goods_count = $goods_count->map(function($count, $key) use ($count_link) {
 			$item = $count_link[$key];
 			$item['count'] = $count;
