@@ -12,6 +12,7 @@ namespace Ecjia\App\Goods\GoodsSearch;
 use Ecjia\App\Goods\GoodsSearch\Formats\GoodsAdminFormatted;
 use Royalcms\Component\Database\Eloquent\Builder;
 use Royalcms\Component\Http\Request;
+use Closure;
 
 class GoodsCollection
 {
@@ -32,7 +33,7 @@ class GoodsCollection
         $this->request = Request::create('', 'GET', $input);
     }
 
-    public function getCollection()
+    public function getCollection(Closure $callback = null)
     {
         $page = $this->request->input('page', 1);
         $size = $this->request->input('size', 15);
@@ -51,7 +52,7 @@ class GoodsCollection
             if (array_key_exists('page', $input)) {
                 unset($input['page']);
             }
-            $count = GoodsSearch::singleton()->applyCount($this->request);
+            $count = GoodsSearch::singleton()->applyCount($this->request, $callback);
 
             $this->ecjia_page = new \ecjia_page($count, $size, null, '', $page);
 
@@ -62,20 +63,24 @@ class GoodsCollection
             $this->request->replace($input);
         }
 
-        $collection = GoodsSearch::singleton()->apply($this->request, function($query) {
-            /**
-             * @var Builder $query
-             */
-            $query->with('store_franchisee_model');
-        });
+        if (is_null($callback)) {
+            $callback = function($query) {
+                /**
+                 * @var Builder $query
+                 */
+                $query->with('store_franchisee_model');
+            };
+        }
+
+        $collection = GoodsSearch::singleton()->apply($this->request, $callback);
 
         return $collection;
     }
 
-    public function getData()
+    public function getData(Closure $callback = null)
     {
 
-        $collection = $this->getCollection();
+        $collection = $this->getCollection($callback);
 
         $user_rank_discount = $this->request->input('user_rank_discount', 1);
         $user_rank = $this->request->input('user_rank', 0);
