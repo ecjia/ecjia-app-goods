@@ -14,9 +14,9 @@ class ProductImageFormatted extends GoodsImageFormatted
 
     protected $type = 'product';
 
-    public function __construct($goods_image)
+    public function __construct($goods_image, $root_dir = null)
     {
-        parent::__construct($goods_image);
+        parent::__construct($goods_image, $root_dir);
 
         $this->goods_source_postion = $this->filePathPrefix('product_source_img/') . $this->spliceFileName();
         $this->goods_img_postion = $this->filePathPrefix('product_img/') . $this->spliceFileName();
