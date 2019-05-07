@@ -29,7 +29,12 @@ class GoodsNumber implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('goods.goods_number', $value);
+    	if(is_array($value)) {
+    		list($expression, $value) = $value;
+    	} else {
+    		$expression = '=';
+    	}
+    	return $builder->where('goods.goods_number', $expression, $value);
     }
 
 }

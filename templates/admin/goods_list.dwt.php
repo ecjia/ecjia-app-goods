@@ -33,10 +33,10 @@
 	</li>
     {/foreach}
 
-	<form class="f_r form-inline" action='{RC_Uri::url("goods/admin/init")}{if $smarty.get.type}&type={$smarty.get.type}{/if}' method="post" name="searchForm">
+	<form class="f_r form-inline" action='{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}' method="post" name="searchForm">
 		<!-- 关键字 -->
-		<input class="w180" type="text" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{t domain="goods"}请输入商家关键字{/t}" size="15" />
-		<input class="w180" type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{t domain="goods"}请输入商品关键字{/t}" size="15" />
+		<input class="w180" type="text" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{t domain='goods'}请输入商家关键字{/t}" size="15" />
+		<input class="w180" type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{t domain='goods'}请输入商品关键字{/t}" size="15" />
 		<button class="btn" type="submit">{t domain="goods"}搜索{/t}</button>
 	</form>
 </ul>
@@ -67,7 +67,7 @@
 		</ul>
 	</div>
 
-	<form class="form-inline" action="{RC_Uri::url('goods/admin/init')}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filterForm">
+	<form class="form-inline" action="{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filterForm">
 		<div class="screen f_l">
 			
 			<div class="f_l m_r5">
@@ -116,7 +116,7 @@
 	<div class="span12">
 		<table class="table table-striped smpl_tbl table_vam table-hide-edit" id="smpl_tbl" data-uniform="uniform">
 			<thead>
-				<tr data-sorthref='{RC_Uri::url("goods/admin/init", "{if $smarty.get.type}&type={$smarty.get.type}{/if}")}'>
+				<tr data-sorthref='{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}'>
 					<th class="table_checkbox">
 						<input type="checkbox" name="select_rows" data-toggle="selectall" data-children=".checkbox"/>
 					</th>
