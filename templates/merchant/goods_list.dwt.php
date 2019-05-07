@@ -116,21 +116,6 @@
 		           	</ul>
 				</div>
 				
-				<form class="form-inline f_l m_l5" action="{RC_Uri::url('goods/merchant/init')}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filter_form">
-					<div class="screen f_l">
-						<div class="form-group">
-							<select class="w130" name="review_status">
-								<option value="-1">{t domain="goods"}请选择...{/t}</option>
-								<option value="1" {if $filter.review_status eq 1}selected{/if}>{t domain="goods"}未审核{/t}</option>
-								<option value="2" {if $filter.review_status eq 2}selected{/if}>{t domain="goods"}审核未通过{/t}</option>
-								<option value="3" {if $filter.review_status eq 3}selected{/if}>{t domain="goods"}已审核{/t}</option>
-								<option value="5" {if $filter.review_status eq 5}selected{/if}>{t domain="goods"}无需审核{/t}</option>
-							</select>
-						</div>
-						<button class="btn btn-primary filter-btn" type="button"><i class="fa fa-search"></i> {t domain="goods"}筛选{/t} </button>
-					</div>
-				</form>
-				
 				<form class="form-inline f_r" action="{RC_Uri::url('goods/merchant/init')}" method="post" name="search_form">
 					<div class="screen f_r">
 						<div class="form-group">
@@ -172,14 +157,14 @@
 								<th data-toggle="sortby" data-sortby="goods_id">{t domain="goods"}商品名称{/t}</th>
 								<th class="w130 sorting" data-toggle="sortby" data-sortby="goods_sn">{t domain="goods"}货号{/t}</th>
 								<th class="w100 sorting text-center" data-toggle="sortby" data-sortby="shop_price">{t domain="goods"}价格{/t}</th>
+								<!-- {if $use_storage} -->
+								<th class="w70 text-center" data-toggle="sortby" data-sortby="goods_number"> {t domain="goods"}库存{/t} </th>
+								<!-- {/if} -->
+								<th class="w70 sorting text-center" data-toggle="sortby" data-sortby="store_sort_order">{t domain="goods"}排序{/t}</th>
 								<th class="w70 text-center"> {t domain="goods"}上架{/t} </th>
 								<th class="w70 text-center"> {t domain="goods"}精品{/t} </th>
 								<th class="w70 text-center"> {t domain="goods"}新品{/t} </th>
 								<th class="w70 text-center"> {t domain="goods"}热销{/t} </th>
-								<!-- {if $use_storage} -->
-								<th class="w70 text-center" data-toggle="sortby" data-sortby="goods_number"> {t domain="goods"}库存{/t} </th>
-								<!-- {/if} --> 
-								<th class="w70 sorting text-center" data-toggle="sortby" data-sortby="store_sort_order">{t domain="goods"}排序{/t}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -206,11 +191,10 @@
 										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}商品属性{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}商品相册{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}关联商品{/t}</a>&nbsp;|&nbsp;
-<!-- 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_parts" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}关联配件{/t}</a>&nbsp;|&nbsp; -->
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}关联文章{/t}</a>&nbsp;|&nbsp;
 										<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}"}'>{t domain="goods"}预览{/t}</a>&nbsp;|&nbsp;
 										{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goods/merchant/product_list" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
-										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain="goods"}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/merchant/remove" args="id={$goods.goods_id}"}'>{t domain="goods"}删除{/t}</a>
+										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/merchant/remove" args="id={$goods.goods_id}"}'>{t domain="goods"}删除{/t}</a>
 									</div>
 								</td>	
 								
@@ -224,10 +208,26 @@
 										{$goods.shop_price}
 									</span> 
 								</td>
+																
+								<!-- {if $use_storage} -->
+								<td align="center">
+									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="{t domain="goods"}请输入库存数量{/t}">
+										{$goods.goods_number}
+									</span>
+								</td>
+								<!-- {/if} -->
+								
+								<td align="center">
+									<span class="cursor_pointer" data-trigger="editable" data-placement="left" data-url="{RC_Uri::url('goods/merchant/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="{t domain="goods"}请输入排序序号{/t}">
+										{$goods.store_sort_order}
+									</span>
+								</td>
+								
 								<td align="center">
 									<i class="cursor_pointer fa {if $goods.is_on_sale}fa-check {else}fa-times{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" 
 									refresh-url="{RC_Uri::url('goods/merchant/init')}{if $filter.type}&type={$filter.type}{/if}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.review_status}&review_status={$filter.review_status}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
+								
 								<td align="center">
 									<i class="cursor_pointer fa {if $goods.store_best}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_best')}" refresh-url="{RC_Uri::url('goods/merchant/init')}
 									{if $filter.type}&type={$filter.type}{/if}
@@ -237,6 +237,7 @@
         							{if $filter.review_status}&review_status={$filter.review_status}{/if}
         							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
+								
 								<td align="center">
 									<i class="cursor_pointer fa {if $goods.store_new}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_new')}" refresh-url="{RC_Uri::url('goods/merchant/init')}
 									{if $filter.type}&type={$filter.type}{/if}
@@ -246,6 +247,7 @@
         							{if $filter.review_status}&review_status={$filter.review_status}{/if}
         							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
+								
 								<td align="center">
 									<i class="cursor_pointer fa {if $goods.store_hot}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_hot')}" refresh-url="{RC_Uri::url('goods/merchant/init')}
 									{if $filter.type}&type={$filter.type}{/if}
@@ -255,18 +257,7 @@
         							{if $filter.review_status}&review_status={$filter.review_status}{/if}
         							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
-								<!-- {if $use_storage} -->
-								<td align="center">
-									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="{t domain="goods"}请输入库存数量{/t}">
-										{$goods.goods_number}
-									</span>
-								</td>
-								<!-- {/if} -->
-								<td align="center">
-									<span class="cursor_pointer" data-trigger="editable" data-placement="left" data-url="{RC_Uri::url('goods/merchant/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="{t domain="goods"}请输入排序序号{/t}">
-										{$goods.store_sort_order}
-									</span>
-								</td>
+
 							</tr>
 							<!-- {foreachelse}-->
 							<tr>
