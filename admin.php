@@ -158,6 +158,7 @@ class admin extends ecjia_admin {
 	    '<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表" target="_blank">关于商品列表帮助文档</a>', 'goods') . '</p>'
 	    );
 	    
+	    $this->assign('action', $_GET['action']);
 		$cat_id   = intval($this->request->input('cat_id', 0));
         $page     = intval($this->request->input('page', 1));
         $brand_id = intval($this->request->input('brand_id', 0));
@@ -266,6 +267,7 @@ class admin extends ecjia_admin {
 
 		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
+// 		_dump($goods_list,1);
 		$this->assign('goods_count', $goods_count);
 
 		$this->assign('filter', $goods_list['filter']);
