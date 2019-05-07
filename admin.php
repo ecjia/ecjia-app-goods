@@ -204,9 +204,9 @@ class admin extends ecjia_admin {
         $input['is_real'] 	= 1;
         
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-		
         $count_link = function ($input, $where) {
             $input = collect($input)->except(array_keys($where))->all();
+            unset($input['is_delete']);
             unset($input['is_real']);
             unset($input['is_on_sale']);
             unset($input['check_review_status']);
@@ -228,7 +228,6 @@ class admin extends ecjia_admin {
             return $links;
         };
         $count_link = $count_link($input, $where);
-
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
         $goods_count = $goods_count->map(function($count, $key) use ($count_link) {
             $item = $count_link[$key];
@@ -321,7 +320,9 @@ class admin extends ecjia_admin {
 		$count_link = function ($input, $where) {
 			$input = collect($input)->except(array_keys($where))->all();
 			unset($input['goods_number']);
+			unset($input['is_on_sale']);
 			unset($input['check_review_status']);
+			unset($input['is_delete']);
 			unset($input['is_real']);
 	
 			$input['sort_order'] = array_values($input['sort_by'])[0];
@@ -442,6 +443,8 @@ class admin extends ecjia_admin {
 			$input = collect($input)->except(array_keys($where))->all();
 			unset($input['goods_number']);
 			unset($input['is_on_sale']);
+			unset($input['check_review_status']);
+			unset($input['is_delete']);
 			unset($input['is_real']);
 	
 			$input['sort_order'] = array_values($input['sort_by'])[0];
@@ -565,6 +568,7 @@ class admin extends ecjia_admin {
 		$count_link = function ($input, $where) {
 			$input = collect($input)->except(array_keys($where))->all();
 			unset($input['check_review_status']);
+			unset($input['is_delete']);
 			unset($input['is_real']);
 	
 			$input['sort_order'] = array_values($input['sort_by'])[0];

@@ -199,7 +199,6 @@
 							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
 							{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-							{if $filter.review_status}&review_status={$filter.review_status}{/if}
 							{if $filter.store_id}&store_id={$filter.store_id}{/if}
 							{if $smarty.get.page}&page={$smarty.get.page}{/if}
 							" data-id="{$goods.goods_id}"></i>
@@ -213,7 +212,6 @@
 							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
 							{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-							{if $filter.review_status}&review_status={$filter.review_status}{/if}
 							{if $filter.store_id}&store_id={$filter.store_id}{/if}
 							{if $smarty.get.page}&page={$smarty.get.page}{/if}
 							" data-id="{$goods.goods_id}"></i>
@@ -227,7 +225,6 @@
 							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
 							{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-							{if $filter.review_status}&review_status={$filter.review_status}{/if}
 							{if $filter.store_id}&store_id={$filter.store_id}{/if}
 							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 					</td>

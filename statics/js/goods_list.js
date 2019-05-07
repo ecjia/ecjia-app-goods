@@ -143,17 +143,12 @@
 
 			$('.filter-btn').on('click', function(e) {
 				e.preventDefault();
-				var review_status = $("select[name='review_status']").val(); //分类
-				var store_id = $("select[name='store_id']").val(); //品牌
+				var store_id = $("select[name='store_id']").val(); //商家
 
 				var url = $("form[name='filterForm']").attr('action');
 
-				if (review_status == 'undefind' || review_status == 0) review_status = '';
 				if (store_id == 'undefind' || store_id == 0) store_id = '';
 
-				if (review_status != '') {
-					url += '&review_status=' + review_status;
-				}
 				if (store_id != '') {
 					url += '&store_id=' + store_id;
 				}
