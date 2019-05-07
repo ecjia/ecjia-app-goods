@@ -62,39 +62,14 @@
 		<div class="panel">
 			<div class="panel-body panel-body-small">
 				<ul class="nav nav-pills pull-left">
-					<li class="{if !$smarty.get.type}active{/if}">
-						<a class="data-pjax" href="{RC_Uri::url('goods/merchant/init')}
-							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
-							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
-							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-							{if $filter.review_status}&review_status={$filter.review_status}{/if}
-							">
-							{t domain="goods"}全部{/t}
-							<span class="badge badge-info">{$goods_list.filter.count_goods_num}</span>
+				 	{foreach $goods_count as $count}
+					<li class="{if $list_type === $count.type}active{/if}">
+						<a class="data-pjax" href="{$count.link}">
+							{t domain="goods"}{$count.label}{/t}
+							<span class="badge badge-info">{$count.count}</span>
 						</a>
 					</li>
-					
-					<li class="{if $smarty.get.type eq 1}active{/if}">
-						<a class="data-pjax" href='{RC_Uri::url("goods/merchant/init", "type=1
-							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
-							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
-							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-							{if $filter.review_status}&review_status={$filter.review_status}{/if}
-							")}'>{t domain="goods"}已上架{/t}
-							<span class="badge badge-info use-plugins-num">{$goods_list.filter.count_on_sale}</span>
-						</a>
-					</li>
-					
-					<li class="{if $smarty.get.type eq 2}active{/if}">	
-						<a class="data-pjax" href='{RC_Uri::url("goods/merchant/init", "type=2
-							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
-							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
-							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-							{if $filter.review_status}&review_status={$filter.review_status}{/if}
-							")}'>{t domain="goods"}未上架{/t}
-							<span class="badge badge-info unuse-plugins-num">{$goods_list.filter.count_not_sale}</span>
-						</a>
-					</li>
+					{/foreach}
 				</ul>	
 				<div class="clearfix"></div>
 			</div>
@@ -116,14 +91,12 @@
 		           	</ul>
 				</div>
 				
-				<form class="form-inline f_r" action="{RC_Uri::url('goods/merchant/init')}" method="post" name="search_form">
+				<form class="form-inline f_r" action="{$list_url}" method="post" name="search_form">
 					<div class="screen f_r">
 						<div class="form-group">
 							<select class="w130" name="cat_id">
 								<option value="0">{t domain="goods"}所有分类{/t}</option>
-								<!-- {foreach from=$cat_list item=cat} -->
-								<option value="{$cat.cat_id}" {if $cat.cat_id == $smarty.get.cat_id}selected{/if} {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
-								<!-- {/foreach} -->
+								{$merchant_cat_list_option}
 							</select>
 						</div>
 						<div class="form-group">
@@ -146,7 +119,7 @@
 				<section class="panel">
 					<table class="table table-striped table-hover table-hide-edit ecjiaf-tlf">
 						<thead>
-							<tr data-sorthref='{RC_Uri::url("goods/merchant/init", "{if $smarty.get.type}&type={$smarty.get.type}{/if}")}'>
+							<tr data-sorthref='{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}'>
 								<th class="table_checkbox check-list w30">
 									<div class="check-item">
 										<input id="checkall" type="checkbox" name="select_rows" data-toggle="selectall" data-children=".checkbox"/>
@@ -193,7 +166,8 @@
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}关联商品{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}关联文章{/t}</a>&nbsp;|&nbsp;
 										<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}"}'>{t domain="goods"}预览{/t}</a>&nbsp;|&nbsp;
-										{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goods/merchant/product_list" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
+										{if $specifications[$goods.goods_type] neq ''}
+										<a target="_blank" href='{url path="goods/merchant/product_list" args="goods_id={$goods.goods_id}"}'>{t domain="goods"}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
 										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/merchant/remove" args="id={$goods.goods_id}"}'>{t domain="goods"}删除{/t}</a>
 									</div>
 								</td>	
@@ -225,36 +199,33 @@
 								
 								<td align="center">
 									<i class="cursor_pointer fa {if $goods.is_on_sale}fa-check {else}fa-times{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" 
-									refresh-url="{RC_Uri::url('goods/merchant/init')}{if $filter.type}&type={$filter.type}{/if}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.review_status}&review_status={$filter.review_status}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
+									refresh-url="{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}{if $filter.type}&type={$filter.type}{/if}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.review_status}&review_status={$filter.review_status}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
 								
 								<td align="center">
-									<i class="cursor_pointer fa {if $goods.store_best}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_best')}" refresh-url="{RC_Uri::url('goods/merchant/init')}
+									<i class="cursor_pointer fa {if $goods.store_best}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_best')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $filter.review_status}&review_status={$filter.review_status}{/if}
         							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
 								
 								<td align="center">
-									<i class="cursor_pointer fa {if $goods.store_new}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_new')}" refresh-url="{RC_Uri::url('goods/merchant/init')}
+									<i class="cursor_pointer fa {if $goods.store_new}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_new')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $filter.review_status}&review_status={$filter.review_status}{/if}
         							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
 								
 								<td align="center">
-									<i class="cursor_pointer fa {if $goods.store_hot}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_hot')}" refresh-url="{RC_Uri::url('goods/merchant/init')}
+									<i class="cursor_pointer fa {if $goods.store_hot}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_hot')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $filter.review_status}&review_status={$filter.review_status}{/if}
         							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
 								</td>
 
