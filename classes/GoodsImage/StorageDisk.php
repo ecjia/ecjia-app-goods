@@ -9,6 +9,7 @@
 namespace Ecjia\App\Goods\GoodsImage;
 
 use RC_Storage;
+use RC_Image;
 
 class StorageDisk
 {
@@ -42,9 +43,17 @@ class StorageDisk
     }
 
     /**
-     * 删除文件
+     * 删除文件，传上传目录的相对文件
      */
     public function delete($path)
+    {
+        return $this->disk->delete($path);
+    }
+
+    /**
+     * 删除文件，传本地文件绝对路径
+     */
+    public function deletePath($path)
     {
         return $this->disk->delete($path);
     }
@@ -60,7 +69,15 @@ class StorageDisk
      */
     public function makeThumb($path, $thumb_img, $thumb_width = 0, $thumb_height = 0)
     {
+        $makeThumb = new MakeGoodsThumbImage($path);
 
+        if ($thumb_width && $thumb_height) {
+            $makeThumb->setSize($thumb_width, $thumb_height);
+        }
+
+        $data = $makeThumb->make();
+
+        $this->wirte($thumb_img, $data);
     }
 
     /**
@@ -69,12 +86,28 @@ class StorageDisk
      * @param       string      $path            原始图片文件名，包含完整路径
      * @param       string      $newpath         加水印后的图片文件名，包含完整路径。如果为空则覆盖源文件
      * @param       string      $watermark          水印图片的完整路径
-     * @param       int         $watermark_place    水印位置代码
+     * @param       int         $watermark_place    水印位置代码 0 无，默认；1 左上，2 右上，3 居中，4 左下，5 右下
      * @return      mixed       如果成功则返回文件路径，否则返回false
      */
     public function addWatermark($path, $newpath, $watermark = null, $watermark_place = null, $watermark_alpha = 0.65)
     {
+        $makeWatermark = new MakeGoodsWatermarkImage($path);
 
+        if ($watermark) {
+            $makeWatermark->setWatermark($watermark);
+        }
+
+        if ($watermark_place) {
+            $makeWatermark->setWatermarkPlace($watermark_place);
+        }
+
+        if ($watermark_alpha) {
+            $makeWatermark->setWatermarkAlpha($watermark_alpha);
+        }
+
+        $data = $makeWatermark->make();
+
+        $this->wirte($newpath, $data);
     }
 
     /**

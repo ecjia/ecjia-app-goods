@@ -10,84 +10,86 @@ namespace Ecjia\App\Goods\GoodsImage;
 
 
 use Ecjia\App\Goods\GoodsImage\Format\ProductImageFormatted;
+use Ecjia\App\Goods\Models\ProductsModel;
+use ecjia_error;
+use ecjia;
 
-class ProductImage
+class ProductImage extends GoodsImage
 {
-    /**
-     * @var int goods_id or product_id
-     */
-    protected $id;
-
-    /**
-     * @var array 上传成功后的信息
-     */
-    protected $fileinfo;
-
-    /**
-     * @var ProductImageFormatted
-     */
-    protected $image_format;
 
 
-    public function __construct($id, $fileinfo = null)
+
+    public function __construct($goods_id, $product_id = 0, $fileinfo = null)
     {
-        $this->id = $id;
+        parent::__construct($goods_id, $product_id, $fileinfo);
 
-        $this->fileinfo = $fileinfo;
 
         $this->image_format = new ProductImageFormatted($this);
-
-    }
-
-    /**
-     * 获取商品ID 或者 货品ID
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * 获取上传文件的扩展名
-     * @return string
-     */
-    public function getExtensionName()
-    {
-        return $this->fileinfo['ext'];
-    }
-
-    /**
-     *  保存图片到磁盘
-     */
-    public function saveImageToDisk()
-    {
-
     }
 
     /**
      * 更新图片到数据库
      */
-    public function updateImageToDatabase()
+    public function updateToDatabase($img_desc = null)
     {
+        if (is_null($img_desc)) {
+            $img_desc = $this->getFileName();
+        }
 
+        list($original_path, $img_path, $thumb_path) = $this->saveImageToDisk();
+
+        if (!$original_path || !$img_path) {
+            return new ecjia_error('upload_products_gallery_error', __('货品图片路径无效', 'goods'));
+        }
+
+        //存入数据库中
+        $model = ProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->select('product_original_img', 'product_img', 'product_thumb')->first();
+        if (! empty($model)) {
+            $this->clearOldImage($model);
+
+            /* 不保留商品原图的时候删除原图 */
+            if (! ecjia::config('retain_original_img') && !empty($original_path)) {
+                $this->disk->deletePath($original_path);
+                $original_path = '';
+            }
+
+            $model->product_original_img = $original_path;
+            $model->product_img = $img_path;
+            $model->product_thumb = $thumb_path;
+            $model->save();
+        }
+
+        /* 复制一份相册图片 */
+        /* 添加判断是否自动生成相册图片 */
+        if (ecjia::config('auto_generate_gallery')) {
+            $data = (new ProductGallery($this->goods_id, $this->product_id, $this->fileinfo))->updateToDatabase($img_desc);
+            if (is_ecjia_error($data)) {
+                //复制失败不中断请求
+                ecjia_log_warning('货品相册复制失败', $data, 'goods');
+            }
+        }
+
+        return true;
     }
 
     /**
-     * 保存缩略图到磁盘
+     * 清理旧图片
+     * @param ProductsModel $model
      */
-    public function saveThumbImageToDisk()
+    protected function clearOldImage($model)
     {
+        /* 先存储新的图片，再删除原来的图片 */
+        if ($model['product_thumb']) {
+            $this->disk->delete($model['product_thumb']);
+        }
 
+        if ($model['product_img']) {
+            $this->disk->delete($model['product_img']);
+        }
+
+        if ($model['product_original_img']) {
+            $this->disk->delete($model['product_original_img']);
+        }
     }
-
-    /**
-     * 更新缩略图到数据库
-     */
-    public function updateThumbImageToDatabase()
-    {
-
-    }
-
 
 }
