@@ -144,28 +144,27 @@ class admin extends ecjia_admin {
 	public function init() {
 	    $this->admin_priv('goods_manage');
 	    
-	    $this->assign('ur_here', __('商品列表', 'goods'));
-	    
-	    ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods')));
 	    ecjia_screen::get_current_screen()->add_help_tab(array(
 	    'id'		=> 'overview',
 	    'title'		=> __('概述', 'goods'),
 	    'content'	=> '<p>' . __('欢迎访问ECJia智能后台商品列表页面，系统中所有的商品都会显示在此列表中。', 'goods') . '</p>'
 	    ));
-	    
+	     
 	    ecjia_screen::get_current_screen()->set_help_sidebar(
 	    '<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
 	    '<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表" target="_blank">关于商品列表帮助文档</a>', 'goods') . '</p>'
-	    );
+	   	);
 	    
-	    $this->assign('action', $_GET['action']);
+	    $action = trim($_GET['action']);
+	    $this->assign('action', $action);
+
 		$cat_id   = intval($this->request->input('cat_id', 0));
         $page     = intval($this->request->input('page', 1));
         $brand_id = intval($this->request->input('brand_id', 0));
         $intro_type = trim($this->request->input('intro_type'));
         $merchant_keywords = trim($this->request->input('merchant_keywords'));
         $keywords = trim($this->request->input('keywords'));
-        $review_status = intval($this->request->input('review_status', 0));
+//         $review_status = intval($this->request->input('review_status', 0));
         $store_id = intval($this->request->input('store_id', 0));
         $list_type = intval($this->request->input('type', 0));
         $sort_by = trim($this->request->input('sort_by', 'goods_id'));
@@ -190,7 +189,7 @@ class admin extends ecjia_admin {
         }
 
         $where = [];
-
+        
         /* 推荐类型 */
         switch ($intro_type) {
             case 'is_best' :
@@ -212,21 +211,44 @@ class admin extends ecjia_admin {
             'intro_type'        => $intro_type,
             'merchant_keywords' => $merchant_keywords,
             'keywords'          => $keywords,
-            'review_status'     => $review_status,
+//             'review_status'     => $review_status,
             'store_id'          => $store_id,
             'sort_by'           => [$sort_by => $sort_order],
             'page'              => $page,
         ];
         $input = collect($input)->merge($where)->filter()->all();
-
         if (!is_null($is_on_sale)) {
             $input['is_on_sale'] = $is_on_sale;
         }
-
+        
+        if ($action == 'sale') {//上架
+        	$ur_here = __('在售商品列表', 'goods');
+        	$input['is_on_sale'] = 1;
+        	$input['check_review_status'] = 3;
+        } elseif ($action == 'finish') {//库存为0
+        	$ur_here = __('售罄商品列表', 'goods');
+        	$input['goods_number'] = 0;
+        	$input['check_review_status'] = 3;
+        } elseif ($action == 'obtained') {//下架且库存大于0
+        	$ur_here = __('下架商品列表', 'goods');
+        	$input['has_obtained'] = true;
+        	$input['check_review_status'] = 3;
+        } elseif ($action == 'check') {//未审核商品列表 1待审核 2不通过 3通过 5无需审核
+        	$ur_here = __('审核商品列表', 'goods');
+        	if (!empty($_GET['nopass'])) {
+        		$input['check_review_status'] = 2; //未通过
+        	} else {
+        		$input['check_review_status'] = 1;//待审核
+        	}
+        }
+        
+        $this->assign('ur_here', $ur_here);
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
+        
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-
+		
         unset($input['is_on_sale']);
-
+        
         $count_link = function ($input, $where) {
             $input = collect($input)->except(array_keys($where))->all();
 
@@ -267,7 +289,6 @@ class admin extends ecjia_admin {
 
 		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
-// 		_dump($goods_list,1);
 		$this->assign('goods_count', $goods_count);
 
 		$this->assign('filter', $goods_list['filter']);
