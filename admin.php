@@ -204,28 +204,47 @@ class admin extends ecjia_admin {
         $input['check_review_status'] = 3;
         $input['is_delete'] = 0;
         $input['is_real'] 	= 1;
+
+        $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+            /**
+             * @var \Royalcms\Component\Database\Query\Builder $query
+             */
+            $query->select(
+                RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`')
+            );
+        });
+
+        $goods_activity_count_func = function ($input) {
+            $input['has_activity'] 	= 1;
+            $goods_activity_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+                /**
+                 * @var \Royalcms\Component\Database\Query\Builder $query
+                 */
+                $query->select(
+                    RC_DB::raw('count(`goods_id`) as `count_activity`')
+                );
+            });
+
+            return $goods_activity_count;
+        };
+
+        $goods_activity_count = $goods_activity_count_func($input);
+
+
         if ($list_type === 1) {
-        	$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData(function($query) {
-	    		/**
-	    		 * @var \Royalcms\Component\Database\Query\Builder $query
-	    		 */
-	    		$query->where(function($query){
-	    			$query->where('is_promote', 1)->orWhereHas('goods_activity_collection', function($query) {
-		    			$time = RC_Time::gmtime();
-		    			$query->where('start_time', '<=', $time)->where('end_time', '>=', $time);
-	    			});
-	    		});
-    		});
+            $input['has_activity'] 	= 1;
+            $goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
         } else {
         	$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
         }
 
-        $count_link = function ($input, $where, $goods_count, $goods_activity_count) {
+        $count_link_func = function ($input, $where, $goods_count, $goods_activity_count) {
             $input = collect($input)->except(array_keys($where))->all();
             unset($input['is_delete']);
             unset($input['is_real']);
             unset($input['is_on_sale']);
             unset($input['check_review_status']);
+            unset($input['has_activity']);
 
             $input['sort_order'] = array_values($input['sort_by'])[0];
             $input['sort_by']    = array_keys($input['sort_by'])[0];
@@ -245,32 +264,8 @@ class admin extends ecjia_admin {
             ];
             return $links;
         };
-      
-        $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
-            /**
-             * @var \Royalcms\Component\Database\Query\Builder $query
-             */
-            $query->select(
-                RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`')
-            );
-        });
-        
-        
-    	$goods_activity_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
-    		/**
-    		 * @var \Royalcms\Component\Database\Query\Builder $query
-    		 */
-    		$query->where(function($query){
-	    			$query->where('is_promote', 1)->orWhereHas('goods_activity_collection', function($query) {
-		    			$time = RC_Time::gmtime();
-		    			$query->where('start_time', '<=', $time)->where('end_time', '>=', $time);
-	    			});
-	    	})->select(
-    			RC_DB::raw('count(`goods_id`) as `count_activity`')
-    		);
-    	});
-        	
-        $goods_count = $count_link($input, $where, $goods_count, $goods_activity_count);
+
+        $goods_count = $count_link_func($input, $where, $goods_count, $goods_activity_count);
 
 		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
