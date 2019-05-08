@@ -182,10 +182,6 @@ class merchant extends ecjia_merchant {
 	    $cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
 	    $this->assign('merchant_cat_list_option', $cat_list_option);
 	    
-// 	    $this->assign('cat_list', merchant_cat_list(0, $cat_id, false));
-
-	    $this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
-	    
 	    $this->assign('intro_list', config('app-goods::goods_suggest_types'));
 	    /* 类型筛选 */
 	    $where = [];
@@ -213,42 +209,72 @@ class merchant extends ecjia_merchant {
 	    ];
 	    $input = collect($input)->merge($where)->filter()->all();
 	    
+	    $input['is_real'] 	= 1;
 	    $input['is_on_sale'] = 1;
 	    $input['check_review_status'] = 3;
 	    $input['is_delete'] = 0;
-	    $input['is_real'] 	= 1;
 	    
-	    $goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-	    $count_link = function ($input, $where) {
+	    $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+	    	/**
+	    	 * @var \Royalcms\Component\Database\Query\Builder $query
+	    	 */
+	    	$query->select(
+	    			RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`')
+	    	);
+	    });
+
+    	$goods_activity_count_func = function ($input) {
+    		$input['has_activity'] 	= 1;
+    		$goods_activity_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+    			/**
+    			 * @var \Royalcms\Component\Database\Query\Builder $query
+    			 */
+    			$query->select(
+    					RC_DB::raw('count(`goods_id`) as `count_activity`')
+    			);
+    		});
+    	
+    			return $goods_activity_count;
+    	};
+	   
+    	$goods_activity_count = $goods_activity_count_func($input);
+    	
+    	if ($list_type === 1) {
+    		$input['has_activity'] 	= 1;
+    		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+    	} else {
+    		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+    	}
+    	 
+	    $count_link_func = function ($input, $where, $goods_count, $goods_activity_count) {
 	    	$input = collect($input)->except(array_keys($where))->all();
 	    	unset($input['is_delete']);
 	    	unset($input['is_real']);
 	    	unset($input['is_on_sale']);
 	    	unset($input['check_review_status']);
+	    	unset($input['has_activity']);
 	    
 	    	$input['sort_order'] = array_values($input['sort_by'])[0];
 	    	$input['sort_by']    = array_keys($input['sort_by'])[0];
 	    	$links = [
 		    	'count_on_sale' => [
 			    	'label' => __('出售中', 'goods'),
-			    	'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
+			    	'link' => RC_Uri::url('goods/merchant/init', array_merge($input, ['type' => 0])),
 			    	'type' => 0,
+			    	'count'=> $goods_count['count_on_sale']
 	    		],
 	    		'count_activity' => [
 			    	'label' => __('参与活动', 'goods'),
-			    	'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
+			    	'link' => RC_Uri::url('goods/merchant/init', array_merge($input, ['type' => 1])),
 			    	'type' => 1,
+			    	'count'=> $goods_activity_count['count_activity']
 		    	]
 	    	];
 	    	return $links;
 	    };
-	    $count_link = $count_link($input, $where);
-	    $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
-	    $goods_count = $goods_count->map(function($count, $key) use ($count_link) {
-	    	$item = $count_link[$key];
-	    	$item['count'] = $count;
-	    	return $item;
-	    });
+	    
+	    $goods_count = $count_link_func($input, $where, $goods_count, $goods_activity_count);
+	    
 	    $this->assign('list_type', $list_type);
 	    $this->assign('goods_list', $goods_list);
 	    $this->assign('goods_count', $goods_count);
