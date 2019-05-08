@@ -44,6 +44,12 @@ class HasActivity implements FilterInterface
                      */
                     $time = RC_Time::gmtime();
                     $query->where('start_time', '<=', $time)->where('end_time', '>=', $time);
+                })->orWhereHas('favourable_activity_collection', function($query) {
+                    /**
+                     * @var \Royalcms\Component\Database\Query\Builder $query
+                     */
+                    $time = RC_Time::gmtime();
+                    $query->where('start_time', '<=', $time)->where('end_time', '>=', $time);
                 });
             });
         }

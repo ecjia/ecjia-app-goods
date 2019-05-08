@@ -186,7 +186,7 @@ class GoodsModel extends Model
      */
     public function favourable_activity_collection()
     {
-        return $this->hasMany('Ecjia\App\Goods\Models\FavourableActivityModel', 'goods_id', 'act_type_ext');
+        return $this->hasMany('Ecjia\App\Goods\Models\FavourableActivityModel', 'act_range_ext', 'goods_id');
     }
 
     /**
