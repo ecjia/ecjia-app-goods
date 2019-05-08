@@ -198,12 +198,10 @@ class admin extends ecjia_admin {
         ];
         $input = collect($input)->merge($where)->filter()->all();
         
-        
         $input['is_real'] 	= 1;
         $input['is_on_sale'] = 1;
         $input['check_review_status'] = 3;
         $input['is_delete'] = 0;
-        $input['is_real'] 	= 1;
 
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
             /**
@@ -455,7 +453,6 @@ class admin extends ecjia_admin {
 		$this->assign('ur_here', __('审核商品列表', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('审核商品列表', 'goods')));
 		
-		$nopass   	= trim($this->request->input('nopass'));
 		$store_id   = intval($this->request->input('store_id', 0));
 	    $list_type  = intval($this->request->input('type', 0));
 	    $page       = intval($this->request->input('page', 1));
@@ -505,19 +502,29 @@ class admin extends ecjia_admin {
 			'page'              => $page,
 		];
 
+		$input = collect($input)->merge($where)->filter()->all();
+
 		$input['is_delete'] = 0;
 		$input['is_real']   = 1;
-
-		if (!empty($nopass)) {
+		
+		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+			/**
+			 * @var \Royalcms\Component\Database\Query\Builder $query
+			 */
+			$query->select(
+				 RC_DB::raw('SUM(IF(`review_status` = 1, 1, 0)) as `check_pending`'),
+				 RC_DB::raw('SUM(IF(`review_status` = 2, 1, 0)) as `check_no_pass`')
+			);
+		});
+		
+		if ($list_type === 1) {
 			$input['check_review_status'] = 2; //未通过
 		} else {
 			$input['check_review_status'] = 1;//待审核
 		}
-		$input = collect($input)->merge($where)->filter()->all();
-
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 		
-		$count_link = function ($input, $where) {
+		$count_link_func = function ($input, $where, $goods_count) {
 			$input = collect($input)->except(array_keys($where))->all();
 			unset($input['check_review_status']);
 			unset($input['is_delete']);
@@ -526,42 +533,25 @@ class admin extends ecjia_admin {
 			$input['sort_order'] = array_values($input['sort_by'])[0];
 			$input['sort_by'] = array_keys($input['sort_by'])[0];
 			$links = [
-				'count_goods_num' => [
-					'label' => __('全部', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
+				'check_pending' => [
+					'label' => __('待审核', 'goods'),
+					'link' => RC_Uri::url('goods/admin/check', array_merge($input, ['type' => 0])),
 					'type' => 0,
+					'count'=> $goods_count['check_pending']
 				],
-				'count_on_sale' => [
-					'label' => __('已上架', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 1])),
+				'check_no_pass' => [
+					'label' => __('审核未通过', 'goods'),
+					'link' => RC_Uri::url('goods/admin/check', array_merge($input, ['type' => 1])),
 					'type' => 1,
-				],
-				'count_not_sale' => [
-					'label' => __('未上架', 'goods'),
-					'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 2])),
-					'type' => 2,
-				],
+					'count'=> $goods_count['check_no_pass']
+				]
 			];
 	
 			return $links;
 		};
 	
-		$count_link = $count_link($input, $where);
+		$goods_count = $count_link_func($input, $where, $goods_count);
 	
-		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
-			/**
-			 * @var \Royalcms\Component\Database\Query\Builder $query
-			 */
-			$query->select(
-					RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `count_on_sale`'),
-					RC_DB::raw('count(`goods_id`) as `count_activity`')
-			);
-		});
-		$goods_count = $goods_count->map(function($count, $key) use ($count_link) {
-			$item = $count_link[$key];
-			$item['count'] = $count;
-			return $item;
-		});
 		$this->assign('list_type', $list_type);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('goods_count', $goods_count);
