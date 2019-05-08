@@ -272,7 +272,6 @@ class GoodsAttr {
         }
 
         return array_get($typeArr, $inputTypeValue);
-
     }
 }
 
