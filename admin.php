@@ -277,6 +277,8 @@ class admin extends ecjia_admin {
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
 		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
 		
+		$this->assign('action', 'sale');
+		
 		$this->display('goods_list.dwt');
 	}
 	
@@ -357,6 +359,8 @@ class admin extends ecjia_admin {
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
 		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
 	
+		$this->assign('action', 'finish');
+		
 		$this->display('goods_list.dwt');
 	}
 	
@@ -439,6 +443,8 @@ class admin extends ecjia_admin {
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
 		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
 	
+		$this->assign('action', 'obtained');
+		
 		$this->display('goods_list.dwt');
 	}
 	
@@ -564,6 +570,8 @@ class admin extends ecjia_admin {
 		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
 		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
 	
+		$this->assign('action', 'check');
+		
 		$this->display('goods_list.dwt');
 	}
 

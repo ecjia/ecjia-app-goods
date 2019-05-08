@@ -289,6 +289,8 @@ class merchant extends ecjia_merchant {
 		
 		$this->assign('form_action', RC_Uri::url('goods/merchant/batch'));
 		
+		$this->assign('action', 'sale');
+		
 		$this->display('goods_list.dwt');
 	}
 	
@@ -368,6 +370,8 @@ class merchant extends ecjia_merchant {
 		
 		$this->assign('form_action_insert', RC_Uri::url('goods/merchant/insert_goodslib'));
 		
+		$this->assign('action', 'finish');
+		
 		$this->display('goods_list.dwt');
 	}
 	
@@ -443,7 +447,9 @@ class merchant extends ecjia_merchant {
 		$this->assign('form_action', RC_Uri::url('goods/merchant/batch'));
 		
 		$this->assign('form_action_insert', RC_Uri::url('goods/merchant/insert_goodslib'));
-	
+		
+		$this->assign('action', 'obtained');
+		
 		$this->display('goods_list.dwt');
 	}
 	
@@ -564,6 +570,8 @@ class merchant extends ecjia_merchant {
 		$this->assign('form_action', RC_Uri::url('goods/merchant/batch'));
 		$this->assign('form_action_insert', RC_Uri::url('goods/merchant/insert_goodslib'));
 
+		$this->assign('action', 'check');
+		
 		$this->display('goods_list.dwt');
 	}
 
