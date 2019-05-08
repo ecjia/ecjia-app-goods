@@ -243,9 +243,9 @@ class merchant extends ecjia_merchant {
     	
     	if ($list_type === 1) {
     		$input['has_activity'] 	= 1;
-    		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+    		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
     	} else {
-    		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+    		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
     	}
     	 
 	    $count_link_func = function ($input, $where, $goods_count, $goods_activity_count) {
@@ -360,7 +360,7 @@ class merchant extends ecjia_merchant {
 		$input['is_delete'] = 0;
 		$input['is_real'] 	= 1;
 		
-		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
 		$this->assign('goods_list', $goods_list);
 		
 		$this->assign('filter', $goods_list['filter']);
@@ -440,7 +440,7 @@ class merchant extends ecjia_merchant {
 		$input['is_delete'] = 0;
 		$input['is_real'] = 1;
 	
-		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
 		$this->assign('goods_list', $goods_list);
 		$this->assign('filter', $goods_list['filter']);
 		
@@ -531,7 +531,7 @@ class merchant extends ecjia_merchant {
 		} else {
 			$input['check_review_status'] = 1;//待审核
 		}
-		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
 
 		$count_link_func = function ($input, $where, $goods_count) {
 			$input = collect($input)->except(array_keys($where))->all();
