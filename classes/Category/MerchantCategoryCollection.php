@@ -74,14 +74,13 @@ class MerchantCategoryCollection
      */
     public function getTopCategories()
     {
-        $goods_num = CategoryGoodsNumber::getGoodsNumberWithCatId();
+        $goods_num = MerchantCategoryGoodsNumber::getGoodsNumberWithCatId();
 
         $collection = $this->queryAllCategories();
 
         $top_levels = $collection->get(0);
 
         $top_levels = $this->recursiveCategroy($top_levels, $collection, $goods_num);
-
         return $top_levels;
     }
 

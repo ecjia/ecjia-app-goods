@@ -55,10 +55,10 @@ class goods_merchant_menu_api extends Component_Event_Api {
         $menus = ecjia_merchant::make_admin_menu('03_cat_and_goods', __('商品', 'goods'), '', 1)->add_icon('fa-gift')->add_purview(array('goods_manage','goods_update','goods_type','merchant_category_manage','goods_manage'))->add_base('goods');
         $submenus = array(
         		
-        	ecjia_merchant::make_admin_menu('01_goods_list', __('在售商品', 'goods'), RC_Uri::url('goods/merchant/init', array('action' => 'sale')), 1)->add_purview('goods_manage')->add_icon('fa-shopping-cart'), //array('goods_manage')
-        	ecjia_merchant::make_admin_menu('02_goods_list', __('售罄商品', 'goods'), RC_Uri::url('goods/merchant/init', array('action' => 'finish')), 2)->add_purview('goods_manage')->add_icon('fa-inbox'), //array('goods_manage')
-        	ecjia_merchant::make_admin_menu('03_goods_list', __('下架商品', 'goods'), RC_Uri::url('goods/merchant/init', array('action' => 'obtained')), 3)->add_purview('goods_manage')->add_icon('fa-arrow-down'), //array('goods_manage')
-        	ecjia_merchant::make_admin_menu('04_goods_list', __('审核商品', 'goods'), RC_Uri::url('goods/merchant/init', array('action' => 'check')), 4)->add_purview('goods_manage')->add_icon('fa-history'), //array('goods_manage')
+        	ecjia_merchant::make_admin_menu('01_goods_list', __('在售商品', 'goods'), RC_Uri::url('goods/merchant/init'), 1)->add_purview('goods_manage')->add_icon('fa-shopping-cart'), //array('goods_manage')
+        	ecjia_merchant::make_admin_menu('02_goods_list', __('售罄商品', 'goods'), RC_Uri::url('goods/merchant/finish'), 2)->add_purview('goods_manage')->add_icon('fa-inbox'), //array('goods_manage')
+        	ecjia_merchant::make_admin_menu('03_goods_list', __('下架商品', 'goods'), RC_Uri::url('goods/merchant/obtained'), 3)->add_purview('goods_manage')->add_icon('fa-arrow-down'), //array('goods_manage')
+        	ecjia_merchant::make_admin_menu('04_goods_list', __('审核商品', 'goods'), RC_Uri::url('goods/merchant/check'), 4)->add_purview('goods_manage')->add_icon('fa-history'), //array('goods_manage')
         	
         	ecjia_merchant::make_admin_menu('07_goods_trash', __('商品回收站', 'goods'), RC_Uri::url('goods/merchant/trash'), 7)->add_purview('goods_manage')->add_icon('fa-recycle'), //array('goods_manage')
             ecjia_merchant::make_admin_menu('divider', '', '', 8)->add_purview(array('goods_update')),
