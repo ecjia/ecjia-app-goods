@@ -193,7 +193,7 @@
 								
 								<td align="center">
 									<span class="cursor_pointer" data-trigger="editable" data-placement="left" data-url="{RC_Uri::url('goods/merchant/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="{t domain="goods"}请输入排序序号{/t}">
-										{$goods.store_sort_order}
+										{$goods.sort_order}
 									</span>
 								</td>
 								
