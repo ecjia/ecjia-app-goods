@@ -20,7 +20,7 @@ class GoodsThumb extends GoodsImage
      */
     public function saveImageToDisk()
     {
-        $thumb_path = $this->disk->getPath($this->image_format->getThumbPostion());
+        $thumb_path = $this->image_format->getThumbPostion();
 
         $original_path = $img_path = null;
 

@@ -111,8 +111,8 @@ class GoodsImage
     public function saveImageToDisk()
     {
         /* 重新格式化图片名称 */
-        $img_path = $this->disk->getPath($this->image_format->getGoodsimgPostion());
-        $original_path = $this->disk->getPath($this->image_format->getSourcePostion());
+        $img_path = $this->image_format->getGoodsimgPostion();
+        $original_path = $this->image_format->getSourcePostion();
 
         // 生成缩略图
         $thumb_path = '';
@@ -121,7 +121,7 @@ class GoodsImage
         }
 
         // 添加水印
-        $this->disk->addWatermark($this->getFilePath(), $img_path);
+        $this->disk->addWatermark($this->getFilePath(), $img_path, null, null, null, $this->getExtensionName());
 
         // 保存原图
         $this->disk->writeForSourcePath($this->getFilePath(), $original_path);
@@ -202,9 +202,9 @@ class GoodsImage
      */
     public function saveThumbImageToDisk()
     {
-        $thumb_path = $this->disk->getPath($this->image_format->getThumbPostion());
+        $thumb_path = $this->image_format->getThumbPostion();
 
-        $this->disk->makeThumb($this->getFilePath(), $thumb_path);
+        $this->disk->makeThumb($this->getFilePath(), $thumb_path, null, null, $this->getExtensionName());
 
         return $thumb_path;
     }

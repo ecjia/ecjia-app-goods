@@ -17,16 +17,33 @@ class MakeGoodsThumbImage
 
     protected $path;
 
+    protected $extension;
+
     protected $thumb_width;
 
     protected $thumb_height;
 
-    public function __construct($path)
+    public function __construct($path, $extension = null)
     {
         $this->path = $path;
+        $this->extension = $extension;
 
         $this->thumb_width = ecjia::config('thumb_width');
         $this->thumb_height = ecjia::config('thumb_height');
+    }
+
+    public function getExtension()
+    {
+        if (is_null($this->extension)) {
+            $ext = RC_File::extension($this->path);
+            if ($ext) {
+                $this->extension = $ext;
+            } else {
+                $this->extension = 'png';
+            }
+        }
+
+        return $this->extension;
     }
 
     /**
@@ -49,11 +66,9 @@ class MakeGoodsThumbImage
         // 修改指定图片的大小
         $image = RC_Image::make($this->path)->resize($this->thumb_width, $this->thumb_height);
 
-        $ext = RC_File::extension($this->path);
+        $data = $image->encode($this->getExtension(), 75);
 
-        $data = $image->encode($ext, 75);
-
-        return $data;
+        return $data->getEncoded();
     }
 
 
