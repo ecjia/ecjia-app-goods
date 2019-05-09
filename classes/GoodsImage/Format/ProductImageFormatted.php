@@ -30,9 +30,9 @@ class ProductImageFormatted extends GoodsImageFormatted
     protected function spliceFileName($is_thumb = false)
     {
         if ($is_thumb) {
-            return $this->goods_image->getProductId() . $this->goods_thumb_separator . $this->random_name . $this->goods_image->getExtensionName();
+            return $this->goods_image->getProductId() . $this->goods_thumb_separator . $this->random_name . '.' . $this->goods_image->getExtensionName();
         } else {
-            return $this->goods_image->getProductId() . $this->goods_separator . $this->random_name . $this->goods_image->getExtensionName();
+            return $this->goods_image->getProductId() . $this->goods_separator . $this->random_name . '.' . $this->goods_image->getExtensionName();
         }
     }
 
