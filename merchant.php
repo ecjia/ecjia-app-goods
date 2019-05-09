@@ -2882,7 +2882,6 @@ class merchant extends ecjia_merchant {
 			$this->db_goods->join(null)->where(array('goods_id' => $goods_id))->update($data);
 		
 			$data_insert = array();
-			_dump($goods_attr_list,1);
 			/* 插入、更新、删除数据 */
 			foreach ($goods_attr_list as $attr_id => $attr_value_list) {
 				foreach ($attr_value_list as $attr_value => $info) {
