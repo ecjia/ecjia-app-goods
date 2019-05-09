@@ -3014,7 +3014,6 @@ class merchant extends ecjia_merchant {
 		}
 	
 		//设置选中状态,并分配标签导航
-		$this->tags['edit_goods_attr']['active'] = 1;
 		$this->assign('tags', $this->tags);
 		$href = RC_Uri::url('goods/merchant/init');
 	
