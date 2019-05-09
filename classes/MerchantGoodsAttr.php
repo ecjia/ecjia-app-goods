@@ -272,4 +272,36 @@ class MerchantGoodsAttr {
 	
 	}
 	
+	
+	/**
+	 * 商家商品分类绑定[规格/参数]模板包含平台数据（下拉）
+	 * @access  public
+	 * @param   integer     $selected   选定的模板编号
+	 * @param   string      $type       模板类型
+	 * @param   boolean     $enabled    激活状态
+	 * @return  string
+	 */
+	public static function category_bind($selected, $type) {
+		$data = RC_DB::table('goods_type')
+			->whereIn('store_id', [0, $_SESSION['store_id']])
+			->where('cat_type', $type)
+			->select('cat_id', 'cat_name', 'store_id')
+			->get();
+		
+		$opt = '';
+		if (!empty($data)) {
+			foreach ($data as $row){
+				if($row['store_id']===0) {
+					$title = ' [平台]';
+				} else {
+					$title = ' [商家]';
+				}
+				$opt .= "<option value='$row[cat_id]'";
+				$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+				$opt .= '>' . htmlspecialchars($row['cat_name']). $title .'</option>';
+			}
+		}
+		return $opt;
+	}
+	
 }

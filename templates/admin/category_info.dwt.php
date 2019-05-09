@@ -313,7 +313,7 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<a class="accordion-toggle collapsed move-mod-head" data-toggle="collapse" data-target="#templates">
-							<strong>{t domain='goods'}绑定规格/参数模板{/t}</strong>
+							<strong>{t domain='goods'}绑定规格 / 参数模板{/t}</strong>
 						</a>
 					</div>
 					<div class="accordion-body in in_visable collapse" id="templates">
@@ -321,7 +321,7 @@
 						    <div class="control-group">{t domain='goods'}规格模板：{/t}<span style="color: #595959;font-size: 12px;">{t domain='goods'}只有绑定后才可在商品详情设置规格{/t}</span></div>
 							<div class="control-group">
     							<select name='specification_id' class="w300">
-    								<option value="0">请选择规格模板…</option>
+    								<option value="0">{t domain='goods'}请选择规格模板…{/t}</option>
     								{$specification_template_list}
     							</select>
     						</div>
@@ -329,7 +329,7 @@
     						<div class="control-group">{t domain='goods'}参数模板：{/t}<span style="color: #595959;font-size: 12px;">{t domain='goods'}只有绑定后才可在商品详情设置参数{/t}</span></div>
 							<div class="control-group">
     							<select name='parameter_id' class="w300">
-    								<option value="0">请选择参数模板…</option>
+    								<option value="0">{t domain='goods'}请选择参数模板…{/t}</option>
     								{$parameter_template_list}
     							</select>
     						</div>
