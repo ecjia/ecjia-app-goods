@@ -168,12 +168,6 @@ class goods_info {
 			$user_price = $product_user_price; 
 		}
 		
-		
-		//商品促销限购数量判断（有没超过用户限购数， 有没超过活动限购数）；超过限购按商品原价处理
-		//if ($promote_price > 0) {
-				
-		//}
-		
 		// 比较商品的促销价格，会员价格，优惠价格
 		if (empty ( $volume_price ) && empty ( $promote_price )) {
 			// 如果优惠价格，促销价格都为空则取会员价格
