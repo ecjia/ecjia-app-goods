@@ -30,7 +30,7 @@ ecjia.merchant.goods_category_list.init();
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel">
-			<div id="actionmodal" class="modal fade">
+		   <div id="actionmodal" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
 	                    <div class="modal-header">
@@ -44,10 +44,9 @@ ecjia.merchant.goods_category_list.init();
 	                       <textarea class="form-control" id="link_value"  name="link_value" disabled="disabled"></textarea>
 	                       <button id="copy_btn" class="btn btn-info m_t10">{t domain="goods"}复制{/t}</button>
 	                    </div>
-	                    </div>
                     </div>
-                </div>
-           	</div>
+                 </div>
+            </div>
            
 			<div class="panel-body panel-body-small">
 				<section class="panel">
