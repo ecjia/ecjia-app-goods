@@ -69,3 +69,14 @@
     margin-left:0;
 }
 .goods_img .fileupload-btn .fileupload-exists { top:31%}
+
+
+.template_box{
+	 background-color: #f9f9f9;
+	 border-radius: 4px
+}
+.box_content {
+	 padding-top: 15px;
+	 padding-bottom: 5px;
+	
+}

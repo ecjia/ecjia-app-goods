@@ -304,4 +304,107 @@ class MerchantGoodsAttr {
 		return $opt;
 	}
 	
+	/**
+	 * 商家商品根据分类获取[规格/参数]模板
+	 */
+	public static function get_cat_template($type, $cat_id) {
+		$template_id = 0;
+		if ($type === 'parameter') {
+			$template_id = RC_DB::table('merchants_category')->where('store_id', $_SESSION['store_id'])->where('cat_id', $cat_id)->pluck('parameter_id');
+		} else {
+			$template_id = RC_DB::table('merchants_category')->where('store_id', $_SESSION['store_id'])->where('cat_id', $cat_id)->pluck('specification_id');
+		}
+		if (empty($template_id)) {
+			$category_info = RC_DB::table('merchants_category')->where('cat_id', $cat_id)->first();
+			if ($category_info['parent_id'] > 0) {
+				$template_id = self::get_cat_template($type, $category_info['parent_id']);
+			}
+		}
+		return $template_id;
+	}
+	
+
+	/**
+	 * 获取[规格/参数]模板详细信息
+	 * 
+	 */
+	public static function get_template_info($template_id) {
+		$template_info = RC_DB::table('goods_type')->where('cat_id', $template_id)->where('store_id', $_SESSION['store_id'])->first();
+		
+		return $template_info;
+	}
+	
+	/**
+	 * 根据参数类型数组创建参数的表单
+	 * 
+    */
+	public static function build_merchant_attr_html($cat_id, $goods_id = 0) {
+		$attr = self::get_cat_attr_list($cat_id, $goods_id);
+		$html = '';
+		$spec = 0;
+		if (!empty($attr)) {
+			foreach ($attr as $key => $val) {
+				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
+				
+				$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+				if ($val ['attr_input_type'] == 0) {
+					$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="attr_value_list[]" type="text" value="' . htmlspecialchars($val ['attr_value']) . '" size="40" /></div> ';
+				} elseif ($val ['attr_input_type'] == 2) {
+					$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea></div>';
+				} else {
+					$attr_values = explode("\n", $val ['attr_values']);
+					if($val['attr_type'] == 2) {
+						foreach ($attr_values as $opt) {
+							$opt = trim(htmlspecialchars($opt));
+							$html .= '<input id="'.$opt.'" type="checkbox" name="attr_value_list[]" value="'.$opt.'" />';
+							$html .= '<label for="'.$opt.'">'.$opt.'</label>';
+						}
+					} else {
+						$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="attr_value_list[]" autocomplete="off">';
+						$html .= '<option value="">' . __('请选择...', 'goods') . '</option>';
+						foreach ($attr_values as $opt) {
+							$opt = trim(htmlspecialchars($opt));
+							$html .= ($val ['attr_value'] != $opt) ? '<option value="' . $opt . '">' . $opt . '</option>' : '<option value="' . $opt . '" selected="selected">' . $opt . '</option>';
+						}
+						$html .= '</select></div>';
+					}
+					
+				}
+// 				$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5 f_l l_h30">' . __('属性价格', 'goods') . '</span>' . ' <div class="col-lg-5 p_l0"><input class="form-control" type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" /></div>' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
+// 				if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
+// 					$html .= ($spec != $val ['attr_id']) ? "<a class='m_l5 l_h30' href='javascript:;' data-toggle='clone-obj' data-parent='.form-group'><i class='fa fa-plus'></i></a>" : "<a class='m_l5 l_h30' href='javascript:;' data-trigger='toggleSpec'><i class='fa fa-times'></i></a>";
+// 					$spec = $val ['attr_id'];
+// 				}
+				$html .= '</div></div>';
+			}
+		}
+		$html .= '';
+		return $html;
+	}
+	
+	
+	/**
+	 * 取得通用属性和某分类的属性，以及某商品的属性值
+	 *
+	 * @param int $cat_id
+	 *            分类编号
+	 * @param int $goods_id
+	 *            商品编号
+	 * @return array 规格与属性列表
+	 */
+	public static function get_cat_attr_list($cat_id, $goods_id = 0) {
+		$dbview = RC_DB::table('attribute as a')
+				->leftJoin('goods_attr as ga', function ($join) use($goods_id) {
+					$join->on(RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+					->where(RC_DB::raw('ga.goods_id'), '=',  $goods_id);
+				});
+		$row = $dbview
+		    ->select(RC_DB::raw('a.attr_id'), RC_DB::raw('a.attr_name'), RC_DB::raw('a.attr_input_type'), RC_DB::raw('a.attr_type'), RC_DB::raw('a.attr_values'), RC_DB::raw('ga.attr_value'), RC_DB::raw('ga.attr_price'))
+		    ->where(RC_DB::raw('a.cat_id'), $cat_id)
+			->orderby(RC_DB::raw('ga.goods_attr_id'), 'asc')
+			->get();
+		
+		return $row;
+	}
+	
 }
