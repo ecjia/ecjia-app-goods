@@ -6,25 +6,31 @@
  * Time: 09:28
  */
 
-namespace Ecjia\App\Goods\GoodsImage;
+namespace Ecjia\App\Goods\GoodsImage\Goods;
 
 
-use Ecjia\App\Goods\GoodsImage\Format\ProductGalleryFormatted;
+use Ecjia\App\Goods\GoodsImage\Format\GoodsGalleryFormatted;
 use Ecjia\App\Goods\Models\GoodsGalleryModel;
-use ecjia_error;
 use ecjia;
+use ecjia_error;
 
-class ProductGallery extends ProductImage
+class GoodsGallery extends GoodsImage
 {
 
+    /**
+     * 设置是否自动生成缩略图
+     * @var bool
+     */
+    protected $auto_generate_thumb = true;
 
     public function __construct($goods_id, $product_id = 0, $fileinfo = null)
     {
         parent::__construct($goods_id, $product_id, $fileinfo);
 
 
-        $this->image_format = new ProductGalleryFormatted($this);
+        $this->image_format = new GoodsGalleryFormatted($this);
     }
+
 
     /**
      * 更新图片到数据库
@@ -64,6 +70,5 @@ class ProductGallery extends ProductImage
 
         return true;
     }
-
 
 }

@@ -6,13 +6,13 @@
  * Time: 09:28
  */
 
-namespace Ecjia\App\Goods\GoodsImage;
+namespace Ecjia\App\Goods\GoodsImage\Goods;
 
 
-use Ecjia\App\Goods\Models\ProductsModel;
+use Ecjia\App\Goods\Models\GoodsModel;
 use ecjia_error;
 
-class ProductThumb extends ProductImage
+class GoodsThumb extends GoodsImage
 {
 
     /**
@@ -46,7 +46,7 @@ class ProductThumb extends ProductImage
             'thumb_url' 	=> $thumb_path,
         );
 
-        $model = ProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->update($data);
+        $model = GoodsModel::where('goods_id', $this->goods_id)->update($data);
         if (! empty($model)) {
             return new ecjia_error('upload_thumb_image_fail', __('商品缩略图上传失败', 'goods'));
         }

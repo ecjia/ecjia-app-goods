@@ -6,13 +6,14 @@
  * Time: 09:27
  */
 
-namespace Ecjia\App\Goods\GoodsImage;
+namespace Ecjia\App\Goods\GoodsImage\Goods;
 
 
 use Ecjia\App\Goods\GoodsImage\Format\GoodsImageFormatted;
 use Ecjia\App\Goods\Models\GoodsModel;
 use ecjia;
 use ecjia_error;
+use Ecjia\App\Goods\GoodsImage\StorageDisk;
 
 class GoodsImage
 {
