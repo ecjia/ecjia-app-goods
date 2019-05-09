@@ -54,12 +54,6 @@
 		              		</div>
 		              		
 	              			<div class="form-group">
-	              				<label class="control-label col-lg-2">{t domain="goods"}商品货号：{/t}</label>
-	              				<div class="col-lg-7">
-	                            	<input class="form-control" name="goods_sn" type="text" value="{$goods.goods_sn|escape}" />
-	                          	</div>
-	              			</div>
-	              			<div class="form-group">
 	              				<label class="control-label col-lg-2">{t domain="goods"}本店售价：{/t}</label>
 	              				<div class="controls col-lg-7">
 	                            	<input class="form-control" name="shop_price" type="text" value="{$goods.shop_price}" />
@@ -87,15 +81,7 @@
 	                            	<span class="help-block">设置单品的销售成本，作为统计利润的依据，单位（元）</span>
 	                          	</div>
 	              			</div>
-		              			
-	              			<div class="form-group">
-	              				<label class="control-label col-lg-2">{t domain="goods"}库存数量：{/t}</label>
-	              				<div class="controls col-lg-7">
-	                            	<input class="form-control" name="goods_number" type="text" value="{$goods.goods_number}" />
-	                          	</div>
-	                          	<span class="input-must">*</span>
-	              			</div>
-		              			
+	              			
 	              			<div class="form-group">
 	              				<label class="control-label col-lg-2">{t domain="goods"}警告数量：{/t}</label>
 	              				<div class="col-lg-7">
