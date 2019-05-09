@@ -63,14 +63,14 @@ class GoodsImageFormatted
     {
         $this->goods_image = $goods_image;
 
-        if (is_null($root_dir)) {
+        if (!is_null($root_dir)) {
             $this->root_dir = $root_dir;
         }
 
         $this->random_name = $this->generateRandomName();
 
         $this->goods_source_postion = $this->filePathPrefix('source_img/') . $this->spliceFileName();
-        $this->goods_img_postion = $this->filePathPrefix('goods_img/') . $this->spliceFileName();
+        $this->goods_image_postion = $this->filePathPrefix('goods_img/') . $this->spliceFileName();
         $this->goods_thumb_postion = $this->filePathPrefix('thumb_img/') . $this->spliceFileName(true);
     }
 
@@ -89,9 +89,9 @@ class GoodsImageFormatted
     protected function spliceFileName($is_thumb = false)
     {
         if ($is_thumb) {
-            return $this->goods_image->getGoodsId() . $this->goods_thumb_separator . $this->random_name . $this->goods_image->getExtensionName();
+            return $this->goods_image->getGoodsId() . $this->goods_thumb_separator . $this->random_name . '.' . $this->goods_image->getExtensionName();
         } else {
-            return $this->goods_image->getGoodsId() . $this->goods_separator . $this->random_name . $this->goods_image->getExtensionName();
+            return $this->goods_image->getGoodsId() . $this->goods_separator . $this->random_name . '.' . $this->goods_image->getExtensionName();
         }
     }
 
