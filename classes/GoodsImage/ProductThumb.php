@@ -12,7 +12,7 @@ namespace Ecjia\App\Goods\GoodsImage;
 use Ecjia\App\Goods\Models\ProductsModel;
 use ecjia_error;
 
-class GoodsThumb extends ProductImage
+class ProductThumb extends ProductImage
 {
 
     /**
