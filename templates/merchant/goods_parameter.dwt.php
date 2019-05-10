@@ -70,7 +70,7 @@
 											<div class="form-group">
 												<label class="control-label col-lg-2 ">{t domain="goods"}参数模板：{/t}</label>
 												<div class="col-lg-6 l_h35">
-													<span class="badge bg-important">!</span> <span class="ecjiafc-red">您当前还未绑定任何模板，请先绑定后，再来设置</span>
+													<span class="badge bg-important">!</span> <span class="ecjiafc-red">您当前还未绑定任何参数模板，请先绑定后，再来设置</span>
 												</div>
 											</div>
 											
