@@ -28,7 +28,7 @@ class StorageDisk
      */
     public function wirte($path, $content)
     {
-        return $this->disk->put_contents($path, $content);
+        return $this->disk->write($path, $content);
     }
 
     /**
@@ -67,9 +67,9 @@ class StorageDisk
      * @param int $thumb_height 缩略图高度
      * @return mixed 如果成功返回缩略图的路径，失败则返回false
      */
-    public function makeThumb($path, $thumb_img, $thumb_width = 0, $thumb_height = 0)
+    public function makeThumb($path, $thumb_img, $thumb_width = 0, $thumb_height = 0, $extension = null)
     {
-        $makeThumb = new MakeGoodsThumbImage($path);
+        $makeThumb = new MakeGoodsThumbImage($path, $extension);
 
         if ($thumb_width && $thumb_height) {
             $makeThumb->setSize($thumb_width, $thumb_height);
@@ -89,9 +89,9 @@ class StorageDisk
      * @param       int         $watermark_place    水印位置代码 0 无，默认；1 左上，2 右上，3 居中，4 左下，5 右下
      * @return      mixed       如果成功则返回文件路径，否则返回false
      */
-    public function addWatermark($path, $newpath, $watermark = null, $watermark_place = null, $watermark_alpha = 0.65)
+    public function addWatermark($path, $newpath, $watermark = null, $watermark_place = null, $watermark_alpha = 0.65, $extension = null)
     {
-        $makeWatermark = new MakeGoodsWatermarkImage($path);
+        $makeWatermark = new MakeGoodsWatermarkImage($path, $extension);
 
         if ($watermark) {
             $makeWatermark->setWatermark($watermark);

@@ -338,17 +338,6 @@ class MerchantGoodsAttr {
 	 * 根据参数类型数组创建参数的表单
 	 * 
     */
-	
-	
-// 	<div class="form-group">
-// 	<label class="control-label col-lg-2">{t domain="favourable"}会员等级：{/t}</label>
-// 	<div class="col-lg-9 m_t5">
-// 	<!-- {foreach from=$user_rank_list item=user_rank} -->
-// 	<input id="user_rank_{$user_rank.rank_id}" type="checkbox" name="user_rank[]" value="{$user_rank.rank_id}" {if $user_rank.checked}checked="true"{/if} />
-// 	<label for="user_rank_{$user_rank.rank_id}">{$user_rank.rank_name}</label>
-// 	<!-- {/foreach} -->
-// 	</div>
-// 	</div>
 	public static function build_merchant_attr_html($cat_id, $goods_id = 0) {
 		$attr = self::get_cat_attr_list($cat_id, $goods_id);
 		$html = '';
@@ -405,13 +394,13 @@ class MerchantGoodsAttr {
 	 */
 	public static function get_cat_attr_list($cat_id, $goods_id = 0) {
 		$dbview = RC_DB::table('attribute as a')
-		->leftJoin('goods_attr as ga', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'));
-		
-		$dbview->where(RC_DB::raw('a.cat_id'), $cat_id);
-		$dbview->where(RC_DB::raw('ga.goods_id'), $goods_id);
-
+				->leftJoin('goods_attr as ga', function ($join) use($goods_id) {
+					$join->on(RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+					->where(RC_DB::raw('ga.goods_id'), '=',  $goods_id);
+				});
 		$row = $dbview
 		    ->select(RC_DB::raw('a.attr_id'), RC_DB::raw('a.attr_name'), RC_DB::raw('a.attr_input_type'), RC_DB::raw('a.attr_type'), RC_DB::raw('a.attr_values'), RC_DB::raw('ga.attr_value'), RC_DB::raw('ga.attr_price'))
+		    ->where(RC_DB::raw('a.cat_id'), $cat_id)
 			->orderby(RC_DB::raw('ga.goods_attr_id'), 'asc')
 			->get();
 		

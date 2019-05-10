@@ -36,9 +36,10 @@ class MakeGoodsWatermarkImage
 
     protected $image_height;
 
-    public function __construct($path)
+    public function __construct($path, $extension = null)
     {
         $this->path = $path;
+        $this->extension = $extension;
 
         $this->watermark = ecjia::config('watermark');
         $this->watermark_place = $this->setWatermarkPlace(ecjia::config('watermark_place'));
@@ -46,6 +47,20 @@ class MakeGoodsWatermarkImage
 
         $this->image_width = ecjia::config('image_width');
         $this->image_height = ecjia::config('image_height');
+    }
+
+    public function getExtension()
+    {
+        if (is_null($this->extension)) {
+            $ext = pathinfo($this->path, PATHINFO_EXTENSION);
+            if ($ext) {
+                $this->extension = $ext;
+            } else {
+                $this->extension = 'jpg';
+            }
+        }
+
+        return $this->extension;
     }
 
     public function setWatermark($watermark)
@@ -125,23 +140,20 @@ class MakeGoodsWatermarkImage
      */
     public function make()
     {
-        if (empty($this->watermark)) {
-            return new ecjia_error('watermark_file_not_exists', __('水印文件不存在', 'goods'));
-        }
-
         $image = RC_Image::make($this->path);
 
-        $watermark = RC_Image::make($this->watermark)->opacity($this->watermark_alpha);
+        //缩略图片大小
+        $image->resize($this->image_width, $this->image_height);
 
+        if (!empty($this->watermark)) {
+            // 插入水印, 水印位置在原图片的右下角
+            $watermark = RC_Image::make($this->watermark)->opacity($this->watermark_alpha);
+            $image->insert($watermark, $this->watermark_place);
+        }
 
-        // 插入水印, 水印位置在原图片的右下角
-        $image->resize($this->image_width, $this->image_height)->insert($watermark, $this->watermark_place);
+        $data = $image->encode($this->getExtension(), 90);
 
-        $ext = RC_File::extension($this->path);
-
-        $data = $image->encode($ext, 90);
-
-        return $data;
+        return $data->getEncoded();
     }
 
 

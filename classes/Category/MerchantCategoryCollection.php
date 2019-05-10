@@ -16,11 +16,15 @@ use Royalcms\Component\Support\Collection;
 class MerchantCategoryCollection
 {
 
+    protected $store_id;
+
     protected $category_id;
 
 
-    public function __construct($category_id = 0)
+    public function __construct($store_id, $category_id = 0)
     {
+        $this->store_id = $store_id;
+
         $this->category_id = $category_id;
     }
 
@@ -31,13 +35,14 @@ class MerchantCategoryCollection
      */
     protected function queryAllCategories()
     {
-        $cache_key = 'query_all_categories';
+        $cache_key = 'query_all_merchant_categories' . $this->store_id;
 
         $collection = ecjia_cache('goods')->get($cache_key);
 
         if (empty($collection)) {
             $collection = MerchantCategoryModel::leftJoin('merchants_category as mc', 'merchants_category.cat_id', '=', RC_DB::raw('`mc`.`parent_id`'))
                 ->select('merchants_category.cat_id', 'merchants_category.store_id', 'merchants_category.cat_name', 'merchants_category.parent_id', 'merchants_category.is_show', RC_DB::raw('COUNT(mc.cat_id) AS has_children'))
+                ->where('merchants_category.store_id', $this->store_id)
                 ->groupBy('merchants_category.cat_id')
                 ->orderBy('merchants_category.parent_id', 'asc')
                 ->orderBy('merchants_category.sort_order', 'asc')
@@ -59,6 +64,7 @@ class MerchantCategoryCollection
         $collection = MerchantCategoryModel::leftJoin('merchants_category as mc', 'merchants_category.cat_id', '=', RC_DB::raw('`mc`.`parent_id`'))
             ->select('merchants_category.cat_id', 'merchants_category.cat_name', 'merchants_category.store_id', 'merchants_category.parent_id', 'merchants_category.is_show', 'merchants_category.sort_order', RC_DB::raw('COUNT(mc.cat_id) AS has_children'))
             ->where('merchants_category.parent_id', $this->category_id)
+            ->where('merchants_category.store_id', $this->store_id)
             ->groupBy('merchants_category.cat_id')
             ->orderBy('merchants_category.parent_id', 'asc')
             ->orderBy('merchants_category.sort_order', 'asc')
@@ -74,7 +80,7 @@ class MerchantCategoryCollection
      */
     public function getTopCategories()
     {
-        $goods_num = MerchantCategoryGoodsNumber::getGoodsNumberWithCatId();
+        $goods_num = MerchantCategoryGoodsNumber::getGoodsNumberWithCatId($this->store_id);
 
         $collection = $this->queryAllCategories();
 

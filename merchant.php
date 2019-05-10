@@ -178,8 +178,7 @@ class merchant extends ecjia_merchant {
 	    
 	    $use_storage = ecjia::config('use_storage');
 	    $this->assign('use_storage', empty($use_storage) ? 0 : 1);
-	    
-	    $merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+	    $merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption($store_id)->render($cat_id);
 	    $this->assign('merchant_cat_list_option', $merchant_cat_list_option);
 	    
 	    $this->assign('intro_list', config('app-goods::goods_suggest_types'));
@@ -323,7 +322,7 @@ class merchant extends ecjia_merchant {
 		$use_storage = ecjia::config('use_storage');
 		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
 		
-		$merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+		$merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption($store_id)->render($cat_id);
 	    $this->assign('merchant_cat_list_option', $merchant_cat_list_option);
 		
 		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
@@ -403,7 +402,7 @@ class merchant extends ecjia_merchant {
 		$use_storage = ecjia::config('use_storage');
 		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
 	
-		$merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+		$merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption($store_id)->render($cat_id);
 	    $this->assign('merchant_cat_list_option', $merchant_cat_list_option);
 	
 		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
@@ -481,7 +480,7 @@ class merchant extends ecjia_merchant {
 		$use_storage = ecjia::config('use_storage');
 		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
 	
-		$merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+		$merchant_cat_list_option = \Ecjia\App\Goods\Category\MerchantCategoryFormSelectOption::buildTopCategorySelectOption($store_id)->render($cat_id);
 	    $this->assign('merchant_cat_list_option', $merchant_cat_list_option);
 	
 		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
@@ -2882,7 +2881,6 @@ class merchant extends ecjia_merchant {
 			$this->db_goods->join(null)->where(array('goods_id' => $goods_id))->update($data);
 		
 			$data_insert = array();
-			_dump($goods_attr_list,1);
 			/* 插入、更新、删除数据 */
 			foreach ($goods_attr_list as $attr_id => $attr_value_list) {
 				foreach ($attr_value_list as $attr_value => $info) {

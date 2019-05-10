@@ -44,7 +44,7 @@ class ProductImage extends GoodsImage
         }
 
         //存入数据库中
-        $model = ProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->select('product_original_img', 'product_img', 'product_thumb')->first();
+        $model = ProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->select('goods_id', 'product_id', 'product_original_img', 'product_img', 'product_thumb')->first();
         if (! empty($model)) {
             $this->clearOldImage($model);
 

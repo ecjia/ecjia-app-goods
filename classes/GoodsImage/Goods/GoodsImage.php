@@ -111,8 +111,8 @@ class GoodsImage
     public function saveImageToDisk()
     {
         /* 重新格式化图片名称 */
-        $img_path = $this->disk->getPath($this->image_format->getGoodsimgPostion());
-        $original_path = $this->disk->getPath($this->image_format->getSourcePostion());
+        $img_path = $this->image_format->getGoodsimgPostion();
+        $original_path = $this->image_format->getSourcePostion();
 
         // 生成缩略图
         $thumb_path = '';
@@ -121,7 +121,7 @@ class GoodsImage
         }
 
         // 添加水印
-        $this->disk->addWatermark($this->getFilePath(), $img_path);
+        $this->disk->addWatermark($this->getFilePath(), $img_path, null, null, null, $this->getExtensionName());
 
         // 保存原图
         $this->disk->writeForSourcePath($this->getFilePath(), $original_path);
@@ -146,13 +146,13 @@ class GoodsImage
         }
 
         //存入数据库中
-        $model = GoodsModel::where('goods_id', $this->goods_id)->select('original_img', 'goods_img', 'goods_thumb')->first();
+        $model = GoodsModel::where('goods_id', $this->goods_id)->select('goods_id', 'original_img', 'goods_img', 'goods_thumb')->first();
         if (! empty($model)) {
             $this->clearOldImage($model);
 
             /* 不保留商品原图的时候删除原图 */
             if (! ecjia::config('retain_original_img') && !empty($original_path)) {
-                $this->disk->deletePath($original_path);
+                $this->disk->delete($original_path);
                 $original_path = '';
             }
 
@@ -202,9 +202,9 @@ class GoodsImage
      */
     public function saveThumbImageToDisk()
     {
-        $thumb_path = $this->disk->getPath($this->image_format->getThumbPostion());
+        $thumb_path = $this->image_format->getThumbPostion();
 
-        $this->disk->makeThumb($this->getFilePath(), $thumb_path);
+        $this->disk->makeThumb($this->getFilePath(), $thumb_path, null, null, $this->getExtensionName());
 
         return $thumb_path;
     }
