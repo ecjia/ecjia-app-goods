@@ -28,6 +28,10 @@ class CheckReviewStatus implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
+        if (is_array($value)) {
+            return $builder->whereIn('goods.review_status', $value);
+        }
+        
     	return $builder->where('goods.review_status', $value);//$value=1或者2
     }
 }
