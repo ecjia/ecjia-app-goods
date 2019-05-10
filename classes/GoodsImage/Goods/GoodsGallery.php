@@ -64,11 +64,8 @@ class GoodsGallery extends GoodsImage
         );
 
         $model = GoodsGalleryModel::create($data);
-        if (! empty($model)) {
-            return new ecjia_error('upload_gallery_image_fail', __('商品相册上传失败', 'goods'));
-        }
 
-        return true;
+        return $model;
     }
 
 }
