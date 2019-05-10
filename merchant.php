@@ -305,7 +305,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('ur_here', __('售罄商品列表（SPU）', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('售罄商品列表（SPU）', 'goods')));
 		
-		$store_id   = intval($this->request->input('store_id', 0));
+		$store_id 	= intval($_SESSION['store_id']);
 		$list_type  = intval($this->request->input('type', 0));
 		$page       = intval($this->request->input('page', 1));
 			
@@ -385,7 +385,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('ur_here', __('下架商品列表（SPU）', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('下架商品列表（SPU）', 'goods')));
 	
-		$store_id   = intval($this->request->input('store_id', 0));
+		$store_id 	= intval($_SESSION['store_id']);
 		$list_type  = intval($this->request->input('type', 0));
 		$page       = intval($this->request->input('page', 1));
 		 
@@ -463,7 +463,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('ur_here', __('审核商品列表（SPU）', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('审核商品列表（SPU）', 'goods')));
 	
-		$store_id   = intval($this->request->input('store_id', 0));
+		$store_id 	= intval($_SESSION['store_id']);
 		$list_type  = intval($this->request->input('type', 0));
 		$page       = intval($this->request->input('page', 1));
 		 
