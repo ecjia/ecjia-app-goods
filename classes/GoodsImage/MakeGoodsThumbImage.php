@@ -35,11 +35,11 @@ class MakeGoodsThumbImage
     public function getExtension()
     {
         if (is_null($this->extension)) {
-            $ext = RC_File::extension($this->path);
+            $ext = pathinfo($this->path, PATHINFO_EXTENSION);
             if ($ext) {
                 $this->extension = $ext;
             } else {
-                $this->extension = 'png';
+                $this->extension = 'jpg';
             }
         }
 
