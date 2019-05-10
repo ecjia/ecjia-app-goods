@@ -8,7 +8,6 @@
 
 namespace Ecjia\App\Goods\GoodsImage\Format;
 
-use Ecjia\App\Goods\GoodsImage\GoodsImage;
 use RC_Time;
 
 class GoodsImageFormatted
@@ -17,7 +16,7 @@ class GoodsImageFormatted
     protected $root_dir = 'images/';
 
     /**
-     * @var GoodsImage
+     * @var \Ecjia\App\Goods\GoodsImage\Goods\GoodsImage
      */
     protected $goods_image;
 
