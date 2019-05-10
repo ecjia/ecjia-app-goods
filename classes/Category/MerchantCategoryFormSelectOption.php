@@ -61,9 +61,9 @@ class MerchantCategoryFormSelectOption
 
     }
 
-    public static function buildTopCategorySelectOption()
+    public static function buildTopCategorySelectOption($store_id)
     {
-        $cat_list = (new \Ecjia\App\Goods\Category\MerchantCategoryCollection())->getTopCategories();
+        $cat_list = (new \Ecjia\App\Goods\Category\MerchantCategoryCollection($store_id))->getTopCategories();
 
         return new static($cat_list);
     }

@@ -16,11 +16,15 @@ use Royalcms\Component\Support\Collection;
 class MerchantCategoryCollection
 {
 
+    protected $store_id;
+
     protected $category_id;
 
 
-    public function __construct($category_id = 0)
+    public function __construct($store_id, $category_id = 0)
     {
+        $this->store_id = $store_id;
+
         $this->category_id = $category_id;
     }
 
@@ -31,7 +35,7 @@ class MerchantCategoryCollection
      */
     protected function queryAllCategories()
     {
-        $cache_key = 'query_all_categories';
+        $cache_key = 'query_all_merchant_categories' . $this->store_id;
 
         $collection = ecjia_cache('goods')->get($cache_key);
 

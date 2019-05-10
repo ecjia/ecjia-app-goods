@@ -20,9 +20,9 @@ class MerchantCategoryGoodsNumber
      *
      * @return \Royalcms\Component\Support\Collection
      */
-    public static function getGoodsNumberWithCatId()
+    public static function getGoodsNumberWithCatId($store_id)
     {
-        $cache_key = 'query_all_categories_every_goods_count';
+        $cache_key = 'query_merchant_all_categories_every_goods_count' . $store_id;
 
         $collection = ecjia_cache('goods')->get($cache_key);
 
@@ -38,11 +38,13 @@ class MerchantCategoryGoodsNumber
                 ->groupBy('merchant_cat_id');
 
 
-            $collection2 = GoodsCatModel::select('goods_cat.cat_id', 'goods_cat.goods_id')
-                ->leftJoin('goods', 'goods.goods_id', '=', 'goods_cat.goods_id')
-                ->where('goods.is_delete', 0)
-                ->get()
-                ->groupBy('cat_id');
+//            $collection2 = GoodsCatModel::select('goods_cat.cat_id', 'goods_cat.goods_id')
+//                ->leftJoin('goods', 'goods.goods_id', '=', 'goods_cat.goods_id')
+//                ->where('goods.is_delete', 0)
+//                ->get()
+//                ->groupBy('cat_id');
+
+            $collection2 = collect();
 
 
             $collection = self::countGoodsNumber($collection1, $collection2);
@@ -57,9 +59,9 @@ class MerchantCategoryGoodsNumber
      *
      * @return \Royalcms\Component\Support\Collection
      */
-    public static function getOnsaleGoodsNumberWithCatId()
+    public static function getOnsaleGoodsNumberWithCatId($store_id)
     {
-        $cache_key = 'query_onsale_categories_every_goods_count';
+        $cache_key = 'query_merchant_onsale_categories_every_goods_count' . $store_id;
 
         $collection = ecjia_cache('goods')->get($cache_key);
 
@@ -74,12 +76,13 @@ class MerchantCategoryGoodsNumber
                 ->get()
                 ->groupBy('cat_id');
 
-            $collection2 = GoodsCatModel::select('goods_cat.cat_id', 'goods_cat.goods_id')
-                ->leftJoin('goods', 'goods.goods_id', '=', 'goods_cat.goods_id')
-                ->where('goods.is_delete', 0)
-                ->where('goods.is_on_sale', 1)
-                ->get()
-                ->groupBy('cat_id');
+//            $collection2 = GoodsCatModel::select('goods_cat.cat_id', 'goods_cat.goods_id')
+//                ->leftJoin('goods', 'goods.goods_id', '=', 'goods_cat.goods_id')
+//                ->where('goods.is_delete', 0)
+//                ->where('goods.is_on_sale', 1)
+//                ->get()
+//                ->groupBy('cat_id');
+            $collection2 = collect();
 
             $collection = self::countGoodsNumber($collection1, $collection2);
 
