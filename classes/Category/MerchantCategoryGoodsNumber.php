@@ -9,7 +9,6 @@
 namespace Ecjia\App\Goods\Category;
 
 
-use Ecjia\App\Goods\Models\GoodsCatModel;
 use Ecjia\App\Goods\Models\GoodsModel;
 
 class MerchantCategoryGoodsNumber
@@ -34,6 +33,7 @@ class MerchantCategoryGoodsNumber
              */
             $collection1 = GoodsModel::select('merchant_cat_id', 'goods_id')
                 ->where('is_delete', 0)
+                ->where('store_id', $store_id)
                 ->get()
                 ->groupBy('merchant_cat_id');
 
@@ -73,6 +73,7 @@ class MerchantCategoryGoodsNumber
             $collection1 = GoodsModel::select('merchant_cat_id', 'goods_id')
                 ->where('is_delete', 0)
                 ->where('is_on_sale', 1)
+                ->where('store_id', $store_id)
                 ->get()
                 ->groupBy('cat_id');
 
