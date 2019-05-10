@@ -200,7 +200,7 @@ class admin extends ecjia_admin {
         
         $input['is_real'] 	= 1;
         $input['is_on_sale'] = 1;
-        $input['check_review_status'] = 3;
+        $input['check_review_status'] = array(3, 5);
         $input['is_delete'] = 0;
 
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
@@ -344,7 +344,7 @@ class admin extends ecjia_admin {
 		
 		$input['goods_number'] = 0;
 		$input['is_on_sale']   = 0;
-		$input['check_review_status'] = 3;
+		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] 	= 1;
 		
@@ -427,7 +427,7 @@ class admin extends ecjia_admin {
 		
 		$input['goods_number']  = array('>', 0);
 		$input['is_on_sale'] 	= 0;
-		$input['check_review_status'] = 3;
+		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] = 1;
 		
