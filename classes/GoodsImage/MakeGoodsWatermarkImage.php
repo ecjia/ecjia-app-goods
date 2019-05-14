@@ -143,7 +143,9 @@ class MakeGoodsWatermarkImage
         $image = RC_Image::make($this->path);
 
         //缩略图片大小
-        $image->resize($this->image_width, $this->image_height);
+        $image->resize($this->image_width, $this->image_height, function ($constraint) {
+            $constraint->upsize();
+        });
 
         if (!empty($this->watermark)) {
             // 插入水印, 水印位置在原图片的右下角

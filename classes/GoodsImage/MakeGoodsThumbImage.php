@@ -64,7 +64,9 @@ class MakeGoodsThumbImage
     public function make()
     {
         // 修改指定图片的大小
-        $image = RC_Image::make($this->path)->resize($this->thumb_width, $this->thumb_height);
+        $image = RC_Image::make($this->path)->resize($this->thumb_width, $this->thumb_height, function ($constraint) {
+            $constraint->upsize();
+        });
 
         $data = $image->encode($this->getExtension(), 75);
 
