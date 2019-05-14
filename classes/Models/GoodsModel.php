@@ -188,7 +188,43 @@ class GoodsModel extends Model
     {
         return $this->hasMany('Ecjia\App\Goods\Models\FavourableActivityModel', 'act_range_ext', 'goods_id');
     }
+    
+    /**
+     * 一对一
+     * 商品平台分类模型信息
+     */
+    public function category_model()
+    {
+    	return $this->belongsTo('Ecjia\App\Goods\Models\CategoryModel', 'cat_id', 'cat_id');
+    }
 
+    /**
+     * 一对一
+     * 商品绑定的规格模板模型信息
+     */
+    public function goods_type_specification_model()
+    {
+        return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'specification_id', 'cat_id');
+    }
+    
+    /**
+     * 一对一
+     * 商品绑定的参数模板模型信息
+     */
+    public function goods_type_parameter_model()
+    {
+        return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'parameter_id', 'cat_id');
+    }
+    
+    /**
+     * 一对一
+     * 商品关联的品牌模型信息
+     */
+    public function brand_model()
+    {
+    	return $this->belongsTo('Ecjia\App\Goods\Models\BrandModel', 'brand_id', 'brand_id');
+    }
+    
     /**
      * 将缓存数组添加至创建缓存数组（用于商品列表）
      * @param $cache_key
