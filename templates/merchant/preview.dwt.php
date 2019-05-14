@@ -29,15 +29,6 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-body">
-			<div class="col-lg-12">
-				<form class="form-inline pull-right" method="post" action="{url path='goods/merchant/preview'}" name="searchForm" data-id="{$goods.goods_id}">
-					<div class="form-group">
-						<input class="form-control" type="text" name="keywords" value="{$goods.goods_id}" placeholder="{t domain="goods"}请输入商品ID或货号{/t}"/>
-					</div>
-					<button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> {t domain="goods"}搜索{/t}</button>
-				</form>
-			</div>
-			
 			<div id="detail">
 				<div class="tm-detail-meta tm-clear">
 					<div class="tm-clear">
@@ -64,27 +55,34 @@
 							    	</dl>
 							    	
 							    	{if $goods.is_promote_now}
-							    	<dl class="tm-promo-panel tm-promo-cur">
-								     	<dt class="tb-metatit">{t domain="goods"}促销价格{/t}</dt>
-								      	<dd>
-								        	<div class="tm-promo-price">
-								          		<em class="tm-yen">¥</em>
-								          		<span class="tm-price">{$goods.promote_price}</span>&nbsp;&nbsp;
-								          	</div>
-								      	</dd>
-							    	</dl>
-							    	
-							    	<dl class="tm-promo-panel tm-promo-cur">
-								     	<dt class="tb-metatit">{t domain="goods"}促销时间{/t}</dt>
-								      	<dd>
-								          	<span class="tm-price">{$goods.promote_start_time} {t domain="goods"}至{/t} {$goods.promote_end_time}</span>
-								      	</dd>
-							    	</dl>
+								    	<dl class="tm-promo-panel tm-promo-cur">
+									     	<dt class="tb-metatit">{t domain="goods"}促销价格{/t}</dt>
+									      	<dd>
+									        	<div class="tm-promo-price">
+									          		<em class="tm-yen">¥</em>
+									          		<span class="tm-price">{$goods.promote_price}</span>&nbsp;&nbsp;
+									          	</div>
+									      	</dd>
+								    	</dl>
+								    	
+								    	<dl class="tm-promo-panel tm-promo-cur">
+									     	<dt class="tb-metatit">{t domain="goods"}倒计时{/t}</dt>
+									      	<dd>
+									          	<span class="tm-price">{$goods.promote_start_time} {t domain="goods"}至{/t} {$goods.promote_end_time}</span>
+									      	</dd>
+								    	</dl>
 							    	{/if}
 							  	</div>
 							  	<div class="tb-key">
 							    	<div class="tb-skin">
 							      		<div class="tb-sku">
+							      			<dl class="tb-amount tm-clear">
+							          			<dt class="tb-metatit">{t domain="goods"}成本价{/t}</dt>
+							          			<dd id="J_Amount">
+										            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.cost_price}</em>
+										            <span id="J_StockTips"></span>
+							          			</dd>
+							        		</dl>
 							      			<dl class="tb-amount tm-clear">
 							          			<dt class="tb-metatit">{t domain="goods"}商品货号{/t}</dt>
 							          			<dd id="J_Amount">
@@ -92,41 +90,45 @@
 										            <span id="J_StockTips"></span>
 							          			</dd>
 							        		</dl>
-							        		<dl class="tb-amount tm-clear">
-							          			<dt class="tb-metatit">{t domain="goods"}数量{/t}</dt>
-							          			<dd id="J_Amount">
-										            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{t domain="goods"}库存{/t}{$goods.goods_number}{t domain="goods"}件{/t}</em>
-										            <span id="J_StockTips"></span>
-							          			</dd>
-							        		</dl>
-							        		<dl class="tb-amount tm-clear">
-							          			<dt class="tb-metatit">{t domain="goods"}警告数量{/t}</dt>
-							          			<dd id="J_Amount">
-							            			<em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.warn_number}{t domain="goods"}件{/t}</em>
-							            			<span id="J_StockTips"></span>
-							          			</dd>
-							        		</dl>
+							        		{if $goods.goods_barcode}
+								        		<dl class="tb-amount tm-clear">
+								          			<dt class="tb-metatit">{t domain="goods"}条形码{/t}</dt>
+								          			<dd id="J_Amount">
+											            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_barcode}</em>
+											            <span id="J_StockTips"></span>
+								          			</dd>
+								        		</dl>
+								        	{/if}
+								        	{if $goods.goods_weight gt 0}
+								        		<dl class="tb-amount tm-clear">
+								          			<dt class="tb-metatit">{t domain="goods"}商品重量{/t}</dt>
+								          			<dd id="J_Amount">
+											            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_weight}{if $goods.weight_unit eq 1}克{else}千克{/if}</em>
+											            <span id="J_StockTips"></span>
+								          			</dd>
+								        		</dl>
+							        		{/if}
 											<dl class="tb-amount tm-clear">
-											    <dt class="tb-metatit">{t domain="goods"}商品重量{/t}</dt>
+											    <dt class="tb-metatit">{t domain="goods"}平台分类{/t}</dt>
 											    <dd id="J_Amount">
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_weight}</em>
-											        <span id="J_StockTips"></span>
-											    </dd>
-											</dl>
-											<dl class="tb-amount tm-clear">
-											    <dt class="tb-metatit">{t domain="goods"}商品分类{/t}</dt>
-											    <dd id="J_Amount">
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$cat_name}</em>
+											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->category_model}{$goods->category_model->cat_name}{/if}</em>
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">{t domain="goods"}店铺分类{/t}</dt>
 											    <dd id="J_Amount">
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$merchant_cat_name}</em>
+											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->merchants_category_model}{$goods->merchants_category_model->cat_name}{/if}</em>
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>
+											<dl class="tb-amount tm-clear">
+							          			<dt class="tb-metatit">{t domain="goods"}商品排序{/t}</dt>
+							          			<dd id="J_Amount">
+							            			<em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.sort_order}</em>
+							            			<span id="J_StockTips"></span>
+							          			</dd>
+							        		</dl>
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">{t domain="goods"}添加时间{/t}</dt>
 											    <dd id="J_Amount">
@@ -135,35 +137,20 @@
 											    </dd>
 											</dl>
 											<dl class="tb-amount tm-clear">
-											    <dt class="tb-metatit">{t domain="goods"}更新时间{/t}</dt>
+											    <dt class="tb-metatit">{t domain="goods"}库存{/t}</dt>
 											    <dd id="J_Amount">
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.last_update}</em>
+											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_number}</em>
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>
-											
 											<dl class="tb-amount tm-clear">
-											    <dt class="tb-metatit">{t domain="goods"}加入推荐{/t}</dt>
-											    <dd id="J_Amount">
-											    	{t domain="goods"}精品{/t}
-											        <em id="J_EmStock" class="tb-hidden m_r5" style="display: inline;">
-											        	{if $goods.store_best}
-											            <i class="fa fa-check"></i>{else}<i class="fa fa-times"></i>
-											            {/if}
-											        </em>
-											        {t domain="goods"}新品{/t}
-											        <em id="J_EmStock" class="tb-hidden m_r5" style="display: inline;">
-											        	{if $goods.store_new}
-											            <i class="fa fa-check"></i>{else}<i class="fa fa-times"></i>
-											            {/if}
-											        </em>
-											        {t domain="goods"}热销{/t}
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">
-											        	{if $goods.store_hot}
-											            <i class="fa fa-check"></i>{else}<i class="fa fa-times"></i>
-											            {/if}
-											        </em>
-											    </dd>
+												{if $goods.is_on_sale eq '1'}
+													<a class="btn btn-info off-sale" data-trigger="goods_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" data-id="{$goods.goods_id}" refresh-url="{RC_Uri::url('goods/merchant/preview')}&id={$goods.goods_id}">{t domain="goods"}商品下架{/t}</a>
+													<a target="_blank" class="btn btn-info" href='{url path="goods/merchant/pc_preview" args="id={$goods.goods_id}"}'>{t domain='goods'}PC效果{/t}</a>
+													<a target="_blank" class="btn btn-info" href='{url path="goods/merchant/h5_preview" args="id={$goods.goods_id}"}'>{t domain='goods'}手机端效果{/t}</a>
+												{else}
+													<a class="btn btn-info on-sale" data-trigger="goods_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" data-id="{$goods.goods_id}" refresh-url="{RC_Uri::url('goods/merchant/preview')}&id={$goods.goods_id}">{t domain="goods"}商品上架{/t}</a>
+												{/if}
 											</dl>
 										</div>
 							    	</div>
@@ -198,6 +185,20 @@
 							</div>
 						</div>
 					</div>
+					
+					{if $product_list}
+					<!-- #BeginLibraryItem "/library/goods_products.lbi" --><!-- #EndLibraryItem -->
+					{/if}
+					
+					<div class="goods-pra">
+						<div class="pra">参数
+							<div class="pra-handle">
+								<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
+							</div>
+						</div>
+						<hr>
+					</div>
+					
 					
 					{if $attr_list}
 					<div id="attributes">

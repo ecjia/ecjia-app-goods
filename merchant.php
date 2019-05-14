@@ -585,7 +585,7 @@ class merchant extends ecjia_merchant {
 		    return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
 		}
 		
-		RC_Hook::do_action('goods_merchant_priview_handler', $goods_id);
+		//RC_Hook::do_action('goods_merchant_priview_handler', $goods_id);
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goods')));
 		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
@@ -603,8 +603,10 @@ class merchant extends ecjia_merchant {
 		$this->assign('action_linkedit', array('text' => __('商品编辑', 'goods'), 'href' => RC_Uri::url('goods/merchant/edit', array('goods_id' => $goods_id))));
 		$this->assign('action_link', array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')));
 		
-		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->orWhere('goods_sn', $goods_id)->first();
+		//$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->orWhere('goods_sn', $goods_id)->first();
 
+		$goods = Ecjia\App\Goods\Models\GoodsModel::where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->orWhere('goods_sn', $goods_id)->first();
+		
 		if (empty($goods)) {
 			return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品列表', 'goods'),'href'=>RC_Uri::url('goods/merchant/init')))));
 		}
@@ -612,10 +614,23 @@ class merchant extends ecjia_merchant {
 		if (!empty($goods['goods_desc'])) {
 			$goods['goods_desc'] = stripslashes($goods['goods_desc']);
 		}
+		
+		//商品是否在促销
+		$time = RC_Time::gmtime();
+		$goods['is_promoting'] = 0;
+		if (($goods['promote_start_date'] <= $time && $goods['promote_end_date'] >= $time) && $goods['is_promote'] == '1' && $goods['promote_price'] > 0) {
+			$goods['is_promote_now'] = 1;
+		}
+		$goods['cost_price'] = ecjia_price_format($goods['cost_price'], false);
 
-		$cat_name = RC_DB::table('category')->where('cat_id', $goods['cat_id'])->pluck('cat_name');
-		$brand_name = RC_DB::table('brand')->where('brand_id', $goods['brand_id'])->pluck('brand_name');
-		$merchant_cat_name = RC_DB::table('merchants_category')->where('cat_id', $goods['merchant_cat_id'])->pluck('cat_name');
+// 		$cat_name = RC_DB::table('category')->where('cat_id', $goods['cat_id'])->pluck('cat_name');
+// 		$brand_name = RC_DB::table('brand')->where('brand_id', $goods['brand_id'])->pluck('brand_name');
+// 		$merchant_cat_name = RC_DB::table('merchants_category')->where('cat_id', $goods['merchant_cat_id'])->pluck('cat_name');
+
+// 		$goods['cat_name']	 		= $goods->category_model->cat_name;
+// 		$goods['brand_name'] 		= $goods->brand_model->brand_name;
+// 		$goods['merchant_cat_name']	= $goods->merchants_category_model->cat_name;
+		
 		$disk = RC_Filesystem::disk();
 		if (!$disk->exists(RC_Upload::upload_path($goods['goods_thumb'])) || empty($goods['goods_thumb'])) {
 			$goods['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
@@ -631,31 +646,34 @@ class merchant extends ecjia_merchant {
 			$goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
 		}
 		
-		$code = isset($_GET['extension_code']) ? 'virtual_card' : '';
-		$this->assign('code', $code);
-		
 		$images_url = RC_App::apps_url('statics/images', __FILE__);
 		$this->assign('images_url', $images_url);
 		
 		//商品相册
-		$goods_photo_list = RC_DB::table('goods_gallery')->where('goods_id', $goods['goods_id'])->get();
-		if (!empty($goods_photo_list)) {
-			$disk = RC_Filesystem::disk();
-			foreach ($goods_photo_list as $k => $v) {
-				if (!$disk->exists(RC_Upload::upload_path($v['img_url'])) || empty($v['img_url'])) {
-					$goods_photo_list[$k]['img_url'] = RC_Uri::admin_url('statics/images/nopic.png');
-				} else {
-					$goods_photo_list[$k]['img_url'] = RC_Upload::upload_url($v['img_url']);
-				}
+// 		$goods_photo_list = RC_DB::table('goods_gallery')->where('goods_id', $goods['goods_id'])->get();
+// 		if (!empty($goods_photo_list)) {
+// 			$disk = RC_Filesystem::disk();
+// 			foreach ($goods_photo_list as $k => $v) {
+// 				if (!$disk->exists(RC_Upload::upload_path($v['img_url'])) || empty($v['img_url'])) {
+// 					$goods_photo_list[$k]['img_url'] = RC_Uri::admin_url('statics/images/nopic.png');
+// 				} else {
+// 					$goods_photo_list[$k]['img_url'] = RC_Upload::upload_url($v['img_url']);
+// 				}
 		
-				if (!$disk->exists(RC_Upload::upload_path($v['thumb_url'])) || empty($v['thumb_url'])) {
-					$goods_photo_list[$k]['thumb_url'] = RC_Uri::admin_url('statics/images/nopic.png');
-				} else {
-					$goods_photo_list[$k]['thumb_url'] = RC_Upload::upload_url($v['thumb_url']);
-				}
-			}
-		}
+// 				if (!$disk->exists(RC_Upload::upload_path($v['thumb_url'])) || empty($v['thumb_url'])) {
+// 					$goods_photo_list[$k]['thumb_url'] = RC_Uri::admin_url('statics/images/nopic.png');
+// 				} else {
+// 					$goods_photo_list[$k]['thumb_url'] = RC_Upload::upload_url($v['thumb_url']);
+// 				}
+// 			}
+// 		}
+
+		$goods_photo_list = $this->get_goods_gallery($goods);
 		$this->assign('goods_photo_list', $goods_photo_list);
+		
+		//商品属性（既商品货品）
+		$product_list = $this->goods_products($goods);
+		$this->assign('product_list', $product_list);
 		
 		//商品属性
 		$attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
@@ -663,14 +681,26 @@ class merchant extends ecjia_merchant {
 		
 		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
 		/* 取得分类、品牌 */
-		$this->assign('goods_cat_list', merchant_cat_list());
-		$this->assign('brand_list', get_brand_list());
+// 		$this->assign('goods_cat_list', merchant_cat_list());
+// 		$this->assign('brand_list', get_brand_list());
 		$this->assign('goods', $goods);
-		$this->assign('cat_name', $cat_name);
-		$this->assign('merchant_cat_name', $merchant_cat_name);
-		$this->assign('brand_name', $brand_name);
+// 		$this->assign('cat_name', $cat_name);
+// 		$this->assign('merchant_cat_name', $merchant_cat_name);
+// 		$this->assign('brand_name', $brand_name);
 		
 		$this->display('preview.dwt');
+	}
+	
+	public function h5_preview()
+	{
+		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
+		RC_Hook::do_action('goods_merchant_h5_priview_handler', $goods_id);
+	}
+	
+	public function pc_preview()
+	{
+		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
+		RC_Hook::do_action('goods_merchant_pc_priview_handler', $goods_id);
 	}
 
 	/**
@@ -3761,6 +3791,57 @@ class merchant extends ecjia_merchant {
 		}
 	
 		return $rows;
+	}
+	
+	private function goods_products($goods)
+	{
+		$product_list = [];
+		if ($goods->products_collection) {
+			$product_list = $goods->products_collection->map(function ($item) use ($goods) {
+					if (empty($item->product_name)) {
+						$item['product_name'] = $goods->goods_name;
+					}
+					$item['product_thumb'] = empty($item->product_thumb) ?  RC_Upload::upload_url($goods->goods_thumb) :  RC_Upload::upload_url($item->product_thumb);
+					$item['product_shop_price'] = $item->product_shop_price <= 0 ? ecjia_price_format($goods->shop_price, false) : ecjia_price_format($item->product_shop_price, false);
+					$item['product_attr_value'] = '';
+					if ($item->goods_attr) {
+						$goods_attr = explode('|', $item->goods_attr);
+						if ($goods->goods_attr_collection) {
+							$product_attr_value = $goods->goods_attr_collection->whereIn('goods_attr_id', $goods_attr)->sortBy('goods_attr_id')->lists('attr_value');
+							$product_attr_value = $product_attr_value->implode('/');
+							$item['product_attr_value'] = $product_attr_value;
+						}
+					}
+					return $item;
+			});
+			$product_list = $product_list->toArray();
+		}
+		
+		return $product_list;
+	}
+	
+	private function get_goods_gallery($goods)
+	{
+		$gallery = [];
+		if ($goods->goods_gallery_collection) {
+			$disk = RC_Filesystem::disk();
+			$gallery = $goods->goods_gallery_collection->map(function ($item) use ($goods, $disk) {
+				if (!$disk->exists(RC_Upload::upload_path($item['img_url'])) || empty($item['img_url'])) {
+					$item['img_url'] = RC_Uri::admin_url('statics/images/nopic.png'); 
+				} else {
+					$item['img_url'] = RC_Upload::upload_url($item['img_url']);
+				}
+				
+				if (!$disk->exists(RC_Upload::upload_path($item['thumb_url'])) || empty($item['thumb_url'])) {
+					$item['thumb_url'] = RC_Uri::admin_url('statics/images/nopic.png');
+				} else {
+					$item['thumb_url'] = RC_Upload::upload_url($item['thumb_url']);
+				}
+				return $item;
+			});
+			$gallery = $gallery->toArray();
+		}
+		return $gallery;
 	}
 }
 

@@ -594,6 +594,7 @@
 	app.preview = {
 		init: function() {
 			app.preview.goods_search();
+			app.preview.goods_on_sale();
 
 			var browse = window.navigator.appName.toLowerCase();
 			var MyMar;
@@ -681,7 +682,44 @@
 					id = $this.find('[name="keywords"]').val();
 				ecjia.pjax(url + '&id=' + id);
 			});
+		},
+		
+		goods_on_sale: function() {
+			$('[data-trigger="goods_on_sale"]').on('click', function(e) {
+				e.preventDefault();
+				var $this = $(this);
+				var url = $this.attr('data-url');
+				var id = $this.attr('data-id');
+				var val = $this.hasClass('off-sale') ? 0 : 1;
+				var type = $this.attr('data-type') ? $this.attr('data-type') : "POST";
+				var pjaxurl = $this.attr('refresh-url');
+
+				var option = {
+					obj: $this,
+					url: url,
+					id: id,
+					val: val,
+					type: type
+				};
+
+				$.ajax({
+					url: option.url,
+					data: {
+						id: option.id,
+						val: option.val
+					},
+					type: option.type,
+					dataType: "json",
+					success: function(data) {
+						data.content ? option.obj.removeClass('off-sale').addClass('on-sale') : option.obj.removeClass('on-sale').addClass('off-sale');
+						ecjia.pjax(pjaxurl, function() {
+							ecjia.merchant.showmessage(data);
+						});
+					}
+				});
+			})
 		}
+		
 	};
 
 	/* 货品列表 */
