@@ -340,27 +340,30 @@ class MerchantGoodsAttr {
     */
 	public static function build_merchant_attr_html($cat_id, $goods_id = 0) {
 		$attr = self::get_cat_attr_list($cat_id, $goods_id);
+		
 		$html = '';
 		$spec = 0;
 		if (!empty($attr)) {
 			foreach ($attr as $key => $val) {
 				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
-				
-				$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
-				if ($val ['attr_input_type'] == 0) {
-					$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="attr_value_list[]" type="text" value="' . htmlspecialchars($val ['attr_value']) . '" size="40" /></div> ';
-				} elseif ($val ['attr_input_type'] == 2) {
-					$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea></div>';
-				} else {
-					$attr_values = explode("\n", $val ['attr_values']);
-					if($val['attr_type'] == 2) {
+				if ($val ['attr_input_type'] == 0) {//手工录入
+					$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+					$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="'.$val[attr_id].'_attr_value_list[]" type="text" value="' . htmlspecialchars($val ['attr_value']) . '" size="40" /></div> ';
+				} elseif ($val ['attr_input_type'] == 2) {//多行文本框
+					$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+					$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="'.$val[attr_id].'_attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea></div>';
+				} else {//从下面列表中选择
+					$attr_values = explode("\n", $val['attr_values']);
+					if($val['attr_type'] == 2) {//复选属性checkbox
+						$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
 						foreach ($attr_values as $opt) {
 							$opt = trim(htmlspecialchars($opt));
-							$html .= '<input id="'.$opt.'" type="checkbox" name="attr_value_list[]" value="'.$opt.'" />';
+							$html .= ($val ['attr_value'] != $opt) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" checked="true"/>';
 							$html .= '<label for="'.$opt.'">'.$opt.'</label>';
 						}
-					} else {
-						$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="attr_value_list[]" autocomplete="off">';
+					} else {//唯一参数
+						$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+						$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="'.$val[attr_id].'_attr_value_list[]" autocomplete="off">';
 						$html .= '<option value="">' . __('请选择...', 'goods') . '</option>';
 						foreach ($attr_values as $opt) {
 							$opt = trim(htmlspecialchars($opt));
@@ -403,7 +406,7 @@ class MerchantGoodsAttr {
 		$row = $dbview
 		    ->select(RC_DB::raw('a.attr_id'), RC_DB::raw('a.attr_name'), RC_DB::raw('a.attr_input_type'), RC_DB::raw('a.attr_type'), RC_DB::raw('a.attr_values'), RC_DB::raw('ga.attr_value'), RC_DB::raw('ga.attr_price'))
 		    ->where(RC_DB::raw('a.cat_id'), $cat_id)
-			->orderby(RC_DB::raw('ga.goods_attr_id'), 'asc')
+			->orderby(RC_DB::raw('a.attr_id'), 'asc')
 			->get();
 		
 		return $row;
