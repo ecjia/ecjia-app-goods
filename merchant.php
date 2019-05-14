@@ -2812,7 +2812,11 @@ class merchant extends ecjia_merchant {
 		}
 		$this->assign('goods_info', $goods_info);
 		
-		$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('parameter', $goods_info['merchant_cat_id']);
+		if(!empty($goods_info['parameter_id'])) {
+			$template_id = $goods_info['parameter_id'];
+		} else {
+			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('parameter', $goods_info['merchant_cat_id']);
+		}
 		$this->assign('template_id', $template_id);
 		
 		if ($template_id) {
@@ -2889,7 +2893,6 @@ class merchant extends ecjia_merchant {
 	 * 商品规格
 	 */
 	public function edit_goods_specification() {
-
 		$this->admin_priv('goods_update');
 		
 		$this->assign('tags', $this->tags);
@@ -2909,7 +2912,11 @@ class merchant extends ecjia_merchant {
 		}
 		$this->assign('goods_info', $goods_info);
 		
-		$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('specification', $goods_info['merchant_cat_id']);
+		if(!empty($goods_info['specification_id'])) {
+			$template_id = $goods_info['specification_id'];
+		} else {
+			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('specification', $goods_info['merchant_cat_id']);
+		}
 		$this->assign('template_id', $template_id);
 		
 		if ($template_id) {
