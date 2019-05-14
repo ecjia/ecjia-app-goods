@@ -335,10 +335,10 @@ class MerchantGoodsAttr {
 	}
 	
 	/**
-	 * 根据参数类型数组创建参数的表单
+	 * 根据参数类型数组创建属性的表单
 	 * 
     */
-	public static function build_merchant_attr_html($cat_id, $goods_id = 0) {
+	public static function build_parameter_html($cat_id, $goods_id = 0) {
 
 		$attr = self::get_cat_attr_list($cat_id, $goods_id);
 	
@@ -372,16 +372,36 @@ class MerchantGoodsAttr {
 							$html .= ($val['attr_value'][0] != $opt) ? '<option value="' . $opt . '">' . $opt . '</option>' : '<option value="' . $opt . '" selected="selected">' . $opt . '</option>';
 						}
 						$html .= '</select></div>';
-						
-// 						$html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5 f_l l_h30">' . __('属性价格', 'goods') . '</span>' . ' <div class="col-lg-5 p_l0"><input class="form-control" type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" /></div>' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
-// 						if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
-// 							$html .= ($spec != $val ['attr_id']) ? "<a class='m_l5 l_h30' href='javascript:;' data-toggle='clone-obj' data-parent='.form-group'><i class='fa fa-plus'></i></a>" : "<a class='m_l5 l_h30' href='javascript:;' data-trigger='toggleSpec'><i class='fa fa-times'></i></a>";
-// 							$spec = $val ['attr_id'];
-// 						}
 					}
-					
 				}
 				
+				$html .= '</div></div>';
+			}
+		}
+		$html .= '';
+		return $html;
+	}
+	
+	/**
+	 * 根据规格类型数组创建参数的表单
+	 *
+	 */
+	public static function build_specification_html($cat_id, $goods_id = 0) {
+	
+		$attr = self::get_cat_attr_list($cat_id, $goods_id);
+	
+		$html = '';
+		$spec = 0;
+		if (!empty($attr)) {
+			foreach ($attr as $key => $val) {
+				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
+				$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
+				$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+				foreach ($attr_values as $opt) {
+					$opt = trim(htmlspecialchars($opt));
+					$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
+					$html .= '<label for="'.$opt.'">'.$opt.'</label>';
+				}
 				$html .= '</div></div>';
 			}
 		}
