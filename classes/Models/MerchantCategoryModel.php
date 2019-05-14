@@ -33,5 +33,22 @@ class MerchantCategoryModel extends Model
 	];
 	
 	
+	/**
+	 * 一对一
+	 * 商家商品分类绑定的规格模板模型信息
+	 */
+	public function goods_type_specification_model()
+	{
+		return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'specification_id', 'cat_id');
+	}
+	
+	/**
+	 * 一对一
+	 * 商家商品分类绑定的参数模板模型信息
+	 */
+	public function goods_type_parameter_model()
+	{
+		return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'parameter_id', 'cat_id');
+	}
 	
 }
