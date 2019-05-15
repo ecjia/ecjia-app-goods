@@ -2893,6 +2893,46 @@ class admin extends ecjia_admin {
 	
 	
 	/**
+	 * 审核商品
+	 */
+	public function check_review() {
+		$this->admin_priv('goods_update');
+		
+		$goods_id       = intval($_POST['goods_id']);
+		$review_content = trim($_POST['review_content']);
+		$review_status  = intval($_POST['review_status']);
+
+		if (empty($review_content)) {
+			return $this->showmessage(__('操作备注不能为空', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR,array('url' => RC_Uri::url('goods/admin/check')));
+		}
+	
+		$data = array(
+			'review_status'	 => $review_status,
+			'review_content' =>	$review_content
+		);
+		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+		
+		$data_action = array(
+				'goods_id'				=> $goods_id,
+				'action_user_type'		=> 'admin',
+				'action_user_id'		=> $_SESSION['admin_id'],
+				'action_user_name'		=> $_SESSION['admin_name'],
+				'status'	            => $review_status,
+				'action_note'			=> $review_content,
+				'add_time'				=> RC_Time::gmtime(),
+		);
+		RC_DB::table('goods_review_log')->insertGetId($data_action);
+		if($review_status === 3) {
+			return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/init')));
+		} else {
+			return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/check', array('type'=>1))));
+		}
+		
+	}
+	
+	
+	
+	/**
 	 * 商品规格重组集合
 	 * @param array $options
 	 * @return array
