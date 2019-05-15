@@ -14,6 +14,12 @@ use RC_DB;
 use RC_Api;
 use ecjia_admin;
 
+/**
+ * 复制店铺中商品规格
+ *
+ * Class StoreGoodsSpecificationDuplicate
+ * @package Ecjia\App\Goods\StoreDuplicateHandlers
+ */
 class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
 {
 
