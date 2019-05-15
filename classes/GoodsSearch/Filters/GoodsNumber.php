@@ -30,11 +30,11 @@ class GoodsNumber implements FilterInterface
     public static function apply(Builder $builder, $value)
     {
     	if(is_array($value)) {
-    		list($expression, $value) = $value;
+    		list($expression, $new_value) = $value;
     	} else {
     		$expression = '=';
+    		$new_value  = $value;
     	}
-    	return $builder->where('goods.goods_number', $expression, $value);
+    	return $builder->where('goods.goods_number', $expression, $new_value);
     }
-
 }
