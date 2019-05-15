@@ -66,9 +66,9 @@
 								    	</dl>
 								    	
 								    	<dl class="tm-promo-panel tm-promo-cur">
-									     	<dt class="tb-metatit">{t domain="goods"}倒计时{/t}</dt>
+									     	<dt class="tb-metatit">{t domain="goods"}促销有效期{/t}</dt>
 									      	<dd>
-									          	<span class="tm-price">{$goods.promote_start_time} {t domain="goods"}至{/t} {$goods.promote_end_time}</span>
+									          	<span class="tm-price"><span class="ecjiafc-red">{$goods.formated_promote_start_date}</span> {t domain="goods"}至{/t} <span class="ecjiafc-red">{$goods.formated_promote_end_date}</span></span>
 									      	</dd>
 								    	</dl>
 							    	{/if}
@@ -191,7 +191,7 @@
 					{/if}
 					
 					<div class="goods-pra">
-						<div class="pra">参数
+						<div class="pra">{t domain="goods"}参数{/t}
 							<div class="pra-handle">
 								<a target="_blank" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>
@@ -206,7 +206,7 @@
 						<!-- #BeginLibraryItem "/library/goods_group_parameter.lbi" --><!-- #EndLibraryItem -->
 					{/if}
 					<div class="goods-pra">
-						<div class="pra">图文详情
+						<div class="pra">{t domain="goods"}图文详情{/t}
 							<div class="pra-handle">
 								<a target="_blank" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>

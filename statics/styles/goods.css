@@ -188,6 +188,12 @@
 	font-size:17px;
 	padding-right:15px;
 }
+#detail .goods-name-style{
+	height: 40px;
+	line-height: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 
 #tbody {
 	width: 460px;
