@@ -112,13 +112,18 @@ class GoodsBasicInFo
     	$product_list = [];
     	if ($this->model->products_collection) {
     		$goods = $this->model;
-    		$product_list = $goods->products_collection->map(function ($item) use ($goods) {
+    		$time = \RC_Time::gmtime();
+    		$product_list = $goods->products_collection->map(function ($item) use ($goods, $time) {
     			if (empty($item->product_name)) {
     				$item['product_name'] = $goods->goods_name;
     			}
     			$item['product_thumb'] = empty($item->product_thumb) ?  \RC_Upload::upload_url($goods->goods_thumb) :  \RC_Upload::upload_url($item->product_thumb);
     			$item['product_shop_price'] = $item->product_shop_price <= 0 ? ecjia_price_format($goods->shop_price, false) : ecjia_price_format($item->product_shop_price, false);
     			$item['product_attr_value'] = '';
+    			$item['is_promote_now'] = 0 ;
+    			if (($goods->promote_start_date <= $time && $goods->promote_end_date >= $time) && $item->is_promote == '1' && $item->promote_price > 0) {
+    				$item['is_promote_now'] = 1;
+    			}
     			if ($item->goods_attr) {
     				$goods_attr = explode('|', $item->goods_attr);
     				if ($goods->goods_attr_collection) {
