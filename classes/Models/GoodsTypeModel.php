@@ -29,6 +29,13 @@ class GoodsTypeModel extends Model
 		'attr_group',
 	];
 	
-	
+	/**
+	 * 一对多
+	 * 规格/参数的属性集合
+	 */
+	public function attribute_collection()
+	{
+		return $this->hasMany('Ecjia\App\Goods\Models\AttributeModel', 'cat_id', 'cat_id');
+	}
 	
 }
