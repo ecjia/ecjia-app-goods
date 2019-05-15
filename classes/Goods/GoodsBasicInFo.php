@@ -51,7 +51,6 @@
 namespace Ecjia\App\Goods\Goods;
 
 use \Ecjia\App\Goods\Models\GoodsModel;
-use Guzzle\Common\Collection;
 
 class GoodsBasicInFo
 {
