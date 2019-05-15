@@ -74,11 +74,12 @@
 								</div> 
 								
 								<span class="help-block m_t10">注：商品规格设置后，商品的价格、货号、库存、条形码都以商品规格属性为准</span>
+								
 								<div class="template_box">
 									{if $has_template}
 										<div class="box_content">
 											<div class="form-group">
-												<label class="control-label col-lg-2 ">{t domain="goods"}参数模板：{/t}</label>
+												<label class="control-label col-lg-2 ">{t domain="goods"}规格模板：{/t}</label>
 												<div class="col-lg-6 l_h35">
 													{$template_info.cat_name}
 													<span class="m_l10">

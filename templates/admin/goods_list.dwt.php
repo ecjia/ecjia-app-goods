@@ -44,29 +44,22 @@
 <!-- </div> -->
 
 <div class="row-fluid batch">
-	<div class="btn-group f_l m_r5">
-		<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-			<i class="fontello-icon-cog"></i>{t domain='goods'}批量操作{/t}<span class="caret"></span>
-		</a>
-		<ul class="dropdown-menu batch-move" data-url="{RC_Uri::url('goods/admin/batch')}">
-			{if $action neq 'check'}
+	{if $action neq 'check'}
+		<div class="btn-group f_l m_r5">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="fontello-icon-cog"></i>{t domain='goods'}批量操作{/t}<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu batch-move" data-url="{RC_Uri::url('goods/admin/batch')}">
 				<li><a class="batch-best-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择设为精品的商品{/t}" href="javascript:;"> <i class="fontello-icon-star"></i>{t domain='goods'}设为精品{/t}</a></li>
 				<li><a class="batch-notbest-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择取消精品的商品{/t}" href="javascript:;"><i class="fontello-icon-star-empty"></i>{t domain='goods'}取消精品{/t}</a></li>
 				<li><a class="batch-new-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为新品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要设为新品的商品{/t}" href="javascript:;"> <i class="fontello-icon-flag"></i>{t domain='goods'}设为新品{/t}</a></li>
 				<li><a class="batch-notnew-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消新品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要取消新品的商品{/t}" href="javascript:;"> <i class="fontello-icon-flag-empty"></i>{t domain='goods'}取消新品{/t}</a></li>
 				<li><a class="batch-hot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为热销吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要设为热销的商品{/t}" href="javascript:;"> <i class="fontello-icon-thumbs-up-alt"></i>{t domain='goods'}设为热销{/t}</a></li>
 				<li><a class="batch-nothot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消热销吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要取消热销的商品{/t}" href="javascript:;"> <i class="fontello-icon-thumbs-up"></i>{t domain='goods'}取消热销{/t}</a></li>
-			{/if}
-			
-			{if $action eq 'check'}
-				<li><a class="batch-pass-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=pass&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要审核通过选中的商品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择需要修改审核状态的商品{/t}" href="javascript:;"> <i class="fontello-icon-ok-circled"></i>{t domain='goods'}审核通过{/t}</a></li>
-				<li><a class="batch-notpass-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_pass&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要不审核通过选中的商品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择需要修改审核状态的商品{/t}" href="javascript:;"> <i class="fontello-icon-cancel-circled"></i>{t domain='goods'}审核未通过{/t}</a></li>
-			{/if}
-			
-			<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=trash&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品放入回收站吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要移至回收站的商品{/t}" href="javascript:;"> <i class="fontello-icon-box"></i>{t domain='goods'}移至回收站{/t}</a></li>
-		</ul>
-	</div>
-
+				<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=trash&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品放入回收站吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要移至回收站的商品{/t}" href="javascript:;"> <i class="fontello-icon-box"></i>{t domain='goods'}移至回收站{/t}</a></li>
+			</ul>
+		</div>
+	{/if}
 	<form class="form-inline" action="{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}" method="post" name="filterForm">
 		<div class="screen f_l">
 			
@@ -170,16 +163,25 @@
 						<br/>
 						
 						<div class="edit-list">
-							<a class="data-pjax" href='{url path="goods/admin/edit" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
-							<a class="data-pjax" href='{url path="goods/admin/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品属性{/t}</a>&nbsp;|&nbsp;
-							<a class="data-pjax" href='{url path="goods/admin_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
-							<a class="data-pjax" href='{url path="goods/admin/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
-							<a class="data-pjax" href='{url path="goods/admin/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
+						
+							{if $goods.review_status neq 2}
 							<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
-							{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goods/admin/product_list" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
-							<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
-										data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
-							<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
+							{/if}
+							
+							{if $action neq 'check'}
+								<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
+								<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
+								data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
+								<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
+							{/if}
+							
+							{if $goods.review_status eq 1}
+								<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}审核{/t}</a>
+							{/if}
+							
+							{if $goods.review_status eq 2}
+								<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}查看审核{/t}</a>
+							{/if}
 						</div>
 					</td>	
 					{if $action neq 'check'}<td>{$goods.goods_sn}</td>{/if}

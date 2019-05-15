@@ -273,5 +273,140 @@ class GoodsAttr {
 
         return array_get($typeArr, $inputTypeValue);
     }
+    
+    /**
+     * 商品库商品根据分类获取[规格/参数]模板
+     */
+    public static function get_cat_template($type, $cat_id) {
+    	$template_id = 0;
+    	if ($type === 'parameter') {
+    		$template_id = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('parameter_id');
+    	} else {
+    		$template_id = RC_DB::table('category')->where('cat_id', $cat_id)->pluck('specification_id');
+    	}
+    	if (empty($template_id)) {
+    		$category_info = RC_DB::table('category')->where('cat_id', $cat_id)->first();
+    		if ($category_info['parent_id'] > 0) {
+    			$template_id = self::get_cat_template($type, $category_info['parent_id']);
+    		}
+    	}
+    	return $template_id;
+    }
+    
+
+    /**
+     * 获取[规格/参数]模板详细信息
+     *
+     */
+    public static function get_template_info($template_id) {
+    	$template_info = RC_DB::table('goods_type')->where('cat_id', $template_id)->first();
+    	
+    	return $template_info;
+    }
+    
+    /**
+     * 根据参数数组创建属性的表单
+     *
+     * @access public
+     * @param int $cat_id
+     *            分类编号
+     * @param int $goods_id
+     *            商品编号
+     * @return string
+     */
+    public static function goodslib_build_attr_html($cat_id, $goods_id = 0) {
+    	$attr = self::get_goodslib_cat_attr_list($cat_id, $goods_id);
+    	$html = '';
+    	$spec = 0;
+    
+    	if (!empty($attr)) {
+    		foreach ($attr as $key => $val) {
+    			$html .= "<div class='control-group'><label class='control-label'>";
+    			if ($val ['attr_input_type'] == 0) {//手工录入
+    				$html .= "$val[attr_name]</label><div class='controls'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+    				$html .= '<input class="w350" name="'.$val[attr_id].'_attr_value_list[]" type="text" value="' . htmlspecialchars($val['attr_value'][0]) . '" size="40" /> ';
+    			} elseif ($val ['attr_input_type'] == 2) {//多行文本框
+    				$html .= "$val[attr_name]</label><div class='controls'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+    				$html .= '<textarea  class="w350" name="'.$val[attr_id].'_attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val['attr_value'][0]) . '</textarea>';
+    			} else {//从下面列表中选择
+    				if($val['attr_type'] == 2) {//复选属性checkbox
+    					$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
+    					$html .= "$val[attr_name]</label><div class='controls chk_radio'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+    					foreach ($attr_values as $opt) {
+    						$opt = trim(htmlspecialchars($opt));
+    						$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
+    						$html .= $opt;
+    					}
+    				} else {//唯一参数
+    					$attr_values = explode("\n", $val ['attr_values']);
+    					$html .= "$val[attr_name]</label><div class='controls'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+    					$html .= '<select class="w350" name="'.$val[attr_id].'_attr_value_list[]" autocomplete="off">';
+    					$html .= '<option value="">' . __('请选择', 'goodslib') . '</option>';
+    					foreach ($attr_values as $opt) {
+    						$opt = trim(htmlspecialchars($opt));
+    						$html .= ($val['attr_value'][0] != $opt) ? '<option value="' . $opt . '">' . $opt . '</option>' : '<option value="' . $opt . '" selected="selected">' . $opt . '</option>';
+    					}
+    					$html .= '</select> ';
+    				}
+    			}
+    			$html .= '</div></div>';
+    		}
+    	}
+    	$html .= '';
+    	return $html;
+    }
+    
+    
+    
+	/**
+	 * 根据规格类型数组创建参数的表单
+	 *
+	 */
+    public static function goodslib_build_specification_html($cat_id, $goods_id = 0) {
+    	
+    	$attr = self::get_goodslib_cat_attr_list($cat_id, $goods_id);
+    	
+    	$html = '';
+    	$spec = 0;
+    
+    	if (!empty($attr)) {
+    		foreach ($attr as $key => $val) {
+    			$html .= "<div class='control-group'><label class='control-label'>";
+    			$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
+    			$html .= "$val[attr_name]</label><div class='controls chk_radio'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+    			foreach ($attr_values as $opt) {
+    				$opt = trim(htmlspecialchars($opt));
+    				$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
+    				$html .= $opt;
+    			}
+    			$html .= '</div></div>';
+    		}
+    	}
+    	$html .= '';
+    	return $html;
+    }
+    
+    /**
+     * 取得通用属性和某分类的属性，以及某商品的属性值
+     *
+     * @param int $cat_id
+     *            分类编号
+     * @param int $goods_id
+     *            商品编号
+     * @return array 规格与属性列表
+     */
+    public static function get_goodslib_cat_attr_list($cat_id, $goods_id = 0) {
+
+    	$row = RC_DB::table('attribute as a')
+    	->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values'))
+    	->where(RC_DB::raw('a.cat_id'), RC_DB::raw($cat_id))
+    	->orderby(RC_DB::raw('a.attr_id'), 'asc')
+    	->get();
+    	foreach($row as $key => $val) {
+			$row[$key]['attr_value'] = RC_DB::TABLE('goodslib_attr')->where('attr_id', $val['attr_id'])->where('goods_id', $goods_id)->lists('attr_value');
+		}
+		
+    	return $row;
+    }
 }
 

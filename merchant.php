@@ -601,6 +601,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('action_linkedit', array('text' => __('商品编辑', 'goods'), 'href' => RC_Uri::url('goods/merchant/edit', array('goods_id' => $goods_id))));
 		$this->assign('action_link', array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')));
 		
+
 		$GoodsBasicInFo = new Ecjia\App\Goods\Goods\GoodsBasicInFo($goods_id, $_SESSION['store_id']);
 		
 		$goods = $GoodsBasicInFo->goodsInFo();
@@ -636,6 +637,9 @@ class merchant extends ecjia_merchant {
 			$goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
 		}
 		
+		$code = isset($_GET['extension_code']) ? 'virtual_card' : '';
+		$this->assign('code', $code);
+		
 		$images_url = RC_App::apps_url('statics/images', __FILE__);
 		$this->assign('images_url', $images_url);
 		
@@ -658,22 +662,10 @@ class merchant extends ecjia_merchant {
 		}
 		
 		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
-		
-		/* 取得分类、品牌 */
+
 		$this->assign('goods', $goods);
+		
 		$this->display('preview.dwt');
-	}
-	
-	public function h5_preview()
-	{
-		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
-		RC_Hook::do_action('goods_merchant_h5_priview_handler', $goods_id);
-	}
-	
-	public function pc_preview()
-	{
-		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
-		RC_Hook::do_action('goods_merchant_pc_priview_handler', $goods_id);
 	}
 
 	/**
@@ -2793,7 +2785,7 @@ class merchant extends ecjia_merchant {
 	}
 	
 	/**
-	 * 商品参数
+	 * 商品参数页面
 	 */
 	public function edit_goods_parameter() {
 		$this->admin_priv('goods_update');
@@ -2837,23 +2829,27 @@ class merchant extends ecjia_merchant {
 	}
 	
 	/**
-	 * 更新商品参数
+	 * 更新商品参数逻辑处理
 	 */
 	public function update_goods_parameter() {
 		$this->admin_priv('goods_update');
 		 
-		$goods_type = isset($_POST['template_id'])	? $_POST['template_id'] 		: 0;
-		$goods_id 	= isset($_POST['goods_id'])     ? intval($_POST['goods_id'])     : 0;
-		if ($goods_type) {
-			$data = array(
-				'parameter_id'    => $goods_type,
-			);
-			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-		}
-
+		$goods_type = !empty($_POST['template_id'])	 ? intval($_POST['template_id'])  : 0;
+		$goods_id 	= !empty($_POST['goods_id'])     ? intval($_POST['goods_id'])     : 0;
+	
 		if (!empty($_POST['attr_id_list'])) {
-
+				
 			$goods_attr_list = array();
+			
+			$data = RC_DB::table('attribute')->select('attr_id', 'attr_index')->where('cat_id', $goods_type)->get();
+			$attr_list = array();
+			if (is_array($data)) {
+				foreach ($data as $key => $row) {
+					$attr_list[$row['attr_id']] = $row['attr_index'];
+				}
+			}
+			
+			
 			$query = RC_DB::table('goods_attr as ga')
 			->leftJoin('attribute as a', function ($join) use($goods_id) {
 				$join->on(RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
@@ -2866,14 +2862,19 @@ class merchant extends ecjia_merchant {
 				}
 			}
 			
-			$attr_goods_list = array();
 			foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
 				$attr_value = $attr_id.'_attr_value_list';
-				$attr_goods_list[$attr_id] = $_POST[$attr_value];
+				$goods_attr_list[$attr_id] = $_POST[$attr_value];
 			}
 			
+			$data = array(
+					'parameter_id'    => $goods_type,
+			);
+			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+			
+			
 			$data_insert = array();
-			foreach ($attr_goods_list as $attr_id => $attr_value_list) {
+			foreach ($goods_attr_list as $attr_id => $attr_value_list) {
 				foreach ($attr_value_list as $attr_value => $info) {
 					$data_insert[] = array(
 						'attr_id'		=> $attr_id,
@@ -2884,17 +2885,15 @@ class merchant extends ecjia_merchant {
 			}
 			RC_DB::table('goods_attr')->insert($data_insert);
 			
-			//为更新用户购物车数据加标记
-			RC_Api::api('cart', 'mark_cart_goods', array('goods_id' => $goods_id));
-
-			return $this->showmessage(__('编辑商品参数成功'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'pjaxurl' => RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id))));
+			$pjaxurl = RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id));
+			return $this->showmessage(__('编辑商品参数成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 		}
 		
 	}
 	
-	/**
-	 * 商品规格
-	 */
+   /**
+     * 设置规格页面
+     */
 	public function edit_goods_specification() {
 		$this->admin_priv('goods_update');
 		
@@ -2938,19 +2937,15 @@ class merchant extends ecjia_merchant {
 	}
 	
 	/**
-	 * 更新商品属性
-	 */
+     * 更新商品规格逻辑处理
+     */
 	public function update_goods_specification() {
 		$this->admin_priv('goods_update');
 			
-		$goods_type = isset($_POST['template_id'])	? $_POST['template_id'] 		: 0;
-		$goods_id 	= isset($_POST['goods_id'])     ? intval($_POST['goods_id'])     : 0;
-		if ($goods_type) {
-			$data = array(
-				'specification_id'  => $goods_type,
-			);
-			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-		}
+		$goods_type     = !empty($_POST['template_id'])	   ? intval($_POST['template_id'])   : 0;
+		$goods_id 	    = !empty($_POST['goods_id'])       ? intval($_POST['goods_id'])      : 0;
+		$goods_number 	= !empty($_POST['goods_number'])   ? intval($_POST['goods_number'])  : ecjia::config('default_storage');
+		$goods_barcode 	= !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
 		
 		if (!empty($_POST['attr_id_list'])) {
 			$goods_attr_list = array();
@@ -2971,6 +2966,13 @@ class merchant extends ecjia_merchant {
 				$attr_value = $attr_id.'_attr_value_list';
 				$attr_goods_list[$attr_id] = $_POST[$attr_value];
 			}
+			
+			$data = array(
+				 'specification_id'  => $goods_type,
+				 'goods_number'		 => $goods_number,
+				 'goods_barcode'	 =>	$goods_barcode
+			);
+			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 				
 			$data_insert = array();
 			foreach ($attr_goods_list as $attr_id => $attr_value_list) {
@@ -2983,13 +2985,10 @@ class merchant extends ecjia_merchant {
 				}
 			}
 			RC_DB::table('goods_attr')->insert($data_insert);
-				
-			//为更新用户购物车数据加标记
-			RC_Api::api('cart', 'mark_cart_goods', array('goods_id' => $goods_id));
-		
-			return $this->showmessage(__('编辑商品规格成功'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'pjaxurl' => RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id))));
+
+			$pjaxurl = RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id));
+			return $this->showmessage(__('设置商品规格成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 		}
-		
 	}
 
 	/**
@@ -3666,57 +3665,6 @@ class merchant extends ecjia_merchant {
 		}
 	
 		return $rows;
-	}
-	
-	private function goods_products($goods)
-	{
-		$product_list = [];
-		if ($goods->products_collection) {
-			$product_list = $goods->products_collection->map(function ($item) use ($goods) {
-					if (empty($item->product_name)) {
-						$item['product_name'] = $goods->goods_name;
-					}
-					$item['product_thumb'] = empty($item->product_thumb) ?  RC_Upload::upload_url($goods->goods_thumb) :  RC_Upload::upload_url($item->product_thumb);
-					$item['product_shop_price'] = $item->product_shop_price <= 0 ? ecjia_price_format($goods->shop_price, false) : ecjia_price_format($item->product_shop_price, false);
-					$item['product_attr_value'] = '';
-					if ($item->goods_attr) {
-						$goods_attr = explode('|', $item->goods_attr);
-						if ($goods->goods_attr_collection) {
-							$product_attr_value = $goods->goods_attr_collection->whereIn('goods_attr_id', $goods_attr)->sortBy('goods_attr_id')->lists('attr_value');
-							$product_attr_value = $product_attr_value->implode('/');
-							$item['product_attr_value'] = $product_attr_value;
-						}
-					}
-					return $item;
-			});
-			$product_list = $product_list->toArray();
-		}
-		
-		return $product_list;
-	}
-	
-	private function get_goods_gallery($goods)
-	{
-		$gallery = [];
-		if ($goods->goods_gallery_collection) {
-			$disk = RC_Filesystem::disk();
-			$gallery = $goods->goods_gallery_collection->map(function ($item) use ($goods, $disk) {
-				if (!$disk->exists(RC_Upload::upload_path($item['img_url'])) || empty($item['img_url'])) {
-					$item['img_url'] = RC_Uri::admin_url('statics/images/nopic.png'); 
-				} else {
-					$item['img_url'] = RC_Upload::upload_url($item['img_url']);
-				}
-				
-				if (!$disk->exists(RC_Upload::upload_path($item['thumb_url'])) || empty($item['thumb_url'])) {
-					$item['thumb_url'] = RC_Uri::admin_url('statics/images/nopic.png');
-				} else {
-					$item['thumb_url'] = RC_Upload::upload_url($item['thumb_url']);
-				}
-				return $item;
-			});
-			$gallery = $gallery->toArray();
-		}
-		return $gallery;
 	}
 }
 

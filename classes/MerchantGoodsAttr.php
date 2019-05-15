@@ -392,6 +392,7 @@ class MerchantGoodsAttr {
 	
 		$html = '';
 		$spec = 0;
+		
 		if (!empty($attr)) {
 			foreach ($attr as $key => $val) {
 				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
