@@ -135,7 +135,7 @@ class GoodsModel extends Model
      */
     public function products_collection()
     {
-    	return $this->hasMany('Ecjia\App\Cart\Models\ProductsModel', 'goods_id', 'goods_id');
+    	return $this->hasMany('Ecjia\App\Goods\Models\ProductsModel', 'goods_id', 'goods_id');
     }
     
     /**
