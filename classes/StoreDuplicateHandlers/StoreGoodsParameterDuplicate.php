@@ -14,7 +14,7 @@ use RC_DB;
 use RC_Api;
 use ecjia_admin;
 
-class StoreGoodsParamDuplicate extends StoreDuplicateAbstract
+class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
 {
 
     /**

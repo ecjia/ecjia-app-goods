@@ -69,7 +69,7 @@ class goods_store_duplicate_storedata_api extends Component_Event_Api
             //goods
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsCategoryDuplicate($store_id, $source_store_id),
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreCashierGoodsDuplicate($store_id, $source_store_id),
-            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsParamDuplicate($store_id, $source_store_id),
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsParameterDuplicate($store_id, $source_store_id),
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsSpecificationDuplicate($store_id, $source_store_id),
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StorePromotionDuplicate($store_id, $source_store_id),
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreBulkGoodsDuplicate($store_id, $source_store_id),
