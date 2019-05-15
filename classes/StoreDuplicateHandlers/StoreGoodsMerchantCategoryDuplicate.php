@@ -20,14 +20,14 @@ use ecjia_admin;
  * Class StoreGoodsCategoryDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
  */
-class StoreGoodsCategoryDuplicate extends StoreDuplicateAbstract
+class StoreGoodsMerchantCategoryDuplicate extends StoreDuplicateAbstract
 {
 
     /**
      * 代号标识
      * @var string
      */
-    protected $code = 'store_goods_category_duplicate';
+    protected $code = 'store_goods_merchant_category_duplicate';
 
     /**
      * 排序
@@ -35,9 +35,14 @@ class StoreGoodsCategoryDuplicate extends StoreDuplicateAbstract
      */
     protected $sort = 2;
 
+    protected $dependents = [
+        'store_goods_paramter_duplicate',
+        'store_goods_specification_duplicate',
+    ];
+
     public function __construct($store_id, $source_store_id)
     {
-        $this->name = __('商品分类', 'goods');
+        $this->name = __('店铺商品分类', 'goods');
 
         parent::__construct($store_id, $source_store_id);
     }

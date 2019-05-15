@@ -27,7 +27,7 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
      * 代号标识
      * @var string
      */
-    protected $code = 'store_goods_param_duplicate';
+    protected $code = 'store_goods_paramter_duplicate';
 
     /**
      * 排序
@@ -37,7 +37,7 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
 
     public function __construct($store_id, $source_store_id)
     {
-        $this->name = __('商品参数', 'goods');
+        $this->name = __('店铺商品参数', 'goods');
 
         parent::__construct($store_id, $source_store_id);
     }
