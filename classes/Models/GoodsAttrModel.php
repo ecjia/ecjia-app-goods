@@ -43,11 +43,12 @@ class GoodsAttrModel extends Model
     public $timestamps = false;
     
     /**
-     * 商品规格属性信息
+     * 一对一
+     * 商品参数/规格的属性信息
      */
-    public function attribute_collection()
+    public function attribute_model()
     {
-    	return $this->hasMany('Ecjia\App\Goods\Models\AttributeModel', 'attr_id', 'attr_id');
+    	return $this->belongsTo('Ecjia\App\Goods\Models\AttributeModel', 'attr_id', 'attr_id');
     }
     
 }

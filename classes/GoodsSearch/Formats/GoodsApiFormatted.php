@@ -302,23 +302,19 @@ class GoodsApiFormatted
     		}
     		if ($this->model->goods_attr_collection) {
     			$res = $this->model->goods_attr_collection->map(function ($item) {
-    				if ($item->attribute_collection) {
-    					$attribute = $item->attribute_collection->map(function ($v, $k) use($item) {
-    						  return  [
+    				if ($item->attribute_model) {
+    					$attribute = [
     									'goods_attr_id' => $item->goods_attr_id,
     									'attr_value'	=> $item->attr_value,
     									'attr_price'	=> $item->attr_price,
-    									'attr_id'		=> $v->attr_id,
-    									'attr_name'		=> $v->attr_name,
-    									'attr_group'	=> $v->attr_group,
-    									'is_linked'		=> $v->is_linked,
-    									'attr_type'		=> $v->attr_type
+    									'attr_id'		=> $item->attribute_model->attr_id,
+    									'attr_name'		=> $item->attribute_model->attr_name,
+    									'attr_group'	=> $item->attribute_model->attr_group,
+    									'is_linked'		=> $item->attribute_model->is_linked,
+    									'attr_type'		=> $item->attribute_model->attr_type
     								];
-    					});
     				}
     				return $attribute;
-    			})->map(function ($val, $key) {
-    				return $val['0'];
     			});
     			
     			$properties = $this->formatGoodsProperties($groups, $res);

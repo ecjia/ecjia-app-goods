@@ -74,7 +74,7 @@ class GoodsApiCollection
                             'store_franchisee_model.merchants_config_collection',
                             'goods_type_model',
                             'goods_attr_collection',
-                            'goods_attr_collection.attribute_collection'
+                            'goods_attr_collection.attribute_model'
                             //'store.merchants_config' => function ($query) {
                             //        $query->select('value')->where('code', '=', 'shop_logo');
                             //    },
