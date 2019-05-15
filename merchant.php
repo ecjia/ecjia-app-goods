@@ -619,6 +619,8 @@ class merchant extends ecjia_merchant {
 		$goods['is_promoting'] = 0;
 		if (($goods['promote_start_date'] <= $time && $goods['promote_end_date'] >= $time) && $goods['is_promote'] == '1' && $goods['promote_price'] > 0) {
 			$goods['is_promote_now'] = 1;
+			$goods['formated_promote_start_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_start_date']);
+			$goods['formated_promote_end_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_end_date']);
 		}
 		$goods['cost_price'] = ecjia_price_format($goods['cost_price'], false);
 		
