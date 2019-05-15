@@ -667,7 +667,25 @@ class merchant extends ecjia_merchant {
 		
 		$this->display('preview.dwt');
 	}
-
+	
+	/**
+	 * 手机端预览
+	 */
+	public function h5_preview()
+	{
+		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
+		RC_Hook::do_action('goods_merchant_h5_priview_handler', $goods_id);
+	}
+	
+	/**
+	 * PC预览
+	 */
+	public function pc_preview()
+	{
+		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
+		RC_Hook::do_action('goods_merchant_pc_priview_handler', $goods_id);
+	}
+	
 	/**
 	* 商品回收站
 	*/
