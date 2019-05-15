@@ -11,6 +11,7 @@ namespace Ecjia\App\Goods\GoodsSearch\Formats;
 
 use Ecjia\App\Goods\Models\GoodsModel;
 use RC_Upload;
+use ecjia;
 
 class GoodsAdminFormatted
 {
@@ -59,6 +60,7 @@ class GoodsAdminFormatted
             'integral'                  => $this->model->integral,
             'is_promote'                => $this->model->is_promote,
             'review_status'             => $this->model->review_status,
+            'add_time'             		=> \RC_Time::local_date(ecjia::config('time_format'), $this->model->add_time)
         ];
     }
 

@@ -35,6 +35,10 @@ class StoreBulkGoodsDuplicate extends StoreDuplicateAbstract
      */
     protected $sort = 6;
 
+    protected $dependents = [
+        'store_goods_merchant_category_duplicate',
+    ];
+
     public function __construct($store_id, $source_store_id)
     {
         $this->name = __('散装商品', 'goods');

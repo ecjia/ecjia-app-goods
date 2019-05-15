@@ -15,6 +15,7 @@
 			app.goods_list.review_static();
 			app.goods_list.toggle_on_sale();
 			app.goods_list.insertGoods();
+			app.goods_list.checkGoods();
 		},
 		review_static: function() {
 			$('.review_static').each(function() {
@@ -306,6 +307,38 @@
 			var options = $.extend(ecjia.admin.defaultOptions.validate, option);
 			$this.validate(options);
 			
+		},
+		
+		checkGoods: function() {
+			 $('[data-toggle="modal"]').on('click', function (e) {
+		           var $this = $(this);
+		           var goods_id = $this.attr('goods-id');
+		           $('#check_review_log').change(function () {
+		        	   var subject_text = $("#check_review_log option:selected").text();
+		       		   var subject_val  = $("#check_review_log option:selected").val();
+				       if (subject_val != 0){
+			           		$('#review_content').val(subject_text);
+			       	   } else {
+			       		    $('#review_content').val('');
+			       	   } 
+		           })
+		           
+		           $(".change_status").on('click', function (e) {
+		        	   e.preventDefault();
+		        	   var review_status = $(this).attr('review_status');
+		               var url = $("form[name='checkForm']").attr('action');
+		               var review_content = $("textarea[name='review_content']").val();
+		               var option = {
+			               	'review_content' : review_content,
+			               	'goods_id' : goods_id,
+			            	'review_status' : review_status
+		               };
+		               $.post(url, option, function (data) {
+		                    ecjia.admin.showmessage(data);
+		                    location.href = data.url;
+		               }, 'json');
+		           });
+			 });
 		}
 	};
 

@@ -37,7 +37,7 @@ class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
 
     public function __construct($store_id, $source_store_id)
     {
-        $this->name = __('商品规格', 'goods');
+        $this->name = __('店铺商品规格', 'goods');
 
         parent::__construct($store_id, $source_store_id);
     }
