@@ -193,27 +193,26 @@
 					<div class="goods-pra">
 						<div class="pra">参数
 							<div class="pra-handle">
-								<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
+								<a target="_blank" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>
 						</div>
 						<hr>
 					</div>
+					{if $common_parameter_list}
+						<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
+					{/if}
 					
-					
-					{if $attr_list}
-					<div id="attributes">
-						<div class="attributes-list" id="J_AttrList">
-							<div class="tm-clear tb-hidden tm_brandAttr" id="J_BrandAttr" style="display: block;">
-								<p class="attr-list-hd tm-clear"><a class="ui-more-nbg tm-MRswitchAttrs" href="#J_Attrs"><i class="ui-more-nbg-arrow tm-MRswitchAttrs"></i></a><em>{t domain="goods"}产品参数：{/t}</em></p>
-								<ul id="J_AttrUL">
-									<!-- {foreach from=$attr_list item=val} -->
-				         			<li>{$val.attr_name}：{$val.attr_value}</li>       			
-				         			<!-- {/foreach} -->																			    						    						    							    						    							    							    						    							    						    							    						    							    					    					    																																																																																																																											    								     <li title="&nbsp;32GB&nbsp;128GB&nbsp;256GB">存储容量:&nbsp;32GB&nbsp;128GB&nbsp;256GB</li>
-								</ul>
+					{if $group_parameter_list}
+						<!-- #BeginLibraryItem "/library/goods_group_parameter.lbi" --><!-- #EndLibraryItem -->
+					{/if}
+					<div class="goods-pra">
+						<div class="pra">图文详情
+							<div class="pra-handle">
+								<a target="_blank" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>
 						</div>
+						<hr>
 					</div>
-					{/if}
 					<div class="t_c clear">{$goods.goods_desc}</div>
 				</div>
 			</div>
