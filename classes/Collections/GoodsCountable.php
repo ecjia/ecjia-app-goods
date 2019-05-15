@@ -12,7 +12,6 @@ namespace Ecjia\App\Goods\Collections;
 use Ecjia\App\Goods\GoodsSearch\GoodsSearch;
 use Closure;
 use Royalcms\Component\Http\Request;
-use RC_DB;
 
 class GoodsCountable
 {
