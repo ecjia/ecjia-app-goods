@@ -120,6 +120,7 @@ class merchant extends ecjia_merchant {
         RC_Style::enqueue_style('mh-product', RC_App::apps_url('statics/styles/mh-product.css', __FILE__), array());
 		RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/merchant_goods_list.js', __FILE__), array(), false, 1);
 		RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/merchant_product.js', __FILE__), array(), false, 1);
+		RC_Script::enqueue_script('clipboard.min', RC_App::apps_url('statics/js/clipboard.min.js', __FILE__), array(), false, 1);
 		
 		RC_Loader::load_app_class('goods', 'goods', false);
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
@@ -3698,6 +3699,30 @@ class merchant extends ecjia_merchant {
 			}
 		}
 		return $this->showmessage(__('新商品分类添加成功！', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $cat_select, 'opt' => $arr));
+	}
+
+	/**
+	 * 查看审核日志
+	 */
+	public function review_log() {
+		$this->admin_priv('goods_manage');
+		
+		$goods_id = intval($_POST['goods_id']);
+		$goods_info = RC_DB::TABLE('goods')->where('goods_id', $goods_id)->select('review_status', 'review_content')->first();
+		$this->assign('goods_info', $goods_info);
+
+		$list_log = RC_DB::TABLE('goods_review_log')->where('goods_id', $goods_id)->select('status', 'action_user_name', 'action_note' ,'add_time')
+		->orderby('add_time', 'desc')
+		->get();
+
+		foreach ($list_log as $key => $rows) {
+			$list_log[$key]['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $rows['add_time']);
+		}
+		$this->assign('list_log', $list_log);
+
+	
+		$data = $this->fetch('review_log.dwt');
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
 	}
 	
 	private function generate_url($url_list) {
