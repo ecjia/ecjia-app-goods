@@ -68,21 +68,23 @@ HTML;
 
 
     /**
-     * 执行清除操作
+     * 执行复制操作
      *
      * @return mixed
      */
     public function handleDuplicate()
     {
-
         $item = $this->dependentCheck();
+
+//        var_dump($item,__METHOD__);
         //判断提示错误
-//        dd($item);
+        if (empty($item)){
+            //标记处理完成
+            $this->markDuplicateFinished();
+            return true;
+        }
 
-        //标记处理完成
-        $this->markDuplicateFinished();
-
-        return true;
+        return false;
     }
 
     /**

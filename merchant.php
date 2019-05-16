@@ -588,21 +588,10 @@ class merchant extends ecjia_merchant {
 		}
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goods')));
-		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
-			'id'		=> 'overview',
-			'title'		=> __('概述', 'goods'),
-			'content'	=> '<p>' . __('欢迎访问ECJia智能后台商品预览页面，在此页面可以预览有关该商品的所有详细信息。', 'goods') . '</p>'
-		));
-		
-		ecjia_merchant_screen::get_current_screen()->set_help_sidebar(
-			'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
-			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E9.A2.84.E8.A7.88.E5.95.86.E5.93.81" target="_blank">关于商品预览帮助文档</a>', 'goods') . '</p>'
-		);
 		
 		$this->assign('ur_here', __('商品预览', 'goods'));
 		$this->assign('action_linkedit', array('text' => __('商品编辑', 'goods'), 'href' => RC_Uri::url('goods/merchant/edit', array('goods_id' => $goods_id))));
 		$this->assign('action_link', array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')));
-		
 
 		$GoodsBasicInFo = new Ecjia\App\Goods\Goods\GoodsBasicInFo($goods_id, $_SESSION['store_id']);
 		
@@ -618,31 +607,17 @@ class merchant extends ecjia_merchant {
 		
 		//商品是否在促销
 		$time = RC_Time::gmtime();
-		$goods['is_promoting'] = 0;
-		if (($goods['promote_start_date'] <= $time && $goods['promote_end_date'] >= $time) && $goods['is_promote'] == '1' && $goods['promote_price'] > 0) {
+		$goods['is_promote_now'] = 0;
+		if (($goods->promote_start_date <= $time && $goods->promote_end_date >= $time) && $goods->is_promote == '1' && $goods->promote_price > 0) {
 			$goods['is_promote_now'] = 1;
 			$goods['formated_promote_start_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_start_date']);
 			$goods['formated_promote_end_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_end_date']);
 		}
 		$goods['cost_price'] = ecjia_price_format($goods['cost_price'], false);
 		
-		$disk = RC_Filesystem::disk();
-		if (!$disk->exists(RC_Upload::upload_path($goods['goods_thumb'])) || empty($goods['goods_thumb'])) {
-			$goods['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
-			$goods['goods_img'] = RC_Uri::admin_url('statics/images/nopic.png');
-		} else {
-			$goods['goods_thumb'] = RC_Upload::upload_url($goods['goods_thumb']);
-			$goods['goods_img'] = RC_Upload::upload_url($goods['goods_img']);
-		}
 		if (!empty($goods['add_time'])) {
 			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods['add_time']);
 		}
-		if (!empty($goods['last_update'])) {
-			$goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
-		}
-		
-		$code = isset($_GET['extension_code']) ? 'virtual_card' : '';
-		$this->assign('code', $code);
 		
 		$images_url = RC_App::apps_url('statics/images', __FILE__);
 		$this->assign('images_url', $images_url);
@@ -664,12 +639,105 @@ class merchant extends ecjia_merchant {
 			$common_parameter_list = $GoodsBasicInFo->getGoodsCommonParameter();
 			$this->assign('common_parameter_list', $common_parameter_list);
 		}
-		
 		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
 
 		$this->assign('goods', $goods);
 		
 		$this->display('preview.dwt');
+	}
+	
+	/**
+	 * 货品预览
+	 */
+	public function product_preview()
+	{
+		$product_id = !empty($_GET['product_id']) ? intval($_GET['product_id']) : 0;
+		
+		if (empty($product_id)) {
+			return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
+		}
+		
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品预览', 'goods')));
+		
+		$this->assign('ur_here', __('货品预览', 'goods'));
+		$this->assign('action_link', array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')));
+		
+		$productBasicInFo = new Ecjia\App\Goods\Goods\ProductBasicInFo($product_id);
+		
+		$product = $productBasicInFo->productInFo();
+		
+		if (empty($product)) {
+			return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品列表', 'goods'),'href'=>RC_Uri::url('goods/merchant/init')))));
+		}
+		$goods_id = $product->goods_id;
+		$GoodsBasicInFo = new Ecjia\App\Goods\Goods\GoodsBasicInFo($goods_id, $_SESSION['store_id']);
+		$goods = $GoodsBasicInFo->goodsInFo();
+		
+		//名称处理
+		$product['product_attr_value'] = '';
+		if (empty($product->product_name)) {
+			$product['product_name'] = $goods->goods_name;
+			if ($product->goods_attr) {
+				$goods_attr = explode('|', $product->goods_attr);
+				if ($goods->goods_attr_collection) {
+					$product_attr_value = $goods->goods_attr_collection->whereIn('goods_attr_id', $goods_attr)->sortBy('goods_attr_id')->lists('attr_value');
+					$product_attr_value = $product_attr_value->implode('/');
+					$product['product_attr_value'] = $product_attr_value;
+				}
+			}
+		}
+		//货品是否在促销
+		$time = RC_Time::gmtime();
+		$product['is_promote_now'] = 0;
+		if (($goods->promote_start_date <= $time && $goods->promote_end_date >= $time) && $product->is_promote == '1' && $product->promote_price > 0) {
+			$product['is_promote_now'] = 1;
+			$product['formated_promote_start_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_start_date']);
+			$product['formated_promote_end_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_end_date']);
+		}
+		
+		//本店价格处理
+		if ($product->product_shop_price <= 0){
+			$product['product_shop_price'] = ecjia_price_format($goods->shop_price, false);
+		} else {
+			$product['product_shop_price'] = ecjia_price_format($product->product_shop_price, false);
+		}
+		//添加时间
+		if (!empty($goods->add_time)) {
+			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods->add_time);
+		}
+		
+		//图文详情
+		if (!empty($product['product_desc'])) {
+			$product['product_desc'] = stripslashes($product->product_desc);
+		} else{
+			if (!empty($goods['goods_desc'])){
+				$product['product_desc'] = stripslashes($goods->goods_desc);
+			}
+		}
+		//货品相册
+		$product_photo_list = $productBasicInFo->getProductGallery();
+		if (empty($product_photo_list)) {
+			$product_photo_list = $GoodsBasicInFo->getGoodsGallery();
+		}
+		$this->assign('product_photo_list', $product_photo_list);
+		
+		//商品参数
+		$attr_group = $GoodsBasicInFo->attrGroup();
+		if (count($attr_group) > 0) {
+			$group_parameter_list = $GoodsBasicInFo->getGoodsGroupParameter();
+			$this->assign('group_parameter_list', $group_parameter_list);
+		} else {
+			$common_parameter_list = $GoodsBasicInFo->getGoodsCommonParameter();
+			$this->assign('common_parameter_list', $common_parameter_list);
+		}
+		
+		$images_url = RC_App::apps_url('statics/images', __FILE__);
+		$this->assign('images_url', $images_url);
+		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
+		$this->assign('product', $product);
+		$this->assign('goods', $goods);
+		
+		$this->display('product_preview.dwt');
 	}
 	
 	/**

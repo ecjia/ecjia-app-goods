@@ -78,8 +78,15 @@ HTML;
      */
     public function handleDuplicate()
     {
+        $item = $this->dependentCheck();
+        //判断提示错误
+        if (empty($item)){
+            //标记处理完成
+            $this->markDuplicateFinished();
+            return TRUE;
+        }
 
-        return true;
+        return FALSE;
     }
 
     /**
