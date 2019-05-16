@@ -21,6 +21,21 @@
 	</h3>
 </div>
 
+<div class="modal hide fade" id="actionmodal">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">×</button>
+        <h3 class="modal-title">{t domain="goods"}内部链接{/t}</h3>
+    </div>
+    <div class="modal-body" style="height:auto;">
+		<div class="success-msg"></div>
+		<div class="error-msg"></div>
+	    <textarea id="link_value"  name="link_value" disabled="disabled"  cols="30" rows="5" class="span5"></textarea>
+	    <div class="form-group">
+	        <button id="copy_btn" class="btn btn-gebo m_t10">{t domain="goods"}复制{/t}</button>
+        </div>
+    </div>
+</div>
+
 <!-- <div class="row-fluid"> -->
 <!-- <div class="choose_list span12">  -->
 <ul class="nav nav-pills">
@@ -169,7 +184,7 @@
 							{/if}
 							
 							{if $action neq 'check'}
-								<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
+								<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_list&goods_id={$goods.goods_id}" >{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
 								<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
 								data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
 								<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
@@ -180,8 +195,9 @@
 							{/if}
 							
 							{if $goods.review_status eq 2}
-								<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}查看审核{/t}</a>
+								<a class="view_review" data-toggle="modal" data-backdrop="static" href="#myModal3" goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/view_review')}">{t domain='goods'}查看审核{/t}</a>
 							{/if}
+							
 						</div>
 					</td>	
 					{if $action neq 'check'}<td>{$goods.goods_sn}</td>{/if}
@@ -312,6 +328,8 @@
         </form>
     </div>
 </div>
+
+<div class="log modal hide fade" id="myModal3"></div>
 
 <div class="modal hide fade" id="insertGoods">
     <div class="modal-header">

@@ -60,6 +60,27 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel">
+			<div id="actionmodal" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+	                    <div class="modal-header">
+		                    <button data-dismiss="modal" class="close" type="button">×</button>
+		                    <h4 class="modal-title">{t domain="goods"}内部链接{/t}</h4>
+	                    </div>
+	                    
+	                    <div class="modal-body">
+		                   <div class="success-msg"></div>
+		                   <div class="error-msg"></div>
+	                       <textarea class="form-control" id="link_value"  name="link_value" disabled="disabled"></textarea>
+	                       <button id="copy_btn" class="btn btn-info m_t10">{t domain="goods"}复制{/t}</button>
+	                    </div>
+                    </div>
+                 </div>
+            </div>
+
+            <div id="review_log" class="modal fade"></div>
+
+
 			<div class="panel-body panel-body-small">
 				<ul class="nav nav-pills pull-left">
 				 	{foreach $goods_count as $count}
@@ -156,7 +177,7 @@
 								
 								{if $action eq 'check'}
 								<th class="w100"> {t domain='goods'}审核状态{/t} </th>
-								<th class="w100"> {t domain='goods'}审核时间{/t} </th>
+								<th class="w150"> {t domain='goods'}审核时间{/t} </th>
 								{/if}
 							</tr>
 						</thead>
@@ -180,9 +201,10 @@
 									<br/>
 									<div class="edit-list">
 										<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
+
+										{if $action neq 'check'}
 										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
-										
-										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
+ 									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}库存/规格{/t}</a>&nbsp;|&nbsp;
 										
 										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品属性{/t}</a>&nbsp;|&nbsp;
@@ -190,8 +212,16 @@
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
 										<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
+										<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_seller_list&goods_id={$goods.goods_id}">{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
+										
 										{if $specifications[$goods.goods_type] neq ''}
 										<a target="_blank" href='{url path="goods/merchant/product_list" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
+										{/if}
+
+										{if $goods.review_status eq 2}
+										<a href="#review_log" data-toggle="modal" data-type="log" id="modal" goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/merchant/review_log')}">查看审核</a>&nbsp;|&nbsp;
+										{/if}
+
 										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/merchant/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
 									</div>
 								</td>
@@ -258,8 +288,8 @@
 								</td>
 
 								{if $action eq 'check'}
-								<td>{$goods.goods_sn}</td>
-								<td>{$goods.goods_sn}</td>
+									<td>{if $goods.review_status eq 1}{t domain='goods'}待审核{/t}{elseif $goods.review_status eq 2}{t domain='goods'}审核未通过{/t}{/if}</td>
+									<td>{$goods.add_time}</td>
 								{/if}
 							</tr>
 							<!-- {foreachelse}-->

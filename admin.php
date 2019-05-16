@@ -113,6 +113,8 @@ class admin extends ecjia_admin {
         RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/product.js', __FILE__), array(), false, 1);
 		RC_Script::localize_script('goods_list', 'js_lang', config('app-goods::jslang.goods_list_page'));
 		RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
+
+		RC_Script::enqueue_script('clipboard.min', RC_App::apps_url('statics/js/clipboard.min.js', __FILE__), array(), false, 1);
 		
 		RC_Loader::load_app_class('goods', 'goods', false);
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
@@ -2928,6 +2930,26 @@ class admin extends ecjia_admin {
 			return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/check', array('type'=>1))));
 		}
 		
+	}
+	
+	
+	/**
+	 * 查看审核记录
+	 */
+	public function review_log() {
+		$this->admin_priv('goods_manage');
+	
+		$goods_id = intval($_POST['goods_id']);
+		$goods_info = RC_DB::TABLE('goods')->where('goods_id', $goods_id)->select('review_status', 'review_content')->first();
+		$this->assign('goods_info', $goods_info);
+		
+		
+		$list_log = RC_DB::TABLE('goods_review_log')->where('goods_id', $goods_id)->select('status', 'action_user_name', 'action_note' ,'add_time')->get();
+		$this->assign('list_log', $list_log);
+	
+		$data = $this->fetch('review_log.dwt');
+	
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
 	}
 	
 	
