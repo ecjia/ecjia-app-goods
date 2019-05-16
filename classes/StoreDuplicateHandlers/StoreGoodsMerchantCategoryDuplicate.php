@@ -81,11 +81,13 @@ HTML;
     {
         $item = $this->dependentCheck();
         //判断提示错误
+        if (empty($item)){
+            //标记处理完成
+            $this->markDuplicateFinished();
+            return TRUE;
+        }
 
-
-//        dd($item);
-
-        return true;
+        return FALSE;
     }
 
     /**

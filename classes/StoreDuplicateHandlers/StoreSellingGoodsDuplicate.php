@@ -85,7 +85,7 @@ HTML;
 //        });
         // RC_DB::enableQueryLog();
         //   RC_DB::getQueryLog()
-        $count = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->count();
+        $count = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=' , 1)->count();
 
         return $count;
     }
@@ -98,8 +98,15 @@ HTML;
      */
     public function handleDuplicate()
     {
+        $item = $this->dependentCheck();
+        //判断提示错误
+        if (empty($item)){
+            //标记处理完成
+            $this->markDuplicateFinished();
+            return TRUE;
+        }
 
-        return true;
+        return FALSE;
     }
 
     /**
