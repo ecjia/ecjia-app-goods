@@ -32,7 +32,7 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
      * 排序RC_Hook::apply_filters(
      * @var int
      */
-    protected $sort = 5;
+    protected $sort = 15;
 
     protected $dependents = [
         'store_goods_merchant_category_duplicate',
@@ -50,8 +50,8 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
      */
     public function handlePrintData()
     {
-        $count     = $this->handleCount();
-        $text      = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>件在售商品', 'goods'), $count);
+        $count = $this->handleCount();
+        $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>件在售商品', 'goods'), $count);
 
         return <<<HTML
 <span class="controls-info">{$text}</span>
@@ -85,7 +85,7 @@ HTML;
 //        });
         // RC_DB::enableQueryLog();
         //   RC_DB::getQueryLog()
-        $count = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=' , 1)->count();
+        $count = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=', 1)->count();
 
         return $count;
     }
@@ -98,15 +98,41 @@ HTML;
      */
     public function handleDuplicate()
     {
-        $item = $this->dependentCheck();
-        //判断提示错误
-        if (empty($item)){
-            //标记处理完成
-            $this->markDuplicateFinished();
-            return TRUE;
+        //检测当前对象是否已复制完成
+        if ($this->isCheckFinished()){
+            return true;
         }
 
-        return FALSE;
+        $dependent = false;
+        if (!empty($this->dependents)) { //如果设有依赖对象
+            //检测依赖
+            if (!empty($this->dependentCheck())){
+                $dependent = true;
+            }
+        }
+
+        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
+        if ($dependent){
+            return false;
+        }
+
+        //@todo 执行具体任务
+        $this->startDuplicateProcedure();
+
+        //标记处理完成
+        $this->markDuplicateFinished();
+
+        //记录日志
+        $this->handleAdminLog();
+
+        return true;
+    }
+
+    /**
+     * 此方法实现店铺复制操作的具体过程
+     */
+    protected function startDuplicateProcedure(){
+
     }
 
     /**

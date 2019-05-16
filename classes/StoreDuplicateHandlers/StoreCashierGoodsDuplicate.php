@@ -33,7 +33,7 @@ class StoreCashierGoodsDuplicate extends StoreDuplicateAbstract
      * 排序
      * @var int
      */
-    protected $sort = 7;
+    protected $sort = 16;
 
     protected $dependents = [
         'store_goods_merchant_category_duplicate',
@@ -78,15 +78,41 @@ HTML;
      */
     public function handleDuplicate()
     {
-        $item = $this->dependentCheck();
-        //判断提示错误
-        if (empty($item)){
-            //标记处理完成
-            $this->markDuplicateFinished();
-            return TRUE;
+        //检测当前对象是否已复制完成
+        if ($this->isCheckFinished()){
+            return true;
         }
 
-        return FALSE;
+        $dependent = false;
+        if (!empty($this->dependents)) { //如果设有依赖对象
+            //检测依赖
+            if (!empty($this->dependentCheck())){
+                $dependent = true;
+            }
+        }
+
+        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
+        if ($dependent){
+            return false;
+        }
+
+        //@todo 执行具体任务
+        $this->startDuplicateProcedure();
+
+        //标记处理完成
+        $this->markDuplicateFinished();
+
+        //记录日志
+        $this->handleAdminLog();
+
+        return true;
+    }
+
+    /**
+     * 此方法实现店铺复制操作的具体过程
+     */
+    protected function startDuplicateProcedure(){
+
     }
 
     /**
