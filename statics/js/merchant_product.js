@@ -33,6 +33,7 @@
 			}).chosen();
 		}
 	};
+	
 	app.product_info = {
 		init: function() {
 			app.product_info.previewImage();
@@ -64,6 +65,54 @@
 		},
 	};
 
+	
+	app.product_spec = {
+			init: function() {
+				app.product_spec.select_spec();
+			},
+
+			select_spec: function() {
+	            $("a[data-toggle='modal']").off('click').on('click', function (e) {
+	            	e.preventDefault();
+	                var $this = $(this);
+	                var goods_id = $this.attr('goods-id');
+	                var url = $this.attr('attr-url');
+	                $.post(url, {'goods_id': goods_id}, function (data) {
+	                	$('.modal').html(data.data);
+	                	
+	                	$(".insertSubmit").on('click', function(e) {
+	        				$("form[name='insertForm']").submit();
+	        			});	
+	                	
+	        			$("form[name='insertForm']").on('submit', function(e) {
+	        				e.preventDefault();
+	        			});
+	        			
+	        			var $this = $('form[name="insertForm"]');
+	        			var option = {
+	        				submitHandler: function() {
+	        					$this.ajaxSubmit({
+	        						dataType: "json",
+	        						success: function(data) {
+	        							$('#myModal1').modal('hide');
+	        							$(".modal-backdrop").remove();
+	        							ecjia.pjax(data.url, function() {
+	        								ecjia.merchant.showmessage(data);
+	        							})
+	        						}
+	        					});
+	        				},
+	        			};
+
+	        			var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
+	        			$this.validate(options);
+	                }, 'json');
+				})
+	        
+			}
+		};
+	
+	
 	/**
 	 * clone_product触发器
 	 * data-parent 		要复制的父级节点

@@ -399,17 +399,19 @@ class MerchantGoodsAttr {
 				$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
 				$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
 				foreach ($attr_values as $opt) {
+					$html .= '<div class="check-box">';
 					$opt = trim(htmlspecialchars($opt));
 					$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
 					$html .= '<label for="'.$opt.'">'.$opt.'</label>';
+					$html .= '</div>';
 				}
 				$html .= '</div></div>';
 			}
 		}
 		$html .= '';
 		return $html;
-	}
-	
+	}    
+	 
 	/**
 	 * 取得通用属性和某分类的属性，以及某商品的属性值
 	 *

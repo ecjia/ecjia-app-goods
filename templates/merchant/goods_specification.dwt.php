@@ -3,7 +3,7 @@
 
 <!-- {block name="footer"} --> 
 <script type="text/javascript">
-	ecjia.merchant.goods_attr.init();
+	ecjia.merchant.product_spec.init();
 </script> 
 <!-- {/block} --> 
 
@@ -27,6 +27,8 @@
 	</div>
 	<div class="clearfix"></div>
 </div>
+
+<div class="modal fade" id="myModal1"></div>
 
 <div class="row">
 	<div class="col-lg-12">
@@ -85,14 +87,11 @@
 													<span class="m_l10">
 														<a href='{url path="goods/mh_category/edit" args="cat_id={$goods_info.merchant_cat_id}"}'><button type="button" class="btn btn-info" >{t domain="goods"}更换模板{/t}</button></a>
 													</span>
+														<a data-toggle="modal" data-backdrop="static" href="#myModal1" goods-id="{$goods_info.goods_id}" attr-url="{RC_Uri::url('goods/merchant/select_spec_values')}" ><button class="btn btn-info"><i class="fa fa-plus"></i> {t domain="goods"}选择属性值{/t}</button></a>
 												</div>
 											</div>
 											
 											<hr>
-											
-											<div id="tbody-goodsAttr"> 
-												{if $goods_attr_html}{$goods_attr_html}{/if}
-											</div>
 										</div>
 									{else}
 										<div class="box_content">
@@ -111,9 +110,7 @@
 										</div>
 									{/if}
 								</div>
-
 		
-							
 								{if $has_template}
 									<div class="form-group">
 										<div class="col-lg-offset-2 col-lg-6 m_t10">
