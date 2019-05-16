@@ -166,7 +166,7 @@ class GoodsApiFormatted
     
     protected function filterGoodsBarcode($goods_barcode)
     {
-        return $goods_barcode;
+        return $this->model->product_bar_code ?: $goods_barcode;
     }
 
     protected function filterGoodsSn($goods_sn)

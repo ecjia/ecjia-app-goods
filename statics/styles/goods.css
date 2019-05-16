@@ -188,11 +188,18 @@
 	font-size:17px;
 	padding-right:15px;
 }
-#detail .goods-name-style{
+#detail .product-goods-name-style{
 	height: 40px;
 	line-height: 20px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+#detail .goods-name-style{
+	height: 72px;
+	line-height: 35px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size:17px;
 }
 
 #tbody {

@@ -9,6 +9,30 @@
 				disable_search: true
 			});
 			bath_url = $("a[name=move_cat_ture]").attr("data-url");
+
+			 //列表内部链接
+            $('[data-toggle="modal"]').on('click', function (e) {
+                 var $this = $(this);
+                 var copy_url = $this.attr('copy-url');
+                 $("textarea[name='link_value']").val(copy_url);
+                 
+                 var clipboard = new Clipboard('#copy_btn', {
+                     text: function() {
+                         return copy_url;
+                     }
+                 });
+                 clipboard.on('success',function(e) {
+                	 $('#alert_msg').remove();
+                     var $info = $('<div id="alert_msg" class="staticalert alert alert-success ui_showmessage"><a data-dismiss="alert" class="close">×</a>复制成功</div>');
+					 $info.appendTo('.success-msg').delay(2000).hide(0);
+                 });
+                 clipboard.on('error',function(e) {
+                	 $('#alert_msg').remove();
+                	 var $info = $('<div id="alert_msg" class="staticalert alert alert-danger ui_showmessage"><a data-dismiss="alert" class="close">×</a>复制失败</div>');
+					 $info.appendTo('.error-msg').delay(2000).hide(0);
+                 });
+ 			});
+
 			app.goods_list.list_search();
 			app.goods_list.filter();
 			app.goods_list.batch_move_cat();
@@ -16,6 +40,7 @@
 			app.goods_list.toggle_on_sale();
 			app.goods_list.insertGoods();
 			app.goods_list.checkGoods();
+			app.goods_list.viewReview();
 		},
 		review_static: function() {
 			$('.review_static').each(function() {
@@ -338,6 +363,18 @@
 		                    location.href = data.url;
 		               }, 'json');
 		           });
+			 });
+		},
+		
+		viewReview: function() {
+			 $(".view_review").off('click').on('click', function (e) {
+				 e.preventDefault();
+		         var $this = $(this);
+		         var goods_id = $this.attr('goods-id');
+		         var url = $this.attr('attr-url');
+	             $.post(url, {'goods_id': goods_id}, function (data) {
+	            	 $('.log').html(data.data);
+	             }, 'json');
 			 });
 		}
 	};
