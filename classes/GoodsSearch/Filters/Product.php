@@ -40,7 +40,8 @@ class Product implements FilterInterface
             	'products.product_thumb',
             	'products.product_img',
             	'products.product_original_img',
-            	'products.promote_limited as product_promote_limited'
+            	'products.promote_limited as product_promote_limited',
+            	'products.product_bar_code'
             );
         }
 
