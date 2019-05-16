@@ -9,6 +9,7 @@
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
+use ecjia_error;
 use RC_Uri;
 use RC_DB;
 use RC_Api;
@@ -22,7 +23,6 @@ use ecjia_admin;
  */
 class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
 {
-
     /**
      * 代号标识
      * @var string
@@ -40,6 +40,8 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
         $this->name = __('店铺商品参数', 'goods');
 
         parent::__construct($store_id, $source_store_id);
+
+        $this->data_operator = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('cat_type', 'parameter');
     }
 
     /**
@@ -47,7 +49,7 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
      */
     public function handlePrintData()
     {
-        $count     = $this->handleCount();
+        $count = $this->handleCount();
         $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>个参数模板', 'goods'), $count);
 
         return <<<HTML
@@ -56,14 +58,21 @@ HTML;
     }
 
     /**
-     * 获取数据统计条数
+     * 统计数据条数并获取
      *
      * @return mixed
      */
     public function handleCount()
     {
-        $count = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('cat_type', 'parameter')->count();
-        return $count;
+        //如果已经统计过，直接返回统计过的条数
+        if ($this->count) {
+            return $this->count;
+        }
+        // 统计数据条数
+        if (!empty($this->data_operator)) {
+            $this->count = $this->data_operator->count();
+        }
+        return $this->count;
     }
 
 
@@ -75,24 +84,20 @@ HTML;
     public function handleDuplicate()
     {
         //检测当前对象是否已复制完成
-        if ($this->isCheckFinished()){
+        if ($this->isCheckFinished()) {
             return true;
         }
 
-        $dependent = false;
+        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
         if (!empty($this->dependents)) { //如果设有依赖对象
             //检测依赖
-            if (!empty($this->dependentCheck())){
-                $dependent = true;
+            $items = $this->dependentCheck();
+            if (!empty($items)) {
+                return new ecjia_error('handle_duplicate_error', __('复制依赖检测失败！', 'store'), $items);
             }
         }
 
-        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
-        if ($dependent){
-            return false;
-        }
-
-        //@todo 执行具体任务
+        //执行具体任务
         $this->startDuplicateProcedure();
 
         //标记处理完成
@@ -105,10 +110,23 @@ HTML;
     }
 
     /**
-     * 此方法实现店铺复制操作的具体过程
+     * 店铺复制操作的具体过程
      */
-    protected function startDuplicateProcedure(){
+    protected function startDuplicateProcedure()
+    {
+        $this->data_operator->chunk(50, function ($items) {
+            //构造可用于复制的数据
+            foreach ($items as &$item) {
+                unset($item['cat_id']);
 
+                //将源店铺ID设为新店铺的ID
+                $item['store_id'] = $this->store_id;
+            }
+
+            dd($items);
+            //插入数据到新店铺
+            RC_DB::table('goods_type')->insert($items);
+        });
     }
 
     /**
