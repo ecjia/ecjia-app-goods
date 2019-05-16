@@ -13,6 +13,7 @@ use RC_Uri;
 use RC_DB;
 use RC_Api;
 use ecjia_admin;
+use ecjia_error;
 
 /**
  * 复制店铺中的商品分类
@@ -84,17 +85,13 @@ HTML;
             return true;
         }
 
-        $dependent = false;
+        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
         if (!empty($this->dependents)) { //如果设有依赖对象
             //检测依赖
-            if (!empty($this->dependentCheck())){
-                $dependent = true;
+            $items = $this->dependentCheck();
+            if (!empty($items)) {
+                return new ecjia_error('handle_duplicate_error', __('复制依赖检测失败！', 'store'), $items);
             }
-        }
-
-        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
-        if ($dependent){
-            return false;
         }
 
         //@todo 执行具体任务
