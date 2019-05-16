@@ -81,3 +81,14 @@
 	
 }
 
+
+.check-box {
+	float: left;
+    padding-left: 10px;
+    width: 80px;
+    border-left: 1px solid #eee;
+    overflow: hidden;
+}
+
+
+
