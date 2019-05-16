@@ -79,6 +79,11 @@ HTML;
      */
     public function handleDuplicate()
     {
+        $item = $this->dependentCheck();
+        //判断提示错误
+
+
+//        dd($item);
 
         return true;
     }

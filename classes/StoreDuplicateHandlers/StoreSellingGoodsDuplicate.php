@@ -65,24 +65,24 @@ HTML;
      */
     public function handleCount()
     {
-        $a = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1);
-        var_dump(RC_DB::getQueryLog());
-        $d = RC_DB::table('store_franchisee')->where('store_id', $this->source_store_id)->get();
-        var_dump(RC_DB::getQueryLog());
-        $a->limit(10)->select('goods_id');
-        $c = $a->lists('goods_id'); //一维数组，包含所有goods_id, get()是二维数组，每个子数组中包含一个goods_id的键值对
-
-        var_dump($c,$d);
-        exit;
-
-        var_dump($a->count());
-        $a->chunk(10,function($goods){
-            foreach ($goods as $v){
-                echo $v['store_id'] . '_'.$v['goods_id'];
-                echo '<br>';
-            }
-            echo '<hr>';
-        });
+//        $a = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1);
+////        var_dump(RC_DB::getQueryLog());
+//        $d = RC_DB::table('store_franchisee')->where('store_id', $this->source_store_id)->get();
+////        var_dump(RC_DB::getQueryLog());
+//        $a->limit(10)->select('goods_id');
+//        $c = $a->lists('goods_id'); //一维数组，包含所有goods_id, get()是二维数组，每个子数组中包含一个goods_id的键值对
+//
+//        var_dump($c,$d);
+//        exit;
+//
+//        var_dump($a->count());
+//        $a->chunk(10,function($goods){
+//            foreach ($goods as $v){
+//                echo $v['store_id'] . '_'.$v['goods_id'];
+//                echo '<br>';
+//            }
+//            echo '<hr>';
+//        });
         // RC_DB::enableQueryLog();
         //   RC_DB::getQueryLog()
         $count = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->count();
