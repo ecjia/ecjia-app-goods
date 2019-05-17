@@ -114,9 +114,9 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
-        $replacement_data = [];
+        $replacement_goods_type = [];
 
-        $this->source_store_data_handler->chunk(50, function ($items) use (& $replacement_data) {
+        $this->source_store_data_handler->chunk(50, function ($items) use (& $replacement_goods_type) {
 //            dd($items);
 
             //构造可用于复制的数据
@@ -131,35 +131,42 @@ HTML;
 
                 $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
 
-                $replacement_data[$cat_id] = $new_cat_id;
-
-
-                //通过源店铺的cat_id查询出在attribute中的关联数据
-                RC_DB::table('attribute')->where('cat_id', $cat_id)->chunk(50, function($attrDataOfCatId) use ($new_cat_id){
-
-                    //构造可用于复制的数据
-                    foreach ($attrDataOfCatId as &$v){
-                        unset($v['attr_id']);
-
-                        //将cat_id替换成新店铺的cat_id
-                        $v['cat_id'] = $new_cat_id;
-
-                    }
-
-                    //为新店铺插入这些数据
-                    RC_DB::table('attribute')->insert($attrDataOfCatId);
-
-
-                });
-
-
+                $replacement_goods_type[$cat_id] = $new_cat_id;
             }
-
 
         });
 
-        $this->setReplacementData($this->getCode(), $replacement_data);
+        $cat_id_keys = array_keys($replacement_goods_type);
+        if (!empty($cat_id_keys)) {
 
+            $replacement_attribute = [];
+
+            //通过源店铺的cat_id查询出在attribute中的关联数据
+            RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function($items) use ($replacement_goods_type, & $replacement_attribute) {
+
+                //构造可用于复制的数据
+                foreach ($items as & $item) {
+                    $attr_id = $item['attr_id'];
+                    unset($item['attr_id']);
+
+                    //将cat_id替换成新店铺的cat_id
+                    $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], 0);
+
+                    //为新店铺插入这些数据
+                    $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
+
+                    $replacement_attribute[$attr_id] = $new_attr_id;
+
+                }
+            });
+        }
+
+        $replacement_data = [
+            'goods_type' => $replacement_goods_type,
+            'attribute' => $replacement_attribute,
+        ];
+
+        $this->setReplacementData($this->getCode(), $replacement_data);
 
     }
 
