@@ -101,8 +101,8 @@
                                                     {/if}                 
 												</div>
 											</div>
-											{if $has_spec}
-											<hr>
+											
+											{if $product_list}
 											<table class="table table-striped table-hide-edit">
                                               <thead>
                                                   <tr>

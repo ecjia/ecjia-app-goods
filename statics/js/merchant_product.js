@@ -128,19 +128,46 @@
                 var goods_id = $this.attr('goods-id');
                 var url = $this.attr('attr-url');
                 $.post(url, {'goods_id': goods_id}, function (data) {
-                	$('.add_pro').html(data.data);
-                	 app.product_spec.add_product_submit(data);
-                	 app.product_spec.del_product_submit(data);
+                	 $('.add_pro').html(data.data);
+                	 
+                	 app.product_spec.ajax_default();
+                	 
+                	 $('.pro_close').on('click', function (e) {
+                		 window.location.reload();
+    				 });
+                	 app.product_spec.add_product_submit();
+                	 app.product_spec.del_product_submit();
             
                 }, 'json');
 			})
 		},
 			
+		ajax_default: function() {
+			var goods_id = $("input[name='good_id']").val();
+            var url = $("input[name='defaulet_data_url']").val();
+            
+            var radio_value = [];
+            $('input:radio:checked').each(function(){
+            	radio_value.push($(this).val());
+            });
+            var filters = {
+	            'goods_id': goods_id,
+	            'radio_value_arr': radio_value,
+            };
+            
+            $.post(url, filters, function (data) {
+	          	 if (data.state == 'success'){
+	          		 var msg = "所选属性已组合成货品，【货号】" + data.product_sn
+	          		 $('.product_sn_msg').html(msg);
+				 }
+            });
+		},
+		
+		
 		//添加货品-处理
 		add_product_submit: function() { 
 	    	$('.add_pro_submint').on('click', function (e) {
 	    		e.preventDefault();
-	    		
 	    		var $this = $(this);
 	            var goods_id = $this.attr('goods-id');
 	            var url = $this.attr('data-url');
@@ -165,7 +192,7 @@
 						 $info.appendTo('.error-msg').delay(5000).hide(0);
 					 }
    	            });
-
+	  	      
         	})
 		},
 
@@ -202,6 +229,7 @@
 	    	})
 		},
 
+		
 		spec_submint: function() {
 			var $this = $('form[name="theForm"]');
 			var option = {

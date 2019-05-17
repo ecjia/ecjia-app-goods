@@ -18,7 +18,7 @@
 				<div class="form-group">
 	              <div class="col-lg-offset-2 col-lg-6">
 	                   <input  type="hidden" name="goods_id" value="{$goods_id}">
-	                   <a class="btn btn-info insertSubmit" href="javascript:;">{t domain="goods"}确定{/t}</a>
+	                   <a class="btn btn-info insertSubmit" href="javascript:;" {if $has_product}disabled="disabled"{/if}>{t domain="goods"}确定{/t}</a>
 	              </div>
 	           	</div>
 		   </form>
