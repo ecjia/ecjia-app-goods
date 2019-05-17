@@ -137,9 +137,9 @@ HTML;
         });
 
         $cat_id_keys = array_keys($replacement_goods_type);
-        if (!empty($cat_id_keys)) {
 
-            $replacement_attribute = [];
+        $replacement_attribute = [];
+        if (!empty($cat_id_keys)) {
 
             //通过源店铺的cat_id查询出在attribute中的关联数据
             RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function($items) use ($replacement_goods_type, & $replacement_attribute) {
