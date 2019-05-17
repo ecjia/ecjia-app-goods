@@ -613,7 +613,7 @@ class merchant extends ecjia_merchant {
 			$goods['formated_promote_start_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_start_date']);
 			$goods['formated_promote_end_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_end_date']);
 		}
-		$goods['cost_price'] = ecjia_price_format($goods['cost_price'], false);
+		$goods['format_cost_price'] = ecjia_price_format($goods['cost_price'], false);
 		
 		if (!empty($goods['add_time'])) {
 			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods['add_time']);

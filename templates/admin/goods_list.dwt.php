@@ -179,8 +179,8 @@
 						
 						<div class="edit-list">
 						
-							{if $goods.review_status neq 2}
-							<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
+							{if $preview_type}
+							<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
 							{/if}
 							
 							{if $action neq 'check'}
