@@ -279,7 +279,6 @@ class merchant extends ecjia_merchant {
 	    $goods_count = $count_link_func($input, $where, $goods_count, $goods_activity_count);
 	    
 	    $this->assign('list_type', $list_type);
-	    _dump($goods_list,1);
 	    $this->assign('goods_list', $goods_list);
 	    $this->assign('goods_count', $goods_count);
 	    
