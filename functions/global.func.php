@@ -900,7 +900,7 @@ function get_merchant_goods_info_nav($goods_id  =0, $extension_code = '') {
 		'edit'                       => array('name' => __('通用信息', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/edit', "goods_id=$goods_id".$extension_code)),
 		'edit_goods_desc'            => array('name' => __('商品描述', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/edit_goods_desc', "goods_id=$goods_id".$extension_code)),
 		'edit_goods_parameter'       => array('name' => __('商品参数', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/edit_goods_parameter', "goods_id=$goods_id".$extension_code)),
-		'edit_goods_specification'   => array('name' => __('库存/规格', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/edit_goods_specification', "goods_id=$goods_id".$extension_code)),
+		'edit_goods_specification'   => array('name' => __('规格/货品', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/edit_goods_specification', "goods_id=$goods_id".$extension_code)),
 		'edit_goods_attr'            => array('name' => __('商品属性', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/edit_goods_attr', "goods_id=$goods_id".$extension_code)),
 		'edit_goods_photo'           => array('name' => __('商品相册', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/mh_gallery/init', "goods_id=$goods_id".$extension_code)),
 		'edit_link_goods'            => array('name' => __('关联商品', 'goods'), 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/edit_link_goods', "goods_id=$goods_id".$extension_code)),

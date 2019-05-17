@@ -67,50 +67,157 @@
 
 	
 	app.product_spec = {
-			init: function() {
-				app.product_spec.select_spec();
-			},
+		init: function() {
+			app.product_spec.select_spec();
+			app.product_spec.spec_add_product();
+			app.product_spec.spec_submint();
+		},
 
-			select_spec: function() {
-	            $("a[data-toggle='modal']").off('click').on('click', function (e) {
-	            	e.preventDefault();
-	                var $this = $(this);
-	                var goods_id = $this.attr('goods-id');
-	                var url = $this.attr('attr-url');
-	                $.post(url, {'goods_id': goods_id}, function (data) {
-	                	$('.modal').html(data.data);
-	                	
-	                	$(".insertSubmit").on('click', function(e) {
-	        				$("form[name='insertForm']").submit();
-	        			});	
-	                	
-	        			$("form[name='insertForm']").on('submit', function(e) {
-	        				e.preventDefault();
-	        			});
-	        			
-	        			var $this = $('form[name="insertForm"]');
-	        			var option = {
-	        				submitHandler: function() {
-	        					$this.ajaxSubmit({
-	        						dataType: "json",
-	        						success: function(data) {
-	        							$('#myModal1').modal('hide');
-	        							$(".modal-backdrop").remove();
-	        							ecjia.pjax(data.url, function() {
-	        								ecjia.merchant.showmessage(data);
-	        							})
-	        						}
-	        					});
-	        				},
-	        			};
+		//设置规格属性-checkbox
+		select_spec: function() {
+            $("a[data-toggle='modal']").off('click').on('click', function (e) {
+            	e.preventDefault();
+            	
+            	$("#myModal2").remove();
+                var $this = $(this);
+                var goods_id = $this.attr('goods-id');
+                var url = $this.attr('attr-url');
+                $.post(url, {'goods_id': goods_id}, function (data) {
+                	$('.modal').html(data.data);
+                	
+                	$(".insertSubmit").on('click', function(e) {
+        				$("form[name='insertForm']").submit();
+        			});	
+                	
+        			$("form[name='insertForm']").on('submit', function(e) {
+        				e.preventDefault();
+        			});
+        			
+        			var $this = $('form[name="insertForm"]');
+        			var option = {
+        				submitHandler: function() {
+        					$this.ajaxSubmit({
+        						dataType: "json",
+        						success: function(data) {
+        							$('#myModal1').modal('hide');
+        							$(".modal-backdrop").remove();
+        							ecjia.pjax(data.url, function() {
+        								ecjia.merchant.showmessage(data);
+        							})
+        						}
+        					});
+        				},
+        			};
 
-	        			var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
-	        			$this.validate(options);
-	                }, 'json');
-				})
-	        
-			}
-		};
+        			var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
+        			$this.validate(options);
+                }, 'json');
+			})
+        
+		},
+			
+		//添加货品-radio
+		spec_add_product: function() {
+            $("a[data-type='add-pro']").off('click').on('click', function (e) {
+            	
+            	$("#myModal1").remove();
+            	
+            	e.preventDefault();
+            	
+                var $this = $(this);
+                var goods_id = $this.attr('goods-id');
+                var url = $this.attr('attr-url');
+                $.post(url, {'goods_id': goods_id}, function (data) {
+                	$('.add_pro').html(data.data);
+                	 app.product_spec.add_product_submit(data);
+                	 app.product_spec.del_product_submit(data);
+            
+                }, 'json');
+			})
+		},
+			
+		//添加货品-处理
+		add_product_submit: function() { 
+	    	$('.add_pro_submint').on('click', function (e) {
+	    		e.preventDefault();
+	    		
+	    		var $this = $(this);
+	            var goods_id = $this.attr('goods-id');
+	            var url = $this.attr('data-url');
+	            var radio_value = [];
+			
+	            $('input:radio:checked').each(function(){
+	            	radio_value.push($(this).val());
+	            });
+   	            var filters = {
+                    'goods_id': goods_id,
+                    'radio_value_arr': radio_value,
+   	            };
+ 
+  	            $.post(url, filters, function (data) {
+	   	          	 if (data.state == 'success'){
+	   	          		 var msg = "所选属性已组合成货品，【货号】" + data.product_sn
+	   	          		 $('.product_sn_msg').html(msg);
+		     		     var $info = $('<div class="staticalert alert alert-success ui_showmessage"><a data-dismiss="alert" class="close">×</a>' + data.message + '</div>');
+		     		     $info.appendTo('.success-msg').delay(5000).hide(0);
+					 } else {
+						 var $info = $('<div class="staticalert alert alert-danger ui_showmessage"><a data-dismiss="alert" class="close">×</a>' + data.message + '</div>');
+						 $info.appendTo('.error-msg').delay(5000).hide(0);
+					 }
+   	            });
+
+        	})
+		},
+
+		//删除货品-处理
+		del_product_submit: function() { 
+	    	$('.del_pro_submint').on('click', function (e) {
+
+	    		e.preventDefault();
+	    		
+	    		var $this = $(this);
+	            var goods_id = $this.attr('goods-id');
+	            var url = $this.attr('data-url');
+	            var radio_value = [];
+			
+	            $('input:radio:checked').each(function(){
+	            	radio_value.push($(this).val());
+	            });
+   	            var filters = {
+                    'goods_id': goods_id,
+                    'radio_value_arr': radio_value,
+   	            };
+ 
+   	            $.post(url, filters, function (data) {
+   	            	console.log(data);
+	   	          	 if (data.state == 'success'){
+	   	          		 $('#product_sn').val(data.template);
+		     		     var $info = $('<div class="staticalert alert alert-success ui_showmessage"><a data-dismiss="alert" class="close">×</a>' + data.message + '</div>');
+		     		     $info.appendTo('.success-msg').delay(5000).hide(0);
+					 } else {
+						 var $info = $('<div class="staticalert alert alert-danger ui_showmessage"><a data-dismiss="alert" class="close">×</a>' + data.message + '</div>');
+						 $info.appendTo('.error-msg').delay(5000).hide(0);
+					 }
+   	            });
+	    	})
+		},
+
+		spec_submint: function() {
+			var $this = $('form[name="theForm"]');
+			var option = {
+				submitHandler: function() {
+					$this.ajaxSubmit({
+						dataType: "json",
+						success: function(data) {
+							ecjia.merchant.showmessage(data);
+						}
+					});
+				}
+			};
+			var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
+			$this.validate(options);
+		}
+	};
 	
 	
 	/**

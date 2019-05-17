@@ -9,6 +9,7 @@
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
+use ecjia_error;
 use RC_Uri;
 use RC_DB;
 use RC_Api;
@@ -22,7 +23,6 @@ use ecjia_admin;
  */
 class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
 {
-
     /**
      * 代号标识
      * @var string
@@ -40,6 +40,8 @@ class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
         $this->name = __('店铺商品规格', 'goods');
 
         parent::__construct($store_id, $source_store_id);
+
+        $this->source_store_data_handler = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('enabled', 1)->where('cat_type', 'specification');
     }
 
     /**
@@ -47,8 +49,8 @@ class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
      */
     public function handlePrintData()
     {
-        $count     = $this->handleCount();
-        $text      = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>个规格模板', 'goods'), $count);
+        $count = $this->handleCount();
+        $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>个规格模板', 'goods'), $count);
 
         return <<<HTML
 <span class="controls-info">{$text}</span>
@@ -56,14 +58,21 @@ HTML;
     }
 
     /**
-     * 获取数据统计条数
+     * 统计数据条数并获取
      *
      * @return mixed
      */
     public function handleCount()
     {
-        $count = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->count();
-        return $count;
+        //如果已经统计过，直接返回统计过的条数
+        if ($this->count) {
+            return $this->count;
+        }
+        // 统计数据条数
+        if (!empty($this->source_store_data_handler)) {
+            $this->count = $this->source_store_data_handler->count();
+        }
+        return $this->count;
     }
 
 
@@ -75,24 +84,20 @@ HTML;
     public function handleDuplicate()
     {
         //检测当前对象是否已复制完成
-        if ($this->isCheckFinished()){
+        if ($this->isCheckFinished()) {
             return true;
         }
 
-        $dependent = false;
+        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
         if (!empty($this->dependents)) { //如果设有依赖对象
             //检测依赖
-            if (!empty($this->dependentCheck())){
-                $dependent = true;
+            $items = $this->dependentCheck();
+            if (!empty($items)) {
+                return new ecjia_error('handle_duplicate_error', __('复制依赖检测失败！', 'store'), $items);
             }
         }
 
-        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
-        if ($dependent){
-            return false;
-        }
-
-        //@todo 执行具体任务
+        //执行具体任务
         $this->startDuplicateProcedure();
 
         //标记处理完成
@@ -105,9 +110,63 @@ HTML;
     }
 
     /**
-     * 此方法实现店铺复制操作的具体过程
+     * 店铺复制操作的具体过程
      */
-    protected function startDuplicateProcedure(){
+    protected function startDuplicateProcedure()
+    {
+        $replacement_goods_type = [];
+
+        $this->source_store_data_handler->chunk(50, function ($items) use (& $replacement_goods_type) {
+//            dd($items);
+
+            //构造可用于复制的数据
+            foreach ($items as $item) {
+
+                $cat_id = $item['cat_id'];
+
+                unset($item['cat_id']);
+
+                //将源店铺ID设为新店铺的ID
+                $item['store_id'] = $this->store_id;
+
+                $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
+
+                $replacement_goods_type[$cat_id] = $new_cat_id;
+            }
+
+        });
+
+        $cat_id_keys = array_keys($replacement_goods_type);
+        if (!empty($cat_id_keys)) {
+
+            $replacement_attribute = [];
+
+            //通过源店铺的cat_id查询出在attribute中的关联数据
+            RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function($items) use ($replacement_goods_type, & $replacement_attribute) {
+
+                //构造可用于复制的数据
+                foreach ($items as & $item) {
+                    $attr_id = $item['attr_id'];
+                    unset($item['attr_id']);
+
+                    //将cat_id替换成新店铺的cat_id
+                    $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], 0);
+
+                    //为新店铺插入这些数据
+                    $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
+
+                    $replacement_attribute[$attr_id] = $new_attr_id;
+
+                }
+            });
+        }
+
+        $replacement_data = [
+            'goods_type' => $replacement_goods_type,
+            'attribute' => $replacement_attribute,
+        ];
+
+        $this->setReplacementData($this->getCode(), $replacement_data);
 
     }
 

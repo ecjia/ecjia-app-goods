@@ -435,4 +435,57 @@ class MerchantGoodsAttr {
 		return $row;
 	}
 	
+	/**
+	 * 获得商品已添加的规格列表
+	 *
+	 * @access public
+	 * @param
+	 *            s integer $goods_id
+	 * @return array
+	 */
+	public static function get_goods_spec_list($goods_id) {
+		if (empty($goods_id)) {
+			return array();
+		}
+		 
+		return RC_DB::table('goods_attr as ga')
+		->leftJoin('attribute as a', RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
+		->where('goods_id', $goods_id)
+		->where(RC_DB::raw('a.attr_type'), 1)
+		->select(RC_DB::raw('ga.goods_attr_id, ga.attr_value, ga.attr_id, a.attr_name'))
+		->orderBy(RC_DB::raw('ga.attr_id'), 'asc')
+		->get();
+	}
+	
+
+	/**
+	 * 商品的货品规格是否存在
+	 *
+	 * @param string $goods_attr
+	 *            商品的货品规格
+	 * @param string $goods_id
+	 *            商品id
+	 * @param int $product_id
+	 *            商品的货品id；默认值为：0，没有货品id
+	 * @return bool true，重复；false，不重复
+	 */
+	public static function check_goods_attr_exist($goods_attr, $goods_id, $product_id = 0) {
+		$db_products = RC_DB::table('products');
+		$goods_id = intval($goods_id);
+		if (strlen($goods_attr) == 0 || empty ($goods_id)) {
+			return true; // 重复
+		}
+	
+		$db_products->where('goods_attr', $goods_attr)->where('goods_id', $goods_id);
+		if (!empty ($product_id)) {
+			$db_products->where('product_id', '!=', $product_id);
+		}
+		$res = $db_products->pluck('product_id');
+		if (empty ($res)) {
+			return false; // 不重复
+		} else {
+			return true; // 重复
+		}
+	}
+	
 }
