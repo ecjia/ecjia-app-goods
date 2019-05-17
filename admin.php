@@ -3046,6 +3046,37 @@ class admin extends ecjia_admin {
 	}
 	
 	
+	/**
+	 * 登录到商家商品编辑页
+	 */
+	public function autologin()
+	{
+		$store_id     = intval($_GET['store_id']);
+		$redirect_url = urlencode($_GET['url']);
+	
+		if ($_SESSION['action_list'] == 'all') {
+			$cookie_name    = RC_Config::get('session.session_admin_name');
+			$authcode_array = array(
+					'admin_token' => RC_Cookie::get($cookie_name),
+					'store_id'    => $store_id,
+					'time'        => RC_Time::gmtime(),
+			);
+			$authcode_str   = http_build_query($authcode_array);
+			$authcode       = RC_Crypt::encrypt($authcode_str);
+	
+			if (defined('RC_SITE')) {
+				$index = 'sites/' . RC_SITE . '/index.php';
+			} else {
+				$index = 'index.php';
+			}
+	
+			$url = str_replace($index, "sites/merchant/index.php", RC_Uri::url('staff/privilege/autologin')) . '&authcode=' . $authcode;
+	
+			$url .= '&redirect_url=' . $redirect_url;
+			return $this->redirect($url);
+		}
+	}
+	
 	
 	/**
 	 * 商品规格重组集合
