@@ -27,7 +27,7 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
      * 代号标识
      * @var string
      */
-    protected $code = 'store_goods_paramter_duplicate';
+    protected $code = 'store_goods_parameter_duplicate';
 
     /**
      * 排序
@@ -112,7 +112,7 @@ HTML;
     /**
      * 店铺复制操作的具体过程
      */
-    protected function startDuplicateProcedure()
+    protected function startDuplicateProcedureOld()
     {
         $replacement_data = [];
 
@@ -157,6 +157,64 @@ HTML;
         });
 
         $this->setReplacementData($this->getCode(), $replacement_data);
+    }
+
+    protected function startDuplicateProcedure()
+    {
+        $replacement_goods_type = [];
+
+        $this->source_store_data_handler->chunk(50, function ($items) use (& $replacement_goods_type) {
+//            dd($items);
+
+            //构造可用于复制的数据
+            foreach ($items as $item) {
+
+                $cat_id = $item['cat_id'];
+
+                unset($item['cat_id']);
+
+                //将源店铺ID设为新店铺的ID
+                $item['store_id'] = $this->store_id;
+
+                $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
+
+                $replacement_goods_type[$cat_id] = $new_cat_id;
+            }
+
+        });
+
+        $cat_id_keys = array_keys($replacement_goods_type);
+
+        $replacement_attribute = [];
+        if (!empty($cat_id_keys)) {
+
+            //通过源店铺的cat_id查询出在attribute中的关联数据
+            RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function($items) use ($replacement_goods_type, & $replacement_attribute) {
+
+                //构造可用于复制的数据
+                foreach ($items as & $item) {
+                    $attr_id = $item['attr_id'];
+                    unset($item['attr_id']);
+
+                    //将cat_id替换成新店铺的cat_id
+                    $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], 0);
+
+                    //为新店铺插入这些数据
+                    $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
+
+                    $replacement_attribute[$attr_id] = $new_attr_id;
+
+                }
+            });
+        }
+
+        $replacement_data = [
+            'goods_type' => $replacement_goods_type,
+            'attribute' => $replacement_attribute,
+        ];
+
+        $this->setReplacementData($this->getCode(), $replacement_data);
+
     }
 
     /**

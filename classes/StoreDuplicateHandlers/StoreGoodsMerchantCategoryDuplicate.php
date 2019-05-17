@@ -36,7 +36,7 @@ class StoreGoodsMerchantCategoryDuplicate extends StoreDuplicateAbstract
     protected $sort = 13;
 
     protected $dependents = [
-        'store_goods_paramter_duplicate',
+        'store_goods_parameter_duplicate',
         'store_goods_specification_duplicate',
     ];
 
@@ -115,26 +115,83 @@ HTML;
         return true;
     }
 
+    private function b(&$data)
+    {
+        foreach ($this->dependents as $code) {
+            //$replacement_data = $progress_data->getReplacementDataByCode($code);
+            if (!empty($replacement_data['goods_type'])) {
+                foreach ($replacement_data['goods_type'] as $old_cat_id => $new_cat_id) {
+                    $item['specification_id'] = $new_cat_id;
+                    RC_DB::table('merchants_category')->where('');
+                }
+            }
+
+        }
+    }
+
     /**
      * 店铺复制操作的具体过程
      */
     protected function startDuplicateProcedure()
     {
-        $this->source_store_data_handler->chunk(50, function ($items) {
-            //构造可用于复制的数据
-            $this->buildDuplicateData($items);
+        $merchant_category_replacement = [];
 
-            dd($items);
-            //插入数据到新店铺
-            RC_DB::table('merchants_category')->insert($items);
+        $progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+
+        $specification_replacement = $progress_data->getReplacementDataByCode('store_goods_specification_duplicate.goods_type');
+        $parameter_replacement = $progress_data->getReplacementDataByCode('store_goods_parameter_duplicate.goods_type');
+
+        $this->source_store_data_handler->orderBy('parent_id', 'asc')->chunk(50, function ($items) use (& $merchant_category_replacement, $specification_replacement, $parameter_replacement) {
+
+            //构造可用于复制的数据
+            //$this->buildDuplicateData($items);
+
+            foreach ($items as &$item) {
+                $merchant_cat_id = $item['cat_id'];
+                unset($item['cat_id']);
+
+                //将源店铺ID设为新店铺的ID
+                $item['store_id'] = $this->store_id;
+
+                //设置新店铺规则ID
+                if (isset($specification_replacement[$item['specification_id']])) {
+                    $item['specification_id'] = $specification_replacement[$item['specification_id']];
+                }
+
+                //设置新店铺参数ID
+                if (isset($parameter_replacement[$item['parameter_id']])) {
+                    $item['parameter_id'] = $parameter_replacement[$item['parameter_id']];
+                }
+
+                //插入数据到新店铺并获取主键ID
+                //$new_merchant_cat_id = $merchant_cat_id + 1;
+                $new_merchant_cat_id = RC_DB::table('merchants_category')->insertGetId($item);
+                $merchant_category_replacement[$merchant_cat_id] = $new_merchant_cat_id;
+
+                //如果该数据不是顶级分类
+                if ((int)$item['parent_id'] !== 0 && isset($merchant_category_replacement[$item['parent_id']])) {
+
+                    //用parent_id找到替换ID，将新插入的数据执行更新，完成parent_id替换
+                    RC_DB::table('merchants_category')
+                        ->where('cat_id', $new_merchant_cat_id)
+                        ->update(['parent_id' => $merchant_category_replacement[$item['parent_id']]]);
+                }
+
+
+                //图片数据的处理
+
+            }
+
         });
 
-
+        $this->setReplacementData($this->getCode(), $replacement_merchant_category_data);
     }
+
 
     protected function buildDuplicateData(&$items)
     {
         foreach ($items as &$item) {
+
             unset($item['cat_id']);
 
             //将源店铺ID设为新店铺的ID
