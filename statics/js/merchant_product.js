@@ -85,6 +85,10 @@
                 $.post(url, {'goods_id': goods_id}, function (data) {
                 	$('.modal').html(data.data);
                 	
+                	$('.sprc_close').on('click', function (e) {
+                		window.location.reload();
+    				});
+                	 
                 	$(".insertSubmit").on('click', function(e) {
         				$("form[name='insertForm']").submit();
         			});	
@@ -113,7 +117,6 @@
         			$this.validate(options);
                 }, 'json');
 			})
-        
 		},
 			
 		//添加货品-radio
@@ -199,9 +202,8 @@
 		//删除货品-处理
 		del_product_submit: function() { 
 	    	$('.del_pro_submint').on('click', function (e) {
-
-	    		e.preventDefault();
 	    		
+	    		e.preventDefault();
 	    		var $this = $(this);
 	            var goods_id = $this.attr('goods-id');
 	            var url = $this.attr('data-url');
@@ -215,10 +217,9 @@
                     'radio_value_arr': radio_value,
    	            };
  
-   	            $.post(url, filters, function (data) {
-   	            	console.log(data);
+  	            $.post(url, filters, function (data) {
 	   	          	 if (data.state == 'success'){
-	   	          		 $('#product_sn').val(data.template);
+	   	          		 $('.product_sn_msg').html('');
 		     		     var $info = $('<div class="staticalert alert alert-success ui_showmessage"><a data-dismiss="alert" class="close">×</a>' + data.message + '</div>');
 		     		     $info.appendTo('.success-msg').delay(5000).hide(0);
 					 } else {

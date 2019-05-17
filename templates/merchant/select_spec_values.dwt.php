@@ -3,7 +3,7 @@
 <div class="modal-dialog" style="width:800px;">
 	<div class="modal-content" style="width:800px;">
 		<div class="modal-header">
-		    <button data-dismiss="modal" class="close" type="button">×</button>
+		    <button data-dismiss="modal" class="close sprc_close" type="button">×</button>
 		    <h4 class="modal-title">{t domain="goods"}设置规格属性{/t}</h4>
 		</div>
 

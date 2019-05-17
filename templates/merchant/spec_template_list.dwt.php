@@ -61,7 +61,7 @@
 									<div class="edit-list">
 										<a class="data-pjax" href='{url path="goods/mh_spec_attribute/init" args="cat_id={$list.cat_id}"}'>{t domain="goods"}查看规格属性{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/mh_spec/edit" args="cat_id={$list.cat_id}"}'>{t domain="goods"}编辑{/t}</a>&nbsp;|&nbsp;
-										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods' escape=no}删除商品规格模板将会清除该模板下的所有属性，您确定要删除选定的商品规格模板吗？{/t}" href='{url path="goods/mh_spec/remove" args="id={$list.cat_id}"}' title="{t domain="goods"}删除{/t}">{t domain="goods"}删除{/t}</a>
+										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods' escape=no}删除后将会清除该模板下所有属性，您确定要删除？{/t}" href='{url path="goods/mh_spec/remove" args="id={$list.cat_id}"}' title="{t domain="goods"}删除{/t}">{t domain="goods"}删除{/t}</a>
 									</div>
 								</td>
 								<td>{$list.attr_count}</td>
