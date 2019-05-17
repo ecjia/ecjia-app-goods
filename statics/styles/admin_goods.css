@@ -195,11 +195,10 @@
 	text-overflow: ellipsis;
 }
 #detail .goods-name-style{
-	height: 72px;
 	line-height: 35px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	font-size:17px;
+	font-size:22px;
 }
 
 #detail .preview-merchant-info{

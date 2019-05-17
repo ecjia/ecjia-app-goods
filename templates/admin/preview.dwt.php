@@ -24,39 +24,11 @@
 
 <div id="detail">
 	<div class="tm-detail-meta tm-clear">
-		<div class="row-fluid tm-clear">
-			<div class="span4">
-				<div id="tbody">
-					{if $goods_photo_list}
-				    <div id="mainbody">
-				    	<!-- {foreach from=$goods_photo_list key=k item=val} -->
-				    	{if $k eq 0}
-				      	<img src="{$val.img_url}" id="mainphoto" />
-				      	{/if}
-				      	<!-- {/foreach} -->
-				    </div>
-				    <img src="{$images_url}/goleft.gif" width="11" height="56" id="goleft" />
-				    <img src="{$images_url}/goright.gif" width="11" height="56" id="goright" />
-				    <div id="photos">
-				    	<div id="showArea">
-					        <!-- SRC: 缩略图地址 REL: 大图地址  NAME: 网址 -->
-					        <!-- {foreach from=$goods_photo_list key=k item=val} -->
-					        <img src="{$val.thumb_url}" rel="{$val.img_url}" />
-					        <!-- {/foreach} -->
-				      	</div>
-				    </div>
-				    {else}
-				    <div id="mainbody">
-				    	<img src="{$no_picture}" id="mainphoto"/>
-				    </div>
-				    {/if}
-				</div>
-				<!-- #BeginLibraryItem "/library/goods_store_info.lbi" --><!-- #EndLibraryItem -->
-			</div>
+		<div class="row-fluid tm-clear" style="margin-bottom:20px;">
 			<div class="span8">
 				<div class="tb-property">
-				  	<div class="tb-detail-hd">
-				    	<h1 data-spm="1000983">{$goods.goods_name}</h1>
+				  	<div class="">
+				    	<div data-spm="1000983" class="goods-name-style"><strong>{$goods.goods_name}</strong></div>
 				    	<div class="tb-detail-sellpoint"></div>
 				 	</div>
 				  	<div class="tm-fcs-panel">
@@ -204,21 +176,56 @@
 				  	</div>
 				</div>
 			</div>
-		</div>
-		{if $attr_list}
-		<div id="attributes">
-			<div class="attributes-list" id="J_AttrList">
-				<div class="tm-clear tb-hidden tm_brandAttr" id="J_BrandAttr" style="display: block;">
-					<p class="attr-list-hd tm-clear"><a class="ui-more-nbg tm-MRswitchAttrs" href="#J_Attrs"><i class="ui-more-nbg-arrow tm-MRswitchAttrs"></i></a><em>{t domain="goods"}产品参数：{/t}</em></p>
-					<ul id="J_AttrUL">
-						<!-- {foreach from=$attr_list item=val} -->
-	         			<li>{$val.attr_name}：{$val.attr_value}</li>       			
-	         			<!-- {/foreach} -->																			    						    						    							    						    							    							    						    							    						    							    						    							    					    					    																																																																																																																											    								     <li title="&nbsp;32GB&nbsp;128GB&nbsp;256GB">存储容量:&nbsp;32GB&nbsp;128GB&nbsp;256GB</li>
-					</ul>
+			<div class="span4">
+				<div id="tbody">
+					{if $goods_photo_list}
+				    <div id="mainbody">
+				    	<!-- {foreach from=$goods_photo_list key=k item=val} -->
+				    	{if $k eq 0}
+				      	<img src="{$val.img_url}" id="mainphoto" />
+				      	{/if}
+				      	<!-- {/foreach} -->
+				    </div>
+				    <img src="{$images_url}/goleft.gif" width="11" height="56" id="goleft" />
+				    <img src="{$images_url}/goright.gif" width="11" height="56" id="goright" />
+				    <div id="photos">
+				    	<div id="showArea">
+					        <!-- SRC: 缩略图地址 REL: 大图地址  NAME: 网址 -->
+					        <!-- {foreach from=$goods_photo_list key=k item=val} -->
+					        <img src="{$val.thumb_url}" rel="{$val.img_url}" />
+					        <!-- {/foreach} -->
+				      	</div>
+				    </div>
+				    {else}
+				    <div id="mainbody">
+				    	<img src="{$no_picture}" id="mainphoto"/>
+				    </div>
+				    {/if}
 				</div>
+				<!-- #BeginLibraryItem "/library/goods_store_info.lbi" --><!-- #EndLibraryItem -->
 			</div>
 		</div>
+		
+		{if $product_list}
+			<!-- #BeginLibraryItem "/library/goods_products.lbi" --><!-- #EndLibraryItem -->
 		{/if}
+		
+		{if $common_parameter_list OR $group_parameter_list}
+			<div class="goods-pra" style="margin-bottom:20px;">
+				<div class="pra">{t domain="goods"}商品参数{/t}</div>
+			</div>
+		{/if}
+		{if $common_parameter_list}
+			<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
+		{/if}
+		{if $group_parameter_list}
+			<!-- #BeginLibraryItem "/library/goods_group_prameter.lbi" --><!-- #EndLibraryItem -->
+		{/if}
+		
+		<div class="goods-pra">
+			<div class="pra">{t domain="goods"}图文详情{/t}</div>
+			<hr>
+		</div>
 		<div class="t_c clear">{$goods.goods_desc}</div>
 	</div>
 </div>
