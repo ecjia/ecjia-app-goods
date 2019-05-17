@@ -279,6 +279,7 @@ class merchant extends ecjia_merchant {
 	    $goods_count = $count_link_func($input, $where, $goods_count, $goods_activity_count);
 	    
 	    $this->assign('list_type', $list_type);
+	    _dump($goods_list,1);
 	    $this->assign('goods_list', $goods_list);
 	    $this->assign('goods_count', $goods_count);
 	    
@@ -1155,18 +1156,7 @@ class merchant extends ecjia_merchant {
 		
 		$this->assign('ur_here', __('编辑商品', 'goods'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => __('商品列表', 'goods')));
-		
-		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
-			'id'		=> 'overview',
-			'title'		=> __('概述', 'goods'),
-			'content'	=> '<p>' . __('欢迎访问ECJia智能后台编辑商品页面，可以在此对相应的商品进行编辑。', 'goods') . '</p>'
-		));
-		
-		ecjia_merchant_screen::get_current_screen()->set_help_sidebar(
-			'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
-			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.95.86.E5.93.81.E7.BC.96.E8.BE.91" target="_blank">关于编辑商品帮助文档</a>', 'goods') . '</p>'
-		);
-		
+
 		/* 商品信息 */
 		$goods = RC_DB::table('goods')->where('goods_id', $_GET['goods_id'])->where('store_id', $_SESSION['store_id'])->first();
 
@@ -1419,6 +1409,10 @@ class merchant extends ecjia_merchant {
 //			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 //		}
 
+		$review_status = RC_DB::TABLE('goods')->where('goods_id', $goods_id)->pluck('review_status');
+		if($review_status === 2) {
+			$review_status = 1;
+		} 
 		$data = array(
 		  	'goods_name'				=> rc_stripslashes($goods_name),
 		  	'goods_name_style'	  		=> $goods_name_style,
@@ -1452,6 +1446,7 @@ class merchant extends ecjia_merchant {
 		  	'is_alone_sale'		 		=> $is_alone_sale,
 		  	'is_shipping'		   		=> $is_shipping,
 		  	'last_update'		   		=> RC_Time::gmtime(),
+			'review_status'				=> $review_status,	
 		);
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 		
