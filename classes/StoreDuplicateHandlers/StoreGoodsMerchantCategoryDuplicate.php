@@ -47,7 +47,7 @@ class StoreGoodsMerchantCategoryDuplicate extends StoreDuplicateAbstract
         parent::__construct($store_id, $source_store_id);
 
 
-        $this->data_operator = RC_DB::table('merchants_category')->where('store_id', $this->source_store_id);
+        $this->source_store_data_handler = RC_DB::table('merchants_category')->where('store_id', $this->source_store_id);
     }
 
     /**
@@ -75,8 +75,8 @@ HTML;
             return $this->count;
         }
         // 统计数据条数
-        if (!empty($this->data_operator)) {
-            $this->count = $this->data_operator->count();
+        if (!empty($this->source_store_data_handler)) {
+            $this->count = $this->source_store_data_handler->count();
         }
         return $this->count;
     }
@@ -120,7 +120,7 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
-        $this->data_operator->chunk(50, function ($items) {
+        $this->source_store_data_handler->chunk(50, function ($items) {
             //构造可用于复制的数据
             $this->buildDuplicateData($items);
 
