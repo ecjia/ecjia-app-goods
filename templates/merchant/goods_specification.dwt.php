@@ -13,6 +13,15 @@
 <!-- #BeginLibraryItem "/library/goods_step.lbi" --><!-- #EndLibraryItem -->
 {/if}
 
+{if $has_template}
+<div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <i class="fa fa-times" data-original-title="" title=""></i>
+      </button>
+      <strong>{t domain="goods"}温馨提示：{/t}</strong><br>{t domain="goods"}1、请先设置商品规格属性，才可以进行货品添加。{/t}</br>{t domain="goods"}2、如果该商品存在货品，那么货品相关设置项优先使用。{/t}
+</div>
+{/if}
+
 <div class="page-header">
 	<div class="pull-left">
 		<h2> 
@@ -29,6 +38,7 @@
 </div>
 
 <div class="modal fade" id="myModal1"></div>
+<div class="add_pro modal fade" id="myModal2"></div>
 
 <div class="row">
 	<div class="col-lg-12">
@@ -75,8 +85,6 @@
 									 </div>
 								</div> 
 								
-								<span class="help-block m_t10">注：商品规格设置后，商品的价格、货号、库存、条形码都以商品规格属性为准</span>
-								
 								<div class="template_box">
 									{if $has_template}
 										<div class="box_content">
@@ -87,11 +95,48 @@
 													<span class="m_l10">
 														<a href='{url path="goods/mh_category/edit" args="cat_id={$goods_info.merchant_cat_id}"}'><button type="button" class="btn btn-info" >{t domain="goods"}更换模板{/t}</button></a>
 													</span>
-														<a data-toggle="modal" data-backdrop="static" href="#myModal1" goods-id="{$goods_info.goods_id}" attr-url="{RC_Uri::url('goods/merchant/select_spec_values')}" ><button class="btn btn-info"><i class="fa fa-plus"></i> {t domain="goods"}选择属性值{/t}</button></a>
+													<a  data-toggle="modal" data-backdrop="static" href="#myModal1" goods-id="{$goods_info.goods_id}" attr-url="{RC_Uri::url('goods/merchant/select_spec_values')}" ><button class="btn btn-info"><i class="fa fa-cog"></i> {t domain="goods"}设置规格属性{/t}</button></a>
+													{if $has_spec}
+                                                     <a data-type="add-pro" data-toggle="modal" data-backdrop="static" href="#myModal2" goods-id="{$goods_info.goods_id}" attr-url="{RC_Uri::url('goods/merchant/spec_add_product')}" ><button class="btn btn-info"><i class="fa fa-plus"></i> {t domain="goods"}添加货品{/t}</button></a>
+                                                    {/if}                 
 												</div>
 											</div>
-											
+											{if $has_spec}
 											<hr>
+											<table class="table table-striped table-hide-edit">
+                                              <thead>
+                                                  <tr>
+                                                    <th>货品（SKU）</th>
+                                                      <th class="product_sn">{t domain='goods'}商品货号{/t}</th>
+                                                      <th>{t domain='goods'}条形码{/t}</th>
+                                                      <th>{t domain='goods'}价格{/t}</th>
+                                                      <th>{t domain='goods'}库存{/t}</th>
+                                                      <th class="w100">{t domain='goods'}操作{/t}</th>
+                                                  </tr>
+                                              </thead>
+                           
+                                              <tbody>
+                                                  <!-- {foreach from=$product_list item=product} -->
+                                                  <tr>
+                                                    <td>
+                                                    <!-- {foreach from=$product.goods_attr item=goods_attr} -->
+                                                      {$goods_attr} {if $goods_attr@last}{else}/{/if}
+                                                      <!-- {/foreach} -->
+                                                      </td>
+                                                      <td><input class="form-control" type="text" name="product_sn" value="{$product.product_sn}" disabled="disabled"/></td>
+                                                      <td><input class="form-control" type="text" name="product_bar_code" value="{$product.product_bar_code}" /></td>
+                                                      <td><input class="form-control" type="text" name="product_shop_price" value="{$product.product_shop_price}" /></td>
+                                                      <td><input class="form-control" type="text" name="product_number" value="{$product_number}" /></div></td>
+                                                      <td style="margin-top: 10px;">
+                                                        <a class="data-pjax" href='{url path="goods/merchant/product_edit" args="id={$product.product_id}&goods_id={$goods_id}"}' >{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
+                                                        <a class="ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该货品删除吗？{/t}" href='{url path="goods/merchant/product_remove" args="id={$product.product_id}"}' >{t domain='goods'}删除{/t}</a>
+                                                    </td>
+                                                  </tr>
+                                                  <!-- {/foreach} -->
+                                              </tbody>
+                                            </table>
+											{/if}
+											
 										</div>
 									{else}
 										<div class="box_content">

@@ -205,7 +205,7 @@
 										{if $action neq 'check'}
 										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
  									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}库存/规格{/t}</a>&nbsp;|&nbsp;
+										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}规格/货品{/t}</a>&nbsp;|&nbsp;
 										
 										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品属性{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;

@@ -2142,7 +2142,6 @@ class merchant extends ecjia_merchant {
         
 		//获得商品已经添加的规格列表
 		$attribute = get_goods_specifications_list($goods_id);
-
 		$_attribute = array();
 		if (!empty($attribute)) {
 			foreach ($attribute as $attribute_value) {
@@ -2546,12 +2545,9 @@ class merchant extends ecjia_merchant {
     			
     		    //排序
     		    sort($goods_attr_id);
-    		    
     		    /* 是否为重复规格的货品 */
     		    $goods_attr = sort_goods_attr_id_array($goods_attr_id);
-    		    
     		    $goods_attr = implode('|', $goods_attr['sort']);
-    		    
     		    if (check_goods_attr_exist($goods_attr, $product['goods_id'])) {
     		        continue;
     		    }
@@ -2930,38 +2926,16 @@ class merchant extends ecjia_merchant {
 		if (!empty($_POST['attr_id_list'])) {
 				
 			$goods_attr_list = array();
-			
-			$data = RC_DB::table('attribute')->select('attr_id', 'attr_index')->where('cat_id', $goods_type)->get();
-			$attr_list = array();
-			if (is_array($data)) {
-				foreach ($data as $key => $row) {
-					$attr_list[$row['attr_id']] = $row['attr_index'];
-				}
-			}
-			
-			
-			$query = RC_DB::table('goods_attr as ga')
-			->leftJoin('attribute as a', function ($join) use($goods_id) {
-				$join->on(RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
-				->where(RC_DB::raw('ga.goods_id'), '=',  $goods_id);
-			})->get();
 
-			if (is_array($query)) {
-				foreach ($query as $key => $row) {
-					$goods_attr_list[$row['attr_id']][$row['attr_value']] = array('sign' => 'delete', 'goods_attr_id' => $row['goods_attr_id']);
-				}
-			}
-			
 			foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
 				$attr_value = $attr_id.'_attr_value_list';
 				$goods_attr_list[$attr_id] = $_POST[$attr_value];
 			}
 			
 			$data = array(
-					'parameter_id'    => $goods_type,
+				 'parameter_id'    => $goods_type,
 			);
 			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-			
 			
 			$data_insert = array();
 			foreach ($goods_attr_list as $attr_id => $attr_value_list) {
@@ -2970,6 +2944,7 @@ class merchant extends ecjia_merchant {
 						'attr_id'		=> $attr_id,
 						'goods_id'		=> $goods_id,
 						'attr_value'	=> $info,
+						'cat_type'		=> 'parameter',
 					);
 				}
 			}
@@ -2978,7 +2953,6 @@ class merchant extends ecjia_merchant {
 			$pjaxurl = RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id));
 			return $this->showmessage(__('编辑商品参数成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 		}
-		
 	}
 	
    /**
@@ -3020,6 +2994,11 @@ class merchant extends ecjia_merchant {
 			$this->assign('goods_attr_html', Ecjia\App\Goods\MerchantGoodsAttr::build_specification_html($template_id, $goods_id));
 		}
 		
+		$count = RC_DB::table('goods_attr')->where('goods_id', $goods_id)->where('cat_type', 'specification')->count();
+		if ($count > 0) {
+			$this->assign('has_spec', 'has_spec');
+		}
+		
 		$this->assign('form_action', RC_Uri::url('goods/merchant/update_goods_specification', array('goods_id' => $goods_id)));
 		
 		$this->display('goods_specification.dwt');
@@ -3037,38 +3016,21 @@ class merchant extends ecjia_merchant {
 		$goods_number 	= !empty($_POST['goods_number'])   ? intval($_POST['goods_number'])  : ecjia::config('default_storage');
 		$goods_barcode 	= !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
 		
-		if (!empty($_POST['attr_id_list'])) {
-			$goods_attr_list = array();
-			$query = RC_DB::table('goods_attr as ga')
-			->leftJoin('attribute as a', function ($join) use($goods_id) {
-				$join->on(RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
-				->where(RC_DB::raw('ga.goods_id'), '=',  $goods_id);
-			})->get();
-		
-			if (is_array($query)) {
-				foreach ($query as $key => $row) {
-					$goods_attr_list[$row['attr_id']][$row['attr_value']] = array('sign' => 'delete', 'goods_attr_id' => $row['goods_attr_id']);
-				}
-			}
-				
-	
-			
-			$data = array(
-				 'specification_id'  => $goods_type,
-				 'goods_number'		 => $goods_number,
-				 'goods_barcode'	 =>	$goods_barcode
-			);
-			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+		$data = array(
+			 'specification_id'  => $goods_type,
+			 'goods_number'		 => $goods_number,
+			 'goods_barcode'	 =>	$goods_barcode
+		);
+		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 
 
-			$pjaxurl = RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id));
-			return $this->showmessage(__('设置商品规格成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
-		}
+		$pjaxurl = RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id));
+		return $this->showmessage(__('设置商品规格成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 	}
 	
 	
 	/**
-	 * 选择商品属性返回值
+	 * 商品规格属性返回值-多选
 	 */
 	public function select_spec_values() {
 		$this->admin_priv('goods_update');
@@ -3098,12 +3060,12 @@ class merchant extends ecjia_merchant {
 		$this->admin_priv('goods_update');
 
 		$goods_id = intval($_POST['goods_id']);
+		
 		$attr_goods_list = array();
 		foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
 			$attr_value = $attr_id.'_attr_value_list';
 			$attr_goods_list[$attr_id] = $_POST[$attr_value];
 		}
-			
 		$data_insert = array();
 		foreach ($attr_goods_list as $attr_id => $attr_value_list) {
 			foreach ($attr_value_list as $attr_value => $info) {
@@ -3111,12 +3073,75 @@ class merchant extends ecjia_merchant {
 					'attr_id'		=> $attr_id,
 					'goods_id'		=> $goods_id,
 					'attr_value'	=> $info,
+					'cat_type'		=> 'specification',
 				);
 			}
 		}
 		RC_DB::table('goods_attr')->insert($data_insert);
 	
 		return $this->showmessage(__('选择规格属性成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id))));
+	}
+	
+	
+	/**
+	 * 添加货品-规格属性 单选
+	 */
+	public function spec_add_product() {
+		$this->admin_priv('goods_update');
+	
+		$goods_id = intval($_POST['goods_id']);
+		$this->assign('goods_id', $goods_id);
+	
+		$attribute = Ecjia\App\Goods\MerchantGoodsAttr::get_goods_spec_list($goods_id);
+		$spec_attribute_list = array();
+		if (!empty($attribute)) {
+			foreach ($attribute as $attribute_value) {
+				$spec_attribute_list[$attribute_value['attr_id']]['attr_id'] = $attribute_value['attr_id'];
+				$spec_attribute_list[$attribute_value['attr_id']]['attr_name'] = $attribute_value['attr_name'];
+				$spec_attribute_list[$attribute_value['attr_id']]['attr_values'][$attribute_value['goods_attr_id']] = $attribute_value['attr_value'];
+			}
+		}
+		$this->assign('spec_attribute_list', $spec_attribute_list);
+		
+		$data = $this->fetch('spec_add_product.dwt');
+	
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
+	}
+	
+	/**
+	 * 添加货品处理
+	 */
+	public function spec_add_product_insert() {
+		$this->admin_priv('goods_update');
+		
+		$goods_id = intval($_POST['goods_id']);
+		$radio_value_arr = $_POST['radio_value_arr'];
+	
+		$goods_id 		= intval($_POST['goods_id']);;
+		$product_value  = !empty($_POST['radio_value_arr']) ? $_POST['radio_value_arr']   : '';
+		
+		if (empty($goods_id)) {
+			return $this->showmessage(__('找不到指定的商品', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		} 
+		
+		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->select('goods_sn', 'goods_name', 'goods_type', 'shop_price')->first();
+		if (empty($goods)) {
+			return $this->showmessage(__('找不到指定的商品', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+
+		$goods_attr = implode('|', $product_value);
+		if (Ecjia\App\Goods\MerchantGoodsAttr::check_goods_attr_exist($goods_attr, $goods_id)) {
+			return $this->showmessage(__('所匹配的属性已存在相应的货品,请更换组合', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		} else {
+			$data = array(
+				'goods_id' 		=> $goods_id,
+				'goods_attr'	=> $goods_attr,
+			);
+			$product_id = RC_DB::table('products')->insertGetId($data);
+			RC_DB::table('products')->where('product_id', $product_id)->update(array('product_sn' => $goods['goods_sn'] . "g_p" . $product_id));
+			$product_sn = RC_DB::TABLE('products')->where('product_id', $product_id)->pluck('product_sn');
+			return $this->showmessage(__('添加货品成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('product_sn' => $product_sn));
+		}
 	}
 
 	/**

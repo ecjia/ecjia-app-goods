@@ -4,7 +4,7 @@
 	<div class="modal-content" style="width:800px;">
 		<div class="modal-header">
 		    <button data-dismiss="modal" class="close" type="button">×</button>
-		    <h4 class="modal-title">{t domain="goods"}选择属性值{/t}</h4>
+		    <h4 class="modal-title">{t domain="goods"}设置规格属性{/t}</h4>
 		</div>
 
 		<div class="modal-body">
@@ -15,8 +15,8 @@
 					{if $goods_attr_html}{$goods_attr_html}{/if}
 				</div>
 				
-				<div class="form-group t_c">
-	              <div class="col-lg-4">
+				<div class="form-group">
+	              <div class="col-lg-offset-2 col-lg-6">
 	                   <input  type="hidden" name="goods_id" value="{$goods_id}">
 	                   <a class="btn btn-info insertSubmit" href="javascript:;">{t domain="goods"}确定{/t}</a>
 	              </div>
