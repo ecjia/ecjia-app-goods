@@ -41,7 +41,7 @@ class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
 
         parent::__construct($store_id, $source_store_id);
 
-        $this->source_store_data_handler = RC_DB::table('goods_type')->where('store_id', $this->source_store_id);
+        $this->source_store_data_handler = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('cat_type', 'specification');
     }
 
     /**
@@ -114,19 +114,32 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
-        $this->source_store_data_handler->chunk(50, function ($items) {
+        $replacement_data = [];
+
+        $this->source_store_data_handler->chunk(50, function ($items) use (& $replacement_data) {
+//            dd($items);
+
             //构造可用于复制的数据
             foreach ($items as &$item) {
+
+                $cat_id = $item['cat_id'];
+
                 unset($item['cat_id']);
 
                 //将源店铺ID设为新店铺的ID
                 $item['store_id'] = $this->store_id;
+
+                $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
+
+                $replacement_data[$cat_id] = $new_cat_id;
             }
 
-            dd($items);
+//            dd($items);
             //插入数据到新店铺
-            RC_DB::table('goods_type')->insert($items);
+//            RC_DB::table('goods_type')->insert($items);
         });
+
+        $this->setReplacementData($this->getCode(), $replacement_data);
     }
 
     /**
