@@ -76,13 +76,15 @@
 							  	<div class="tb-key">
 							    	<div class="tb-skin">
 							      		<div class="tb-sku">
-							      			<dl class="tb-amount tm-clear">
-							          			<dt class="tb-metatit">{t domain="goods"}成本价{/t}</dt>
-							          			<dd id="J_Amount">
-										            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.cost_price}</em>
-										            <span id="J_StockTips"></span>
-							          			</dd>
-							        		</dl>
+							      			<!-- {if $goods.cost_price gt 0} -->
+								      			<dl class="tb-amount tm-clear">
+								          			<dt class="tb-metatit">{t domain="goods"}成本价{/t}</dt>
+								          			<dd id="J_Amount">
+											            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.format_cost_price}</em>
+											            <span id="J_StockTips"></span>
+								          			</dd>
+								        		</dl>
+							        		<!-- {/if} -->
 							      			<dl class="tb-amount tm-clear">
 							          			<dt class="tb-metatit">{t domain="goods"}商品货号{/t}</dt>
 							          			<dd id="J_Amount">
