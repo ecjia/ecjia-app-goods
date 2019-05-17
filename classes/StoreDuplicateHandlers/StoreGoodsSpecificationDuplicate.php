@@ -41,7 +41,7 @@ class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
 
         parent::__construct($store_id, $source_store_id);
 
-        $this->source_store_data_handler = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('cat_type', 'specification');
+        $this->source_store_data_handler = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('enabled', 1)->where('cat_type', 'specification');
     }
 
     /**
@@ -120,7 +120,7 @@ HTML;
 //            dd($items);
 
             //构造可用于复制的数据
-            foreach ($items as &$item) {
+            foreach ($items as $item) {
 
                 $cat_id = $item['cat_id'];
 
@@ -132,14 +132,35 @@ HTML;
                 $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
 
                 $replacement_data[$cat_id] = $new_cat_id;
+
+
+                //通过源店铺的cat_id查询出在attribute中的关联数据
+                RC_DB::table('attribute')->where('cat_id', $cat_id)->chunk(50, function($attrDataOfCatId) use ($new_cat_id){
+
+                    //构造可用于复制的数据
+                    foreach ($attrDataOfCatId as &$v){
+                        unset($v['attr_id']);
+
+                        //将cat_id替换成新店铺的cat_id
+                        $v['cat_id'] = $new_cat_id;
+
+                    }
+
+                    //为新店铺插入这些数据
+                    RC_DB::table('attribute')->insert($attrDataOfCatId);
+
+
+                });
+
+
             }
 
-//            dd($items);
-            //插入数据到新店铺
-//            RC_DB::table('goods_type')->insert($items);
+
         });
 
         $this->setReplacementData($this->getCode(), $replacement_data);
+
+
     }
 
     /**
