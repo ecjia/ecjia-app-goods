@@ -236,7 +236,7 @@
 								
 								<td>
 									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_price')}" data-name="goods_price" data-pk="{$goods.goods_id}" data-title="请输入商品价格"> 
-										¥{$goods.shop_price}
+										{$goods.shop_price}
 									</span> 
 								</td>
 																

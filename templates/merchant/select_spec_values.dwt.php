@@ -3,7 +3,7 @@
 <div class="modal-dialog" style="width:800px;">
 	<div class="modal-content" style="width:800px;">
 		<div class="modal-header">
-		    <button data-dismiss="modal" class="close" type="button">×</button>
+		    <button data-dismiss="modal" class="close sprc_close" type="button">×</button>
 		    <h4 class="modal-title">{t domain="goods"}设置规格属性{/t}</h4>
 		</div>
 
@@ -18,7 +18,7 @@
 				<div class="form-group">
 	              <div class="col-lg-offset-2 col-lg-6">
 	                   <input  type="hidden" name="goods_id" value="{$goods_id}">
-	                   <a class="btn btn-info insertSubmit" href="javascript:;">{t domain="goods"}确定{/t}</a>
+	                   <a class="btn btn-info insertSubmit" href="javascript:;" {if $has_product}disabled="disabled"{/if}>{t domain="goods"}确定{/t}</a>
 	              </div>
 	           	</div>
 		   </form>
