@@ -204,6 +204,7 @@ class admin extends ecjia_admin {
         $input['is_on_sale'] = 1;
         $input['check_review_status'] = array(3, 5);
         $input['is_delete'] = 0;
+        $input['no_need_cashier_goods'] = true;
 
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
             /**
@@ -245,6 +246,7 @@ class admin extends ecjia_admin {
             unset($input['is_on_sale']);
             unset($input['check_review_status']);
             unset($input['has_activity']);
+            unset($input['no_need_cashier_goods']);
 
             $input['sort_order'] = array_values($input['sort_by'])[0];
             $input['sort_by']    = array_keys($input['sort_by'])[0];
@@ -351,6 +353,7 @@ class admin extends ecjia_admin {
 		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] 	= 1;
+		$input['no_need_cashier_goods'] = true;
 		
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 		$this->assign('goods_list', $goods_list);
@@ -435,6 +438,7 @@ class admin extends ecjia_admin {
 		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] = 1;
+		$input['no_need_cashier_goods'] = true;
 		
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 
@@ -518,6 +522,7 @@ class admin extends ecjia_admin {
 
 		$input['is_delete'] = 0;
 		$input['is_real']   = 1;
+		$input['no_need_cashier_goods'] = true;
 		
 		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
 			/**
@@ -543,6 +548,7 @@ class admin extends ecjia_admin {
 			unset($input['check_review_status']);
 			unset($input['is_delete']);
 			unset($input['is_real']);
+			unset($input['no_need_cashier_goods']);
 	
 			$input['sort_order'] = array_values($input['sort_by'])[0];
 			$input['sort_by'] = array_keys($input['sort_by'])[0];

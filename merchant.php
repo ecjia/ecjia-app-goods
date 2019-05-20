@@ -217,6 +217,8 @@ class merchant extends ecjia_merchant {
 	    $input['is_on_sale'] = 1;
 	    $input['check_review_status'] = array(3, 5);
 	    $input['is_delete'] = 0;
+	    $input['no_need_cashier_goods'] = true;
+	    
 	    
 	    $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
 	    	/**
@@ -257,6 +259,7 @@ class merchant extends ecjia_merchant {
 	    	unset($input['is_on_sale']);
 	    	unset($input['check_review_status']);
 	    	unset($input['has_activity']);
+	    	unset($input['no_need_cashier_goods']);
 	    
 	    	$input['sort_order'] = array_values($input['sort_by'])[0];
 	    	$input['sort_by']    = array_keys($input['sort_by'])[0];
@@ -362,6 +365,7 @@ class merchant extends ecjia_merchant {
 		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] 	= 1;
+		$input['no_need_cashier_goods'] = true;
 		
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
 		$this->assign('goods_list', $goods_list);
@@ -443,6 +447,7 @@ class merchant extends ecjia_merchant {
 		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] = 1;
+		$input['no_need_cashier_goods'] = true;
 	
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
 		$this->assign('goods_list', $goods_list);
@@ -520,6 +525,7 @@ class merchant extends ecjia_merchant {
 	
 		$input['is_delete'] = 0;
 		$input['is_real']   = 1;
+		$input['no_need_cashier_goods'] = true;
 	
 		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
 			/**
@@ -2941,7 +2947,7 @@ class merchant extends ecjia_merchant {
 		$goods_id 	= !empty($_POST['goods_id'])     ? intval($_POST['goods_id'])     : 0;
 	
 		$attr_id_list = $this->request->input('attr_id_list');
-		$input_all    = $this->request->input();
+		$input_all = $this->request->input();
 		
 		if (!empty($attr_id_list)) {
 			$attr_id_list = collect($attr_id_list)->mapWithKeys(function ($attr_id) use ($input_all) {
@@ -2959,13 +2965,10 @@ class merchant extends ecjia_merchant {
 					$new_collection = $collection->get($key);
 					
 					if (is_array($id_values)) {
-						$count = count($id_values);
 						$new_collection = $collection->get($key);
 
 						if (!empty($new_collection)) {
-							//移除取消的
 							$new_collection->map(function($model) use ($id_values) {
-									
 								if (!in_array($model->attr_value, $id_values) ) {
 									$model->delete();
 								}
@@ -3015,7 +3018,7 @@ class merchant extends ecjia_merchant {
 				 'parameter_id'    => $goods_type,
 			);
 			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-
+						
 			$pjaxurl = RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id));
 			return $this->showmessage(__('编辑商品参数成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 		}
