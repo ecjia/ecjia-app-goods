@@ -162,7 +162,7 @@ HTML;
                 $item['bonus_type_id'] = array_get($store_bonus_replacement, $item['bonus_type_id'], $item['bonus_type_id']);
 
                 //设置新店铺 goods_type
-                $item['goods_type'] = array_get($goods_type_replacement, $item['goods_type'], $item['goods_type']);
+//                $item['goods_type'] = array_get($goods_type_replacement, $item['goods_type'], $item['goods_type']);
 
                 //设置新店铺 specification_id
                 $item['specification_id'] = array_get($goods_specification_replacement, $item['specification_id'], $item['specification_id']);
@@ -174,13 +174,13 @@ HTML;
 
                 //click_count，商品点击数是否设为0
 
-                //goods_number 商品库存数量是否设为0
+                //goods_number 商品库存数量是否设为1000
 
-                //shop_price 本店售价是否重新设置
+                //shop_price 本店售价 不变
 
-                //cost_price 成本价是否重新设置
+                //cost_price 成本价 不变
 
-                //promote_* 促销相关字段，不一定在新店铺适用
+                //promote_* 促销相关字段，原样复制，不处理
 
                 //add_time  商品添加时间是否设为当前时间
 

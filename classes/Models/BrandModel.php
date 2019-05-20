@@ -32,5 +32,12 @@ class BrandModel extends Model
         'is_delete',
     ];
 
+    /**
+     * 该模型是否被自动维护时间戳
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
 
 }
