@@ -156,6 +156,7 @@ HTML;
 
         $this->recursiveCategroy($top_categories, $all_categories, $specification_replacement, $parameter_replacement);
 
+        //@todo cat_image 未复制
 
         dd($top_categories,$this->merchant_category_replacement);
 
