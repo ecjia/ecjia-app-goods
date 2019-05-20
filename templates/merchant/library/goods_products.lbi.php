@@ -36,7 +36,7 @@
     		<td>{$list.product_number}</td>
     		<td>
     			<a target="_blank" href='{url path="goods/merchant/product_edit" args="id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
-    			<a target="_blank" href='{url path="goods/merchant/product_preview" args="product_id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}预览{/t}</a>	&nbsp;|&nbsp;		
+    			<a target="_blank" href='{url path="goods/merchant/product_preview" args="product_id={$list.product_id}&goods_id={$list.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>	&nbsp;|&nbsp;		
 				<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该货品放入回收站吗？{/t}" href='{url path="goods/merchant/product_remove" args="id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}删除{/t}</a>
 			</td>
     	</tr>

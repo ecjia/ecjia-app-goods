@@ -291,6 +291,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('form_action', RC_Uri::url('goods/merchant/batch'));
 		
 		$this->assign('action', 'sale');
+		$this->assign('preview_type', 'selling');//预览跳转type
 		
 		$this->display('goods_list.dwt');
 	}
@@ -372,6 +373,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('form_action_insert', RC_Uri::url('goods/merchant/insert_goodslib'));
 		
 		$this->assign('action', 'finish');
+		$this->assign('preview_type', 'finished');//预览跳转type
 		
 		$this->display('goods_list.dwt');
 	}
@@ -450,6 +452,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('form_action_insert', RC_Uri::url('goods/merchant/insert_goodslib'));
 		
 		$this->assign('action', 'obtained');
+		$this->assign('preview_type', 'obtained');//预览跳转type
 		
 		$this->display('goods_list.dwt');
 	}
@@ -529,8 +532,10 @@ class merchant extends ecjia_merchant {
 	
 		if ($list_type === 1) {
 			$input['check_review_status'] = 2; //未通过
+			$this->assign('preview_type', 'refused_check');//预览跳转type
 		} else {
 			$input['check_review_status'] = 1;//待审核
+			$this->assign('preview_type', 'await_check');//预览跳转type
 		}
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
 
@@ -583,15 +588,27 @@ class merchant extends ecjia_merchant {
 		$this->admin_priv('goods_manage');
 		
 		$goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
+		$preview_type = $_GET['preview_type'];
+		
 		if (empty($goods_id)) {
 		    return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
 		}
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goods')));
-		
 		$this->assign('ur_here', __('商品预览', 'goods'));
-		$this->assign('action_linkedit', array('text' => __('商品编辑', 'goods'), 'href' => RC_Uri::url('goods/merchant/edit', array('goods_id' => $goods_id))));
-		$this->assign('action_link', array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')));
+		
+		//返回商品列表
+		if ($preview_type == 'selling') {
+			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init'));
+		} elseif ($preview_type == 'finished') {
+			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/finish'));
+		} elseif ($preview_type == 'obtained') {
+			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/obtained'));
+		} else {
+			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/check'));
+		}
+		
+		$this->assign('action_link', $action_link);
 
 		$GoodsBasicInFo = new Ecjia\App\Goods\Goods\GoodsBasicInFo($goods_id, $_SESSION['store_id']);
 		
@@ -604,6 +621,8 @@ class merchant extends ecjia_merchant {
 		if (!empty($goods['goods_desc'])) {
 			$goods['goods_desc'] = stripslashes($goods['goods_desc']);
 		}
+		
+		
 		
 		//商品是否在促销
 		$time = RC_Time::gmtime();
@@ -642,6 +661,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
 
 		$this->assign('goods', $goods);
+		$this->assign('preview_type', $preview_type);
 		
 		$this->display('preview.dwt');
 	}
@@ -652,6 +672,8 @@ class merchant extends ecjia_merchant {
 	public function product_preview()
 	{
 		$product_id = !empty($_GET['product_id']) ? intval($_GET['product_id']) : 0;
+		$goods_id   = !empty($_GET['goods_id']) ? intval($_GET['goods_id']) : 0;
+		$preview_type = $_GET['preview_type'];
 		
 		if (empty($product_id)) {
 			return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
@@ -660,7 +682,7 @@ class merchant extends ecjia_merchant {
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品预览', 'goods')));
 		
 		$this->assign('ur_here', __('货品预览', 'goods'));
-		$this->assign('action_link', array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init')));
+		$this->assign('action_link', array('text' => __('商品预览', 'goods'), 'href' => RC_Uri::url('goods/merchant/preview', array('id' => $goods_id, 'preview_type' => $preview_type))));
 		
 		$productBasicInFo = new Ecjia\App\Goods\Goods\ProductBasicInFo($product_id);
 		

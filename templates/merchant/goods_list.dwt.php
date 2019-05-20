@@ -211,7 +211,7 @@
 										<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
 										<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
-										<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
+										<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
 										<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_seller_list&goods_id={$goods.goods_id}">{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
 										
 										{if $specifications[$goods.goods_type] neq ''}

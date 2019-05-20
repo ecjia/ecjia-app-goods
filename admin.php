@@ -782,6 +782,160 @@ class admin extends ecjia_admin {
 	}
 
 	/**
+	 * 货品预览
+	 */
+	public function product_preview()
+	{
+		$product_id = !empty($_GET['product_id']) ? intval($_GET['product_id']) : 0;
+		$goods_id   = !empty($_GET['goods_id']) ? intval($_GET['goods_id']) : 0;
+		$preview_type = $_GET['preview_type'];
+		
+		if (empty($product_id)) {
+			return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
+		}
+		
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品预览', 'goods')));
+		ecjia_screen::get_current_screen()->add_help_tab(array(
+		'id'		=> 'overview',
+		'title'		=> __('概述', 'goods'),
+		'content'	=> '<p>' . __('欢迎访问ECJia智能后台商品预览页面，在此页面可以预览有关该商品的所有详细信息。', 'goods') . '</p>'
+				));
+		
+		ecjia_screen::get_current_screen()->set_help_sidebar(
+		'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
+		'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E9.A2.84.E8.A7.88.E5.95.86.E5.93.81" target="_blank">关于商品预览帮助文档</a>', 'goods') . '</p>'
+				);
+		
+		$this->assign('ur_here', __('货品预览', 'goods'));
+		$this->assign('action_link', array('text' => __('商品预览', 'goods'), 'href' => RC_Uri::url('goods/admin/preview', array('id' => $goods_id, 'preview_type' => $preview_type))));
+		
+		$productBasicInFo = new Ecjia\App\Goods\Goods\ProductBasicInFo($product_id);
+		
+		$product = $productBasicInFo->productInFo();
+		
+		if (empty($product)) {
+			return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品预览', 'goods'),'href'=>RC_Uri::url('goods/admin/preview', array('id' => $goods_id, 'preview_type' => $preview_type))))));
+		}
+		$goods_id = $product->goods_id;
+		$GoodsBasicInFo = new Ecjia\App\Goods\Goods\GoodsBasicInFo($goods_id);
+		$goods = $GoodsBasicInFo->goodsInFo();
+		
+		//名称处理
+		$product['product_attr_value'] = '';
+		if (empty($product->product_name)) {
+			$product['product_name'] = $goods->goods_name;
+			if ($product->goods_attr) {
+				$goods_attr = explode('|', $product->goods_attr);
+				if ($goods->goods_attr_collection) {
+					$product_attr_value = $goods->goods_attr_collection->whereIn('goods_attr_id', $goods_attr)->sortBy('goods_attr_id')->lists('attr_value');
+					$product_attr_value = $product_attr_value->implode('/');
+					$product['product_attr_value'] = $product_attr_value;
+				}
+			}
+		}
+		
+		//货品是否在促销
+		$time = RC_Time::gmtime();
+		$product['is_promote_now'] = 0;
+		if (($goods->promote_start_date <= $time && $goods->promote_end_date >= $time) && $product->is_promote == '1' && $product->promote_price > 0) {
+			$product['is_promote_now'] = 1;
+			$product['formated_promote_start_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_start_date']);
+			$product['formated_promote_end_date'] = RC_Time::local_date('Y-m-d H:i:s', $goods['promote_end_date']);
+		}
+		
+		//本店价格处理
+		if ($product->product_shop_price <= 0){
+			$product['product_shop_price'] = ecjia_price_format($goods->shop_price, false);
+		} else {
+			$product['product_shop_price'] = ecjia_price_format($product->product_shop_price, false);
+		}
+		//添加时间
+		if (!empty($goods->add_time)) {
+			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods->add_time);
+		}
+		
+		//图文详情
+		if (!empty($product['product_desc'])) {
+			$product['product_desc'] = stripslashes($product->product_desc);
+		} else{
+			if (!empty($goods['goods_desc'])){
+				$product['product_desc'] = stripslashes($goods->goods_desc);
+			}
+		}
+		//货品相册
+		$product_photo_list = $productBasicInFo->getProductGallery();
+		if (empty($product_photo_list)) {
+			$product_photo_list = $GoodsBasicInFo->getGoodsGallery();
+		}
+		$this->assign('product_photo_list', $product_photo_list);
+		
+		//商品参数
+		$attr_group = $GoodsBasicInFo->attrGroup();
+		if (count($attr_group) > 0) {
+			$group_parameter_list = $GoodsBasicInFo->getGoodsGroupParameter();
+			$this->assign('group_parameter_list', $group_parameter_list);
+		} else {
+			$common_parameter_list = $GoodsBasicInFo->getGoodsCommonParameter();
+			$this->assign('common_parameter_list', $common_parameter_list);
+		}
+		
+		
+		//店铺logo，店铺电话
+		$goods['shop_kf_mobile'] = '';
+		$goods['shop_logo'] =  RC_Uri::admin_url('statics/images/nopic.png');
+		if ($goods->store_franchisee_model->merchants_config_collection) {
+			$shop_logo_info = $goods->store_franchisee_model->merchants_config_collection->where('code', 'shop_logo')->first();
+			$shop_kf_mobile_info = $goods->store_franchisee_model->merchants_config_collection->where('code', 'shop_kf_mobile')->first();
+				
+			$goods['shop_logo'] = empty($shop_logo_info['value']) ? $goods['shop_logo'] : RC_Upload::upload_url($shop_logo_info['value']);
+			$goods['shop_kf_mobile'] = empty($shop_logo_info['value']) ? $goods['shop_kf_mobile'] : $shop_kf_mobile_info['value'];
+		}
+		//店铺地址shop_address
+		$city      					= ecjia_region::getRegionName($goods->store_franchisee_model->city);
+		$district       			= ecjia_region::getRegionName($goods->store_franchisee_model->district);
+		$street   					= ecjia_region::getRegionName($goods->store_franchisee_model->street);
+		$goods['shop_address'] 		= $city.$district.$street.$goods->store_franchisee_model->address;
+		
+		//店铺名称
+		$goods['merchants_name'] = '';
+		if ($goods->store_franchisee_model) {
+			$goods['merchants_name'] = $goods->store_franchisee_model->merchants_name;
+		}
+		//营业时间
+		$goods['shop_trade_time'] = Ecjia\App\Merchant\MerchantFunction::get_store_trade_time($goods->store_id);
+		//店铺经营模式
+		if ($goods->store_franchisee_model->manage_mode == 'self') {
+			$goods['manage_mode'] = '自营';
+		} else {
+			$goods['manage_mode'] = '入驻';
+		}
+		
+		
+		$action = $_SESSION['action_list'] == 'all' ? true : false;
+		$this->assign('action', $action);
+		
+		if ($action) {
+			if (defined('RC_SITE')) {
+				$index = 'sites/' . RC_SITE . '/index.php';
+			} else {
+				$index = 'index.php';
+			}
+			$edit_url = RC_Uri::url('goods/merchant/product_edit', array('id'=> $product_id,'goods_id' => $goods_id));
+			$edit_url = str_replace($index, "sites/merchant/index.php", $edit_url);
+		
+			$this->assign('edit_url', urlencode($edit_url));
+		}
+		
+		$images_url = RC_App::apps_url('statics/images', __FILE__);
+		$this->assign('images_url', $images_url);
+		$this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
+		$this->assign('product', $product);
+		$this->assign('goods', $goods);
+		
+		$this->display('product_preview.dwt');
+	}
+	
+	/**
 	 * 手机端预览
 	 */
 	public function h5_preview()
