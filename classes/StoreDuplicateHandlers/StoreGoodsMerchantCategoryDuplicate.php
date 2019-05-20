@@ -227,7 +227,7 @@ HTML;
 //            return $model;
 //        });
 
-        $categories = $categories = $categories->where('parent_id', 0);
+        $categories = $categories->where('parent_id', 0);
 
         return $categories;
     }
