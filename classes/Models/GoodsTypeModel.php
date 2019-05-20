@@ -28,6 +28,13 @@ class GoodsTypeModel extends Model
 		'enabled',
 		'attr_group',
 	];
+
+    /**
+     * 该模型是否被自动维护时间戳
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 	
 	/**
 	 * 一对多

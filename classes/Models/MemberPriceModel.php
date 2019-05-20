@@ -56,7 +56,12 @@ class MemberPriceModel extends Model
     protected $table = 'member_price';
     
     protected $primaryKey = 'price_id';
-    
+
+    /**
+     * 该模型是否被自动维护时间戳
+     *
+     * @var bool
+     */
     public $timestamps = false;
     
     protected $fillable = [];
