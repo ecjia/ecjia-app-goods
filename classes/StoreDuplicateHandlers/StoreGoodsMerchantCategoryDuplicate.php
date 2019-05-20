@@ -184,7 +184,7 @@ HTML;
 
         });
 
-        $this->setReplacementData($this->getCode(), $replacement_merchant_category_data);
+        $this->setReplacementData($this->getCode(), $merchant_category_replacement);
     }
 
 
