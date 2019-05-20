@@ -349,10 +349,10 @@ class MerchantGoodsAttr {
 				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
 				if ($val ['attr_input_type'] == 0) {//手工录入
 					$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
-					$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="'.$val[attr_id].'_attr_value_list[]" type="text" value="' . htmlspecialchars($val['attr_value'][0]) . '" size="40" /></div> ';
+					$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="'.$val[attr_id].'_attr_value_list" type="text" value="' . htmlspecialchars($val['attr_value'][0]) . '" size="40" /></div> ';
 				} elseif ($val ['attr_input_type'] == 2) {//多行文本框
 					$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
-					$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="'.$val[attr_id].'_attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val['attr_value'][0]) . '</textarea></div>';
+					$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="'.$val[attr_id].'_attr_value_list" rows="3" cols="40">' . htmlspecialchars($val['attr_value'][0]) . '</textarea></div>';
 				} else {//从下面列表中选择
 					if($val['attr_type'] == 2) {//复选属性checkbox
 						$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
@@ -365,7 +365,7 @@ class MerchantGoodsAttr {
 					} else {//唯一参数
 						$attr_values = explode("\n", $val['attr_values']);
 						$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
-						$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="'.$val[attr_id].'_attr_value_list[]" autocomplete="off">';
+						$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="'.$val[attr_id].'_attr_value_list" autocomplete="off">';
 						$html .= '<option value="">' . __('请选择...', 'goods') . '</option>';
 						foreach ($attr_values as $opt) {
 							$opt = trim(htmlspecialchars($opt));
