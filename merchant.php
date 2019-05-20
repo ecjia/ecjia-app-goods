@@ -1,4 +1,5 @@
 <?php
+use Ecjia\App\Goods\Models\GoodsAttrModel;
 //
 //    ______         ______           __         __         ______
 //   /\  ___\       /\  ___\         /\_\       /\_\       /\  __ \
@@ -2939,33 +2940,82 @@ class merchant extends ecjia_merchant {
 		$goods_type = !empty($_POST['template_id'])	 ? intval($_POST['template_id'])  : 0;
 		$goods_id 	= !empty($_POST['goods_id'])     ? intval($_POST['goods_id'])     : 0;
 	
-		if (!empty($_POST['attr_id_list'])) {
-				
+		$attr_id_list = $this->request->input('attr_id_list');
+		$input_all    = $this->request->input();
+		
+		if (!empty($attr_id_list)) {
+			$attr_id_list = collect($attr_id_list)->mapWithKeys(function ($attr_id) use ($input_all) {
+				$vkey = $attr_id . '_attr_value_list';
+				$vvalue = array_get($input_all, $vkey);
+				return [$attr_id => $vvalue];
+			});
+			
 			$goods_attr_list = array();
 
-			foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
-				$attr_value = $attr_id.'_attr_value_list';
-				$goods_attr_list[$attr_id] = $_POST[$attr_value];
-			}
+			$updateGoodsAttr = function ($goods_id, $attr_id_list) {
+				$collection = GoodsAttrModel::where('cat_type', 'parameter')->where('goods_id', $goods_id)->get();
+				$collection = $collection->groupBy('attr_id');
+				$attr_id_list->map(function($id_values, $key) use ($collection, $goods_id) {
+					$new_collection = $collection->get($key);
+					
+					if (is_array($id_values)) {
+						$count = count($id_values);
+						$new_collection = $collection->get($key);
+
+						if (!empty($new_collection)) {
+							//移除取消的
+							$new_collection->map(function($model) use ($id_values) {
+									
+								if (!in_array($model->attr_value, $id_values) ) {
+									$model->delete();
+								}
+									
+							});
+							$old_values = $new_collection->pluck('attr_value')->all();
+							$new_values = collect($id_values)->diff($old_values);
+						}
+						else {
+							$new_values = $id_values;
+						}
+					
+						//添加新增的
+						foreach ($new_values as $v) {
+							GoodsAttrModel::insert([
+								'cat_type' => 'parameter',
+								'goods_id' => $goods_id,
+								'attr_id' => $key,
+								'attr_value' => $v,
+							]);
+						}
+					}
+					else {
+						if (!empty($new_collection)) {
+							$new_collection->map(function($model) use ($id_values) {
+								$model->attr_value = $id_values;
+								$model->save();
+							});
+						}
+						else {
+							GoodsAttrModel::insert([
+								'cat_type' => 'parameter',
+								'goods_id' => $goods_id,
+								'attr_id' => $key,
+								'attr_value' => $id_values,
+							]);
+						}
+					
+					}
+					
+				});
+			};
+			
+			$updateGoodsAttr($goods_id, $attr_id_list);
 			
 			$data = array(
 				 'parameter_id'    => $goods_type,
 			);
 			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-			
-			$data_insert = array();
-			foreach ($goods_attr_list as $attr_id => $attr_value_list) {
-				foreach ($attr_value_list as $attr_value => $info) {
-					$data_insert[] = array(
-						'attr_id'		=> $attr_id,
-						'goods_id'		=> $goods_id,
-						'attr_value'	=> $info,
-						'cat_type'		=> 'parameter',
-					);
-				}
-			}
-			RC_DB::table('goods_attr')->insert($data_insert);
-			
+
 			$pjaxurl = RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id));
 			return $this->showmessage(__('编辑商品参数成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 		}
