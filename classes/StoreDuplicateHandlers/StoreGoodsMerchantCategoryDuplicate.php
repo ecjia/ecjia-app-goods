@@ -8,12 +8,14 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
+use Ecjia\App\Goods\Models\MerchantCategoryModel;
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
 use RC_Uri;
 use RC_DB;
 use RC_Api;
 use ecjia_admin;
 use ecjia_error;
+use Royalcms\Component\Support\Collection;
 
 /**
  * 复制店铺中的商品分类
@@ -39,6 +41,12 @@ class StoreGoodsMerchantCategoryDuplicate extends StoreDuplicateAbstract
         'store_goods_parameter_duplicate',
         'store_goods_specification_duplicate',
     ];
+
+    /**
+     * temp merchant category id
+     * @var array
+     */
+    private $merchant_category_replacement = [];
 
     public function __construct($store_id, $source_store_id)
     {
@@ -134,57 +142,135 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
-        $merchant_category_replacement = [];
+//        $merchant_category_replacement = [];
 
         $progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
 
         $specification_replacement = $progress_data->getReplacementDataByCode('store_goods_specification_duplicate.goods_type');
         $parameter_replacement = $progress_data->getReplacementDataByCode('store_goods_parameter_duplicate.goods_type');
 
-        $this->source_store_data_handler->orderBy('parent_id', 'asc')->chunk(50, function ($items) use (& $merchant_category_replacement, $specification_replacement, $parameter_replacement) {
 
-            //构造可用于复制的数据
-            //$this->buildDuplicateData($items);
+        $all_categories = MerchantCategoryModel::where('store_id', $this->store_id)->get();
 
-            foreach ($items as &$item) {
-                $merchant_cat_id = $item['cat_id'];
-                unset($item['cat_id']);
+        $top_categories = $this->queryTopCategories($all_categories, $specification_replacement, $parameter_replacement);
 
-                //将源店铺ID设为新店铺的ID
-                $item['store_id'] = $this->store_id;
-
-                //设置新店铺规则ID
-                if (isset($specification_replacement[$item['specification_id']])) {
-                    $item['specification_id'] = $specification_replacement[$item['specification_id']];
-                }
-
-                //设置新店铺参数ID
-                if (isset($parameter_replacement[$item['parameter_id']])) {
-                    $item['parameter_id'] = $parameter_replacement[$item['parameter_id']];
-                }
-
-                //插入数据到新店铺并获取主键ID
-                //$new_merchant_cat_id = $merchant_cat_id + 1;
-                $new_merchant_cat_id = RC_DB::table('merchants_category')->insertGetId($item);
-                $merchant_category_replacement[$merchant_cat_id] = $new_merchant_cat_id;
-
-                //如果该数据不是顶级分类
-                if ((int)$item['parent_id'] !== 0 && isset($merchant_category_replacement[$item['parent_id']])) {
-
-                    //用parent_id找到替换ID，将新插入的数据执行更新，完成parent_id替换
-                    RC_DB::table('merchants_category')
-                        ->where('cat_id', $new_merchant_cat_id)
-                        ->update(['parent_id' => $merchant_category_replacement[$item['parent_id']]]);
-                }
+        $this->recursiveCategroy($top_categories, $all_categories, $specification_replacement, $parameter_replacement);
 
 
-                //图片数据的处理
+
+//        $this->source_store_data_handler->orderBy('parent_id', 'asc')->chunk(50, function ($items) use (& $merchant_category_replacement, $specification_replacement, $parameter_replacement) {
+//
+//            //构造可用于复制的数据
+//            //$this->buildDuplicateData($items);
+//
+//            foreach ($items as &$item) {
+//                $merchant_cat_id = $item['cat_id'];
+//                unset($item['cat_id']);
+//
+//                //将源店铺ID设为新店铺的ID
+//                $item['store_id'] = $this->store_id;
+//
+//                //设置新店铺规则ID
+//                if (isset($specification_replacement[$item['specification_id']])) {
+//                    $item['specification_id'] = $specification_replacement[$item['specification_id']];
+//                }
+//
+//                //设置新店铺参数ID
+//                if (isset($parameter_replacement[$item['parameter_id']])) {
+//                    $item['parameter_id'] = $parameter_replacement[$item['parameter_id']];
+//                }
+//
+//                //插入数据到新店铺并获取主键ID
+//                //$new_merchant_cat_id = $merchant_cat_id + 1;
+//                $new_merchant_cat_id = RC_DB::table('merchants_category')->insertGetId($item);
+//                $merchant_category_replacement[$merchant_cat_id] = $new_merchant_cat_id;
+//
+//                //如果该数据不是顶级分类
+//                if ((int)$item['parent_id'] !== 0 && isset($merchant_category_replacement[$item['parent_id']])) {
+//
+//                    //用parent_id找到替换ID，将新插入的数据执行更新，完成parent_id替换
+//                    RC_DB::table('merchants_category')
+//                        ->where('cat_id', $new_merchant_cat_id)
+//                        ->update(['parent_id' => $merchant_category_replacement[$item['parent_id']]]);
+//                }
+//
+//
+//                //图片数据的处理
+//
+//            }
+//
+//        });
+
+        $this->setReplacementData($this->getCode(), $this->merchant_category_replacement);
+    }
+
+
+    protected function queryTopCategories($categories, $specification_replacement, $parameter_replacement)
+    {
+        $categories = $categories->where('parent_id', 0)->map(function ($model) use ($specification_replacement, $parameter_replacement) {
+
+            $new_model = $model->replicate();
+
+            $new_model->store_id = $this->store_id;
+            //设置新店铺规格ID
+            $new_model->specification_id = array_get($specification_replacement, $new_model->specification_id, $new_model->specification_id);
+            //设置新店铺参数ID
+            $new_model->parameter_id = array_get($parameter_replacement, $new_model->parameter_id, $new_model->parameter_id);
+
+            $new_model->save();
+
+            $this->merchant_category_replacement[$model->cat_id] = $new_model->cat_id;
+
+            return $model;
+        });
+
+        return $categories;
+    }
+
+
+    /**
+     * 递归分类数据
+     * @param $categories \Royalcms\Component\Support\Collection
+     * @param $collection \Royalcms\Component\Support\Collection
+     * @param $goods_num \Royalcms\Component\Support\Collection
+     * @return \Royalcms\Component\Support\Collection
+     */
+    protected function recursiveCategroy($categories, $collection, $specification_replacement, $parameter_replacement)
+    {
+        if (empty($categories)) {
+            return null;
+        }
+
+        $categories = $categories->map(function ($model) use ($collection, $specification_replacement, $parameter_replacement) {
+
+
+            $new_model = $model->replicate();
+
+            $new_model->store_id = $this->store_id;
+            //设置新店铺规格ID
+            $new_model->specification_id = array_get($specification_replacement, $new_model->specification_id, $new_model->specification_id);
+            //设置新店铺参数ID
+            $new_model->parameter_id = array_get($parameter_replacement, $new_model->parameter_id, $new_model->parameter_id);
+
+            //取出原parent_id数据
+            $new_model->parent_id = array_get($this->merchant_category_replacement, $model->parent_id, $model->parent_id);
+
+            $new_model->save();
+
+            $this->merchant_category_replacement[$model->cat_id] = $new_model->cat_id;
+
+            $model->childrens = $collection->where('parent_id', $model->cat_id);
+
+            if ($model->childrens instanceof Collection) {
+
+                $model->childrens = $this->recursiveCategroy($model->childrens, $collection, $specification_replacement, $parameter_replacement);
 
             }
 
+            return $model;
         });
 
-        $this->setReplacementData($this->getCode(), $replacement_merchant_category_data);
+        return $categories;
     }
 
 
