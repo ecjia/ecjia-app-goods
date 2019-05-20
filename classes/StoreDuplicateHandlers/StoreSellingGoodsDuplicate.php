@@ -44,8 +44,8 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
 
         parent::__construct($store_id, $source_store_id);
 
-        $this->source_store_data_handler = RC_DB::table('goods')->take(1)->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=', 1)
-            ->select('goods_id', 'store_id', 'merchant_cat_id', 'bonus_type_id', 'goods_type', 'specification_id', 'parameter_id');
+        $this->source_store_data_handler = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=', 1);
+            //->select('goods_id', 'store_id', 'merchant_cat_id', 'bonus_type_id', 'goods_type', 'specification_id', 'parameter_id');
 
     }
 
