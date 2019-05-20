@@ -150,12 +150,14 @@ HTML;
         $parameter_replacement = $progress_data->getReplacementDataByCode('store_goods_parameter_duplicate.goods_type');
 
 
-        $all_categories = MerchantCategoryModel::where('store_id', $this->store_id)->get();
+        $all_categories = MerchantCategoryModel::where('store_id', $this->source_store_id)->get();
 
         $top_categories = $this->queryTopCategories($all_categories, $specification_replacement, $parameter_replacement);
 
         $this->recursiveCategroy($top_categories, $all_categories, $specification_replacement, $parameter_replacement);
 
+
+        dd($top_categories,$this->merchant_category_replacement);
 
 
 //        $this->source_store_data_handler->orderBy('parent_id', 'asc')->chunk(50, function ($items) use (& $merchant_category_replacement, $specification_replacement, $parameter_replacement) {
