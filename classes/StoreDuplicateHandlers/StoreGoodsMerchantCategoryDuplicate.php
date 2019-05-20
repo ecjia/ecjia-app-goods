@@ -152,7 +152,7 @@ HTML;
 
         $all_categories = MerchantCategoryModel::where('store_id', $this->source_store_id)->get();
 
-        $top_categories = $this->queryTopCategories($all_categories, $specification_replacement, $parameter_replacement);
+        $top_categories = $all_categories->where('parent_id', 0);
 
         $this->recursiveCategroy($top_categories, $all_categories, $specification_replacement, $parameter_replacement);
 
@@ -205,31 +205,6 @@ HTML;
 //        });
 
         $this->setReplacementData($this->getCode(), $this->merchant_category_replacement);
-    }
-
-
-    protected function queryTopCategories($categories, $specification_replacement, $parameter_replacement)
-    {
-//        $categories = $categories->where('parent_id', 0)->map(function ($model) use ($specification_replacement, $parameter_replacement) {
-//
-////            $new_model = $model->replicate();
-////
-////            $new_model->store_id = $this->store_id;
-////            //设置新店铺规格ID
-////            $new_model->specification_id = array_get($specification_replacement, $new_model->specification_id, $new_model->specification_id);
-////            //设置新店铺参数ID
-////            $new_model->parameter_id = array_get($parameter_replacement, $new_model->parameter_id, $new_model->parameter_id);
-////
-////            $new_model->save();
-////
-////            $this->merchant_category_replacement[$model->cat_id] = $new_model->cat_id;
-//
-//            return $model;
-//        });
-
-        $categories = $categories->where('parent_id', 0);
-
-        return $categories;
     }
 
 
