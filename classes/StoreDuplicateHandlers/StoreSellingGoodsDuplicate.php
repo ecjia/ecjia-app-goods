@@ -45,7 +45,7 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
         parent::__construct($store_id, $source_store_id);
 
         $this->source_store_data_handler = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=', 1);
-            //->select('goods_id', 'store_id', 'merchant_cat_id', 'bonus_type_id', 'goods_type', 'specification_id', 'parameter_id');
+        //->select('goods_id', 'store_id', 'merchant_cat_id', 'bonus_type_id', 'goods_type', 'specification_id', 'parameter_id');
 
     }
 
@@ -119,23 +119,30 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
-
         $progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
 
-        $replacement_data = $progress_data->getReplacementDataByCode();
-        //$merchant_category_replacement = $progress_data->getReplacementDataByCode('store_goods_merchant_category_duplicate');
+        $merchant_category_replacement = $progress_data->getReplacementDataByCode('store_goods_merchant_category_duplicate');
 
+        $store_bonus_replacement = $progress_data->getReplacementDataByCode('store_bonus_duplicate');
+
+        $goods_specification_replacement = $progress_data->getReplacementDataByCode('store_goods_specification_duplicate.goods_type');
+
+        $goods_parameter_duplicate_replacement = $progress_data->getReplacementDataByCode('store_goods_parameter_duplicate.goods_type');
+
+        $goods_type_replacement = $goods_specification_replacement + $goods_parameter_duplicate_replacement;
 
         $replacement_goods = [];
-        //$merchant_category_replacement = isset($replacement_data['store_goods_merchant_category_duplicate']) ? $replacement_data['store_goods_merchant_category_duplicate'] : [];
-        $this->source_store_data_handler->chunk(50, function ($items) use ($replacement_data, &$replacement_goods) {
+
+        $this->source_store_data_handler->chunk(50, function ($items) use (
+            &$replacement_goods,
+            $merchant_category_replacement,
+            $store_bonus_replacement,
+            $goods_specification_replacement,
+            $goods_parameter_duplicate_replacement,
+            $goods_type_replacement
+        ) {
 
             //从过程数据中提取需要用到的替换数据
-            $merchant_category_replacement = array_get($replacement_data, 'store_goods_merchant_category_duplicate', []);
-            $store_bonus_replacement = array_get($replacement_data, 'store_bonus_duplicate', []);
-            $goods_specification_replacement = array_get($replacement_data, 'store_goods_specification_duplicate', []);
-            $goods_parameter_duplicate_replacement = array_get($replacement_data, 'store_goods_parameter_duplicate', []);
-            $goods_type_replacement = array_get($goods_specification_replacement, 'goods_type', []) + array_get($goods_parameter_duplicate_replacement, 'goods_type', []);
 
             //dd($items);
             //构造可用于复制的数据
@@ -148,31 +155,20 @@ HTML;
                 //将源店铺ID设为新店铺的ID
                 $item['store_id'] = $this->store_id;
 
-
                 //设置新店铺 merchant_cat_id
-                if (isset($merchant_category_replacement[$item['merchant_cat_id']])) {
-                    $item['merchant_cat_id'] = $merchant_category_replacement[$item['merchant_cat_id']];
-                }
+                $item['merchant_cat_id'] = array_get($merchant_category_replacement, $item['merchant_cat_id'], $item['merchant_cat_id']);
 
                 //设置新店铺 bonus_type_id
-                if (isset($store_bonus_replacement[$item['bonus_type_id']])) {
-                    $item['bonus_type_id'] = $store_bonus_replacement[$item['bonus_type_id']];
-                }
+                $item['bonus_type_id'] = array_get($store_bonus_replacement, $item['bonus_type_id'], $item['bonus_type_id']);
 
                 //设置新店铺 goods_type
-                if (isset($goods_type_replacement[$item['goods_type']])) {
-                    $item['goods_type'] = $goods_type_replacement[$item['goods_type']];
-                }
+                $item['goods_type'] = array_get($goods_type_replacement, $item['goods_type'], $item['goods_type']);
 
                 //设置新店铺 specification_id
-                if (isset($goods_specification_replacement[$item['specification_id']])) {
-                    $item['specification_id'] = $goods_specification_replacement[$item['specification_id']];
-                }
+                $item['specification_id'] = array_get($goods_specification_replacement, $item['specification_id'], $item['specification_id']);
 
                 //设置新店铺 parameter_id
-                if (isset($goods_parameter_duplicate_replacement[$item['parameter_id']])) {
-                    $item['parameter_id'] = $goods_parameter_duplicate_replacement[$item['parameter_id']];
-                }
+                $item['parameter_id'] = array_get($goods_parameter_duplicate_replacement, $item['parameter_id'], $item['parameter_id']);
 
                 //goods_sn，商品唯一货号是需要重新生成，生成规则是什么
 
@@ -194,7 +190,6 @@ HTML;
 
 
                 //图片字段的处理
-
 
 
                 //插入数据到新店铺
