@@ -45,6 +45,8 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
         parent::__construct($store_id, $source_store_id);
 
         $this->source_store_data_handler = RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=', 1);
+        //->select('goods_id', 'store_id', 'merchant_cat_id', 'bonus_type_id', 'goods_type', 'specification_id', 'parameter_id');
+
     }
 
     /**
@@ -117,14 +119,93 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
-        $this->source_store_data_handler->chunk(50, function ($items) {
-            //构造可用于复制的数据
-            $this->buildDuplicateData($items);
+        $progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
 
-            dd($items);
-            //插入数据到新店铺
-            RC_DB::table('goods')->insert($items);
+        $merchant_category_replacement = $progress_data->getReplacementDataByCode('store_goods_merchant_category_duplicate');
+
+        $store_bonus_replacement = $progress_data->getReplacementDataByCode('store_bonus_duplicate');
+
+        $goods_specification_replacement = $progress_data->getReplacementDataByCode('store_goods_specification_duplicate.goods_type');
+
+        $goods_parameter_duplicate_replacement = $progress_data->getReplacementDataByCode('store_goods_parameter_duplicate.goods_type');
+
+        $goods_type_replacement = $goods_specification_replacement + $goods_parameter_duplicate_replacement;
+
+        $replacement_goods = [];
+
+        $this->source_store_data_handler->chunk(50, function ($items) use (
+            &$replacement_goods,
+            $merchant_category_replacement,
+            $store_bonus_replacement,
+            $goods_specification_replacement,
+            $goods_parameter_duplicate_replacement,
+            $goods_type_replacement
+        ) {
+
+            //从过程数据中提取需要用到的替换数据
+
+            //dd($items);
+            //构造可用于复制的数据
+            //$this->buildDuplicateData($items);
+
+            foreach ($items as &$item) {
+                $goods_id = $item['goods_id'];
+                unset($item['goods_id']);
+
+                //将源店铺ID设为新店铺的ID
+                $item['store_id'] = $this->store_id;
+
+                //设置新店铺 merchant_cat_id
+                $item['merchant_cat_id'] = array_get($merchant_category_replacement, $item['merchant_cat_id'], $item['merchant_cat_id']);
+
+                //设置新店铺 bonus_type_id
+                $item['bonus_type_id'] = array_get($store_bonus_replacement, $item['bonus_type_id'], $item['bonus_type_id']);
+
+                //设置新店铺 goods_type
+                $item['goods_type'] = array_get($goods_type_replacement, $item['goods_type'], $item['goods_type']);
+
+                //设置新店铺 specification_id
+                $item['specification_id'] = array_get($goods_specification_replacement, $item['specification_id'], $item['specification_id']);
+
+                //设置新店铺 parameter_id
+                $item['parameter_id'] = array_get($goods_parameter_duplicate_replacement, $item['parameter_id'], $item['parameter_id']);
+
+                //goods_sn，商品唯一货号是需要重新生成，生成规则是什么
+
+                //click_count，商品点击数是否设为0
+
+                //goods_number 商品库存数量是否设为0
+
+                //shop_price 本店售价是否重新设置
+
+                //cost_price 成本价是否重新设置
+
+                //promote_* 促销相关字段，不一定在新店铺适用
+
+                //add_time  商品添加时间是否设为当前时间
+
+                //comments_number 评论是否设置为0
+
+                //sales_volume 销量是否设置为0
+
+
+                //图片字段的处理
+
+
+                //插入数据到新店铺
+                //$new_goods_id = $goods_id + 1;
+                $new_goods_id = RC_DB::table('goods')->insertGetId($item);
+                $replacement_goods[$goods_id] = $new_goods_id;
+
+            }
+
+
+            //dd($items,$replacement_goods);
         });
+
+        $this->setReplacementData($this->getCode(), $replacement_goods);
+
+
     }
 
     protected function buildDuplicateData(&$items)
@@ -132,7 +213,8 @@ HTML;
         foreach ($items as &$item) {
             unset($item['goods_id']);
 
-            //将源店铺ID设为新店铺的ID
+            $item['merchant_cat_id'] =
+                //将源店铺ID设为新店铺的ID
             $item['store_id'] = $this->store_id;
 
 

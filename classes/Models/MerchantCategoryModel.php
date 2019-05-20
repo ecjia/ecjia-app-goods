@@ -31,6 +31,8 @@ class MerchantCategoryModel extends Model
 		'sort_order',
 		'is_show',
 	];
+
+    public $timestamps = false;
 	
 	
 	/**
