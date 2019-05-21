@@ -3301,21 +3301,22 @@ class merchant extends ecjia_merchant {
 	/**
 	 * 切换radio获取货号
 	 */
-// 	public function ajax_select_radio() {
-// 		$this->admin_priv('goods_update');
+	public function ajax_select_radio() {
+		$this->admin_priv('goods_update');
 	
-// 		$goods_id 		= intval($_POST['goods_id']);
-// 		$product_value  = !empty($_POST['radio_value_arr']) ? $_POST['radio_value_arr']   : '';
+		$goods_id 		= intval($_POST['goods_id']);
+		$product_value  = !empty($_POST['radio_value_arr']) ? $_POST['radio_value_arr']   : '';
 	
-// 		if (empty($goods_id)) {
-// 			return $this->showmessage(__('找不到指定的商品', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-// 		}
-// 		$goods_attr = implode('|', $product_value);
-// 		$product_sn = RC_DB::TABLE('products')->where('goods_attr', $goods_attr)->pluck('product_sn');
-// 		if(!empty($product_sn)) {
-// 			return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('product_sn' => $product_sn));
-// 		}
-// 	}
+		if (empty($goods_id)) {
+			return $this->showmessage(__('找不到指定的商品', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+		$goods_attr = implode('|', $product_value);
+		$product_sn = RC_DB::TABLE('products')->where('goods_attr', $goods_attr)->pluck('product_sn');
+		
+		if(!empty($product_sn)) {
+			return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('product_sn' => $product_sn));
+		}
+	}
 	
 	
 	/**
