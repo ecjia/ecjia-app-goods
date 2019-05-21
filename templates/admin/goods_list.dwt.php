@@ -182,7 +182,7 @@
 					<td class="hide-edit-area">
 						<strong>{$goods.merchants_name}</strong>
 						
-						</span>{if $goods.manage_mode eq 'self'}<span class="ecjiafc-red">（自营）</span>{/if}
+						</span>{if $goods.manage_mode eq 'self'}<span class="ecjiafc-red">{t domain='goods'}（自营）{/t}</span>{/if}
 						<br>
 						
                         {if $goods.product_list}<span class="label-orange">{t domain='goods'}多货品{/t}{/if}</span>
@@ -200,7 +200,7 @@
 							{if $action neq 'check'}
 								<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_list&goods_id={$goods.goods_id}" >{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
 								<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
-								data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
+								data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}" data-costprice="{$goods.cost_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
 								<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
 							{/if}
 							
@@ -363,12 +363,6 @@
                 </div>
             </div>
             <div class="control-group control-group-small formSep">
-                <label class="control-label">{t domain='goods'}商品货号{/t}</label>
-                <div class="controls">
-                    <input class="form-control" name="goods_sn" type="text" value="" />
-                </div>
-            </div>
-            <div class="control-group control-group-small formSep">
                 <label class="control-label">{t domain='goods'}本店售价{/t}</label>
                 <div class="controls">
                     <input class="form-control" name="shop_price" type="text" value="" />
@@ -381,6 +375,12 @@
                 <div class="controls">
                     <input class="form-control" name="market_price" type="text" value="" />
                     <a class="btn" data-toggle="integral_market_price">{t domain='goods'}取整数{/t}</a>
+                </div>
+            </div>
+            <div class="control-group control-group-small formSep">
+                <label class="control-label">{t domain='goods'}成本价{/t}</label>
+                <div class="controls">
+                    <input class="form-control" name="cost_price" type="text" value="" />
                 </div>
             </div>
             <div class="control-group control-group-small formSep">

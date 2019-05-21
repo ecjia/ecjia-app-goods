@@ -25,18 +25,16 @@
 			   </div>
 			   {/foreach}
 			   
-			   {if $product_sn}
 		   	   <div class="form-group">
 	             <div class="col-lg-offset-2 col-lg-6">
-	             	<p class="product_sn_msg">所选属性已组合成货品，【货号】：{$product_sn}</p>
+	             	<p class="product_sn_msg"></p>
 	             </div>
 	           </div>
-	           {/if}
 	           
 			   <div class="form-group">
 	             <div class="col-lg-offset-2 col-lg-6">
 	                   <input type="hidden" name="good_id" value="{$goods_id}"/>
-	                   <input type="hidden" name="defaulet_data_url" value='{url path="goods/merchant/ajax_defaulet_spec"}'/>
+	                   <input type="hidden" name="ajax_select_radio_url" value='{url path="goods/merchant/ajax_select_radio"}'/>
 	                   <button type="button" class="add_pro_submint btn btn-info" goods-id="{$goods_id}" data-url='{url path="goods/merchant/spec_add_product_insert"}'>添加</button></a>
 	                   <button type="button" class="del_pro_submint btn btn-danger" goods-id="{$goods_id}" data-url='{url path="goods/merchant/spec_del_product"}'>移除</button></a>
 	             </div>

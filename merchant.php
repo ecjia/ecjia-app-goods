@@ -2964,17 +2964,19 @@ class merchant extends ecjia_merchant {
 				return [$attr_id => $vvalue];
 			});
 			
-			$goods_attr_list = array();
-
 			$updateGoodsAttr = function ($goods_id, $attr_id_list) {
 				$collection = GoodsAttrModel::where('cat_type', 'parameter')->where('goods_id', $goods_id)->get();
 				$collection = $collection->groupBy('attr_id');
 				$attr_id_list->map(function($id_values, $key) use ($collection, $goods_id) {
 					$new_collection = $collection->get($key);
 					
-					if (is_array($id_values)) {
-						$new_collection = $collection->get($key);
-
+					if (is_null($id_values)) {
+						if (!empty($new_collection)) {
+							$new_collection->map(function($model){
+								$model->delete();
+							});
+						}
+					} elseif (is_array($id_values)) {
 						if (!empty($new_collection)) {
 							$new_collection->map(function($model) use ($id_values) {
 								if (!in_array($model->attr_value, $id_values) ) {
@@ -2984,12 +2986,9 @@ class merchant extends ecjia_merchant {
 							});
 							$old_values = $new_collection->pluck('attr_value')->all();
 							$new_values = collect($id_values)->diff($old_values);
-						}
-						else {
+						} else {
 							$new_values = $id_values;
 						}
-					
-						//添加新增的
 						foreach ($new_values as $v) {
 							GoodsAttrModel::insert([
 								'cat_type' => 'parameter',
@@ -2998,15 +2997,13 @@ class merchant extends ecjia_merchant {
 								'attr_value' => $v,
 							]);
 						}
-					}
-					else {
+					} else {
 						if (!empty($new_collection)) {
 							$new_collection->map(function($model) use ($id_values) {
 								$model->attr_value = $id_values;
 								$model->save();
 							});
-						}
-						else {
+						} else {
 							GoodsAttrModel::insert([
 								'cat_type' => 'parameter',
 								'goods_id' => $goods_id,
@@ -3014,9 +3011,7 @@ class merchant extends ecjia_merchant {
 								'attr_value' => $id_values,
 							]);
 						}
-					
 					}
-					
 				});
 			};
 			
@@ -3243,12 +3238,9 @@ class merchant extends ecjia_merchant {
 		
 		$goods_attr = implode('|', $product_value);
 		$product_sn = RC_DB::TABLE('products')->where('goods_attr', $goods_attr)->pluck('product_sn');
-		if(!empty($product_sn)) {
-			$this->assign('product_sn', $product_sn);
-		}
 		$data = $this->fetch('spec_add_product.dwt');
 		
-		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data, 'product_sn' => $product_sn));
 	}
 	
 	/**
@@ -3304,24 +3296,22 @@ class merchant extends ecjia_merchant {
 	/**
 	 * 切换radio获取货号
 	 */
-// 	public function ajax_select_radio() {
-// 		$this->admin_priv('goods_update');
+	public function ajax_select_radio() {
+		$this->admin_priv('goods_update');
+	
+		$goods_id 		= intval($_POST['goods_id']);
+		$product_value  = !empty($_POST['radio_value_arr']) ? $_POST['radio_value_arr']   : '';
+	
+		if (empty($goods_id)) {
+			return $this->showmessage(__('找不到指定的商品', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+		}
+		$goods_attr = implode('|', $product_value);
+		$product_sn = RC_DB::TABLE('products')->where('goods_attr', $goods_attr)->pluck('product_sn');
 		
-// 		$goods_id = intval($_POST['goods_id']);
-// 		$radio_value_arr = $_POST['radio_value_arr'];
-	
-// 		$goods_id 		= intval($_POST['goods_id']);;
-// 		$product_value  = !empty($_POST['radio_value_arr']) ? $_POST['radio_value_arr']   : '';
-	
-// 		if (empty($goods_id)) {
-// 			return $this->showmessage(__('找不到指定的商品', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-// 		}
-// 		$goods_attr = implode('|', $product_value);
-// 		$product_sn = RC_DB::TABLE('products')->where('goods_attr', $goods_attr)->pluck('product_sn');
-// 		if(!empty($product_sn)) {
-// 			return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('product_sn' => $product_sn));
-// 		}
-// 	}
+		if(!empty($product_sn)) {
+			return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('product_sn' => $product_sn));
+		}
+	}
 	
 	
 	/**
