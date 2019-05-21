@@ -140,8 +140,8 @@ class goods_detail_module extends api_front implements api_interface {
 
         $data = ecjia_api::transformerData('GOODS', $data);
         /*获得商品的规格和属性*/
-        $specificationParameter = new \Ecjia\App\Goods\GoodsSpecificationParameter\SpecificationParameter($goods_id);
-        list($properties, $specification) = $specificationParameter->getGoodsSpecPra();
+        $goodsBasicInFo = new \Ecjia\App\Goods\Goods\GoodsBasicInFo($goods_id);
+        list($properties, $specification) = $goodsBasicInFo->getGoodsSpecPra();
         
         $data['properties']      = $properties;
         $data['specification']   = $specification;
@@ -253,15 +253,25 @@ class goods_detail_module extends api_front implements api_interface {
         }
         
         $data['favourable_list'] = $favourable_list;
-
-       //商品详情页猜你喜欢 
-        $options = array(
-        		'cat_id'	=> $data['cat_id'],
-        		'intro'		=> 'hot',
-        		'page'		=> 1,
-        		'size'		=> 8,
-        		'store_id'	=> $goods['store_id'],
-        );
+		//查找商品关联商品
+		$linked_goods_ids = RC_DB::table('link_goods')->where('goods_id', $goods_id)->lists('link_goods_id');
+		if (count($linked_goods_ids) > 0) {
+			//商品详情页猜你喜欢
+			$options = array(
+					'goods_ids'	=> $linked_goods_ids,
+					'page'		=> 1,
+					'size'		=> 8
+			);
+		} else {
+			//商品详情页猜你喜欢
+			$options = array(
+					'cat_id'	=> $data['cat_id'],
+					'intro'		=> 'hot',
+					'page'		=> 1,
+					'size'		=> 8,
+					'store_id'	=> $goods['store_id'],
+			);
+		}
         $data['related_goods'] = $this->_related_goods($options);
         
 
@@ -549,7 +559,13 @@ class goods_detail_module extends api_front implements api_interface {
 		if (!empty($options['cat_id'])) {
 			$filters['cat_id'] = $options['cat_id'];
 		}
-		$filters['is_hot'] = 1;
+		if ($options['intro']) {
+			$filters['is_hot'] = 1;
+		}
+		//商品的关联商品
+		if ($options['goods_ids']) {
+			$filters['goods_ids'] = $options['goods_ids'];
+		}
 		//会员等级价格
 		$filters['user_rank'] = $_SESSION['user_rank'];
 		$filters['user_rank_discount'] = $_SESSION['discount'];
