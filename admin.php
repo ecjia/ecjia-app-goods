@@ -716,7 +716,6 @@ class admin extends ecjia_admin {
 		
 	}
 	
-	
 	/**
 	 * 收银台商品
 	 */
@@ -765,12 +764,12 @@ class admin extends ecjia_admin {
 		}
 	
 		$input = [
-		'intro_type'        => $intro_type,
-		'merchant_keywords' => $merchant_keywords,
-		'keywords'          => $keywords,
-		'store_id'          => $store_id,
-		'sort_by'           => [$sort_by => $sort_order],
-		'page'              => $page,
+			'intro_type'        => $intro_type,
+			'merchant_keywords' => $merchant_keywords,
+			'keywords'          => $keywords,
+			'store_id'          => $store_id,
+			'sort_by'           => [$sort_by => $sort_order],
+			'page'              => $page,
 		];
 	
 		$input = collect($input)->merge($where)->filter()->all();
@@ -838,7 +837,7 @@ class admin extends ecjia_admin {
 
 		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
 
-		$this->assign('action', 'bulk');
+		$this->assign('action', 'cashier');
 
 		$this->display('goods_list.dwt');
 	
@@ -1970,7 +1969,20 @@ class admin extends ecjia_admin {
 		if ($_GET['type'] == 'drop' || $_GET['type'] == 'restore') {
 			$pjaxurl = RC_Uri::url('goods/admin/trash', $page);
 		} else {
-			$pjaxurl = RC_Uri::url('goods/admin/init', 'is_on_sale='.$is_on_sale.$page);
+			$action_url = $_GET['action_url'];
+			if($action_url == 'finish') {
+				$pjaxurl = RC_Uri::url('goods/admin/finish', 'is_on_sale='.$is_on_sale.$page);
+			} elseif($action_url == 'obtained') {
+				$pjaxurl = RC_Uri::url('goods/admin/obtained', 'is_on_sale='.$is_on_sale.$page);
+			} elseif($action_url == 'check') {
+				$pjaxurl = RC_Uri::url('goods/admin/check', 'is_on_sale='.$is_on_sale.$page);
+			} elseif($action_url == 'bulk') {
+				$pjaxurl = RC_Uri::url('goods/admin/bulk', 'is_on_sale='.$is_on_sale.$page);
+			} elseif($action_url == 'cashier') {
+				$pjaxurl = RC_Uri::url('goods/admin/cashier', 'is_on_sale='.$is_on_sale.$page);
+			} else {
+				$pjaxurl = RC_Uri::url('goods/admin/init', 'is_on_sale='.$is_on_sale.$page);
+			}
 		}
 		/* 释放app缓存*/
 		$goods_cache_array = $this->orm_goods_db->get_cache_item('goods_list_cache_key_array');
