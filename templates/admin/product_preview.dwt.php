@@ -145,9 +145,7 @@
 		</div>
 		
 		{if $common_parameter_list OR $group_parameter_list}
-			<div class="goods-pra" style="margin-bottom:20px;">
-				<div class="pra">{t domain="goods"}商品参数{/t}</div>
-			</div>
+			<h3 class="heading">{t domain="goods"}商品参数{/t}</h3>
 		{/if}
 		{if $common_parameter_list}
 			<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
@@ -155,12 +153,10 @@
 		{if $group_parameter_list}
 			<!-- #BeginLibraryItem "/library/goods_group_prameter.lbi" --><!-- #EndLibraryItem -->
 		{/if}
-		
-		<div class="goods-pra">
-			<div class="pra">{t domain="goods"}图文详情{/t}</div>
-			<hr>
+		<div>
+			<h3 class="heading">{t domain="goods"}图文详情{/t}</h3>
+			<div class="t_c clear">{$product.product_desc}</div>
 		</div>
-		<div class="t_c clear">{$product.product_desc}</div>
 	</div>
 </div>
 <!-- {/block} -->

@@ -124,13 +124,17 @@
 								        <span id="J_StockTips"></span>
 								    </dd>
 								</dl>
-								<dl class="tb-amount tm-clear">
-								    <dt class="tb-metatit">{t domain="goods"}商品品牌{/t}</dt>
-								    <dd id="J_Amount">
-								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->brand_model}{$goods->brand_model->brand_name}{/if}</em>
-								        <span id="J_StockTips"></span>
-								    </dd>
-								</dl>
+								<!-- {if $goods->brand_model} -->
+									<!-- {if $goods->brand_model->brand_name} -->
+										<dl class="tb-amount tm-clear">
+										    <dt class="tb-metatit">{t domain="goods"}商品品牌{/t}</dt>
+										    <dd id="J_Amount">
+										        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->brand_model}{$goods->brand_model->brand_name}{/if}</em>
+										        <span id="J_StockTips"></span>
+										    </dd>
+										</dl>
+									<!-- {/if} -->
+								<!-- {/if} -->
 								<dl class="tb-amount tm-clear">
 				          			<dt class="tb-metatit">{t domain="goods"}商品排序{/t}</dt>
 				          			<dd id="J_Amount">
@@ -211,9 +215,7 @@
 		{/if}
 		
 		{if $common_parameter_list OR $group_parameter_list}
-			<div class="goods-pra" style="margin-bottom:20px;">
-				<div class="pra">{t domain="goods"}商品参数{/t}</div>
-			</div>
+			<h3 class="heading">{t domain="goods"}商品参数{/t}</h3>
 		{/if}
 		{if $common_parameter_list}
 			<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
@@ -221,12 +223,10 @@
 		{if $group_parameter_list}
 			<!-- #BeginLibraryItem "/library/goods_group_prameter.lbi" --><!-- #EndLibraryItem -->
 		{/if}
-		
-		<div class="goods-pra">
-			<div class="pra">{t domain="goods"}图文详情{/t}</div>
-			<hr>
+		<div>
+			<h3 class="heading">{t domain="goods"}图文详情{/t}</h3>
+			<div class="t_c clear">{$goods.goods_desc}</div>
 		</div>
-		<div class="t_c clear">{$goods.goods_desc}</div>
 	</div>
 </div>
 <!-- {/block} -->
