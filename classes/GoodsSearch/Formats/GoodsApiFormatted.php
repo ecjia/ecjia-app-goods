@@ -209,40 +209,40 @@ class GoodsApiFormatted
      * @param $pro
      * @return array
      */
-    protected function formatProperties($pro)
-    {
-    	$outData = [];
-    	if (!empty($pro)) {
-    		foreach ($pro as $key => $value) {
-    			// 处理分组
-    			foreach ($value as $k => $v) {
-    				$v['value']                 = strip_tags($v['value']);
-    				$outData[]				    = $v;
-    			}
-    		}
-    	}
-    	return $outData;
-    }
+//     protected function formatProperties($pro)
+//     {
+//     	$outData = [];
+//     	if (!empty($pro)) {
+//     		foreach ($pro as $key => $value) {
+//     			// 处理分组
+//     			foreach ($value as $k => $v) {
+//     				$v['value']                 = strip_tags($v['value']);
+//     				$outData[]				    = $v;
+//     			}
+//     		}
+//     	}
+//     	return $outData;
+//     }
     
     /**
      * 处理商品规格
      * @param $pro
      * @return array
      */
-    protected function formatSpecification($spe)
-    {
-    	$outData = [];
-    	if (!empty($spe)) {
-    		foreach ($spe as $key => $value) {
-    			if (!empty($value['values'])) {
-    				$value['value'] = $value['values'];
-    				unset($value['values']);
-    			}
-    			$outData[] = $value;
-    		}
-    	}
-    	return $outData;
-    }
+//     protected function formatSpecification($spe)
+//     {
+//     	$outData = [];
+//     	if (!empty($spe)) {
+//     		foreach ($spe as $key => $value) {
+//     			if (!empty($value['values'])) {
+//     				$value['value'] = $value['values'];
+//     				unset($value['values']);
+//     			}
+//     			$outData[] = $value;
+//     		}
+//     	}
+//     	return $outData;
+//     }
     
     /**
      * 获取货品属性价的和
@@ -292,76 +292,210 @@ class GoodsApiFormatted
     	return $user_price;
     }
     
+    /**
+     * 商品绑定的规格属性模板获取参数和规格
+     * @return array
+     */
     protected function goodsProperties()
     {
-    	$properties = ['pro' => [], 'spe' => [], 'lnk' => []];
-    	if ($this->model->goods_type_model) {
-    		$grp = $this->model->goods_type_model->attr_group;
-    		if (! empty ( $grp )) {
-    			$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
-    		}
-    		if ($this->model->goods_attr_collection) {
-    			$res = $this->model->goods_attr_collection->map(function ($item) {
-    				if ($item->attribute_model) {
-    					$attribute = [
-    									'goods_attr_id' => $item->goods_attr_id,
-    									'attr_value'	=> $item->attr_value,
-    									'attr_price'	=> $item->attr_price,
-    									'attr_id'		=> $item->attribute_model->attr_id,
-    									'attr_name'		=> $item->attribute_model->attr_name,
-    									'attr_group'	=> $item->attribute_model->attr_group,
-    									'is_linked'		=> $item->attribute_model->is_linked,
-    									'attr_type'		=> $item->attribute_model->attr_type
-    								];
-    				}
-    				return $attribute;
-    			});
-    			
-    			$properties = $this->formatGoodsProperties($groups, $res);
-    		}
-    	}
+    	$goodsParameter 		= $this->getGoodsParameter();
+    	$goodsSpecification 	= $this->getGoodsSpecification();
     	
-    	$pro = empty($properties['pro']) ? [] : $this->formatProperties($properties['pro']);
-    	$spe = empty($properties['spe']) ? [] : $this->formatSpecification($properties['spe']);
-    	
-    	return [$pro, $spe];
+    	return [$goodsParameter, $goodsSpecification];
     }
     
+    /**
+     * 兼容老数据获取规格属性
+     */
+//     protected function oldGoodsProperties()
+//     {
+//     	$properties = ['pro' => [], 'spe' => [], 'lnk' => []];
+//     	if ($this->model->goods_type_model) {
+//     		$grp = $this->model->goods_type_model->attr_group;
+//     		if (! empty ( $grp )) {
+//     			$groups = explode ( "\n", strtr ( $grp, "\r", '' ) );
+//     		}
+//     		if ($this->model->goods_attr_collection) {
+//     			$res = $this->model->goods_attr_collection->map(function ($item) {
+//     				if ($item->attribute_model) {
+//     					$attribute = [
+// 	    					'goods_attr_id' => $item->goods_attr_id,
+// 	    					'attr_value'	=> $item->attr_value,
+// 	    					'attr_price'	=> $item->attr_price,
+// 	    					'attr_id'		=> $item->attribute_model->attr_id,
+// 	    					'attr_name'		=> $item->attribute_model->attr_name,
+// 	    					'attr_group'	=> $item->attribute_model->attr_group,
+// 	    					'is_linked'		=> $item->attribute_model->is_linked,
+// 	    					'attr_type'		=> $item->attribute_model->attr_type
+//     					];
+//     				}
+//     				return $attribute;
+//     			});
+    				 
+//     			$properties = $this->formatGoodsProperties($groups, $res);
+//     		}
+//     	}
+    	 
+//     	$pro = empty($properties['pro']) ? [] : $this->formatProperties($properties['pro']);
+//     	$spe = empty($properties['spe']) ? [] : $this->formatSpecification($properties['spe']);
+    	
+//     	return [$pro, $spe];
+//     }
     
-    protected function formatGoodsProperties($groups, $res)
+    protected function getGoodsParameter()
     {
-    	$arr ['pro'] = array (); // 属性
-    	$arr ['spe'] = array (); // 规格
-    	$arr ['lnk'] = array (); // 关联的属性
+    	$result = [];
+    	 
+    	if ($this->model->goods_type_parameter_model) {
+    		$parameter_id = $this->model->goods_type_parameter_model->cat_id;
+    	} else {
+    		$parameter_id = 0;
+    	}
+    	if ($this->model->goods_attr_collection) {
+    		$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
+    			if ($item->attribute_model) {
+    				if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
+    					$arr = [];
+    					if ($item->attribute_model->attr_name) {
+    						$arr = [
+	    						'attr_name'     => $item->attribute_model->attr_name,
+	    						'attr_value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
+    						];
+    						return $arr;
+    					}
+    				}
+    				
+    			}
+    		})->filter()->all();
+    		$result = array_merge($res);
+    	}
+    	return $result;
+    }
+    
+    protected function getGoodsSpecification()
+    {
+    	$result = [];
+    	$specification_id = 0;
     	
-    	foreach ( $res as $row ) {
-    		$row ['attr_value'] = str_replace ( "\n", '<br />', $row ['attr_value'] );
-    	
-    		if ($row ['attr_type'] == 0) {
-    			$group = (isset ( $groups [$row ['attr_group']] )) ? $groups [$row ['attr_group']] : __('商品属性', 'goods');
-    	
-    			$arr ['pro'] [$group] [$row ['attr_id']] ['name'] = $row ['attr_name'];
-    			$arr ['pro'] [$group] [$row ['attr_id']] ['value'] = $row ['attr_value'];
-    		} else {
-    			$attr_price = $row['attr_price'];
-    	
-    			$arr ['spe'] [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
-    			$arr ['spe'] [$row ['attr_id']] ['name'] = $row ['attr_name'];
-    			$arr ['spe'] [$row ['attr_id']] ['value'] [] = array (
+    	if ($this->model->goods_type_specification_model) {
+    		$specification_id = $this->model->goods_type_specification_model->cat_id;
+    	} 
+    	//商品未绑定规格模板，兼容老数据；看goods表的goods_type字段有没值
+    	if (empty($specification_id)) {
+    		if ($this->model->goods_type) {
+    			$specification_id = $this->model->goods_type;
+    		}
+    	}
+    	if (!empty($specification_id)) {
+    		if ($this->model->goods_attr_collection) {
+    			$result = $this->model->goods_attr_collection->map(function ($item) use ($specification_id) {
+    				if ($item->attribute_model) {
+    					if ($item->attribute_model->cat_id == $specification_id) {
+    						return [
+	    						'goods_attr_id' => $item->goods_attr_id,
+	    						'attr_value'	=> $item->attr_value,
+	    						'attr_price'	=> $item->attr_price,
+	    						'attr_id'		=> $item->attribute_model->attr_id,
+	    						'attr_name'		=> $item->attribute_model->attr_name,
+	    						'attr_group'	=> $item->attribute_model->attr_group,
+	    						'is_linked'		=> $item->attribute_model->is_linked,
+	    						'attr_type'		=> $item->attribute_model->attr_type
+    						];
+    					}
+    				}
+    			});
+    		}
+    	}
+    	if (!empty($result)) {
+    		$result = $this->formatSpec($result);
+    	}
+    	return $result;
+    }
+    
+    /**
+     * 商品参数处理
+     * @param array $parameter
+     */
+    protected function formatPra($parameter = [])
+    {
+    	if (!empty($parameter)) {
+    		foreach ($parameter as $k => $v) {
+    			if (empty($v['attr_name'])) {
+    				unset($parameter[$k]);
+    			}
+    		}
+    		return $parameter->toArray();
+    	}
+    }
+    
+    /**
+     * 商品规格处理
+     * @param array $specification
+     * @return array
+     */
+    protected function formatSpec($specification)
+    {
+    	$arr = [];
+    	$spec = [];
+    	foreach ($specification as $row ) {
+    		if ($row ['attr_type'] != 0) {
+    			$arr [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
+    			$arr [$row ['attr_id']] ['name'] = $row ['attr_name'];
+    			$arr [$row ['attr_id']] ['value'] [] = array (
     					'label' => $row ['attr_value'],
     					'price' => $row ['attr_price'],
     					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
     					'id' => $row ['goods_attr_id']
     			);
     		}
-    	
-    		if ($row ['is_linked'] == 1) {
-    			/* 如果该属性需要关联，先保存下来 */
-    			$arr ['lnk'] [$row ['attr_id']] ['name'] = $row ['attr_name'];
-    			$arr ['lnk'] [$row ['attr_id']] ['value'] = $row ['attr_value'];
+    
+    	}
+    	if (!empty($arr)) {
+    		foreach ($arr as $key => $value) {
+    			if (!empty($value['values'])) {
+    				$value['value'] = $value['values'];
+    				unset($value['values']);
+    			}
+    			$spec[] = $value;
     		}
     	}
-    	return $arr;
+    	return $spec;
     }
+    
+//     protected function formatGoodsProperties($groups, $res)
+//     {
+//     	$arr ['pro'] = array (); // 属性
+//     	$arr ['spe'] = array (); // 规格
+//     	$arr ['lnk'] = array (); // 关联的属性
+    	
+//     	foreach ( $res as $row ) {
+//     		$row ['attr_value'] = str_replace ( "\n", '<br />', $row ['attr_value'] );
+    	
+//     		if ($row ['attr_type'] == 0) {
+//     			$group = (isset ( $groups [$row ['attr_group']] )) ? $groups [$row ['attr_group']] : __('商品属性', 'goods');
+    	
+//     			$arr ['pro'] [$group] [$row ['attr_id']] ['name'] = $row ['attr_name'];
+//     			$arr ['pro'] [$group] [$row ['attr_id']] ['value'] = $row ['attr_value'];
+//     		} else {
+//     			$attr_price = $row['attr_price'];
+    	
+//     			$arr ['spe'] [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
+//     			$arr ['spe'] [$row ['attr_id']] ['name'] = $row ['attr_name'];
+//     			$arr ['spe'] [$row ['attr_id']] ['value'] [] = array (
+//     					'label' => $row ['attr_value'],
+//     					'price' => $row ['attr_price'],
+//     					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
+//     					'id' => $row ['goods_attr_id']
+//     			);
+//     		}
+    	
+//     		if ($row ['is_linked'] == 1) {
+//     			/* 如果该属性需要关联，先保存下来 */
+//     			$arr ['lnk'] [$row ['attr_id']] ['name'] = $row ['attr_name'];
+//     			$arr ['lnk'] [$row ['attr_id']] ['value'] = $row ['attr_value'];
+//     		}
+//     	}
+//     	return $arr;
+//     }
     
 }
