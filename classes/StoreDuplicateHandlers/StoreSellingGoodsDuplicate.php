@@ -245,7 +245,7 @@ HTML;
             //dump($replacement_goods);
             if (!empty($old_goods_id)) {
 
-                //获取商品规格、参数中的 goods_type 替换数据
+                //获取商品规格、参数中的 attribute 替换数据
                 $replacement_attribute = $progress_data->getReplacementDataByCode('store_goods_specification_duplicate.attribute') + $progress_data->getReplacementDataByCode('store_goods_parameter_duplicate.attribute');
 
                 // goods_attr 表中的替换
