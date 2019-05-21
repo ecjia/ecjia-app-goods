@@ -215,25 +215,26 @@ HTML;
                 //存储 products 相关替换数据
                 $replacement_data['products'] = $this->replacement_products;
 
-                //将数据同步到 goods_gallery
+
+
+                //迁移出去
+                //将数据同步到 goods_gallery 商品相册数据
                 $this->duplicateGoodsGallery($old_goods_id);
                 //存储 goods_gallery 相关替换数据
                 $replacement_data['goods_gallery'] = $this->replacement_goods_gallery;
 
-
-                //迁移出去
-                //将数据同步到 goods_cat
+                //将数据同步到 goods_cat  商品扩展分类数据
                 $this->duplicateGoodsCat($old_goods_id, $merchant_category_replacement);
 
-                //将数据同步到 member_price
+                //将数据同步到 member_price  商品会员价格数据
                 $this->duplicateMemberPrice();
                 //存储 member_price 相关替换数据
                 $replacement_data['member_price'] = $this->replacement_member_price;
 
-                //将数据同步到 volume_price
+                //将数据同步到 volume_price  商品阶梯价格数据
                 $this->duplicateVolumePrice($old_goods_id);
 
-                //将数据同步到 link_goods
+                //将数据同步到 link_goods  商品关联商品数据
                 $this->duplicateLinkGOods($old_goods_id);
             }
 
