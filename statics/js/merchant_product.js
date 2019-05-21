@@ -206,26 +206,26 @@
 	    	})
 		},
 
-		ajax_select_radio: function() {
-			var goods_id = $("input[name='good_id']").val();
-            var url = $("input[name='defaulet_data_url']").val();
-            
-            var radio_value = [];
-            $('input:radio:checked').each(function(){
-            	radio_value.push($(this).val());
-            });
-            var filters = {
-	            'goods_id': goods_id,
-	            'radio_value_arr': radio_value,
-            };
-            
-            $.post(url, filters, function (data) {
-	          	 if (data.state == 'success'){
-	          		 var msg = "所选属性已组合成货品，【货号】" + data.product_sn
-	          		 $('.product_sn_msg').html(msg);
-				 }
-            });
-		},
+//		ajax_select_radio: function() {
+//			var goods_id = $("input[name='good_id']").val();
+//            var url = $("input[name='defaulet_data_url']").val();
+//            
+//            var radio_value = [];
+//            $('input:radio:checked').each(function(){
+//            	radio_value.push($(this).val());
+//            });
+//            var filters = {
+//	            'goods_id': goods_id,
+//	            'radio_value_arr': radio_value,
+//            };
+//            
+//            $.post(url, filters, function (data) {
+//	          	 if (data.state == 'success'){
+//	          		 var msg = "所选属性已组合成货品，【货号】" + data.product_sn
+//	          		 $('.product_sn_msg').html(msg);
+//				 }
+//            });
+//		},
 		
 		spec_submint: function() {
 			var $this = $('form[name="theForm"]');
