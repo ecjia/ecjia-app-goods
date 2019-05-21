@@ -3197,6 +3197,7 @@ class merchant extends ecjia_merchant {
 		$goods_id = intval($_POST['goods_id']);
 		$this->assign('goods_id', $goods_id);
 	
+		
 		$attribute = Ecjia\App\Goods\MerchantGoodsAttr::get_goods_spec_list($goods_id);
 		$spec_attribute_list = array();
 		if (!empty($attribute)) {
@@ -3208,6 +3209,17 @@ class merchant extends ecjia_merchant {
 		}
 		$this->assign('spec_attribute_list', $spec_attribute_list);
 		
+		$product_value = array();
+		foreach ($spec_attribute_list as $value) {
+			$attr_values = key($value['attr_values']);
+			array_push($product_value, $attr_values);
+		}
+		
+		$goods_attr = implode('|', $product_value);
+		$product_sn = RC_DB::TABLE('products')->where('goods_attr', $goods_attr)->pluck('product_sn');
+		if(!empty($product_sn)) {
+			$this->assign('product_sn', $product_sn);
+		}
 		$data = $this->fetch('spec_add_product.dwt');
 		
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
@@ -3264,11 +3276,11 @@ class merchant extends ecjia_merchant {
 
 	
 	/**
-	 * 默认查看
+	 * 切换radio获取货号
 	 */
-	public function ajax_defaulet_spec() {
+	public function ajax_select_radio() {
 		$this->admin_priv('goods_update');
-	
+		
 		$goods_id = intval($_POST['goods_id']);
 		$radio_value_arr = $_POST['radio_value_arr'];
 	
