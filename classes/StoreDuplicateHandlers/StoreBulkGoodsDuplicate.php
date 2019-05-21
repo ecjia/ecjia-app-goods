@@ -33,7 +33,7 @@ class StoreBulkGoodsDuplicate extends StoreDuplicateAbstract
      * 排序
      * @var int
      */
-    protected $sort = 16;
+    protected $sort = 21;
 
     protected $dependents = [
         'store_goods_merchant_category_duplicate',

@@ -17,7 +17,8 @@ use RC_Time;
 
 /**
  * 复制店铺中的在售商品
- *
+ * @todo 图片字段的处理 attr_img_file attr_img_site attr_gallery_flie
+ * @todo 图片字段的处理 product_thumb product_img product_original_img product_desc
  * Class StoreSellingGoodsDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
  */
@@ -216,26 +217,25 @@ HTML;
                 $replacement_data['products'] = $this->replacement_products;
 
 
-
                 //迁移出去
                 //将数据同步到 goods_gallery 商品相册数据
-                $this->duplicateGoodsGallery($old_goods_id);
+                //$this->duplicateGoodsGallery($old_goods_id);
                 //存储 goods_gallery 相关替换数据
-                $replacement_data['goods_gallery'] = $this->replacement_goods_gallery;
+                //$replacement_data['goods_gallery'] = $this->replacement_goods_gallery;
 
                 //将数据同步到 goods_cat  商品扩展分类数据
-                $this->duplicateGoodsCat($old_goods_id, $merchant_category_replacement);
+                //$this->duplicateGoodsCat($old_goods_id, $merchant_category_replacement);
 
                 //将数据同步到 member_price  商品会员价格数据
-                $this->duplicateMemberPrice();
+                //$this->duplicateMemberPrice($old_goods_id);
                 //存储 member_price 相关替换数据
-                $replacement_data['member_price'] = $this->replacement_member_price;
+                //$replacement_data['member_price'] = $this->replacement_member_price;
 
                 //将数据同步到 volume_price  商品阶梯价格数据
-                $this->duplicateVolumePrice($old_goods_id);
+                //$this->duplicateVolumePrice($old_goods_id);
 
                 //将数据同步到 link_goods  商品关联商品数据
-                $this->duplicateLinkGOods($old_goods_id);
+                //$this->duplicateLinkGOods($old_goods_id);
             }
 
             $this->setReplacementData($this->getCode(), $replacement_data);
@@ -313,8 +313,11 @@ HTML;
                 //goods_sn，商品唯一货号需要重新生成（暂未实现）
                 //$item['goods_sn'] = generate_goods_sn($goods_id);
 
-
                 //@todo 图片字段的处理  goods_desc goods_thumb goods_img original_img
+                $item['goods_desc'] = $this->copyImage($item['goods_desc']);
+                $item['goods_thumb'] = $this->copyImage($item['goods_thumb']);
+                $item['goods_img'] = $this->copyImage($item['goods_img']);
+                $item['original_img'] = $this->copyImage($item['original_img']);
 
 
                 //插入数据到新店铺
@@ -346,7 +349,9 @@ HTML;
                 $item['attr_id'] = array_get($replacement_attribute, $item['attr_id'], $item['attr_id']);
 
                 //@todo 图片字段的处理 attr_img_file attr_img_site attr_gallery_flie
-
+                $item['attr_img_file'] = $this->copyImage($item['attr_img_file']);
+                $item['attr_img_site'] = $this->copyImage($item['attr_img_site']);
+                $item['attr_gallery_flie'] = $this->copyImage($item['attr_gallery_flie']);
 
                 //将数据插入到新店铺
                 $new_goods_attr_id = RC_DB::table('goods_attr')->insertGetId($item);
@@ -411,6 +416,10 @@ HTML;
 
 
                 //@todo 图片字段的处理 product_thumb product_img product_original_img product_desc
+                $item['product_thumb'] = $this->copyImage($item['product_thumb']);
+                $item['product_img'] = $this->copyImage($item['product_img']);
+                $item['product_original_img'] = $this->copyImage($item['product_original_img']);
+                $item['product_desc'] = $this->copyImage($item['product_desc']);
 
 
                 //将数据插入到新店铺
@@ -442,6 +451,10 @@ HTML;
                 $item['product_id'] = array_get($this->replacement_products, $item['product_id'], $item['product_id']);
 
                 //@todo 图片字段的处理 img_url img_desc thumb_url img_original
+                $item['img_url'] = $this->copyImage($item['img_url']);
+                $item['img_desc'] = $this->copyImage($item['img_desc']);
+                $item['thumb_url'] = $this->copyImage($item['thumb_url']);
+                $item['img_original'] = $this->copyImage($item['img_original']);
 
 
                 //将数据插入到新店铺
@@ -560,7 +573,7 @@ HTML;
 
         $merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
 
-        ecjia_admin::admin_log($merchants_name, 'clean', 'store_goods');
+        ecjia_admin::admin_log($merchants_name, 'duplicate', 'store_goods');
     }
 
 }

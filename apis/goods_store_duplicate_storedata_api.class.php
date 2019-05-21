@@ -74,6 +74,12 @@ class goods_store_duplicate_storedata_api extends Component_Event_Api
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreBulkGoodsDuplicate($store_id, $source_store_id),
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreSellingGoodsDuplicate($store_id, $source_store_id),
 
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsCatDuplicate($store_id, $source_store_id),
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreMemberPriceDuplicate($store_id, $source_store_id),
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreVolumePriceDuplicate($store_id, $source_store_id),
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreLinkGoodsDuplicate($store_id, $source_store_id),
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsGalleryDuplicate($store_id, $source_store_id),
+
         ];
     }
 
