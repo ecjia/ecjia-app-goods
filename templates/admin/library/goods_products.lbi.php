@@ -1,7 +1,6 @@
 <?php defined('IN_ECJIA') or exit('No permission resources.');?>
-<div class="goods-products">
-	货品（SKU）
-	<hr>
+<div>
+	<h3 class="heading">{t domain="goods"}货品（SKU）{/t}</h3>
 </div>
 <div class="row-fluid">
 	<div class="span12">
