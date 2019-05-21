@@ -190,12 +190,12 @@
 					{/if}
 					
 					<div class="goods-pra">
-						<div class="pra">{t domain="goods"}参数{/t}
+						<div class="pra">{t domain="goods"}商品参数{/t}
 							<div class="pra-handle">
 								<a target="_blank" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>
 						</div>
-						<hr>
+						<hr style="margin-top:0px;">
 					</div>
 					{if $common_parameter_list}
 						<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
@@ -210,7 +210,7 @@
 								<a target="_blank" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>
 						</div>
-						<hr>
+						<hr style="margin-top:0px;">
 					</div>
 					<div class="t_c clear">{$goods.goods_desc}</div>
 				</div>

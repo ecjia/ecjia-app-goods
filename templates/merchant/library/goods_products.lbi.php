@@ -1,6 +1,6 @@
 <div class="goods-products">
-	商品属性
-	<hr>
+	{t domain="goods"}货品（SKU）{/t}
+	<hr style="margin-top:0px;">
 </div>
 <table class="table table-striped table-hide-edit">
 	<thead>
