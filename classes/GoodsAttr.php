@@ -371,15 +371,17 @@ class GoodsAttr {
     
     	if (!empty($attr)) {
     		foreach ($attr as $key => $val) {
-    			$html .= "<div class='control-group'><label class='control-label'>";
+    			$html .= "<div class='priv_list'><div class='control-group'><label class='control-label'>";
     			$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
-    			$html .= "$val[attr_name]</label><div class='controls chk_radio'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+    			$html .= "$val[attr_name]</label><div class='controls'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
     			foreach ($attr_values as $opt) {
+    				$html .= '<div class="check-box">';
     				$opt = trim(htmlspecialchars($opt));
-    				$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
+    				$html .= (in_array($opt, $val['attr_value'])) ? '<input class="checkbox" id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input class="checkbox" id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
     				$html .= $opt;
+    				$html .= '</div>';
     			}
-    			$html .= '</div></div>';
+    			$html .= '</div></div></div>';
     		}
     	}
     	$html .= '';
@@ -407,6 +409,28 @@ class GoodsAttr {
 		}
 		
     	return $row;
+    }
+    
+    /**
+     * 获得商品已添加的规格列表
+     *
+     * @access public
+     * @param
+     *            s integer $goods_id
+     * @return array
+     */
+    public static function get_goodslib_spec_list($goods_id) {
+    	if (empty($goods_id)) {
+    		return array();
+    	}
+    		
+    	return RC_DB::table('goodslib_attr as ga')
+    	->leftJoin('attribute as a', RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
+    	->where('goods_id', $goods_id)
+    	->where(RC_DB::raw('a.attr_type'), 1)
+    	->select(RC_DB::raw('ga.goods_attr_id, ga.attr_value, ga.attr_id, a.attr_name'))
+    	->orderBy(RC_DB::raw('ga.attr_id'), 'asc')
+    	->get();
     }
 }
 

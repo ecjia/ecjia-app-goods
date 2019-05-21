@@ -3072,8 +3072,7 @@ class merchant extends ecjia_merchant {
 		}
 		
 		$product = Ecjia\App\Goods\MerchantGoodsAttr::product_list($goods_id, '');
-
-		$this->assign('product_list', 		$product['product']);
+		$this->assign('product_list', $product['product']);
 		
 		$this->assign('form_action', RC_Uri::url('goods/merchant/update_goods_specification', array('goods_id' => $goods_id)));
 		
