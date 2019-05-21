@@ -58,12 +58,14 @@ class goods_admin_menu_api extends Component_Event_Api {
 			ecjia_admin::make_admin_menu('02_goods_list', __('售罄商品', 'goods'), RC_Uri::url('goods/admin/finish'), 2)->add_purview(array('goods_manage')),
 			ecjia_admin::make_admin_menu('03_goods_list', __('下架商品', 'goods'), RC_Uri::url('goods/admin/obtained'), 3)->add_purview(array('goods_manage')),
 			ecjia_admin::make_admin_menu('04_goods_list', __('审核商品', 'goods'), RC_Uri::url('goods/admin/check'), 4)->add_purview(array('goods_manage')),
-				
-		    ecjia_admin::make_admin_menu('05_goods_trash', __('商品回收站', 'goods'), RC_Uri::url('goods/admin/trash'), 5)->add_purview(array('goods_manage')),
+			ecjia_admin::make_admin_menu('05_goods_list', __('散装商品', 'goods'), RC_Uri::url('goods/admin/bulk'), 5)->add_purview(array('goods_manage')),
+			ecjia_admin::make_admin_menu('06_goods_list', __('收银台商品', 'goods'), RC_Uri::url('goods/admin/cashier'), 6)->add_purview(array('goods_manage')),
+					
+		    ecjia_admin::make_admin_menu('05_goods_trash', __('商品回收站', 'goods'), RC_Uri::url('goods/admin/trash'), 7)->add_purview(array('goods_manage')),
 		    
-		    ecjia_admin::make_admin_menu('divider', '', '', 6)->add_purview(array('category_manage', 'brand_manage', 'attr_manage'), 6),
-		    ecjia_admin::make_admin_menu('07_category_list', __('商品分类', 'goods'), RC_Uri::url('goods/admin_category/init'), 7)->add_purview(array('category_manage')),
-		    ecjia_admin::make_admin_menu('08_goods_brand_list', __('商品品牌', 'goods'), RC_Uri::url('goods/admin_brand/init'), 8)->add_purview('brand_manage'),
+		    ecjia_admin::make_admin_menu('divider', '', '', 8)->add_purview(array('category_manage', 'brand_manage', 'attr_manage'), 8),
+		    ecjia_admin::make_admin_menu('09_category_list', __('商品分类', 'goods'), RC_Uri::url('goods/admin_category/init'), 9)->add_purview(array('category_manage')),
+		    ecjia_admin::make_admin_menu('10_goods_brand_list', __('商品品牌', 'goods'), RC_Uri::url('goods/admin_brand/init'), 10)->add_purview('brand_manage'),
 			
 		);
         $menus->add_submenu($submenus);
