@@ -241,10 +241,16 @@ HTML;
         } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
             return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
-
-
     }
 
+    /**
+     * 复制 goods 数据
+     * @param $merchant_category_replacement
+     * @param $store_bonus_replacement
+     * @param $goods_specification_replacement
+     * @param $goods_parameter_duplicate_replacement
+     * @param $goods_type_replacement
+     */
     private function duplicateGoods($merchant_category_replacement, $store_bonus_replacement, $goods_specification_replacement, $goods_parameter_duplicate_replacement, $goods_type_replacement)
     {
         $this->getSourceStoreDataHandler()->chunk(50, function ($items) use (
@@ -316,6 +322,11 @@ HTML;
         });
     }
 
+    /**
+     * 复制 goods_attr 数据
+     * @param $old_goods_id
+     * @param $replacement_attribute
+     */
     private function duplicateGoodsAttr($old_goods_id, $replacement_attribute)
     {
 
@@ -344,6 +355,11 @@ HTML;
         });
     }
 
+    /**
+     * 复制 goods_cat 数据
+     * @param $old_goods_id
+     * @param $merchant_category_replacement
+     */
     private function duplicateGoodsCat($old_goods_id, $merchant_category_replacement)
     {
         RC_DB::table('goods_cat')->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) use ($merchant_category_replacement) {
@@ -361,6 +377,10 @@ HTML;
         });
     }
 
+    /**
+     * 复制 products 数据
+     * @param $old_goods_id
+     */
     private function duplicateProducts($old_goods_id)
     {
         RC_DB::table('products')->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
@@ -401,6 +421,10 @@ HTML;
         });
     }
 
+    /**
+     * 复制 goods_gallery 数据
+     * @param $old_goods_id
+     */
     private function duplicateGoodsGallery($old_goods_id)
     {
         RC_DB::table('goods_gallery')->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
@@ -428,6 +452,10 @@ HTML;
         });
     }
 
+    /**
+     * 复制 member_price 数据
+     * @param $old_goods_id
+     */
     private function duplicateMemberPrice($old_goods_id)
     {
         RC_DB::table('member_price')->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
@@ -449,6 +477,10 @@ HTML;
         });
     }
 
+    /**
+     * 复制 volume_price 数据
+     * @param $old_goods_id
+     */
     private function duplicateVolumePrice($old_goods_id)
     {
         RC_DB::table('volume_price')->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
@@ -465,6 +497,10 @@ HTML;
         });
     }
 
+    /**
+     * 复制 link_goods 数据
+     * @param $old_goods_id
+     */
     private function duplicateLinkGoods($old_goods_id)
     {
         RC_DB::table('link_goods')->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
