@@ -157,7 +157,7 @@ HTML;
                         unset($item['attr_id']);
 
                         //将cat_id替换成新店铺的cat_id
-                        $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], 0);
+                        $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], $item['cat_id']);
 
                         //为新店铺插入这些数据
                         $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
