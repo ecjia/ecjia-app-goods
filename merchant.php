@@ -1,5 +1,4 @@
 <?php
-use Ecjia\App\Goods\Models\GoodsAttrModel;
 //
 //    ______         ______           __         __         ______
 //   /\  ___\       /\  ___\         /\_\       /\_\       /\  __ \
@@ -47,6 +46,7 @@ use Ecjia\App\Goods\Models\GoodsAttrModel;
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 
+use Ecjia\App\Goods\Models\GoodsAttrModel;
 /**
  *  ECJIA 商品管理程序
  */
