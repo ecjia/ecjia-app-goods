@@ -2964,17 +2964,19 @@ class merchant extends ecjia_merchant {
 				return [$attr_id => $vvalue];
 			});
 			
-			$goods_attr_list = array();
-
 			$updateGoodsAttr = function ($goods_id, $attr_id_list) {
 				$collection = GoodsAttrModel::where('cat_type', 'parameter')->where('goods_id', $goods_id)->get();
 				$collection = $collection->groupBy('attr_id');
 				$attr_id_list->map(function($id_values, $key) use ($collection, $goods_id) {
 					$new_collection = $collection->get($key);
 					
-					if (is_array($id_values)) {
-						$new_collection = $collection->get($key);
-
+					if (is_null($id_values)) {
+						if (!empty($new_collection)) {
+							$new_collection->map(function($model){
+								$model->delete();
+							});
+						}
+					} elseif (is_array($id_values)) {
 						if (!empty($new_collection)) {
 							$new_collection->map(function($model) use ($id_values) {
 								if (!in_array($model->attr_value, $id_values) ) {
@@ -2984,12 +2986,9 @@ class merchant extends ecjia_merchant {
 							});
 							$old_values = $new_collection->pluck('attr_value')->all();
 							$new_values = collect($id_values)->diff($old_values);
-						}
-						else {
+						} else {
 							$new_values = $id_values;
 						}
-					
-						//添加新增的
 						foreach ($new_values as $v) {
 							GoodsAttrModel::insert([
 								'cat_type' => 'parameter',
@@ -2998,15 +2997,13 @@ class merchant extends ecjia_merchant {
 								'attr_value' => $v,
 							]);
 						}
-					}
-					else {
+					} else {
 						if (!empty($new_collection)) {
 							$new_collection->map(function($model) use ($id_values) {
 								$model->attr_value = $id_values;
 								$model->save();
 							});
-						}
-						else {
+						} else {
 							GoodsAttrModel::insert([
 								'cat_type' => 'parameter',
 								'goods_id' => $goods_id,
@@ -3014,9 +3011,7 @@ class merchant extends ecjia_merchant {
 								'attr_value' => $id_values,
 							]);
 						}
-					
 					}
-					
 				});
 			};
 			
