@@ -350,7 +350,7 @@ class GoodsBasicInFo
     			$arr [$row ['attr_id']] ['name'] = $row ['attr_name'];
     			$arr [$row ['attr_id']] ['value'] [] = array (
     					'label' => $row ['attr_value'],
-    					'price' => $row ['attr_price'],
+    					'price' => $row ['attr_price'] > 0 ? $row ['attr_price'] : 0,
     					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
     					'id' => $row ['goods_attr_id']
     			);
