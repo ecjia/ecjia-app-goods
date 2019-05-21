@@ -240,7 +240,7 @@ class merchant extends ecjia_merchant {
     			);
     		});
     	
-    			return $goods_activity_count;
+    		return $goods_activity_count;
     	};
 	   
     	$goods_activity_count = $goods_activity_count_func($input);

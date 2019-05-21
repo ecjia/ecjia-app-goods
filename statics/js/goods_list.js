@@ -367,15 +367,16 @@
 		},
 		
 		viewReview: function() {
-			 $(".view_review").off('click').on('click', function (e) {
+ 			$('[data-toggle="modal"][data-type="log"]').off('click').on('click', function (e) {
 				 e.preventDefault();
 		         var $this = $(this);
 		         var goods_id = $this.attr('goods-id');
 		         var url = $this.attr('attr-url');
 	             $.post(url, {'goods_id': goods_id}, function (data) {
-	            	 $('.log').html(data.data);
+	            	 $('#review_log').html(data.data);
 	             }, 'json');
 			 });
+       
 		}
 	};
 

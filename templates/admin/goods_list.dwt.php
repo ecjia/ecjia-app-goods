@@ -209,7 +209,7 @@
 							{/if}
 							
 							{if $goods.review_status eq 2}
-								<a class="view_review" data-toggle="modal" data-backdrop="static" href="#myModal3" goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/view_review')}">{t domain='goods'}查看审核{/t}</a>
+								<a  href="#review_log" data-toggle="modal" data-type="log" data-backdrop="static"  goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/review_log')}">{t domain='goods'}查看审核{/t}</a>
 							{/if}
 							
 						</div>
@@ -346,7 +346,7 @@
     </div>
 </div>
 
-<div class="log modal hide fade" id="myModal3"></div>
+<div id="review_log" class="modal hide fade" ></div>
 
 <div class="modal hide fade" id="insertGoods">
     <div class="modal-header">

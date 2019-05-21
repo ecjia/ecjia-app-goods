@@ -3455,21 +3455,27 @@ class admin extends ecjia_admin {
 	}
 	
 	/**
-	 * 查看审核记录
+	 * 查看审核日志
 	 */
 	public function review_log() {
 		$this->admin_priv('goods_manage');
-	
+		
 		$goods_id = intval($_POST['goods_id']);
 		$goods_info = RC_DB::TABLE('goods')->where('goods_id', $goods_id)->select('review_status', 'review_content')->first();
 		$this->assign('goods_info', $goods_info);
-		
-		
-		$list_log = RC_DB::TABLE('goods_review_log')->where('goods_id', $goods_id)->select('status', 'action_user_name', 'action_note' ,'add_time')->get();
+
+		$list_log = RC_DB::TABLE('goods_review_log')->where('goods_id', $goods_id)->select('status', 'action_user_name', 'action_note' ,'add_time')
+		->orderby('add_time', 'desc')
+		->get();
+
+		foreach ($list_log as $key => $rows) {
+			$list_log[$key]['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $rows['add_time']);
+		}
 		$this->assign('list_log', $list_log);
+
 	
 		$data = $this->fetch('review_log.dwt');
-	
+		
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
 	}
 	
