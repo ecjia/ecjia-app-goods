@@ -83,6 +83,10 @@ class GoodsBasicInFo
     	return $data;
     }
 
+    /**
+     * 商品相册
+     * @return array
+     */
     public function getGoodsGallery()
     {
     	$gallery = [];
@@ -107,6 +111,10 @@ class GoodsBasicInFo
     	return $gallery;
     }
     
+    /**
+     * 商品的货品
+     * @return array
+     */
     public function goodsProducts()
     {
     	$product_list = [];
@@ -150,6 +158,10 @@ class GoodsBasicInFo
     	return ['pra' => $parameter, 'spe' => $specification];
     }
     
+    /**
+     * 分组参数
+     * @return array
+     */
     public function getGoodsGroupParameter()
     {
     	$res = [];
@@ -197,6 +209,10 @@ class GoodsBasicInFo
     	return $res;
     }
     
+    /**
+     * 商品未分组参数
+     * @return
+     */
     public function getGoodsCommonParameter()
     {
     	$result = [];
@@ -214,8 +230,8 @@ class GoodsBasicInFo
     					if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
     						if ($item->attribute_model->attr_name) {
     							return [
-    							'attr_name'     => $item->attribute_model->attr_name,
-    							'attr_value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
+	    							'attr_name'     => $item->attribute_model->attr_name,
+	    							'attr_value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
     							];
     						}
     					}
@@ -229,22 +245,10 @@ class GoodsBasicInFo
     	return $result;
     }
     
-    
-    protected function handleGroupParameter ($res = []) 
-    {
-    	if (!empty($res)) {
-    		foreach ($res as $key => $val) {
-    			if ($val) {
-    				foreach ($val as $k => $v) {
-    					$arr[] = $v;
-    				}
-    			}
-    		}
-    		$res  = collect($arr)->filter()->all();
-    	}
-    	return $res;
-    }
-    
+    /**
+     * 参数分组信息
+     * @return array
+     */
     public function attrGroup()
     {
     	$grp = [];
@@ -259,139 +263,22 @@ class GoodsBasicInFo
     }
     
     /**
-     * 商品参数
+     * 参数分组处理
+     * @param array $res
      * @return array
      */
-    protected function getGoodsParameter()
+    protected function handleGroupParameter ($res = [])
     {
-    	$res = [];
-    	 
-    	if ($this->model->goods_type_parameter_model) {
-    		$parameter_id = $this->model->goods_type_parameter_model->cat_id;
-    	} else {
-    		$parameter_id = 0;
-    	}
-    	
-    	if (!empty($parameter_id)) {
-    		if ($this->model->goods_attr_collection) {
-    			$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
-    				if ($item->attribute_collection) {
-    					$parameter = $item->attribute_collection->map(function ($v) use ($item, $parameter_id) {
-    						if ($v['cat_id'] == $parameter_id || $v->attr_type == '0') {
-    							if ($v->attr_name) {
-    								return [
-    								'attr_name'     => $v->attr_name,
-    								'attr_value'	=> $v->attr_input_type == '1' ? str_replace ( "\n", '/', $v->attr_values) : $item->attr_value,
-    								];
-    							}
-    						}
-    					});
-    				}
-    				return $parameter;
-    			})->map(function ($val) {
-    				return $val['0'];
-    			});
-    		}
-    	}
-    	 
     	if (!empty($res)) {
-    		$res = $this->formatPra($res);
+    		foreach ($res as $key => $val) {
+    			if ($val) {
+    				foreach ($val as $k => $v) {
+    					$arr[] = $v;
+    				}
+    			}
+    		}
+    		$res  = collect($arr)->filter()->all();
     	}
     	return $res;
     }
-    
-    /**
-     * 商品规格
-     * @return array
-     */
-    protected function getGoodsSpecification()
-    {
-    	$result = [];
-    	if ($this->model->goods_type_specification_model) {
-    		$specification_id = $this->model->goods_type_specification_model->cat_id;
-    	} else {
-    		$specification_id = 0;
-    	}
-    	if (!empty($specification_id)) {
-    		if ($this->model->goods_attr_collection) {
-    			$result = $this->model->goods_attr_collection->map(function ($item) use ($specification_id) {
-    				if ($item->attribute_collection) {
-    					$specification = $item->attribute_collection->map(function ($v) use ($item, $specification_id){
-    						if ($v['cat_id'] == $specification_id) {
-    							return [
-    							'goods_attr_id' => $item->goods_attr_id,
-    							'attr_value'	=> $item->attr_value,
-    							'attr_price'	=> $item->attr_price,
-    							'attr_id'		=> $v->attr_id,
-    							'attr_name'		=> $v->attr_name,
-    							'attr_group'	=> $v->attr_group,
-    							'is_linked'		=> $v->is_linked,
-    							'attr_type'		=> $v->attr_type
-    							];
-    						}
-    					});
-    					return $specification;
-    				}
-    			})->map(function ($val) {
-    				return $val['0'];
-    			});
-    		}
-    	}
-    	if ($result) {
-    		$result = $this->formatSpec($result);
-    	}
-    	return $result;
-    }
-    
-    /**
-     * 商品规格处理
-     * @param array $specification
-     * @return array
-     */
-    protected function formatSpec($specification)
-    {
-    	$arr = [];
-    	$spec = [];
-    	foreach ($specification as $row ) {
-    		if ($row ['attr_type'] != 0) {
-    			$arr [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
-    			$arr [$row ['attr_id']] ['name'] = $row ['attr_name'];
-    			$arr [$row ['attr_id']] ['value'] [] = array (
-    					'label' => $row ['attr_value'],
-    					'price' => $row ['attr_price'],
-    					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
-    					'id' => $row ['goods_attr_id']
-    			);
-    		}
-    
-    	}
-    	if (!empty($arr)) {
-    		foreach ($arr as $key => $value) {
-    			if (!empty($value['values'])) {
-    				$value['value'] = $value['values'];
-    				unset($value['values']);
-    			}
-    			$spec[] = $value;
-    		}
-    	}
-    	return $spec;
-    }
-    
-    /**
-     * 商品参数处理
-     * @param array $parameter
-     */
-    protected function formatPra($parameter = [])
-    {
-    	if (!empty($parameter)) {
-    		foreach ($parameter as $k => $v) {
-    			if (empty($v['attr_name'])) {
-    				unset($parameter[$k]);
-    			}
-    		}
-    		return $parameter->toArray();
-    	}
-    }
-    
-
 }
