@@ -24,6 +24,7 @@ class GoodsAttrModel extends Model
      */
     protected $fillable = [
         'goods_id',
+        'cat_type',
         'attr_id',
         'attr_value',
         'color_value',

@@ -38,10 +38,15 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
     public function __construct($store_id, $source_store_id)
     {
         $this->name = __('店铺商品参数', 'goods');
-
         parent::__construct($store_id, $source_store_id);
+    }
 
-        $this->source_store_data_handler = RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('cat_type', 'parameter')->where('enabled', 1);
+    /**
+     * 获取源店铺数据操作对象
+     */
+    public function getSourceStoreDataHandler()
+    {
+        return RC_DB::table('goods_type')->where('store_id', $this->source_store_id)->where('cat_type', 'parameter')->where('enabled', 1);
     }
 
     /**
@@ -68,10 +73,9 @@ HTML;
         if ($this->count) {
             return $this->count;
         }
+
         // 统计数据条数
-        if (!empty($this->source_store_data_handler)) {
-            $this->count = $this->source_store_data_handler->count();
-        }
+        $this->count = $this->getSourceStoreDataHandler()->count();
         return $this->count;
     }
 
@@ -98,7 +102,10 @@ HTML;
         }
 
         //执行具体任务
-        $this->startDuplicateProcedure();
+        $result = $this->startDuplicateProcedure();
+        if (is_ecjia_error($result)) {
+            return $result;
+        }
 
         //标记处理完成
         $this->markDuplicateFinished();
@@ -134,10 +141,10 @@ HTML;
 
 
                 //通过源店铺的cat_id查询出在attribute中的关联数据
-                RC_DB::table('attribute')->where('cat_id', $cat_id)->chunk(50, function($attrDataOfCatId) use ($new_cat_id){
+                RC_DB::table('attribute')->where('cat_id', $cat_id)->chunk(50, function ($attrDataOfCatId) use ($new_cat_id) {
 
                     //构造可用于复制的数据
-                    foreach ($attrDataOfCatId as &$v){
+                    foreach ($attrDataOfCatId as &$v) {
                         unset($v['attr_id']);
 
                         //将cat_id替换成新店铺的cat_id
@@ -161,59 +168,59 @@ HTML;
 
     protected function startDuplicateProcedure()
     {
-        $replacement_goods_type = [];
-
-        $this->source_store_data_handler->chunk(50, function ($items) use (& $replacement_goods_type) {
-//            dd($items);
-
-            //构造可用于复制的数据
-            foreach ($items as $item) {
-
-                $cat_id = $item['cat_id'];
-
-                unset($item['cat_id']);
-
-                //将源店铺ID设为新店铺的ID
-                $item['store_id'] = $this->store_id;
-
-                $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
-
-                $replacement_goods_type[$cat_id] = $new_cat_id;
-            }
-
-        });
-
-        $cat_id_keys = array_keys($replacement_goods_type);
-
-        $replacement_attribute = [];
-        if (!empty($cat_id_keys)) {
-
-            //通过源店铺的cat_id查询出在attribute中的关联数据
-            RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function($items) use ($replacement_goods_type, & $replacement_attribute) {
-
+        try {
+            $replacement_goods_type = [];
+            $this->getSourceStoreDataHandler()->chunk(50, function ($items) use (& $replacement_goods_type) {
                 //构造可用于复制的数据
-                foreach ($items as & $item) {
-                    $attr_id = $item['attr_id'];
-                    unset($item['attr_id']);
+                foreach ($items as $item) {
 
-                    //将cat_id替换成新店铺的cat_id
-                    $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], 0);
+                    $cat_id = $item['cat_id'];
 
-                    //为新店铺插入这些数据
-                    $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
+                    unset($item['cat_id']);
 
-                    $replacement_attribute[$attr_id] = $new_attr_id;
+                    //将源店铺ID设为新店铺的ID
+                    $item['store_id'] = $this->store_id;
 
+                    $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
+
+                    $replacement_goods_type[$cat_id] = $new_cat_id;
                 }
             });
+
+            $cat_id_keys = array_keys($replacement_goods_type);
+
+            $replacement_attribute = [];
+            if (!empty($cat_id_keys)) {
+                //通过源店铺的cat_id查询出在attribute中的关联数据
+                RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function ($items) use ($replacement_goods_type, & $replacement_attribute) {
+                    //构造可用于复制的数据
+                    foreach ($items as & $item) {
+                        $attr_id = $item['attr_id'];
+                        unset($item['attr_id']);
+
+                        //将cat_id替换成新店铺的cat_id
+                        $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], 0);
+
+                        //为新店铺插入这些数据
+                        $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
+
+                        $replacement_attribute[$attr_id] = $new_attr_id;
+
+                    }
+                });
+            }
+
+            $replacement_data = [
+                'goods_type' => $replacement_goods_type,
+                'attribute' => $replacement_attribute,
+            ];
+
+            $this->setReplacementData($this->getCode(), $replacement_data);
+
+            return true;
+        } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
+            return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
-
-        $replacement_data = [
-            'goods_type' => $replacement_goods_type,
-            'attribute' => $replacement_attribute,
-        ];
-
-        $this->setReplacementData($this->getCode(), $replacement_data);
 
     }
 
@@ -224,7 +231,13 @@ HTML;
      */
     public function handleAdminLog()
     {
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
 
+        $store_info = RC_Api::api('store', 'store_info', array('store_id' => $this->store_id));
+
+        $merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
+
+        ecjia_admin::admin_log($merchants_name, 'duplicate', 'store_goods');
     }
 
 }

@@ -199,11 +199,11 @@ class admin extends ecjia_admin {
             'page'              	=> $page,
         ];
         $input = collect($input)->merge($where)->filter()->all();
-        
         $input['is_real'] 	= 1;
         $input['is_on_sale'] = 1;
         $input['check_review_status'] = array(3, 5);
         $input['is_delete'] = 0;
+        $input['no_need_cashier_goods'] = true;
 
         $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
             /**
@@ -245,6 +245,7 @@ class admin extends ecjia_admin {
             unset($input['is_on_sale']);
             unset($input['check_review_status']);
             unset($input['has_activity']);
+            unset($input['no_need_cashier_goods']);
 
             $input['sort_order'] = array_values($input['sort_by'])[0];
             $input['sort_by']    = array_keys($input['sort_by'])[0];
@@ -351,6 +352,7 @@ class admin extends ecjia_admin {
 		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] 	= 1;
+		$input['no_need_cashier_goods'] = true;
 		
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 		$this->assign('goods_list', $goods_list);
@@ -435,6 +437,7 @@ class admin extends ecjia_admin {
 		$input['check_review_status'] = array(3, 5);
 		$input['is_delete'] = 0;
 		$input['is_real'] = 1;
+		$input['no_need_cashier_goods'] = true;
 		
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
 
@@ -518,6 +521,7 @@ class admin extends ecjia_admin {
 
 		$input['is_delete'] = 0;
 		$input['is_real']   = 1;
+		$input['no_need_cashier_goods'] = true;
 		
 		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
 			/**
@@ -543,6 +547,7 @@ class admin extends ecjia_admin {
 			unset($input['check_review_status']);
 			unset($input['is_delete']);
 			unset($input['is_real']);
+			unset($input['no_need_cashier_goods']);
 	
 			$input['sort_order'] = array_values($input['sort_by'])[0];
 			$input['sort_by'] = array_keys($input['sort_by'])[0];
@@ -583,6 +588,263 @@ class admin extends ecjia_admin {
 		$this->display('goods_list.dwt');
 	}
 
+	
+	/**
+	 * 散装商品
+	 */
+	public function bulk() {
+		$this->admin_priv('goods_manage');
+		
+		$this->assign('list_url', RC_Uri::url('goods/admin/bulk'));
+		
+		$this->assign('ur_here', __('散装商品列表', 'goods'));
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('散装商品列表', 'goods')));
+		
+		$store_id   = intval($this->request->input('store_id', 0));
+		$list_type  = intval($this->request->input('type', 0));
+		$page       = intval($this->request->input('page', 1));
+		 
+		$intro_type = trim($this->request->input('intro_type'));
+		
+		$merchant_keywords = trim($this->request->input('merchant_keywords'));
+		$keywords          = trim($this->request->input('keywords'));
+		 
+		$sort_by    = trim($this->request->input('sort_by', 'goods_id'));
+		$sort_order = trim($this->request->input('sort_order', 'DESC'));
+		
+		$use_storage = ecjia::config('use_storage');
+		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
+		
+		$cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+		$this->assign('cat_list_option', $cat_list_option);
+		
+		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
+		
+		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
+		
+		/* 类型筛选 */
+		$where = [];
+		switch ($intro_type) {
+			case 'is_best' :
+				$where['is_best'] = 1;
+				break;
+			case 'is_hot' :
+				$where['is_hot'] = 1;
+				break;
+			case 'is_new' :
+				$where['is_new'] = 1;
+				break;
+		}
+		
+		$input = [
+			'intro_type'        => $intro_type,
+			'merchant_keywords' => $merchant_keywords,
+			'keywords'          => $keywords,
+			'store_id'          => $store_id,
+			'sort_by'           => [$sort_by => $sort_order],
+			'page'              => $page,
+		];
+		
+		$input = collect($input)->merge($where)->filter()->all();
+		
+		$input['is_delete'] = 0;
+		$input['is_real']   = 1;
+		$input['extension_code'] = 'bulk';
+		
+		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+			/**
+			 * @var \Royalcms\Component\Database\Query\Builder $query
+			 */
+			$query->select(
+					RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `is_on_sale`'),
+					RC_DB::raw('SUM(IF(`is_on_sale` = 0, 1, 0)) as `is_not_sale`')
+			);
+		});
+		
+		if ($list_type === 1) {
+			$input['is_on_sale'] = 0; 
+		} else {
+			$input['is_on_sale'] = 1;
+		}
+		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+	
+		$count_link_func = function ($input, $where, $goods_count) {
+			$input = collect($input)->except(array_keys($where))->all();
+			unset($input['check_review_status']);
+			unset($input['is_delete']);
+			unset($input['is_real']);
+			unset($input['extension_code']);
+	
+			$input['sort_order'] = array_values($input['sort_by'])[0];
+			$input['sort_by'] = array_keys($input['sort_by'])[0];
+			$links = [
+				'check_pending' => [
+					'label' => __('已上架', 'goods'),
+					'link' => RC_Uri::url('goods/admin/bulk', array_merge($input, ['type' => 0])),
+					'type' => 0,
+					'count'=> $goods_count['is_on_sale']
+				],
+				'check_no_pass' => [
+					'label' => __('未上架', 'goods'),
+					'link' => RC_Uri::url('goods/admin/bulk', array_merge($input, ['type' => 1])),
+					'type' => 1,
+					'count'=> $goods_count['is_not_sale']
+				]
+			];
+	
+			return $links;
+		};
+	
+		$goods_count = $count_link_func($input, $where, $goods_count);
+	
+		$this->assign('list_type', $list_type);
+		$this->assign('goods_list', $goods_list);
+		$this->assign('goods_count', $goods_count);
+	
+		$this->assign('filter', $goods_list['filter']);
+	
+		$store_list = \Ecjia\App\Store\Stores\StoreCollection::getStoreNameKeyBy();
+		$this->assign('store_list', $store_list);
+	
+		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
+		
+		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
+	
+		$this->assign('action', 'bulk');
+	
+		$this->display('goods_list.dwt');
+		
+	}
+	
+	
+	/**
+	 * 收银台商品
+	 */
+	public function cashier() {
+		$this->admin_priv('goods_manage');
+	
+		$this->assign('list_url', RC_Uri::url('goods/admin/cashier'));
+	
+		$this->assign('ur_here', __('收银台商品列表', 'goods'));
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('收银台商品列表', 'goods')));
+	
+		$store_id   = intval($this->request->input('store_id', 0));
+		$list_type  = intval($this->request->input('type', 0));
+		$page       = intval($this->request->input('page', 1));
+			
+		$intro_type = trim($this->request->input('intro_type'));
+	
+		$merchant_keywords = trim($this->request->input('merchant_keywords'));
+		$keywords          = trim($this->request->input('keywords'));
+			
+		$sort_by    = trim($this->request->input('sort_by', 'goods_id'));
+		$sort_order = trim($this->request->input('sort_order', 'DESC'));
+	
+		$use_storage = ecjia::config('use_storage');
+		$this->assign('use_storage', empty($use_storage) ? 0 : 1);
+	
+		$cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+		$this->assign('cat_list_option', $cat_list_option);
+	
+		$this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
+	
+		$this->assign('intro_list', config('app-goods::goods_suggest_types'));
+	
+		/* 类型筛选 */
+		$where = [];
+		switch ($intro_type) {
+			case 'is_best' :
+				$where['is_best'] = 1;
+				break;
+			case 'is_hot' :
+				$where['is_hot'] = 1;
+				break;
+			case 'is_new' :
+				$where['is_new'] = 1;
+				break;
+		}
+	
+		$input = [
+		'intro_type'        => $intro_type,
+		'merchant_keywords' => $merchant_keywords,
+		'keywords'          => $keywords,
+		'store_id'          => $store_id,
+		'sort_by'           => [$sort_by => $sort_order],
+		'page'              => $page,
+		];
+	
+		$input = collect($input)->merge($where)->filter()->all();
+	
+		$input['is_delete'] = 0;
+		$input['is_real']   = 1;
+		$input['extension_code'] = 'cashier';
+	
+		$goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData(function($query) {
+			/**
+			 * @var \Royalcms\Component\Database\Query\Builder $query
+			 */
+			$query->select(
+					RC_DB::raw('SUM(IF(`is_on_sale` = 1, 1, 0)) as `is_on_sale`'),
+					RC_DB::raw('SUM(IF(`is_on_sale` = 0, 1, 0)) as `is_not_sale`')
+			);
+		});
+	
+		if ($list_type === 1) {
+			$input['is_on_sale'] = 0;
+		} else {
+			$input['is_on_sale'] = 1;
+		}
+		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
+
+		$count_link_func = function ($input, $where, $goods_count) {
+			$input = collect($input)->except(array_keys($where))->all();
+			unset($input['check_review_status']);
+			unset($input['is_delete']);
+			unset($input['is_real']);
+			unset($input['extension_code']);
+
+			$input['sort_order'] = array_values($input['sort_by'])[0];
+			$input['sort_by'] = array_keys($input['sort_by'])[0];
+			$links = [
+				'check_pending' => [
+					'label' => __('已上架', 'goods'),
+					'link' => RC_Uri::url('goods/admin/cashier', array_merge($input, ['type' => 0])),
+					'type' => 0,
+					'count'=> $goods_count['is_on_sale']
+				],
+				'check_no_pass' => [
+					'label' => __('未上架', 'goods'),
+					'link' => RC_Uri::url('goods/admin/cashier', array_merge($input, ['type' => 1])),
+					'type' => 1,
+					'count'=> $goods_count['is_not_sale']
+				]
+			];
+
+			return $links;
+		};
+
+		$goods_count = $count_link_func($input, $where, $goods_count);
+
+		$this->assign('list_type', $list_type);
+		$this->assign('goods_list', $goods_list);
+		$this->assign('goods_count', $goods_count);
+
+		$this->assign('filter', $goods_list['filter']);
+
+		$store_list = \Ecjia\App\Store\Stores\StoreCollection::getStoreNameKeyBy();
+		$this->assign('store_list', $store_list);
+
+		$this->assign('form_action', RC_Uri::url('goods/admin/batch'));
+
+		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
+
+		$this->assign('action', 'bulk');
+
+		$this->display('goods_list.dwt');
+	
+	}
+	
+	
     /**
      * 导出
      */
