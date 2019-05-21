@@ -135,6 +135,11 @@
                 	 if(data.product_sn) {
                       	 var msg = "所选属性已组合成货品，【货号】" + data.product_sn
        	          		 $('.product_sn_msg').html(msg);
+                      	 $('.add_pro_submint').hide();
+                      	 $('.del_pro_submint').show();
+                	 } else {
+                		 $('.add_pro_submint').show();
+                		 $('.del_pro_submint').hide();
                 	 }
                 	 
                 	 $('.pro_close').on('click', function (e) {
@@ -164,8 +169,12 @@
 	          		 if(data.product_sn) {
 	          			 var msg = "所选属性已组合成货品，【货号】" + data.product_sn
 		          		 $('.product_sn_msg').html(msg);
+	          			 $('.add_pro_submint').hide();
+	          			 $('.del_pro_submint').show();
 	          		 } else {
 	          			 $('.product_sn_msg').html('');
+	          			 $('.add_pro_submint').show();
+	          			 $('.del_pro_submint').hide();
 	          		 }
 	            });
   
@@ -193,6 +202,8 @@
 	   	          	 if (data.state == 'success'){
 	   	          		 var msg = "所选属性已组合成货品，【货号】" + data.product_sn
 	   	          		 $('.product_sn_msg').html(msg);
+		   	          	 $('.add_pro_submint').hide();
+	          			 $('.del_pro_submint').show();
 		     		     var $info = $('<div class="staticalert alert alert-success ui_showmessage"><a data-dismiss="alert" class="close">×</a>' + data.message + '</div>');
 		     		     $info.appendTo('.success-msg').delay(5000).hide(0);
 					 } else {
@@ -225,6 +236,8 @@
   	            $.post(url, filters, function (data) {
 	   	          	 if (data.state == 'success'){
 	   	          		 $('.product_sn_msg').html('');
+		   	          	 $('.add_pro_submint').show();
+	          			 $('.del_pro_submint').hide();
 		     		     var $info = $('<div class="staticalert alert alert-success ui_showmessage"><a data-dismiss="alert" class="close">×</a>' + data.message + '</div>');
 		     		     $info.appendTo('.success-msg').delay(5000).hide(0);
 					 } else {
