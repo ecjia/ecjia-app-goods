@@ -24,11 +24,14 @@
 				   </div>
 			   </div>
 			   {/foreach}
+			   
+			   {if $product_sn}
 		   	   <div class="form-group">
 	             <div class="col-lg-offset-2 col-lg-6">
-	             	<p class="product_sn_msg"></p>
+	             	<p class="product_sn_msg">所选属性已组合成货品，【货号】：{$product_sn}</p>
 	             </div>
 	           </div>
+	           {/if}
 	           
 			   <div class="form-group">
 	             <div class="col-lg-offset-2 col-lg-6">
