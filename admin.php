@@ -1662,6 +1662,7 @@ class admin extends ecjia_admin {
         $goods_sn = isset($_POST['goods_sn']) 		? $_POST['goods_sn'] 		: '';
         $shop_price = isset($_POST['shop_price']) 		? $_POST['shop_price'] 		: 0;
         $market_price = isset($_POST['market_price']) 	? $_POST['market_price'] 		: 0;
+        $cost_price = isset($_POST['cost_price']) 	? $_POST['cost_price'] 		: 0;
         $is_display = isset($_POST['is_display']) 		? intval($_POST['is_display']) 		: 0;
         
         if(empty($id)) {
@@ -1700,6 +1701,7 @@ class admin extends ecjia_admin {
         $goods['goods_sn'] = $goods_sn;
         $goods['shop_price'] = $shop_price;
         $goods['market_price'] = $market_price;
+        $goods['cost_price'] = $cost_price;
         $goods['is_display'] = $is_display;
         $goods['brand_id'] = $goods_info['brand_id'];
         $goods['goods_weight'] = $goods_info['goods_weight'];
