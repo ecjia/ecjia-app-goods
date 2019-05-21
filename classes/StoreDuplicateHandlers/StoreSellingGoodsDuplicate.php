@@ -210,9 +210,6 @@ HTML;
                 // 存储 goods_attr 相关替换数据
                 $replacement_data['goods_attr'] = $this->replacement_goods_attr;
 
-                //将数据同步到 goods_cat
-                $this->duplicateGoodsCat($old_goods_id, $merchant_category_replacement);
-
                 //将数据同步到 products
                 $this->duplicateProducts($old_goods_id);
                 //存储 products 相关替换数据
@@ -222,6 +219,11 @@ HTML;
                 $this->duplicateGoodsGallery($old_goods_id);
                 //存储 goods_gallery 相关替换数据
                 $replacement_data['goods_gallery'] = $this->replacement_goods_gallery;
+
+
+                //迁移出去
+                //将数据同步到 goods_cat
+                $this->duplicateGoodsCat($old_goods_id, $merchant_category_replacement);
 
                 //将数据同步到 member_price
                 $this->duplicateMemberPrice();
@@ -516,6 +518,32 @@ HTML;
             RC_DB::table('link_goods')->insert($items);
             //dd($items);
         });
+    }
+
+    /**
+     * 复制单张图片
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    protected function copyImage($path)
+    {
+
+        return $path;
+    }
+
+    /**
+     * 复制缩编器内容中的图片
+     *
+     * @param $content
+     *
+     * @return string
+     */
+    protected function copyImageForContent($content)
+    {
+
+        return $content;
     }
 
     /**
