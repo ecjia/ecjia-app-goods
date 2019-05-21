@@ -226,6 +226,15 @@ class GoodsModel extends Model
     }
     
     /**
+     * 一对多
+     * 商品关联商品集合
+     */
+    public function link_goods_collection()
+    {
+    	return $this->hasMany('Ecjia\App\Goods\Models\LinkGoodsModel', 'goods_id', 'goods_id');
+    }
+    
+    /**
      * 将缓存数组添加至创建缓存数组（用于商品列表）
      * @param $cache_key
      * @param int $expiry
