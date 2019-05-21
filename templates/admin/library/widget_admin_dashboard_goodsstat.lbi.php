@@ -101,7 +101,7 @@
                         <img src="{$static_url}bulk.png" alt="">
                         <div class="info">
                             <div class="name">散装商品</div>
-                            <span class="count-num"><a target="_blank" href='javascript:;'>{$goods.bulk}</a></span>
+                            <span class="count-num"><a target="_blank" href='{url path="goods/admin/bulk"}'>{$goods.bulk}</a></span>
                         </div>
                      </div>
 				</div>
@@ -110,7 +110,7 @@
                         <img src="{$static_url}cashier.png" alt="">
                         <div class="info">
                             <div class="name">收银台商品</div>
-                            <span class="count-num"><a target="_blank" href='javascript:;'>{$goods.cashier}</a></span>
+                            <span class="count-num"><a target="_blank" href='{url path="goods/admin/cashier"}'>{$goods.cashier}</a></span>
                         </div>
                      </div>
 				</div>
