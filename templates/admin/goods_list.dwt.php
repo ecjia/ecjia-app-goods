@@ -363,12 +363,6 @@
                 </div>
             </div>
             <div class="control-group control-group-small formSep">
-                <label class="control-label">{t domain='goods'}商品货号{/t}</label>
-                <div class="controls">
-                    <input class="form-control" name="goods_sn" type="text" value="" />
-                </div>
-            </div>
-            <div class="control-group control-group-small formSep">
                 <label class="control-label">{t domain='goods'}本店售价{/t}</label>
                 <div class="controls">
                     <input class="form-control" name="shop_price" type="text" value="" />
