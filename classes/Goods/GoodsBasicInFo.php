@@ -148,17 +148,6 @@ class GoodsBasicInFo
     }
     
     /**
-     * 获取商品规格参数
-     */
-    public function getGoodsSpecPra()
-    {
-    	$parameter 		= $this->getGoodsParameter();
-    	$specification 	= $this->getGoodsSpecification();
-    	 
-    	return ['pra' => $parameter, 'spe' => $specification];
-    }
-    
-    /**
      * 分组参数
      * @return array
      */
@@ -260,6 +249,124 @@ class GoodsBasicInFo
     		} 
     	}
     	return $grp;
+    }
+    
+    /**
+     * 获取商品规格参数
+     */
+    public function getGoodsSpecPra()
+    {
+    	$parameter 		= $this->getGoodsParameter();
+    	$specification 	= $this->getGoodsSpecification();
+    	 
+    	return [$parameter, $specification];
+    }
+    
+    /**
+     * 商品参数
+     * @return array
+     */
+    protected function getGoodsParameter()
+    {
+    	$result = [];
+    	 
+    	if ($this->model->goods_type_parameter_model) {
+    		$parameter_id = $this->model->goods_type_parameter_model->cat_id;
+    	}
+    	if ($this->model->goods_attr_collection) {
+    		$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
+    			if ($item->attribute_model) {
+    				if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
+    					if ($item->attribute_model->attr_name) {
+    						return [
+    						'attr_name'     => $item->attribute_model->attr_name,
+    						'attr_value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
+    						];
+    					}
+    				}
+    			}
+    		})->filter()->all();
+    
+    		$result = array_merge($res);
+    	}
+    	return $result;
+    }
+    
+    /**
+     * 商品规格
+     * @return array
+     */
+    protected function getGoodsSpecification()
+    {
+    	$result = [];
+    	$specification_id = 0;
+    	if ($this->model->goods_type_specification_model) {
+    		$specification_id = $this->model->goods_type_specification_model->cat_id;
+    	}
+    	//商品未绑定规格模板，兼容老数据；看goods表的goods_type字段有没值
+    	if (empty($specification_id)) {
+    		if ($this->model->goods_type) {
+    			$specification_id = $this->model->goods_type;
+    		}
+    	}
+    	if (!empty($specification_id)) {
+    		if ($this->model->goods_attr_collection) {
+    			$result = $this->model->goods_attr_collection->map(function ($item) use ($specification_id) {
+    				if ($item->attribute_model) {
+    					if ($item->attribute_model->cat_id == $specification_id) {
+    						return [
+    						'goods_attr_id' => $item->goods_attr_id,
+    						'attr_value'	=> $item->attr_value,
+    						'attr_price'	=> $item->attr_price,
+    						'attr_id'		=> $item->attribute_model->attr_id,
+    						'attr_name'		=> $item->attribute_model->attr_name,
+    						'attr_group'	=> $item->attribute_model->attr_group,
+    						'is_linked'		=> $item->attribute_model->is_linked,
+    						'attr_type'		=> $item->attribute_model->attr_type
+    						];
+    					}
+    				}
+    			});
+    		}
+    	}
+    	if ($result) {
+    		$result = $this->formatSpec($result);
+    	}
+    	return $result;
+    }
+    
+    /**
+     * 商品规格处理
+     * @param array $specification
+     * @return array
+     */
+    protected function formatSpec($specification)
+    {
+    	$arr = [];
+    	$spec = [];
+    	foreach ($specification as $row ) {
+    		if ($row ['attr_type'] != 0) {
+    			$arr [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
+    			$arr [$row ['attr_id']] ['name'] = $row ['attr_name'];
+    			$arr [$row ['attr_id']] ['value'] [] = array (
+    					'label' => $row ['attr_value'],
+    					'price' => $row ['attr_price'],
+    					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
+    					'id' => $row ['goods_attr_id']
+    			);
+    		}
+    
+    	}
+    	if (!empty($arr)) {
+    		foreach ($arr as $key => $value) {
+    			if (!empty($value['values'])) {
+    				$value['value'] = $value['values'];
+    				unset($value['values']);
+    			}
+    			$spec[] = $value;
+    		}
+    	}
+    	return $spec;
     }
     
     /**
