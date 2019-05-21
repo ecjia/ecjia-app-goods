@@ -189,13 +189,13 @@ class merchant extends ecjia_merchant {
 	    $where = [];
 	    switch ($intro_type) {
 	    	case 'is_best' :
-	    		$where['is_best'] = 1;
+	    		$where['store_is_best'] = 1;
 	    		break;
 	    	case 'is_hot' :
-	    		$where['is_hot'] = 1;
+	    		$where['store_is_best'] = 1;
 	    		break;
 	    	case 'is_new' :
-	    		$where['is_new'] = 1;
+	    		$where['store_is_best'] = 1;
 	    		break;
 	    }
 
@@ -251,7 +251,6 @@ class merchant extends ecjia_merchant {
     	} else {
     		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\MerchantGoodsCollection($input))->getData();
     	}
-    	 
 	    $count_link_func = function ($input, $where, $goods_count, $goods_activity_count) {
 	    	$input = collect($input)->except(array_keys($where))->all();
 	    	unset($input['is_delete']);
@@ -338,13 +337,13 @@ class merchant extends ecjia_merchant {
 		$where = [];
 		switch ($intro_type) {
 			case 'is_best' :
-				$where['is_best'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 			case 'is_hot' :
-				$where['is_hot'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 			case 'is_new' :
-				$where['is_new'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 		}
 		
@@ -420,13 +419,13 @@ class merchant extends ecjia_merchant {
 		$where = [];
 		switch ($intro_type) {
 			case 'is_best' :
-				$where['is_best'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 			case 'is_hot' :
-				$where['is_hot'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 			case 'is_new' :
-				$where['is_new'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 		}
 	
@@ -500,13 +499,13 @@ class merchant extends ecjia_merchant {
 		$where = [];
 		switch ($intro_type) {
 			case 'is_best' :
-				$where['is_best'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 			case 'is_hot' :
-				$where['is_hot'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 			case 'is_new' :
-				$where['is_new'] = 1;
+				$where['store_is_best'] = 1;
 				break;
 		}
 	
@@ -1760,7 +1759,16 @@ class merchant extends ecjia_merchant {
 		if ($_GET['type'] == 'drop' || $_GET['type'] == 'restore') {
 			$pjaxurl = RC_Uri::url('goods/merchant/trash' ,$page);
 		} else {
-			$pjaxurl = RC_Uri::url('goods/merchant/init' ,'is_on_sale='.$is_on_sale.$page);
+			$action_url = $_GET['action_url'];
+			if($action_url == 'finish') {
+				$pjaxurl = RC_Uri::url('goods/merchant/finish', 'is_on_sale='.$is_on_sale.$page);
+			} elseif($action_url == 'obtained') {
+				$pjaxurl = RC_Uri::url('goods/merchant/obtained', 'is_on_sale='.$is_on_sale.$page);
+			} elseif($action_url == 'check') {
+				$pjaxurl = RC_Uri::url('goods/merchant/check', 'is_on_sale='.$is_on_sale.$page);
+			} else {
+				$pjaxurl = RC_Uri::url('goods/merchant/init', 'is_on_sale='.$is_on_sale.$page);
+			}
 		}
 		
 		/* 释放app缓存*/
