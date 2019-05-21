@@ -3243,12 +3243,9 @@ class merchant extends ecjia_merchant {
 		
 		$goods_attr = implode('|', $product_value);
 		$product_sn = RC_DB::TABLE('products')->where('goods_attr', $goods_attr)->pluck('product_sn');
-		if(!empty($product_sn)) {
-			$this->assign('product_sn', $product_sn);
-		}
 		$data = $this->fetch('spec_add_product.dwt');
 		
-		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data, 'product_sn' => $product_sn));
 	}
 	
 	/**
@@ -3306,11 +3303,8 @@ class merchant extends ecjia_merchant {
 	 */
 // 	public function ajax_select_radio() {
 // 		$this->admin_priv('goods_update');
-		
-// 		$goods_id = intval($_POST['goods_id']);
-// 		$radio_value_arr = $_POST['radio_value_arr'];
 	
-// 		$goods_id 		= intval($_POST['goods_id']);;
+// 		$goods_id 		= intval($_POST['goods_id']);
 // 		$product_value  = !empty($_POST['radio_value_arr']) ? $_POST['radio_value_arr']   : '';
 	
 // 		if (empty($goods_id)) {
