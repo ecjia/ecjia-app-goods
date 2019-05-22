@@ -2292,7 +2292,7 @@ class merchant extends ecjia_merchant {
             $info['product_original_img'] 	= goods_imageutils::getAbsoluteUrl($info['product_original_img']);
         }
 
-        $this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/product_list', ['goods_id' => $goods_id]), 'text' => __('商品编辑', 'goods')));
+        $this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/edit_goods_specification', ['goods_id' => $goods_id]), 'text' => __('商品编辑', 'goods')));
 
 
         $this->assign('goods_name', 		sprintf(__('商品名称：%s', 'goods'), $goods['goods_name']));
