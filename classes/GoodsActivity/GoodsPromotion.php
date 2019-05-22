@@ -159,7 +159,6 @@ class GoodsPromotion
      */
     public function updateCartGoodsPrice($cart_id, $goods_id, $goods_num = '1', $is_spec_price = false, $spec = array(), $product_id = 0)
     {
-    	\RC_Logger::getLogger('error')->info('test666');
     	$discount = $_SESSION['discount'];
     	$user_rank = $_SESSION['user_rank'];
     	
@@ -231,6 +230,8 @@ class GoodsPromotion
     		}
     	}
     	//更新商品最终购买价格
+    	\RC_Logger::getLogger('error')->info('test666');
+    	
     	\RC_DB::table('cart')->where('rec_id', $cart_id)->update(array('goods_price' => $final_price));
     }
     
@@ -466,6 +467,33 @@ class GoodsPromotion
     			);
     		}
     	}
+    }
+    
+    /**
+     * 获得指定的规格的价格
+     *
+     * @access public
+     * @param mix $spec
+     *        	规格ID的数组或者逗号分隔的字符串
+     * @return void
+     */
+    private function spec_price($spec) {
+    	if (! empty ( $spec )) {
+    		if (is_array ( $spec )) {
+    			foreach ( $spec as $key => $val ) {
+    				$spec [$key] = addslashes ( $val );
+    			}
+    		} else {
+    			$spec = addslashes ( $spec );
+    		}
+    		$db = \RC_DB::table('goods_attr');
+    		$rs = $db->whereIn('goods_attr_id', $spec)->select(\RC_DB::raw('sum(attr_price) as attr_price'))->first();
+    		$price = $rs['attr_price'];
+    	} else {
+    		$price = 0;
+    	}
+    
+    	return $price;
     }
     
     /**
