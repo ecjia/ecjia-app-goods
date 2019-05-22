@@ -73,7 +73,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 商品参数模板列表页面
 	 */
 	public function init() {
-		$this->admin_priv('goods_parameter_template_manage');
+		$this->admin_priv('goods_parameter_attr_manage');
 
 		ecjia_merchant_screen::get_current_screen()->remove_last_nav_here();
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品参数模板', 'goods')));
@@ -94,7 +94,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 添加参数模板页面
 	 */
 	public function add() {
-		$this->admin_priv('goods_parameter_template_update');
+		$this->admin_priv('goods_parameter_attr_update');
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('添加参数模板', 'goods')));
 		$this->assign('ur_here', __('添加参数模板', 'goods'));
@@ -113,7 +113,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 添加参数模板数据处理
 	 */
 	public function insert() {
-		$this->admin_priv('goods_parameter_template_update');
+		$this->admin_priv('goods_parameter_attr_update');
 
 		$par_template['store_id']		= !empty($_SESSION['store_id']) ? $_SESSION['store_id'] : 0;
 		$par_template['cat_name']		= trim($_POST['cat_name']);
@@ -138,7 +138,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 编辑参数模板页面
 	 */
 	public function edit() {
-		$this->admin_priv('goods_parameter_template_update');
+		$this->admin_priv('goods_parameter_attr_update');
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑参数模板', 'goods')));
 		$this->assign('ur_here', __('编辑参数模板', 'goods'));
@@ -156,7 +156,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 编辑参数模板数据处理
 	 */
 	public function update() {
-		$this->admin_priv('goods_parameter_template_update');
+		$this->admin_priv('goods_parameter_attr_update');
 		
 		$cat_id	= intval($_POST['cat_id']);
 		$parameter_template['cat_name']		= trim($_POST['cat_name']);
@@ -202,7 +202,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 切换启用状态
 	 */
 	public function toggle_enabled() {
-		$this->admin_priv('goods_parameter_template_update');
+		$this->admin_priv('goods_parameter_attr_update');
 	
 		$id		= intval($_POST['id']);
 		$val    = intval($_POST['val']);
@@ -216,7 +216,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 删除商品参数模板
 	 */
 	public function remove() {
-		$this->admin_priv('goods_parameter_template_delete');
+		$this->admin_priv('goods_parameter_attr_delete');
 		
 		$id = intval($_GET['id']);
 		$name = RC_DB::table('goods_type')->where('cat_id', $id)->pluck('cat_name');
@@ -239,7 +239,7 @@ class mh_parameter extends ecjia_merchant {
 	 * 修改参数模板名称
 	 */
 	public function edit_type_name() {
-		$this->admin_priv('goods_parameter_template_update');
+		$this->admin_priv('goods_parameter_attr_update');
 		
 		$cat_id   = !empty($_POST['pk'])  		? intval($_POST['pk'])	: 0;
 		$cat_name = !empty($_POST['value']) 	? trim($_POST['value'])	: '';
