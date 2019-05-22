@@ -98,18 +98,18 @@
 												<label class="control-label col-lg-2 ">{t domain="goods"}规格模板：{/t}</label>
 												<div class="col-lg-6 l_h35">
 													{$template_info.cat_name}
-														
+													
+													{if $goods_info.specification_id}
+	                                                	<a data-toggle="clear_data" data-href='{url path="goods/merchant/clear_spec_data"}' goods-id="{$goods_info.goods_id}" ><button type="button" class="btn btn-default" >{t domain="goods"}更换模板{/t}</button></a>
+                                                    {else}
+                                                        <a href='{url path="goods/mh_category/edit" args="cat_id={$goods_info.merchant_cat_id}"}'><button type="button" class="btn btn-default" >{t domain="goods"}更换模板{/t}</button></a>
+                                                    {/if} 
+                                                    
 													<a data-toggle="modal" data-backdrop="static" href="#myModal1" goods-id="{$goods_info.goods_id}" attr-url="{RC_Uri::url('goods/merchant/select_spec_values')}" ><button class="btn btn-info"><i class="fa fa-cog"></i> {t domain="goods"}设置规格属性{/t}</button></a>
 													
 													{if $has_spec}
 	                                                    <a data-type="add-pro" data-toggle="modal" data-backdrop="static" href="#myModal2" goods-id="{$goods_info.goods_id}" attr-url="{RC_Uri::url('goods/merchant/spec_add_product')}" ><button class="btn btn-info"><i class="fa fa-plus"></i> {t domain="goods"}添加货品{/t}</button></a>
 	                                                {/if} 
-	                                                
-	                                                {if $goods_info.specification_id}
-	                                                	<a data-toggle="clear_data" data-href='{url path="goods/merchant/clear_spec_data"}' goods-id="{$goods_info.goods_id}" ><button type="button" class="btn btn-default" >{t domain="goods"}更换模板{/t}</button></a>
-                                                    {else}
-                                                        <a href='{url path="goods/mh_category/edit" args="cat_id={$goods_info.merchant_cat_id}"}'><button type="button" class="btn btn-default" >{t domain="goods"}更换模板{/t}</button></a>
-                                                    {/if} 
 												</div>
 											</div>
 											

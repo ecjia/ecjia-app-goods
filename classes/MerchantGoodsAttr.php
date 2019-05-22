@@ -533,7 +533,7 @@ class MerchantGoodsAttr {
 		->get();
 	
 		/* 处理规格属性 */
-		$goods_attr = product_goods_attr_list($goods_id);
+		$goods_attr = self::product_goods_attr_list($goods_id);
 		if (!empty ($row)) {
 			foreach ($row as $key => $value) {
 				$_goods_attr_array = explode('|', $value ['goods_attr']);
@@ -552,6 +552,26 @@ class MerchantGoodsAttr {
 			'page_count'	=> $filter ['page_count'],
 			'record_count'	=> $filter ['record_count']
 		);
+	}
+	
+	/**
+	 * 获得商品的规格属性值列表
+	 *
+	 * @access public
+	 * @param
+	 *            s integer $goods_id
+	 * @return array
+	 */
+	public static function product_goods_attr_list($goods_id) {
+		$results = RC_DB::table('goods_attr')->select('goods_attr_id', 'attr_value')->where('goods_id', $goods_id)->get();
+	
+		$return_arr = array();
+		if (!empty ($results)) {
+			foreach ($results as $value) {
+				$return_arr [$value ['goods_attr_id']] = $value ['attr_value'];
+			}
+		}
+		return $return_arr;
 	}
 	
 }
