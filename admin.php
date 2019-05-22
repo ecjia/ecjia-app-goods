@@ -3458,6 +3458,9 @@ class admin extends ecjia_admin {
 		);
 		RC_DB::table('goods_review_log')->insertGetId($data_action);
 	
+		//商品审核消息通知
+		$this->send_notifications($goods_id, $review_status);
+		
 		//商品预览页进行审核操作后，跳转到预览页
 		return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/preview', array('id' => $goods_id, 'preview_type' => 'await_check'))));
 	}
