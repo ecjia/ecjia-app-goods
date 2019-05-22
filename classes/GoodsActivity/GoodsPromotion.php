@@ -159,6 +159,7 @@ class GoodsPromotion
      */
     public function updateCartGoodsPrice($cart_id, $goods_id, $goods_num = '1', $is_spec_price = false, $spec = array(), $product_id = 0)
     {
+    	\RC_Logger::getLogger('error')->info('test666');
     	$discount = $_SESSION['discount'];
     	$user_rank = $_SESSION['user_rank'];
     	
