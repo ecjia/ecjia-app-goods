@@ -341,7 +341,7 @@ class GoodsAttr {
     					$attr_values = explode("\n", $val ['attr_values']);
     					$html .= "$val[attr_name]</label><div class='controls'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
     					$html .= '<select class="w350" name="'.$val[attr_id].'_attr_value_list[]" autocomplete="off">';
-    					$html .= '<option value="">' . __('请选择', 'goodslib') . '</option>';
+    					$html .= '<option value="">' . __('请选择', 'goods') . '</option>';
     					foreach ($attr_values as $opt) {
     						$opt = trim(htmlspecialchars($opt));
     						$html .= ($val['attr_value'][0] != $opt) ? '<option value="' . $opt . '">' . $opt . '</option>' : '<option value="' . $opt . '" selected="selected">' . $opt . '</option>';
