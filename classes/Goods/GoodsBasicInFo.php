@@ -273,21 +273,28 @@ class GoodsBasicInFo
     	if ($this->model->goods_type_parameter_model) {
     		$parameter_id = $this->model->goods_type_parameter_model->cat_id;
     	}
+    	$arr = [];
+    	
     	if ($this->model->goods_attr_collection) {
     		$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
     			if ($item->attribute_model) {
+    				$attr_id = $item->attribute_model->attr_id;
+    				
     				if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
     					if ($item->attribute_model->attr_name && $item->attr_value) {
+    						$arr[$item->attribute_model->attr_id]['name'] = $item->attribute_model->attr_name;
     						return [
-    						'name'     => $item->attribute_model->attr_name,
-    						'value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
+    							'attr_id'	=> $item->attr_id,
+	    						'name'     => $item->attribute_model->attr_name,
+	    						'value'	=> $item->attribute_model->attr_type == '2' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
     						];
+
+    						return $arr;
     					}
     				}
     			}
     		})->filter()->all();
-    
-    		$result = array_merge($res);
+    		$result = $this->formatPra($res);
     	}
     	return $result;
     }
@@ -389,5 +396,18 @@ class GoodsBasicInFo
     		$res  = collect($arr)->filter()->all();
     	}
     	return $res;
+    }
+    
+    protected function formatPra($parameter)
+    {
+    	$arr = [];
+    	if ($parameter) {
+    		foreach ($parameter as $row) {
+    			$arr[$row['attr_id']]['name'] = $row['name'];
+    			$arr[$row['attr_id']]['value'] = $row['value'];
+    		}
+    		$arr = array_merge($arr);
+    	}
+    	return $arr;
     }
 }
