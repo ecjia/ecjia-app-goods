@@ -207,6 +207,7 @@ class GoodsProductPrice
                 $shop_price += $total_attr_price;
                 $promote_price = ($promote_price > 0) ? ($promote_price + $total_attr_price) : 0;
             }
+            $final_shop_price =  $promote_price > 0 ? min($shop_price, $promote_price) : $shop_price;
             
 			$data = [
 				'product_id' 					=> 0,
