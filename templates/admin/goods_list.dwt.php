@@ -181,17 +181,12 @@
 					
 					<td class="hide-edit-area">
 						<strong>{$goods.merchants_name}</strong>
-						
 						</span>{if $goods.manage_mode eq 'self'}<span class="ecjiafc-red">{t domain='goods'}（自营）{/t}</span>{/if}
 						<br>
-						
                         {if $goods.product_list}<span class="label-orange">{t domain='goods'}多货品{/t}{/if}</span>
-                        <span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_name')}" data-name="goods_edit_name" data-pk="{$goods.goods_id}" data-title="请输入商品名称">
-							{$goods.goods_name|escape:html}
-						</span>
+						{$goods.goods_name|escape:html}
 						{if $goods.is_promote eq 1}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
 						<br/>
-						
 						<div class="edit-list">
 							{if $preview_type}
 							<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
@@ -211,7 +206,6 @@
 							{if $goods.review_status eq 2}
 								<a  href="#review_log" data-toggle="modal" data-type="log" data-backdrop="static"  goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/review_log')}">{t domain='goods'}查看审核{/t}</a>
 							{/if}
-							
 						</div>
 					</td>	
 					{if $action neq 'check'}<td>{$goods.goods_sn}</td>{/if}
