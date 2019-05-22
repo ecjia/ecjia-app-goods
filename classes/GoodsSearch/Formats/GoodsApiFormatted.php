@@ -358,6 +358,7 @@ class GoodsApiFormatted
     					$arr = [];
     					if ($item->attribute_model->attr_name && $item->attr_value) {
     						$arr = [
+    							'attr_id'	=> $item->attr_id,
 	    						'name'     	=> $item->attribute_model->attr_name,
 	    						'value'		=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
     						];
@@ -367,7 +368,9 @@ class GoodsApiFormatted
     				
     			}
     		})->filter()->all();
-    		$result = array_merge($res);
+	    	if ($res) {
+	    		$result = $this->formatPra($res);
+	    	}
     	}
     	return $result;
     }
@@ -419,14 +422,15 @@ class GoodsApiFormatted
      */
     protected function formatPra($parameter = [])
     {
-    	if (!empty($parameter)) {
-    		foreach ($parameter as $k => $v) {
-    			if (empty($v['attr_name'])) {
-    				unset($parameter[$k]);
-    			}
+    	$arr = [];
+    	if ($parameter) {
+    		foreach ($parameter as $row) {
+    			$arr[$row['attr_id']]['name'] = $row['name'];
+    			$arr[$row['attr_id']]['value'] = $row['value'];
     		}
-    		return $parameter->toArray();
+    		$arr = array_merge($arr);
     	}
+    	return $arr;
     }
     
     /**

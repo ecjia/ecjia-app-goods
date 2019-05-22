@@ -278,8 +278,6 @@ class GoodsBasicInFo
     	if ($this->model->goods_attr_collection) {
     		$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
     			if ($item->attribute_model) {
-    				$attr_id = $item->attribute_model->attr_id;
-    				
     				if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
     					if ($item->attribute_model->attr_name && $item->attr_value) {
     						$arr[$item->attribute_model->attr_id]['name'] = $item->attribute_model->attr_name;
