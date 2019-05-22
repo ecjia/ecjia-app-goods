@@ -121,7 +121,8 @@ class GoodsPromotion
      */
     public function getProductPromotion()
     {
-    	return $this->products;
+    	$data = $this->products;
+    	return $data;
     }
 
     /**
@@ -463,9 +464,10 @@ class GoodsPromotion
      * 商品活动购买记录信息
      * @return array
      */
-    protected function goodsActivityRecordsInfo()
+    public function goodsActivityRecordsInfo()
     {
     	$info = GoodsActivityRecordsModel::where('activity_id', 0)->where('activity_type', 'promotion')->where('user_id', $this->user_id)->where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->first();
-		return $info;
+    	
+    	return $info;
     }
 }
