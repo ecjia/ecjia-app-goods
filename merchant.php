@@ -3260,8 +3260,7 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(__('找不到指定的商品', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} 
 		
-		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->select('goods_sn', 'goods_name', 'goods_type', 'shop_price')->first();
-		
+		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->select('goods_sn', 'goods_number', 'goods_name', 'goods_type', 'shop_price')->first();
 		$goods_attr = implode('|', $product_value);
 		if (Ecjia\App\Goods\MerchantGoodsAttr::check_goods_attr_exist($goods_attr, $goods_id)) {
 			return $this->showmessage(__('所匹配的属性已存在相应的货品,请更换组合', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -3269,6 +3268,7 @@ class merchant extends ecjia_merchant {
 			$data = array(
 				'goods_id' 		=> $goods_id,
 				'goods_attr'	=> $goods_attr,
+				'product_number'=> $goods['goods_number'],
 			);
 			$product_id = RC_DB::table('products')->insertGetId($data);
 			RC_DB::table('products')->where('product_id', $product_id)->update(array('product_sn' => $goods['goods_sn'] . "g_p" . $product_id));
