@@ -230,8 +230,6 @@ class GoodsPromotion
     		}
     	}
     	//更新商品最终购买价格
-    	\RC_Logger::getLogger('error')->info('test666');
-    	
     	\RC_DB::table('cart')->where('rec_id', $cart_id)->update(array('goods_price' => $final_price));
     }
     
