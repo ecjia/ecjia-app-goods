@@ -70,13 +70,7 @@
 				<img src="../{$cat.cat_image}" border="0" style="vertical-align:middle;" width="60px" height="21px">
 				<!-- {/if} -->
 			</td>
-			<td>
-                {if $cat.goods_num > 0}
-                <a href='{url path="goods/admin/init" args="cat_id={$cat.cat_id}"}'>{$cat.goods_num}</a>
-                {else}
-                {$cat.goods_num}
-                {/if}
-			</td>
+			<td>{$cat.goods_num}</td>
 			<td>
 				<span {if $cat.measure_unit}class="cursor_pointer" data-trigger="editable" data-url="{url path='goods/admin_category/edit_measure_unit'}" data-name="edit_grade" data-pk="{$cat.cat_id}" data-title="{t domain="goods"}请输入数量单位{/t}"{/if}>
 				<!-- {if $cat.measure_unit}{$cat.measure_unit}{else}&nbsp;&nbsp;&nbsp;&nbsp;{/if} -->
