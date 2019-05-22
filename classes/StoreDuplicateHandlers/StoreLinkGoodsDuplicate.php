@@ -23,6 +23,8 @@ class StoreLinkGoodsDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     private $table = 'link_goods';
 
+    protected $rank_order = 9;
+
     public function __construct($store_id, $source_store_id, $sort = 19)
     {
         parent::__construct($store_id, $source_store_id, '商品关联商品', $sort);

@@ -93,10 +93,17 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
      */
     protected $goods_type_replacement = [];
 
+    protected $rank_order = 4;
+
+    protected $rank_total = 11;
+
+    protected $rank = '';
+
     public function __construct($store_id, $source_store_id, $name = '在售普通商品', $sort = 14)
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __($name, 'goods');
+        $this->rank = sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
@@ -603,7 +610,7 @@ HTML;
         }
     }
 
-    private function showValueOfAttrs($attr_name = null)
+    protected function showValueOfAttrs($attr_name = null)
     {
         if (is_string($attr_name)) {
             $attr_name = explode(',', $attr_name);

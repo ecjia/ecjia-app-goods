@@ -32,10 +32,17 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
      */
     protected $replacement_goods = [];
 
+    protected $rank_order = 1;
+
+    protected $rank_total = 11;
+
+    protected $rank = '';
+
     public function __construct($store_id, $source_store_id, $name, $sort = 15)
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __($name, 'goods');
+        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
