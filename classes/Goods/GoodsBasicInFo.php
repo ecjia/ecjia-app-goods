@@ -277,10 +277,10 @@ class GoodsBasicInFo
     		$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
     			if ($item->attribute_model) {
     				if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
-    					if ($item->attribute_model->attr_name) {
+    					if ($item->attribute_model->attr_name && $item->attr_value) {
     						return [
-    						'attr_name'     => $item->attribute_model->attr_name,
-    						'attr_value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
+    						'name'     => $item->attribute_model->attr_name,
+    						'value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
     						];
     					}
     				}
@@ -330,6 +330,7 @@ class GoodsBasicInFo
     		}
     	}
     	if ($result) {
+    		$result = $result->toArray();
     		$result = $this->formatSpec($result);
     	}
     	return $result;
@@ -344,13 +345,14 @@ class GoodsBasicInFo
     {
     	$arr = [];
     	$spec = [];
+    	
     	foreach ($specification as $row ) {
     		if ($row ['attr_type'] != 0) {
     			$arr [$row ['attr_id']] ['attr_type'] = $row ['attr_type'];
     			$arr [$row ['attr_id']] ['name'] = $row ['attr_name'];
     			$arr [$row ['attr_id']] ['value'] [] = array (
     					'label' => $row ['attr_value'],
-    					'price' => $row ['attr_price'] > 0 ? $row ['attr_price'] : 0,
+    					'price' => $row ['attr_price'],
     					'format_price' => price_format ( abs ( $row ['attr_price'] ), false ),
     					'id' => $row ['goods_attr_id']
     			);
