@@ -2,18 +2,18 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
-use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
 use ecjia_error;
 use RC_DB;
 use RC_Api;
 use ecjia_admin;
 
 /**
- * 复制店铺中商品关联商品数据
+ * 复制店铺中商品关联商品数据（无图片字段）
+ *
  * Class StoreLinkGoodsDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
  */
-class StoreLinkGoodsDuplicate extends StoreDuplicateAbstract
+class StoreLinkGoodsDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 {
     /**
      * 代号标识
@@ -21,52 +21,11 @@ class StoreLinkGoodsDuplicate extends StoreDuplicateAbstract
      */
     protected $code = 'store_link_goods_duplicate';
 
-    /**
-     * 排序RC_Hook::apply_filters(
-     * @var int
-     */
-    protected $sort = 19;
-
-    protected $dependents = [
-        'store_selling_goods_duplicate',
-        'store_cashier_goods_duplicate'
-    ];
-
-    /**
-     * goods 表中的替换数据
-     * @var array
-     */
-    private $replacement_goods = [];
-
-    private $progress_data;
-
     private $table = 'link_goods';
 
-    public function __construct($store_id, $source_store_id)
+    public function __construct($store_id, $source_store_id, $sort = 19)
     {
-        $this->name = __('商品关联商品', 'goods');
-        parent::__construct($store_id, $source_store_id);
-    }
-
-    /**
-     * 获取源店铺数据操作对象
-     */
-    public function getSourceStoreDataHandler()
-    {
-        return RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=', 1);
-    }
-
-    /**
-     * 数据描述及输出显示内容
-     */
-    public function handlePrintData()
-    {
-        $count = $this->handleCount();
-        $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>件%s', 'goods'), $count, $this->name);
-
-        return <<<HTML
-<span class="controls-info">{$text}</span>
-HTML;
+        parent::__construct($store_id, $source_store_id, '商品关联商品', $sort);
     }
 
     /**
@@ -90,42 +49,6 @@ HTML;
     }
 
     /**
-     * 执行复制操作
-     *
-     * @return mixed
-     */
-    public function handleDuplicate()
-    {
-        //检测当前对象是否已复制完成
-        if ($this->isCheckFinished()) {
-            return true;
-        }
-
-        //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
-        if (!empty($this->dependents)) { //如果设有依赖对象
-            //检测依赖
-            $items = $this->dependentCheck();
-            if (!empty($items)) {
-                return new ecjia_error('handle_duplicate_error', __('复制依赖检测失败！', 'store'), $items);
-            }
-        }
-
-        //执行具体任务
-        $result = $this->startDuplicateProcedure();
-        if (is_ecjia_error($result)) {
-            return $result;
-        }
-
-        //标记处理完成
-        $this->markDuplicateFinished();
-
-        //记录日志
-        $this->handleAdminLog();
-
-        return true;
-    }
-
-    /**
      * 店铺复制操作的具体过程
      * @return bool|ecjia_error
      */
@@ -144,7 +67,6 @@ HTML;
                 //将数据同步到 link_goods  商品关联商品数据
                 $this->duplicateLinkGoods($old_goods_id);
             }
-
             return true;
         } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
             return new ecjia_error('duplicate_data_error', $e->getMessage());
@@ -170,46 +92,6 @@ HTML;
             RC_DB::table($this->table)->insert($items);
             //dd($items);
         });
-    }
-
-    /**
-     * 设置 goods 替换数据
-     * @return $this
-     */
-    protected function setReplacementGoodsAfterSetProgressData()
-    {
-        if (empty($this->replacement_goods)) {
-            //获取当前依赖下所有商品替换数据
-            foreach ($this->dependents as $code) {
-                $this->replacement_goods += $this->progress_data->getReplacementDataByCode($code);
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * 设置过程数据
-     * @return $this
-     */
-    protected function setProgressData()
-    {
-        if (empty($this->progress_data)) {
-            //从过程数据中提取需要用到的替换数据
-            $this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
-        }
-        return $this;
-    }
-
-    /**
-     * 获取源店铺中的 goods_id
-     * @return array
-     */
-    protected function getOldGoodsId()
-    {
-        if (empty($this->replacement_goods)) {
-            return $this->getSourceStoreDataHandler()->lists('goods_id');
-        }
-        return array_keys($this->replacement_goods);
     }
 
     /**
