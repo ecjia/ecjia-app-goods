@@ -50,11 +50,11 @@ use Royalcms\Component\Database\Eloquent\Model;
 
 defined('IN_ECJIA') or exit('No permission resources.');
 
-class StoreFranchiseeModel extends Model
+class StaffUserModel extends Model
 {
-    protected $table = 'store_franchisee';
+    protected $table = 'staff_user';
 
-    protected $primaryKey = 'store_id';
+    protected $primaryKey = 'user_id';
 
     /**
      * 可以被批量赋值的属性。
@@ -71,26 +71,6 @@ class StoreFranchiseeModel extends Model
      * @var bool
      */
     public $timestamps = false;
-
-    /**
-     * 一对多
-     * 店铺设置集合
-     */
-    public function merchants_config_collection()
-    {
-    	return $this->hasMany('Ecjia\App\Goods\Models\MerchantConfigModel', 'store_id', 'store_id');
-    }
-    
-    /**
-     * 一对多
-     * 店铺员工集合
-     */
-    public function staff_user_collection()
-    {
-    	return $this->hasMany('Ecjia\App\Goods\Models\StaffUserModel', 'store_id', 'store_id');
-    }
-    
-    
 }
 
 // end

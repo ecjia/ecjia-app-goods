@@ -44,53 +44,71 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-namespace Ecjia\App\Goods\Models;
+namespace Ecjia\App\Goods\Notifications;
 
-use Royalcms\Component\Database\Eloquent\Model;
+use Royalcms\Component\Bus\Queueable;
+use Royalcms\Component\Notifications\Notification;
 
-defined('IN_ECJIA') or exit('No permission resources.');
+// use Royalcms\Component\Notifications\Messages\MailMessage;
 
-class StoreFranchiseeModel extends Model
+/**
+ * 商品审核被拒（商品审核被拒发消息通知给商品所属店铺店长）
+ */
+class GoodsCheckRefused extends Notification
 {
-    protected $table = 'store_franchisee';
+    use Queueable;
 
-    protected $primaryKey = 'store_id';
+    private $notifiable_data;
 
     /**
-     * 可以被批量赋值的属性。
+     * Create a new notification instance.
      *
-     * @var array
+     * @return void
      */
-    protected $fillable = [
-
-    ];
+    public function __construct($goods_checkrefused_data)
+    {
+        //
+        $this->notifiable_data = $goods_checkrefused_data;
+    }
 
     /**
-     * 该模型是否被自动维护时间戳
+     * Get the notification's delivery channels.
      *
-     * @var bool
+     * @param  mixed $notifiable
+     * @return array
      */
-    public $timestamps = false;
+    public function via($notifiable)
+    {
+        return array('database');
+    }
+
+//     /**
+//      * Get the mail representation of the notification.
+//      *
+//      * @param  mixed  $notifiable
+//      * @return \Royalcms\Component\Notifications\Messages\MailMessage
+//      */
+//     public function toMail($notifiable)
+//     {
+//         return with(new MailMessage)
+//                     ->line('The introduction to the notification.')
+//                     ->action('Notification Action', 'https://ecjia.com')
+//                     ->line('Thank you for using our application!');
+//     }
 
     /**
-     * 一对多
-     * 店铺设置集合
+     * Get the array representation of the notification.
+     *
+     * @param  mixed $notifiable
+     * @return array
      */
-    public function merchants_config_collection()
+    public function toArray()
     {
-    	return $this->hasMany('Ecjia\App\Goods\Models\MerchantConfigModel', 'store_id', 'store_id');
+//         return array(
+//         	'user_name' => 'admin',
+//             'order_sn' => '12344421111233332',
+//             'goods_name' => 'test',
+//         );
+        return $this->notifiable_data;
     }
-    
-    /**
-     * 一对多
-     * 店铺员工集合
-     */
-    public function staff_user_collection()
-    {
-    	return $this->hasMany('Ecjia\App\Goods\Models\StaffUserModel', 'store_id', 'store_id');
-    }
-    
-    
 }
-
-// end
