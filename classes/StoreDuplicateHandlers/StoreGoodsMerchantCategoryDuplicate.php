@@ -30,12 +30,6 @@ class StoreGoodsMerchantCategoryDuplicate extends StoreDuplicateAbstract
      */
     protected $code = 'store_goods_merchant_category_duplicate';
 
-    /**
-     * 排序
-     * @var int
-     */
-    protected $sort = 13;
-
     protected $dependents = [
         'store_goods_parameter_duplicate',
         'store_goods_specification_duplicate',
@@ -47,11 +41,17 @@ class StoreGoodsMerchantCategoryDuplicate extends StoreDuplicateAbstract
      */
     private $merchant_category_replacement = [];
 
-    public function __construct($store_id, $source_store_id)
-    {
-        $this->name = __('店铺商品分类', 'goods');
+    protected $rank_order = 3;
 
-        parent::__construct($store_id, $source_store_id);
+    protected $rank_total = 11;
+
+    protected $rank = '';
+
+    public function __construct($store_id, $source_store_id, $sort = 13)
+    {
+        parent::__construct($store_id, $source_store_id, $sort);
+        $this->name = __('店铺商品分类', 'goods');
+        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
