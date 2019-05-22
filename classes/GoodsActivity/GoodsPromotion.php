@@ -468,6 +468,33 @@ class GoodsPromotion
     }
     
     /**
+     * 获得指定的规格的价格
+     *
+     * @access public
+     * @param mix $spec
+     *        	规格ID的数组或者逗号分隔的字符串
+     * @return void
+     */
+    private function spec_price($spec) {
+    	if (! empty ( $spec )) {
+    		if (is_array ( $spec )) {
+    			foreach ( $spec as $key => $val ) {
+    				$spec [$key] = addslashes ( $val );
+    			}
+    		} else {
+    			$spec = addslashes ( $spec );
+    		}
+    		$db = \RC_DB::table('goods_attr');
+    		$rs = $db->whereIn('goods_attr_id', $spec)->select(\RC_DB::raw('sum(attr_price) as attr_price'))->first();
+    		$price = $rs['attr_price'];
+    	} else {
+    		$price = 0;
+    	}
+    
+    	return $price;
+    }
+    
+    /**
      * 商品活动购买记录信息
      * @return array
      */
