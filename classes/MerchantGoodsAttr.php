@@ -329,7 +329,7 @@ class MerchantGoodsAttr {
 	 * 
 	 */
 	public static function get_template_info($template_id) {
-		$template_info = RC_DB::table('goods_type')->where('cat_id', $template_id)->where('store_id', $_SESSION['store_id'])->first();
+		$template_info = RC_DB::table('goods_type')->where('cat_id', $template_id)->first();
 		
 		return $template_info;
 	}
