@@ -1683,7 +1683,7 @@ class admin extends ecjia_admin {
             return new ecjia_error('no_goods', __('未检测到此商品', 'goods'));
         }
         /* 如果没有输入商品货号则自动生成一个商品货号 */
-        if (empty($goods_sn)) {
+//        if (empty($goods_sn)) {
             $max_id = $this->db_goods->goods_find('', 'MAX(goods_id) + 1|max');
             if (empty($max_id['max'])) {
                 $goods_sn_bool = true;
@@ -1692,13 +1692,13 @@ class admin extends ecjia_admin {
                 $goods_sn = generate_goods_sn($max_id['max']);
             }
             $_POST['goods_sn'] = $goods_sn;
-        } else {
-            /* 检查货号是否重复 */
-            $count = $this->db_goods->is_only(array('goods_sn' => $goods_sn, 'is_delete' => 0));
-            if ($count > 0) {
-                return $this->showmessage(__('您输入的货号已存在，请换一个', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-            }
-        }
+//        } else {
+//            /* 检查货号是否重复 */
+//            $count = $this->db_goods->is_only(array('goods_sn' => $goods_sn, 'is_delete' => 0));
+//            if ($count > 0) {
+//                return $this->showmessage(__('您输入的货号已存在，请换一个', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+//            }
+//        }
         
         $goods['goods_name'] = $goods_name;
         $goods['goods_sn'] = $goods_sn;
