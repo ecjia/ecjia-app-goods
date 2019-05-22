@@ -44,6 +44,9 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+use Ecjia\App\Goods\Notifications\GoodsCheckRefused;
+use Ecjia\App\Goods\Notifications\GoodsCheckSuccess;
+
 defined('IN_ECJIA') or exit('No permission resources.');
 
 /**
@@ -3392,7 +3395,7 @@ class admin extends ecjia_admin {
 		$goods_id       = intval($_POST['goods_id']);
 		$review_content = trim($_POST['review_content']);
 		$review_status  = intval($_POST['review_status']);
-
+		
 		if (empty($review_content)) {
 			return $this->showmessage(__('操作备注不能为空', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR,array('url' => RC_Uri::url('goods/admin/check')));
 		}
@@ -3414,9 +3417,12 @@ class admin extends ecjia_admin {
 		);
 		RC_DB::table('goods_review_log')->insertGetId($data_action);
 		
-		if($review_status === 3) {
+		//商品审核消息通知
+		$this->send_notifications($goods_id, $review_status);
+		
+		if($review_status === 3) {//审核通过
 			return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/init')));
-		} else {
+		} else {//审核被拒
 			return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/check', array('type'=>1))));
 		}
 	}
@@ -3551,6 +3557,61 @@ class admin extends ecjia_admin {
 		}
 	
 		return $rows;
+	}
+	
+	private function send_notifications($goods_id, $review_status)
+	{
+		//商品基本信息
+		$GoodsBasicInFo = new Ecjia\App\Goods\Goods\GoodsBasicInFo($goods_id);
+		$goods = $GoodsBasicInFo->goodsInFo();
+		/* 商品审核通知（默认通知店长）*/
+		if ($goods->store_franchisee_model) {
+			if ($goods->store_franchisee_model->staff_user_collection) {
+				$staff_user_collection = $goods->store_franchisee_model->staff_user_collection;
+				$staff_user = $staff_user_collection->where('parent_id', 0)->first();
+				if (!empty($staff_user)) {
+					/* 通知记录*/
+					$orm_staff_user_db = RC_Model::model('express/orm_staff_user_model');
+					$staff_user_ob = $orm_staff_user_db->find($staff_user['user_id']);
+					if ($review_status === 3) { //审核通过消息通知
+						try {
+							$goods_check_data = array(
+									'title'	=> __('商品审核通过', 'goods'),
+									'body'	=> __('您有商品审核通过，商品货号为：', 'goods').$goods['goods_sn'],
+									'data'	=> array(
+											'goods_id'		         => $goods['goods_id'],
+											'goods_sn'		         => $goods['goods_sn'],
+											'goods_name'	         => $goods['goods_name']
+									),
+							);
+		
+							$push_goods_placed = new GoodsCheckSuccess($goods_check_data);
+							RC_Notification::send($staff_user_ob, $push_goods_placed);
+						} catch (PDOException $e) {
+							RC_Logger::getLogger('info')->error($e);
+						}
+					} else {//审核被拒消息通知
+						try {
+							$goods_check_data = array(
+									'title'	=> __('商品审核被拒', 'goods'),
+									'body'	=> __('您有商品审核被拒，商品货号为：', 'goods').$goods['goods_sn'],
+									'data'	=> array(
+											'goods_id'		         => $goods['goods_id'],
+											'goods_sn'		         => $goods['goods_sn'],
+											'goods_name'	         => $goods['goods_name'],
+									),
+							);
+		
+							$push_goods_placed = new GoodsCheckRefused($goods_check_data);
+							RC_Notification::send($staff_user_ob, $push_goods_placed);
+						} catch (PDOException $e) {
+							RC_Logger::getLogger('info')->error($e);
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 }
 
