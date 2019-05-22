@@ -2292,7 +2292,7 @@ class merchant extends ecjia_merchant {
             $info['product_original_img'] 	= goods_imageutils::getAbsoluteUrl($info['product_original_img']);
         }
 
-        $this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/product_list', ['goods_id' => $goods_id]), 'text' => __('商品编辑', 'goods')));
+        $this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/edit_goods_specification', ['goods_id' => $goods_id]), 'text' => __('商品编辑', 'goods')));
 
 
         $this->assign('goods_name', 		sprintf(__('商品名称：%s', 'goods'), $goods['goods_name']));
@@ -3041,7 +3041,8 @@ class merchant extends ecjia_merchant {
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('parameter_id' => 0));
 			
 		//删除关联的规格属性
-		RC_DB::table('goods_attr')->where(array('goods_id' => $goods_id))->delete();
+		RC_DB::table('goods_attr')->where(array('goods_id' => $goods_id))->where(array('cat_type' => 'parameter'))->delete();
+		
 		return $this->showmessage(__('清除相关数据成功，您可以重新进行更换参数模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id))));
 	}
 	
@@ -3361,7 +3362,7 @@ class merchant extends ecjia_merchant {
 			RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('specification_id' => 0));
 			
  			//删除关联的规格属性
-			RC_DB::table('goods_attr')->where(array('goods_id' => $goods_id))->delete();
+			RC_DB::table('goods_attr')->where(array('goods_id' => $goods_id))->where(array('cat_type' => 'specification'))->delete();
 			
 			//删除货品相关
 			foreach($product_list as $value) {

@@ -9,6 +9,7 @@
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Goods\Models\MerchantCategoryModel;
+use Ecjia\App\Store\StoreDuplicate\StoreCopyImage;
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
 use RC_DB;
 use RC_Api;
@@ -17,7 +18,7 @@ use ecjia_error;
 use Royalcms\Component\Support\Collection;
 
 /**
- * 复制店铺中的商品分类（无图片字段）
+ * 复制店铺中的商品分类（有图片字段）
  *
  * Class StoreGoodsCategoryDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
@@ -256,6 +257,31 @@ HTML;
         //解决外键带来的问题数据
 
 
+    }
+
+    /**
+     * 复制图片
+     * cat_image
+     *
+     * @param $item
+     */
+    protected function copyImage($path)
+    {
+        /**
+         * 数据样式：
+         * merchant/62/data/category/1497203993901325255.png
+         */
+        try {
+            $path = (new StoreCopyImage($this->store_id, $this->source_store_id))->copyMerchantConfigImage($path);
+        }
+        catch (\League\Flysystem\FileNotFoundException $e) {
+
+            $path = '';
+
+            ecjia_log_warning($e->getMessage());
+        }
+
+        return $path;
     }
 
     /**
