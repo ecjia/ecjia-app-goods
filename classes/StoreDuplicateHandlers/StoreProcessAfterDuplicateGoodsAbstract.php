@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
-
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
 use ecjia_error;
@@ -10,18 +8,21 @@ use RC_DB;
 
 /**
  * 主商品数据复制后的后续操作行为抽象
- * Class StoreProcessAfterCopyGoodsAbstract
+ *
+ * Class StoreProcessAfterDuplicateGoodsAbstract
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
  */
-abstract class StoreProcessAfterCopyGoodsAbstract extends StoreDuplicateAbstract
+abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbstract
 {
-
     protected $dependents = [
         'store_selling_goods_duplicate',
         'store_cashier_goods_duplicate'
     ];
 
-
+    /**
+     * 过程数据对象
+     * @var null|object
+     */
     protected $progress_data;
 
     /**
@@ -30,13 +31,19 @@ abstract class StoreProcessAfterCopyGoodsAbstract extends StoreDuplicateAbstract
      */
     protected $replacement_goods = [];
 
+    public function __construct($store_id, $source_store_id, $name, $sort = 0)
+    {
+        $this->name = __($name, 'goods');
+        $this->sort = $sort;
+        parent::__construct($store_id, $source_store_id);
+    }
 
     /**
      * 获取源店铺数据操作对象
      */
     public function getSourceStoreDataHandler()
     {
-        return RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '=', 0);
+        return RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', 0);
     }
 
     /**
@@ -44,9 +51,7 @@ abstract class StoreProcessAfterCopyGoodsAbstract extends StoreDuplicateAbstract
      */
     public function handlePrintData()
     {
-        $count = $this->handleCount();
-        $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>%s', 'goods'), $count, $this->name);
-
+        $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>%s', 'goods'), $this->handleCount(), $this->name);
         return <<<HTML
 <span class="controls-info">{$text}</span>
 HTML;
@@ -88,6 +93,7 @@ HTML;
         return true;
     }
 
+    abstract protected function startDuplicateProcedure();
     /**
      * 设置 goods 替换数据
      * @return $this

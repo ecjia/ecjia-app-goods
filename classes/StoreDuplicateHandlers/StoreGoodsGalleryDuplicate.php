@@ -2,7 +2,6 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
-use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
 use ecjia_error;
 use RC_DB;
 use RC_Api;
@@ -10,11 +9,13 @@ use ecjia_admin;
 
 /**
  * 复制店铺中商品相册数据
+ *
  * @todo 图片字段的处理 img_url img_desc thumb_url img_original
+ *
  * Class StoreGoodsGalleryDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
  */
-class StoreGoodsGalleryDuplicate extends StoreAfterCopyProcessAbstract
+class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 {
     /**
      * 代号标识
@@ -22,19 +23,13 @@ class StoreGoodsGalleryDuplicate extends StoreAfterCopyProcessAbstract
      */
     protected $code = 'store_goods_gallery_duplicate';
 
-    /**
-     * 排序RC_Hook::apply_filters(
-     * @var int
-     */
-    protected $sort = 20;
-
-
     private $replacement_goods_gallery = [];
 
-    public function __construct($store_id, $source_store_id)
+    private $table = 'goods_gallery';
+
+    public function __construct($store_id, $source_store_id, $sort = 20)
     {
-        $this->name = __('商品相册', 'goods');
-        parent::__construct($store_id, $source_store_id);
+        parent::__construct($store_id, $source_store_id, '商品相册', $sort);
     }
 
     /**
@@ -52,7 +47,7 @@ class StoreGoodsGalleryDuplicate extends StoreAfterCopyProcessAbstract
         // 统计数据条数
         $old_goods_id = $this->getOldGoodsId();
         if (!empty($old_goods_id)) {
-            $this->count = RC_DB::table('goods_gallery')->whereIn('goods_id', $old_goods_id)->count();
+            $this->count = RC_DB::table($this->table)->whereIn('goods_id', $old_goods_id)->count();
         }
         return $this->count;
     }
@@ -98,7 +93,7 @@ class StoreGoodsGalleryDuplicate extends StoreAfterCopyProcessAbstract
      */
     private function duplicateGoodsGallery($old_goods_id, $replacement_products)
     {
-        RC_DB::table('goods_gallery')->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) use ($replacement_products) {
+        RC_DB::table($this->table)->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) use ($replacement_products) {
             foreach ($items as $item) {
                 $img_id = $item['img_id'];
                 unset($item['img_id']);
@@ -118,7 +113,7 @@ class StoreGoodsGalleryDuplicate extends StoreAfterCopyProcessAbstract
 
                 //将数据插入到新店铺
                 //$new_img_id = $img_id + 1;
-                $new_img_id = RC_DB::table('goods_gallery')->insertGetId($item);
+                $new_img_id = RC_DB::table($this->table)->insertGetId($item);
 
                 //存储替换记录
                 $this->replacement_goods_gallery[$img_id] = $new_img_id;

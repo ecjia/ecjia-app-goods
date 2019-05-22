@@ -17,8 +17,10 @@ use RC_Time;
 
 /**
  * 复制店铺中的在售商品
- * @todo 图片字段的处理 attr_img_file attr_img_site attr_gallery_flie
- * @todo 图片字段的处理 product_thumb product_img product_original_img product_desc
+ *
+ * @todo goods_attr 表的图片字段的处理 attr_img_file attr_img_site attr_gallery_flie
+ * @todo products 表的图片字段的处理 product_thumb product_img product_original_img product_desc
+ *
  * Class StoreSellingGoodsDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
  */

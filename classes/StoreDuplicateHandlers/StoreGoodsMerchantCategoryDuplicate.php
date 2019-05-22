@@ -10,7 +10,6 @@ namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Goods\Models\MerchantCategoryModel;
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
-use RC_Uri;
 use RC_DB;
 use RC_Api;
 use ecjia_admin;
@@ -18,7 +17,7 @@ use ecjia_error;
 use Royalcms\Component\Support\Collection;
 
 /**
- * 复制店铺中的商品分类
+ * 复制店铺中的商品分类（无图片字段）
  *
  * Class StoreGoodsCategoryDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
