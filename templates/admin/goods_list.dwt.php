@@ -198,7 +198,7 @@
 							{/if}
 							
 							{if $action neq 'check'}
-								<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_list&goods_id={$goods.goods_id}" >{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
+								<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_detail&goods_id={$goods.goods_id}" >{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
 								<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
 								data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}" data-costprice="{$goods.cost_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
 								<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
