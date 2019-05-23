@@ -97,6 +97,7 @@
                                         <input name="product_id" type="hidden" value="{$info.product_id}">
                                         <label class="control-label col-lg-3"> </label>
                                     <input type="submit" name="submit" value="{t domain="goods"}完成{/t}" class="btn btn-info" />
+                                    <a target="_blank" class="btn btn-info" href='{url path="goods/merchant/product_preview" args="product_id={$info.product_id}&goods_id={$info.goods_id}"}'>{t domain='goods'}预览{/t}</a>
                                     </div>
                                 </div>
 
