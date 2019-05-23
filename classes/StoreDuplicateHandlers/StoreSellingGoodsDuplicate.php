@@ -439,6 +439,33 @@ HTML;
         return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
+    protected function copyGoodsGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
+    {
+        $copy = new CopyGoodsImage($goods_id, $product_id);
+
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
+
+        return [$new_original_path, $new_img_path, $new_thumb_path];
+    }
+
+    protected function copyProductImage($goods_id, $product_id, $original_path, $img_path, $thumb_path)
+    {
+        $copy = new CopyGoodsImage($goods_id, $product_id);
+
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
+
+        return [$new_original_path, $new_img_path, $new_thumb_path];
+    }
+
+    protected function copyProductGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
+    {
+        $copy = new CopyGoodsImage($goods_id, $product_id);
+
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
+
+        return [$new_original_path, $new_img_path, $new_thumb_path];
+    }
+
     /**
      * 复制缩编器内容中的图片
      *
