@@ -196,21 +196,27 @@
 							<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_detail&goods_id={$goods.goods_id}" >{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
 							{/if}
 							
-							{if $action neq 'check'}
-								<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
+							{if $action eq 'sale' or $action eq 'finish' or $action eq 'obtained'}
+							<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
 								data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}" data-costprice="{$goods.cost_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
+							{/if}
+							
+							{if $action neq 'check'}
 								<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
 							{/if}
 							
-							{if $goods.review_status eq 1}
-								<a data-toggle="modal" data-backdrop="static" href="#myModal2" goods-id="{$goods.goods_id}">{t domain='goods'}审核{/t}</a>
-							{/if}
-							
-							{if $goods.review_status eq 2}
-								<a  href="#review_log" data-toggle="modal" data-type="log" data-backdrop="static"  goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/review_log')}">{t domain='goods'}查看审核{/t}</a>
+							{if $action eq 'check'}
+								{if $goods.review_status eq 1}
+									<a data-toggle="modal" data-backdrop="static" href="#myModal2" goods-id="{$goods.goods_id}">{t domain='goods'}审核{/t}</a>
+								{/if}
+								
+								{if $goods.review_status eq 2}
+									<a  href="#review_log" data-toggle="modal" data-type="log" data-backdrop="static"  goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/review_log')}">{t domain='goods'}查看审核{/t}</a>
+								{/if}
 							{/if}
 						</div>
 					</td>	
+					
 					{if $action neq 'check'}<td>{$goods.goods_sn}</td>{/if}
 					
 					<td>{$goods.shop_price}</td>
