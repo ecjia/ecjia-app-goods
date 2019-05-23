@@ -2,6 +2,7 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
+use Ecjia\App\Goods\GoodsImage\CopyGoodsImage;
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
 use ecjia_admin;
 use ecjia_error;
@@ -427,14 +428,15 @@ HTML;
      *
      * @param $path
      *
-     * @return string
+     * @return []
      */
-    protected function copyGoodsImage($original_path, $img_path, $thumb_path)
+    protected function copyGoodsImage($goods_id, $product_id, $original_path, $img_path, $thumb_path)
     {
+        $copy = new CopyGoodsImage($goods_id, $product_id);
 
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
 
-
-        return [$original_path, $img_path, $thumb_path];
+        return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
     /**
@@ -446,8 +448,9 @@ HTML;
      */
     protected function copyImageForContent($content)
     {
-
-        return $content;
+        $new_content = CopyGoodsImage::copyDescriptionContentImages($content);
+        
+        return $new_content;
     }
 
     /**
