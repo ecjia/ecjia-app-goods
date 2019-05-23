@@ -112,7 +112,8 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
     protected function setProgressData()
     {
         if (empty($this->progress_data)) {
-            $this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            //$this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            $this->progress_data = $this->getProgressData();
         }
         return $this;
     }
