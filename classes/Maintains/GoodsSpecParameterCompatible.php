@@ -46,10 +46,10 @@
 //
 namespace Ecjia\App\Goods\Maintains;
 
+use Ecjia\App\Goods\Models\GoodsAttrModel;
 use Ecjia\App\Goods\Models\GoodsModel;
 use Ecjia\App\Goods\Models\GoodsTypeModel;
 use Ecjia\App\Maintain\AbstractCommand;
-use RC_DB;
 
 class GoodsSpecParameterCompatible extends AbstractCommand
 {
@@ -75,7 +75,7 @@ class GoodsSpecParameterCompatible extends AbstractCommand
      */
     public function __construct()
     {
-    	$this->name = __('更新商品规格参数老数据兼容', 'goods');
+    	$this->name = __('商品规格参数更新', 'goods');
     	$this->description = __('更新商品规格参数老数据兼容', 'goods');
     }
 
@@ -93,16 +93,36 @@ class GoodsSpecParameterCompatible extends AbstractCommand
 
         $this->processGoodsTypeTable();
 
-        $this->processGoods();
+        $this->processGoodsTable();
 
-
-
+        $this->processGoodsAttrTable();
         
         return true;
     }
 
+    private function processGoodsAttrTable()
+    {
 
-    private function processGoods()
+        $count = GoodsAttrModel::whereNull('cat_type')->count();
+
+        while ($count) {
+
+            GoodsAttrModel::with('attribute_model')->whereNull('cat_type')->chunk(50, function ($items) {
+
+                $items->map(function ($model) {
+                    $model->cat_type = $model->attribute_model->attr_type > 0 ? 'specification' : 'parameter';
+                    $model->save();
+                });
+
+            });
+
+            $count = GoodsAttrModel::whereNull('cat_type')->count();
+        }
+
+    }
+
+
+    private function processGoodsTable()
     {
 
         $count = GoodsModel::where('goods_type', '<>', 0)->where('specification_id', 0)->where('parameter_id', 0)->count();
