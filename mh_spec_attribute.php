@@ -110,7 +110,7 @@ class mh_spec_attribute extends ecjia_merchant {
 		}
 		$this->assign('attr_list', $attr_list);
 		
-		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsAttr::goods_type_list_select($cat_id, 'specification', $goods_type_info['store_id']));
+		$this->assign('goods_type_list', Ecjia\App\Goods\MerchantGoodsAttr::goods_type_list_select($cat_id, 'specification'));
 		
 		$this->assign('form_action', RC_Uri::url('goods/mh_spec_attribute/batch'));
 		

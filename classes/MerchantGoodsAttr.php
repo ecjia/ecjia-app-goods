@@ -68,32 +68,29 @@ class MerchantGoodsAttr {
 	 * @param   boolean     $enabled    激活状态 
 	 * @return  string
 	 */
-	public static function goods_type_list_select($selected, $type, $store_id) {
-		
-		$db_goods_type =  RC_DB::table('goods_type')
+	public static function goods_type_list_select($selected, $type) {
+		$data = RC_DB::table('goods_type')
+		->whereIn('store_id', [0, $_SESSION['store_id']])
 		->where('cat_type', $type)
-		->where(function ($query) {
-			$query->where(function ($query) {
-				$query->where('store_id', $_SESSION['store_id']);
-			})->orWhere(function ($query) {
-				$query->where('store_id', 0);
-			});
-		});
-
-		if ($store_id) {
-			$db_goods_type->where('enabled', 1);
-		} else {
-			$db_goods_type->where('enabled', 0);
-		}
-		
-		$data = $db_goods_type->select('cat_id', 'cat_name')->get();
+		->select('cat_id', 'cat_name', 'store_id', 'enabled')
+		->orderBy('store_id', 'desc')
+		->get();
 		
 		$opt = '';
 		if (!empty($data)) {
 			foreach ($data as $row){
-				$opt .= "<option value='$row[cat_id]'";
-				$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
-				$opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+				if($row['store_id']===0 && $row['enabled']===0) {
+					unset($row);
+				} else {
+					if($row['store_id']===0) {
+						$title = ' [平台]';
+					} else {
+						$title = ' [商家]';
+					}
+					$opt .= "<option value='$row[cat_id]'";
+					$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+					$opt .= '>' . htmlspecialchars($row['cat_name']). $title .'</option>';
+				}
 			}
 		}
 		return $opt;
@@ -317,6 +314,7 @@ class MerchantGoodsAttr {
 			->where('cat_type', $type)
 			->where('enabled', 1)
 			->select('cat_id', 'cat_name', 'store_id')
+			->orderBy('store_id', 'desc')
 			->get();
 		
 		$opt = '';
