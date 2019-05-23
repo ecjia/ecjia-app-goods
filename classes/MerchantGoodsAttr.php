@@ -315,6 +315,7 @@ class MerchantGoodsAttr {
 		$data = RC_DB::table('goods_type')
 			->whereIn('store_id', [0, $_SESSION['store_id']])
 			->where('cat_type', $type)
+			->where('enabled', 1)
 			->select('cat_id', 'cat_name', 'store_id')
 			->get();
 		
