@@ -369,16 +369,20 @@ class GoodsAttr {
     public static function goodslib_build_attr_text($cat_id, $goods_id = 0) {
         $attr = self::get_goodslib_cat_attr_list($cat_id, $goods_id);
         $text = '';
-
         if (!empty($attr)) {
             foreach ($attr as $key => $val) {
-                $text .= $val['attr_name'] . ':';
                 if($val['attr_value']) {
-                    foreach ($val['attr_value'] as $attr_value) {
-                        $text .= htmlspecialchars($attr_value);
+                    if(count($val['attr_value']) > 1 || !empty($val['attr_value'][0])) {
+                        $text .= $val['attr_name'] . ':';
+                        $i = 0;
+                        foreach ($val['attr_value'] as $attr_value) {
+                            if($i > 0) $text .= ',';
+                            $text .= htmlspecialchars($attr_value);
+                            $i++;
+                        }
+                        $text .= "\n";
                     }
                 }
-                $text .= "\n";
             }
         }
         return $text;
