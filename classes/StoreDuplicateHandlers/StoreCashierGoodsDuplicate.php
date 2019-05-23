@@ -21,6 +21,7 @@ class StoreCashierGoodsDuplicate extends StoreSellingGoodsDuplicate
     protected $code = 'store_cashier_goods_duplicate';
 
     protected $rank_order = 5;
+
     public function __construct($store_id, $source_store_id, $sort = 15)
     {
         parent::__construct($store_id, $source_store_id, '在售收银台商品', $sort);
@@ -51,17 +52,12 @@ class StoreCashierGoodsDuplicate extends StoreSellingGoodsDuplicate
             //存储 goods 相关替换数据
             $this->setReplacementData($this->getCode(), ['goods' => $this->replacement_goods]);
 
+            return true;
         } catch (QueryException $e) {
-            $this->enableException();
             ecjia_log_warning($e->getMessage());
-            $this->err_msg .= $e->getMessage();
+            return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
 
-        if ($this->exception) {
-            $this->disableException();
-            return new ecjia_error('duplicate_data_error', $this->err_msg);
-        }
-        return true;
     }
 
 }

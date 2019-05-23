@@ -21,6 +21,7 @@ class StoreBulkGoodsDuplicate extends StoreSellingGoodsDuplicate
     protected $code = 'store_bulk_goods_duplicate';
 
     protected $rank_order = 6;
+
     public function __construct($store_id, $source_store_id, $sort = 16)
     {
         parent::__construct($store_id, $source_store_id, '在售散装商品', $sort);
@@ -51,17 +52,11 @@ class StoreBulkGoodsDuplicate extends StoreSellingGoodsDuplicate
             //存储 goods 相关替换数据
             $this->setReplacementData($this->getCode(), ['goods' => $this->replacement_goods]);
 
+            return true;
         } catch (QueryException $e) {
-            $this->enableException();
-            $this->err_msg .= $e->getMessage();
+            ecjia_log_warning($e->getMessage());
+            return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
-
-        if ($this->exception) {
-            $this->disableException();
-            ecjia_log_error($this->err_msg);
-            return new ecjia_error('duplicate_data_error', $this->err_msg);
-        }
-        return true;
     }
 
 }

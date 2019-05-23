@@ -4,8 +4,6 @@ namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use ecjia_error;
 use RC_DB;
-use RC_Api;
-use ecjia_admin;
 use Royalcms\Component\Database\QueryException;
 
 /**
@@ -59,7 +57,7 @@ class StoreGoodsCatDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
             return true;
         } catch (QueryException $e) {
-            ecjia_log_error($e->getMessage());
+            ecjia_log_warning($e->getMessage());
             return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
     }
