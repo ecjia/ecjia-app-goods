@@ -38,7 +38,6 @@
 					<li class="{if !$smarty.get.store_type}active{/if}"><a class="data-pjax" href='{url path="goods/mh_spec/init" args="{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}"}'>{t domain="goods"}店铺规格{/t} <span class="badge badge-info">{if $type_count.merchant}{$type_count.merchant}{else}0{/if}</span> </a></li>
 					<li class="{if $smarty.get.store_type eq 1}active{/if}"><a class="data-pjax" href='{url path="goods/mh_spec/init" args="store_type=1{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}"}'>{t domain="goods"}平台规格{/t} <span class="badge badge-info">{if $type_count.platform}{$type_count.platform}{else}0{/if}</span> </a></li>
 				</ul>
-				<div class="clearfix"></div>
 				
 				<form class="form-inline pull-right" name="searchForm" method="post" action="{$form_search}{if $filter.store_type}&type={$filter.store_type}{/if}">
 					<div class="screen f_r">
