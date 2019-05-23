@@ -3,8 +3,11 @@
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
+use ecjia_admin;
 use ecjia_error;
+use RC_Api;
 use RC_DB;
+use Royalcms\Component\Database\QueryException;
 
 /**
  * 主商品数据复制后的后续操作行为抽象
@@ -44,6 +47,8 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
         $this->name = __($name, 'goods');
         $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
+
+    abstract protected function getTableName();
 
     /**
      * 获取源店铺数据操作对象
@@ -138,11 +143,37 @@ HTML;
     protected function getOldGoodsId()
     {
         if (empty($this->replacement_goods)) {
-
-            return $this->getSourceStoreDataHandler()->lists('goods_id');
+            try {
+                return $this->getSourceStoreDataHandler()->lists('goods_id');
+            } catch (QueryException $e) {
+                ecjia_log_warning($e->getMessage());
+            }
         }
         return array_keys($this->replacement_goods);
     }
 
+    /**
+     * 统计数据条数并获取
+     *
+     * @return mixed
+     */
+    public function handleCount()
+    {
+        //如果已经统计过，直接返回统计过的条数
+        if ($this->count) {
+            return $this->count;
+        }
+
+        // 统计数据条数
+        $old_goods_id = $this->getOldGoodsId();
+        if (!empty($old_goods_id)) {
+            try {
+                $this->count = RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->count();
+            } catch (QueryException $e) {
+                ecjia_log_warning($e->getMessage());
+            }
+        }
+        return $this->count;
+    }
 
 }

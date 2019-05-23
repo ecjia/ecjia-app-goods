@@ -71,6 +71,16 @@ class MerchantGoodsAttr {
 	public static function goods_type_select_list($selected, $type, $enabled = false) {
 		
 		$db_goods_type = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id']);
+		
+		$db_goods_type =  RC_DB::table('goods_type')
+		->where('cat_type', $type)
+		->where(function ($query) {
+			$query->where(function ($query) {
+				$query->where('store_id', $_SESSION['store_id']);
+			})->orWhere(function ($query) {
+				$query->where('store_id', 0);
+			});
+		});
 
 		if ($enabled) {
 			$db_goods_type->where('enabled', 1);
