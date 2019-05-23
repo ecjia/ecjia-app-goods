@@ -29,16 +29,17 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
      */
     protected $code = 'store_goods_parameter_duplicate';
 
-    /**
-     * 排序
-     * @var int
-     */
-    protected $sort = 12;
+    protected $rank_order = 2;
 
-    public function __construct($store_id, $source_store_id)
+    protected $rank_total = 11;
+
+    protected $rank = '';
+
+    public function __construct($store_id, $source_store_id, $sort = 12)
     {
+        parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __('店铺商品参数', 'goods');
-        parent::__construct($store_id, $source_store_id);
+        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**

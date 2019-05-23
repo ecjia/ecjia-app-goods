@@ -29,16 +29,17 @@ class StoreGoodsSpecificationDuplicate extends StoreDuplicateAbstract
      */
     protected $code = 'store_goods_specification_duplicate';
 
-    /**
-     * 排序
-     * @var int
-     */
-    protected $sort = 11;
+    protected $rank_order = 1;
 
-    public function __construct($store_id, $source_store_id)
+    protected $rank_total = 11;
+
+    protected $rank = '';
+
+    public function __construct($store_id, $source_store_id, $sort = 11)
     {
+        parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __('店铺商品规格', 'goods');
-        parent::__construct($store_id, $source_store_id);
+        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**

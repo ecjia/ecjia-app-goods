@@ -21,6 +21,7 @@ class StoreBulkGoodsDuplicate extends StoreSellingGoodsDuplicate
      */
     protected $code = 'store_bulk_goods_duplicate';
 
+    protected $rank_order = 6;
     public function __construct($store_id, $source_store_id, $sort = 16)
     {
         parent::__construct($store_id, $source_store_id, '在售散装商品', $sort);

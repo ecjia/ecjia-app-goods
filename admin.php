@@ -466,7 +466,7 @@ class admin extends ecjia_admin {
 	public function check() {
 		$this->admin_priv('goods_manage');
 		
-		$this->assign('list_url', RC_Uri::url('goods/admin/obtained'));
+		$this->assign('list_url', RC_Uri::url('goods/admin/check'));
 
 		$this->assign('ur_here', __('审核商品列表', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('审核商品列表', 'goods')));

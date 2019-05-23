@@ -23,6 +23,8 @@ class StoreGoodsCatDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     private $table = 'goods_cat';
 
+    protected $rank_order = 11;
+
     public function __construct($store_id, $source_store_id, $sort = 21)
     {
         parent::__construct($store_id, $source_store_id, '商品扩展分类', $sort);
