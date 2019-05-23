@@ -418,7 +418,6 @@ class MerchantGoodsAttr {
 	public static function build_specification_html($cat_id, $goods_id = 0) {
 	
 		$attr = self::get_cat_attr_list($cat_id, $goods_id);
-	
 		$html = '';
 		$spec = 0;
 		
@@ -426,6 +425,7 @@ class MerchantGoodsAttr {
 			foreach ($attr as $key => $val) {
 				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
 				$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
+				$attr_values = collect($attr_values)->filter()->all();
 				$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
 				foreach ($attr_values as $opt) {
 					$html .= '<div class="check-box">';
