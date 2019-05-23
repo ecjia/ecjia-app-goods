@@ -282,26 +282,5 @@ HTML;
         return $path;
     }
 
-    /**
-     * 返回操作日志编写
-     *
-     * @return mixed
-     */
-    public function handleAdminLog()
-    {
-        \Ecjia\App\Store\Helper::assign_adminlog_content();
-
-        $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
-        $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
-
-        //$merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
-
-        $store_merchant_name = empty($store_info) ? '' : $store_info['merchants_name'];
-        $source_store_merchant_name = empty($source_store_info) ? '' : $source_store_info['merchants_name'];
-
-        $content = sprintf(__('将【%s】店铺所有%s复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
-        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
-    }
-
 
 }
