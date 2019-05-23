@@ -25,12 +25,15 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     private $replacement_goods_gallery = [];
 
-    private $table = 'goods_gallery';
-
     protected $rank_order = 7;
     public function __construct($store_id, $source_store_id, $sort = 17)
     {
         parent::__construct($store_id, $source_store_id, '商品相册', $sort);
+    }
+
+    protected function getTableName()
+    {
+        return 'goods_gallery';
     }
 
     /**
@@ -48,7 +51,7 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
         // 统计数据条数
         $old_goods_id = $this->getOldGoodsId();
         if (!empty($old_goods_id)) {
-            $this->count = RC_DB::table($this->table)->whereIn('goods_id', $old_goods_id)->count();
+            $this->count = RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->count();
         }
         return $this->count;
     }
@@ -94,7 +97,7 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
      */
     private function duplicateGoodsGallery($old_goods_id, $replacement_products)
     {
-        RC_DB::table($this->table)->whereIn('goods_id', $old_goods_id)->chunk(20, function ($items) use ($replacement_products) {
+        RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->chunk(20, function ($items) use ($replacement_products) {
             foreach ($items as &$item) {
                 $img_id = $item['img_id'];
                 unset($item['img_id']);
@@ -114,7 +117,7 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
                 //将数据插入到新店铺
                 //$new_img_id = $img_id + 1;
-                $new_img_id = RC_DB::table($this->table)->insertGetId($item);
+                $new_img_id = RC_DB::table($this->getTableName())->insertGetId($item);
 
                 //存储替换记录
                 $this->replacement_goods_gallery[$img_id] = $new_img_id;
@@ -147,22 +150,6 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
     {
 
         return $content;
-    }
-
-    /**
-     * 返回操作日志编写
-     *
-     * @return mixed
-     */
-    public function handleAdminLog()
-    {
-        \Ecjia\App\Store\Helper::assign_adminlog_content();
-
-        $store_info = RC_Api::api('store', 'store_info', array('store_id' => $this->store_id));
-
-        $merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
-
-        ecjia_admin::admin_log($merchants_name, 'duplicate', 'store_goods');
     }
 
 }

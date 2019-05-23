@@ -8,6 +8,7 @@ use RC_DB;
 use RC_Api;
 use ecjia_admin;
 use RC_Time;
+use Royalcms\Component\Database\QueryException;
 
 /**
  * 复制店铺中的在售商品
@@ -157,7 +158,11 @@ HTML;
         }
 
         // 统计数据条数
-        $this->count = $this->getSourceStoreDataHandler()->count();
+        try {
+            $this->count = $this->getSourceStoreDataHandler()->count();
+        } catch (QueryException $e) {
+            ecjia_log_warning($e->getMessage());
+        }
         return $this->count;
     }
 
@@ -285,6 +290,7 @@ HTML;
     {
         $this->getSourceStoreDataHandler()->chunk(50, function ($items) {
             $time = RC_Time::gmtime();
+
             foreach ($items as $item) {
                 $goods_id = $item['goods_id'];
                 unset($item['goods_id']);
@@ -341,13 +347,15 @@ HTML;
                 $item['goods_img'] = $this->copyImage($item['goods_img']);
                 $item['original_img'] = $this->copyImage($item['original_img']);
 
-
-                //插入数据到新店铺
-                //$new_goods_id = $goods_id + 1;
-                $new_goods_id = RC_DB::table('goods')->insertGetId($item);
-
-                //存储替换记录
-                $this->replacement_goods[$goods_id] = $new_goods_id;
+                try {
+                    //插入数据到新店铺
+                    //$new_goods_id = $goods_id + 1;
+                    $new_goods_id = RC_DB::table('goods')->insertGetId($item);
+                    //存储替换记录
+                    $this->replacement_goods[$goods_id] = $new_goods_id;
+                } catch (QueryException $e) {
+                    ecjia_log_warning($e->getMessage());
+                }
             }
         });
         //dd($this->getCode(), $this->replacement_goods);

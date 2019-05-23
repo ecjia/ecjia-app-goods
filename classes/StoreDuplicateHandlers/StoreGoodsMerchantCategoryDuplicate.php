@@ -260,10 +260,8 @@ HTML;
     }
 
     /**
-     * 复制图片
-     * cat_image
-     *
-     * @param $item
+     * @param $path
+     * @return bool|string
      */
     protected function copyImage($path)
     {
@@ -293,11 +291,16 @@ HTML;
     {
         \Ecjia\App\Store\Helper::assign_adminlog_content();
 
-        $store_info = RC_Api::api('store', 'store_info', array('store_id' => $this->store_id));
+        $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
+        $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
 
-        $merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
+        //$merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
 
-        ecjia_admin::admin_log($merchants_name, 'duplicate', 'store_goods');
+        $store_merchant_name = empty($store_info) ? '' : $store_info['merchants_name'];
+        $source_store_merchant_name = empty($source_store_info) ? '' : $source_store_info['merchants_name'];
+
+        $content = sprintf(__('将【%s】店铺所有%s复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
+        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
     }
 
 
