@@ -61,14 +61,15 @@ class MerchantGoodsAttr {
 	}
 	
 	/**
-	 * 获得商家商品[规格/参数]模板（下拉）
+	 * 获得商家商品[规格/参数]模板（列表下拉）--获取平台启用的
 	 * @access  public
 	 * @param   integer     $selected   选定的模板编号
 	 * @param   string      $type       模板类型
 	 * @param   boolean     $enabled    激活状态 
 	 * @return  string
 	 */
-	public static function goods_type_select_list($selected, $type, $enabled = false) {
+	public static function goods_type_list_select($selected, $type, $store_id) {
+		
 		$db_goods_type =  RC_DB::table('goods_type')
 		->where('cat_type', $type)
 		->where(function ($query) {
@@ -79,12 +80,36 @@ class MerchantGoodsAttr {
 			});
 		});
 
-		if ($enabled) {
+		if ($store_id) {
 			$db_goods_type->where('enabled', 1);
+		} else {
+			$db_goods_type->where('enabled', 0);
 		}
 		
-		$data = $db_goods_type->select('cat_id', 'cat_name')->where('cat_type', $type)->get();
+		$data = $db_goods_type->select('cat_id', 'cat_name')->get();
 		
+		$opt = '';
+		if (!empty($data)) {
+			foreach ($data as $row){
+				$opt .= "<option value='$row[cat_id]'";
+				$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+				$opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+			}
+		}
+		return $opt;
+	}
+	
+	
+	/**
+	 * 获得商家商品[规格/参数]模板 添加编辑属性（下拉）只允许读商家
+	 * @access  public
+	 * @param   integer     $selected   选定的模板编号
+	 * @param   string      $type       模板类型
+	 * @return  string
+	 */
+	public static function goods_type_add_select($selected, $type) {
+		$data =  RC_DB::table('goods_type')
+		->where('cat_type', $type)->where('store_id', $_SESSION['store_id'])->select('cat_id', 'cat_name')->get();
 		$opt = '';
 		if (!empty($data)) {
 			foreach ($data as $row){
