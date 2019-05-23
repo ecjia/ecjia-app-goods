@@ -203,22 +203,22 @@
 										<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
 
 										{if $action neq 'check'}
-										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
- 									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}规格/货品{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
+	 									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}规格/货品{/t}</a>&nbsp;|&nbsp;
+											
+											<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
+											<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
+										{/if}
 										
-										<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
-										<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
-										<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_detail&goods_id={$goods.goods_id}">{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
-										
-										{if $specifications[$goods.goods_type] neq ''}
-										<a target="_blank" href='{url path="goods/merchant/product_list" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
+										{if $action eq 'sale' or $action eq 'finish'}
+											<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_detail&goods_id={$goods.goods_id}">{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;										
 										{/if}
 
 										{if $goods.review_status eq 2}
-										<a href="#review_log" data-toggle="modal" data-type="log" id="modal" goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/merchant/review_log')}">查看审核</a>&nbsp;|&nbsp;
+											<a href="#review_log" data-toggle="modal" data-type="log" id="modal" goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/merchant/review_log')}">查看审核</a>&nbsp;|&nbsp;
 										{/if}
 
 										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/merchant/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
@@ -226,11 +226,11 @@
 								</td>
 									
 								{if $action neq 'check'}
-								<td>
-									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_sn')}" data-name="goods_edit_goods_sn" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入商品货号{/t}">
-										{$goods.goods_sn} 
-									</span>
-								</td>
+									<td>
+										<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_sn')}" data-name="goods_edit_goods_sn" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入商品货号{/t}">
+											{$goods.goods_sn} 
+										</span>
+									</td>
 								{/if}
 								
 								<td>
@@ -240,23 +240,23 @@
 								</td>
 																
 								{if $use_storage}
-								<td>
-									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入库存数量{/t}">
-										{$goods.goods_number}
-									</span>
-								</td>
+									<td>
+										<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入库存数量{/t}">
+											{$goods.goods_number}
+										</span>
+									</td>
 								{/if}
 								
 								{if $action neq 'check'}
-								<td>
-									<span class="cursor_pointer" data-trigger="editable" data-placement="left" data-url="{RC_Uri::url('goods/merchant/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入排序序号{/t}">
-										{$goods.sort_order}
-									</span>
-								</td>
-								<td>
-									<i class="cursor_pointer fa {if $goods.is_on_sale}fa-check {else}fa-times{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" 
-									refresh-url="{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}{if $filter.type}&type={$filter.type}{/if}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.review_status}&review_status={$filter.review_status}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
-								</td>
+									<td>
+										<span class="cursor_pointer" data-trigger="editable" data-placement="left" data-url="{RC_Uri::url('goods/merchant/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入排序序号{/t}">
+											{$goods.sort_order}
+										</span>
+									</td>
+									<td>
+										<i class="cursor_pointer fa {if $goods.is_on_sale}fa-check {else}fa-times{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" 
+										refresh-url="{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}{if $filter.type}&type={$filter.type}{/if}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.review_status}&review_status={$filter.review_status}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
+									</td>
 								{/if}
 								
 								<td>
