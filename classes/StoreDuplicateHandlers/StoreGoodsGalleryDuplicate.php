@@ -27,6 +27,7 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     private $table = 'goods_gallery';
 
+    protected $rank_order = 7;
     public function __construct($store_id, $source_store_id, $sort = 17)
     {
         parent::__construct($store_id, $source_store_id, '商品相册', $sort);

@@ -23,6 +23,7 @@ class StoreCashierGoodsDuplicate extends StoreSellingGoodsDuplicate
      */
     protected $code = 'store_cashier_goods_duplicate';
 
+    protected $rank_order = 5;
     public function __construct($store_id, $source_store_id, $sort = 15)
     {
         parent::__construct($store_id, $source_store_id, '在售收银台商品', $sort);

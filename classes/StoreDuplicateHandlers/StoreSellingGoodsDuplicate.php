@@ -93,10 +93,17 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
      */
     protected $goods_type_replacement = [];
 
+    protected $rank_order = 4;
+
+    protected $rank_total = 11;
+
+    protected $rank = '';
+
     public function __construct($store_id, $source_store_id, $name = '在售普通商品', $sort = 14)
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __($name, 'goods');
+        $this->rank = sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
@@ -105,7 +112,8 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
     protected function setProgressData()
     {
         if (empty($this->progress_data)) {
-            $this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            //$this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            $this->progress_data = $this->getProgressData();
         }
         return $this;
     }
@@ -603,7 +611,7 @@ HTML;
         }
     }
 
-    private function showValueOfAttrs($attr_name = null)
+    protected function showValueOfAttrs($attr_name = null)
     {
         if (is_string($attr_name)) {
             $attr_name = explode(',', $attr_name);

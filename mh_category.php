@@ -99,6 +99,7 @@ class mh_category extends ecjia_merchant
         $this->assign('action_link', array('href' => RC_Uri::url('goods/mh_category/add'), 'text' => __('添加商品分类', 'goods')));
         $this->assign('action_link1', array('href' => RC_Uri::url('goods/mh_category/move'), 'text' => __('转移商品', 'goods')));
         $this->assign('cat_info', $cat_list);
+        $this->assign('store_id', $_SESSION['store_id']);
 
         $this->display('category_list.dwt');
     }

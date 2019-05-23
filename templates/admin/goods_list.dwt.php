@@ -65,7 +65,7 @@
 				<i class="fontello-icon-cog"></i>{t domain='goods'}批量操作{/t}<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu batch-move" data-url="{RC_Uri::url('goods/admin/batch')}&list_url={$list_url}">
-				{if $action neq 'bulk'}
+				{if $action neq 'bulk' and  $action neq 'cashier'}
 					<li><a class="batch-best-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=best&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择设为精品的商品{/t}" href="javascript:;"> <i class="fontello-icon-star"></i>{t domain='goods'}设为精品{/t}</a></li>
 					<li><a class="batch-notbest-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_best&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择取消精品的商品{/t}" href="javascript:;"><i class="fontello-icon-star-empty"></i>{t domain='goods'}取消精品{/t}</a></li>
 					<li><a class="batch-new-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=new&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为新品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要设为新品的商品{/t}" href="javascript:;"> <i class="fontello-icon-flag"></i>{t domain='goods'}设为新品{/t}</a></li>
@@ -91,7 +91,7 @@
 			</div>
 			<button class="btn filter-btn" type="button">{t domain='goods'}筛选{/t}</button>
 		</div>
-		{if $action neq 'bulk'}
+		{if $action neq 'bulk' and  $action neq 'cashier'}
 		<div class="screen f_r">
 			<!-- 分类 -->
 			<div class="f_l m_r5">
@@ -133,7 +133,7 @@
 						<input type="checkbox" name="select_rows" data-toggle="selectall" data-children=".checkbox"/>
 					</th>
 					
-					{if $action neq 'bulk'}
+					{if $action neq 'bulk' and  $action neq 'cashier'}
 					<th class="w80">{t domain='goods'}缩略图{/t}</th>
 					{/if}
 					
@@ -151,7 +151,7 @@
 					<th class="w35" data-toggle="sortby" data-sortby="sort_order">{t domain='goods'}排序{/t}</th>
 					{/if}
 					
-					{if $action neq 'bulk'}
+					{if $action neq 'bulk' and  $action neq 'cashier'}
 					<th class="w35"> {t domain='goods'}精品{/t} </th>
 					<th class="w35"> {t domain='goods'}新品{/t} </th>
 					<th class="w35"> {t domain='goods'}热销{/t} </th>
@@ -171,7 +171,7 @@
 						<input class="checkbox" type="checkbox" name="checkboxes[]" value="{$goods.goods_id}"/>
 					</td>	
 					
-					{if $action neq 'bulk'}				
+					{if $action neq 'bulk' and  $action neq 'cashier'}				
 					<td>
 						<a href="{url path='goods/admin/edit' args="goods_id={$goods.goods_id}"}" title="{$goods.goods_name|escape:html}" >
 							<img class="thumbnail" alt="{$goods.goods_name}" src="{$goods.goods_thumb}">
@@ -181,39 +181,42 @@
 					
 					<td class="hide-edit-area">
 						<strong>{$goods.merchants_name}</strong>
-						
 						</span>{if $goods.manage_mode eq 'self'}<span class="ecjiafc-red">{t domain='goods'}（自营）{/t}</span>{/if}
 						<br>
-						
                         {if $goods.product_list}<span class="label-orange">{t domain='goods'}多货品{/t}{/if}</span>
-                        <span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/admin/edit_goods_name')}" data-name="goods_edit_name" data-pk="{$goods.goods_id}" data-title="请输入商品名称">
-							{$goods.goods_name|escape:html}
-						</span>
+						{$goods.goods_name|escape:html}
 						{if $goods.is_promote eq 1}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
 						<br/>
-						
 						<div class="edit-list">
 							{if $preview_type}
 							<a target="_blank" href='{url path="goods/admin/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
 							{/if}
 							
-							{if $action neq 'check'}
-								<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_list&goods_id={$goods.goods_id}" >{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
-								<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
+							{if $action eq 'sale' or $action eq 'finish'}
+							<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_detail&goods_id={$goods.goods_id}" >{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
+							{/if}
+							
+							{if $action eq 'sale' or $action eq 'finish' or $action eq 'obtained'}
+							<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goods/admin/insert_goodslib" args="goods_id={$goods.goods_id}"}' 
 								data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}" data-costprice="{$goods.cost_price}">{t domain='goods'}导入商品库{/t}</a>&nbsp;|&nbsp;
+							{/if}
+							
+							{if $action neq 'check'}
 								<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/admin/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
 							{/if}
 							
-							{if $goods.review_status eq 1}
-								<a data-toggle="modal" data-backdrop="static" href="#myModal2" goods-id="{$goods.goods_id}">{t domain='goods'}审核{/t}</a>
+							{if $action eq 'check'}
+								{if $goods.review_status eq 1}
+									<a data-toggle="modal" data-backdrop="static" href="#myModal2" goods-id="{$goods.goods_id}">{t domain='goods'}审核{/t}</a>
+								{/if}
+								
+								{if $goods.review_status eq 2}
+									<a  href="#review_log" data-toggle="modal" data-type="log" data-backdrop="static"  goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/review_log')}">{t domain='goods'}查看审核{/t}</a>
+								{/if}
 							{/if}
-							
-							{if $goods.review_status eq 2}
-								<a  href="#review_log" data-toggle="modal" data-type="log" data-backdrop="static"  goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/admin/review_log')}">{t domain='goods'}查看审核{/t}</a>
-							{/if}
-							
 						</div>
 					</td>	
+					
 					{if $action neq 'check'}<td>{$goods.goods_sn}</td>{/if}
 					
 					<td>{$goods.shop_price}</td>
@@ -229,7 +232,7 @@
 					</td>
 					{/if}
 					
-					{if $action neq 'bulk'}
+					{if $action neq 'bulk' and  $action neq 'cashier'}
 					<td>
 						<i class="{if $goods.is_best}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_best')}
 							{if $filter.type}&type={$filter.type}{/if}

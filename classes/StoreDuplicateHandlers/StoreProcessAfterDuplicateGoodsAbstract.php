@@ -32,10 +32,17 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
      */
     protected $replacement_goods = [];
 
+    protected $rank_order = 1;
+
+    protected $rank_total = 11;
+
+    protected $rank = '';
+
     public function __construct($store_id, $source_store_id, $name, $sort = 15)
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __($name, 'goods');
+        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
@@ -118,7 +125,8 @@ HTML;
     {
         if (empty($this->progress_data)) {
             //从过程数据中提取需要用到的替换数据
-            $this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            //$this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            $this->progress_data = $this->getProgressData();
         }
         return $this;
     }

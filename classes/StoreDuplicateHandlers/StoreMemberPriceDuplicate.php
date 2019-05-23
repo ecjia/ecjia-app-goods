@@ -26,6 +26,8 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     private $table = 'member_price';
 
+    protected $rank_order = 8;
+
     public function __construct($store_id, $source_store_id, $sort = 18)
     {
         parent::__construct($store_id, $source_store_id, '商品会员价格', $sort);

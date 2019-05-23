@@ -23,6 +23,8 @@ class StoreVolumePriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     private $table = 'volume_price';
 
+    protected $rank_order = 10;
+
     public function __construct($store_id, $source_store_id, $sort = 20)
     {
         parent::__construct($store_id, $source_store_id, '商品阶梯价格', $sort);
