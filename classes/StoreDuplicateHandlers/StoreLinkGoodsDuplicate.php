@@ -53,7 +53,7 @@ class StoreLinkGoodsDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
             }
             return true;
         } catch (QueryException $e) {
-            ecjia_log_error($e->getMessage());
+            ecjia_log_warning($e->getMessage());
             return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
     }

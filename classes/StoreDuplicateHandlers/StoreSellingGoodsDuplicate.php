@@ -2,8 +2,11 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
+use Ecjia\App\Goods\GoodsImage\CopyGoodsImage;
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
+use ecjia_admin;
 use ecjia_error;
+use RC_Api;
 use RC_DB;
 use RC_Time;
 use Royalcms\Component\Database\QueryException;
@@ -96,15 +99,15 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
 
     protected $rank_total = 11;
 
-    protected $rank = '';
-
-    protected $err_msg = '';
-
     public function __construct($store_id, $source_store_id, $name = '在售普通商品', $sort = 14)
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __($name, 'goods');
-        $this->rank = sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
+    }
+
+    public function getName()
+    {
+        return $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
@@ -113,8 +116,7 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
     protected function setProgressData()
     {
         if (empty($this->progress_data)) {
-            //$this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
-            $this->progress_data = $this->getProgressData();
+            $this->progress_data = $this->handleDuplicateProgressData();
         }
         return $this;
     }
@@ -125,12 +127,11 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
      */
     public function getSourceStoreDataHandler()
     {
-        return RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', '!=', 1)->where(function ($query) {
+        return RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', 0)->where(function ($query) {
             $query
                 ->whereNull('extension_code')
                 ->orWhere('extension_code', '');
         });
-        //->select('goods_id', 'store_id', 'merchant_cat_id', 'bonus_type_id', 'goods_type', 'specification_id', 'parameter_id');
     }
 
     /**
@@ -246,17 +247,12 @@ HTML;
 
             $this->setReplacementData($this->getCode(), $replacement_data);
 
+            return true;
         } catch (QueryException $e) {
-            $this->enableException();
-            $this->err_msg .= $e->getMessage();
+            ecjia_log_warning($e->getMessage());
+            return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
 
-        if ($this->exception) {
-            $this->disableException();
-            ecjia_log_error($this->err_msg);
-            return new ecjia_error('duplicate_data_error', $this->err_msg);
-        }
-        return true;
     }
 
     /**
@@ -267,7 +263,7 @@ HTML;
         $this->getSourceStoreDataHandler()->chunk(50, function ($items) {
             $time = RC_Time::gmtime();
 
-            foreach ($items as &$item) {
+            foreach ($items as $item) {
                 $goods_id = $item['goods_id'];
                 unset($item['goods_id']);
 
@@ -321,21 +317,20 @@ HTML;
 
                 try {
                     //插入数据到新店铺
-                    $new_goods_id = $goods_id + 1;
-                    //$new_goods_id = RC_DB::table('goods')->insertGetId($item);
+                    //$new_goods_id = $goods_id + 1;
+                    $new_goods_id = RC_DB::table('goods')->insertGetId($item);
                     //存储替换记录
                     $this->replacement_goods[$goods_id] = $new_goods_id;
 
                     //商品唯一货号需要重新生成
                     $goods_sn = function_exists('generate_goods_sn') ? generate_goods_sn($new_goods_id) : bin2hex(random_bytes(16));
-                    //RC_DB::table('goods')->where('goods_id', $new_goods_id)->update(['goods_sn' => $goods_sn]);
+                    RC_DB::table('goods')->where('goods_id', $new_goods_id)->update(['goods_sn' => $goods_sn]);
                     $item['goods_sn'] = $goods_sn;
                 } catch (QueryException $e) {
-                    $this->enableException();
-                    $this->err_msg .= $e->getMessage();
+                    ecjia_log_warning($e->getMessage());
                 }
             }
-            dd($items);
+
         });
         //dd($this->getCode(), $this->replacement_goods);
     }
@@ -372,8 +367,7 @@ HTML;
                     //存储替换记录
                     $this->replacement_goods_attr[$goods_attr_id] = $new_goods_attr_id;
                 } catch (QueryException $e) {
-                    $this->enableException();
-                    $this->err_msg .= $e->getMessage();
+                    ecjia_log_warning($e->getMessage());
                 }
             }
         });
@@ -423,8 +417,7 @@ HTML;
                     //建立替换数据的关联关系
                     $this->replacement_products[$product_id] = $new_product_id;
                 } catch (QueryException $e) {
-                    $this->enableException();
-                    $this->err_msg .= $e->getMessage();
+                    ecjia_log_warning($e->getMessage());
                 }
             }
         });
@@ -435,12 +428,15 @@ HTML;
      *
      * @param $path
      *
-     * @return string
+     * @return []
      */
-    protected function copyImage($path)
+    protected function copyGoodsImage($goods_id, $product_id, $original_path, $img_path, $thumb_path)
     {
+        $copy = new CopyGoodsImage($goods_id, $product_id);
 
-        return $path;
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
+
+        return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
     /**
@@ -452,8 +448,34 @@ HTML;
      */
     protected function copyImageForContent($content)
     {
+        $new_content = CopyGoodsImage::copyDescriptionContentImages($content);
+        
+        return $new_content;
+    }
 
-        return $content;
+    /**
+     * 返回操作日志编写
+     *
+     * @return mixed
+     */
+    public function handleAdminLog()
+    {
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
+
+        static $store_merchant_name, $source_store_merchant_name;
+
+        if (empty($store_merchant_name)) {
+            $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->store_id]);
+            $store_merchant_name = array_get(empty($store_info) ? [] : $store_info, 'merchants_name');
+        }
+
+        if (empty($source_store_merchant_name)) {
+            $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
+            $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
+        }
+
+        $content = sprintf(__('录入：将【%s】店铺所有%s复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $this->name, $store_merchant_name);
+        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
     }
 
     /**

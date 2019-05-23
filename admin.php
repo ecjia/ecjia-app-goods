@@ -1684,14 +1684,14 @@ class admin extends ecjia_admin {
         }
         /* 如果没有输入商品货号则自动生成一个商品货号 */
 //        if (empty($goods_sn)) {
-            $max_id = $this->db_goods->goods_find('', 'MAX(goods_id) + 1|max');
+        $max_id = RC_DB::table('goodslib')->select(RC_DB::raw('MAX(goods_id) + 1 as max'))->first();
             if (empty($max_id['max'])) {
                 $goods_sn_bool = true;
                 $goods_sn = '';
             } else {
-                $goods_sn = generate_goods_sn($max_id['max']);
+                $goods_sn = generate_goodslib_goods_sn($max_id['max']);
             }
-            $_POST['goods_sn'] = $goods_sn;
+//            $_POST['goods_sn'] = $goods_sn;
 //        } else {
 //            /* 检查货号是否重复 */
 //            $count = $this->db_goods->is_only(array('goods_sn' => $goods_sn, 'is_delete' => 0));
@@ -1711,7 +1711,7 @@ class admin extends ecjia_admin {
         $goods['weight_unit'] = $goods_info['weight_unit'];
         $goods['keywords'] = $goods_info['keywords'];
         $goods['goods_brief'] = $goods_info['goods_brief'];
-        $goods['goods_desc'] = $goods_info['goods_desc'];
+        $goods['goods_desc'] = empty($goods_info['goods_desc']) ? '' : $goods_info['goods_desc'];
         $goods['goods_barcode'] = $goods_info['goods_barcode'];
         $time = RC_Time::gmtime();
         $goods['add_time'] = $time;
@@ -1723,7 +1723,7 @@ class admin extends ecjia_admin {
 //                $goods['goods_type'] = $goods_info['goods_type'];
 //            }
 //        }
-//        _dump($goods_info,1);
+//        _dump($goods,1);
 
         $new_id = RC_DB::table('goodslib')->insertGetId($goods);
         if(!empty($goods_info['goods_img'])) {
@@ -1766,7 +1766,7 @@ class admin extends ecjia_admin {
         $cat_info = RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
         if($cat_info['store_id'] != 0) {
             //非平台规格，先复制
-
+            return ;
         }
         $db_goods_attr = RC_DB::table('goods_attr')->where('goods_id', $goods_id);
         if($cat_type) {
