@@ -404,10 +404,10 @@ HTML;
 
 
                 //@todo 图片字段的处理 product_thumb product_img product_original_img product_desc
-                $item['product_thumb'] = $this->copyImage($item['product_thumb']);
-                $item['product_img'] = $this->copyImage($item['product_img']);
-                $item['product_original_img'] = $this->copyImage($item['product_original_img']);
-                $item['product_desc'] = $this->copyImage($item['product_desc']);
+                $item['product_thumb'] = $this->copyGoodsImage($item['product_thumb']);
+                $item['product_img'] = $this->copyGoodsImage($item['product_img']);
+                $item['product_original_img'] = $this->copyGoodsImage($item['product_original_img']);
+                $item['product_desc'] = $this->copyGoodsImage($item['product_desc']);
 
                 try {
                     //将数据插入到新店铺
