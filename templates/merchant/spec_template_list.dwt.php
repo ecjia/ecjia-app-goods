@@ -57,7 +57,6 @@
 							<tr>
 								<th class="w150">{t domain="goods"}模板名称{/t}</th>
 								<th class="w130">{t domain="goods"}属性统计{/t}</th>
-								<th class="w130">{t domain="goods"}商品数量{/t}</th>
 								
 								{if !$smarty.get.store_type}
 								<th class="w80">{t domain="goods"}状态{/t}</th>
@@ -83,13 +82,12 @@
 									</div>
 								</td>
 								<td>{$list.attr_count}</td>
-								<td>0</td>
 								{if !$smarty.get.store_type}
 								<td><i class="fa cursor_pointer {if $list.enabled}fa-check {else}fa-times{/if}" title="{t domain='goods'}点击修改状态{/t}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/mh_spec/toggle_enabled')}" data-id="{$list.cat_id}"></i></td>
 								{/if}
 							</tr>
 							<!-- {foreachelse} -->
-							<tr><td class="no-records" colspan="4">{t domain="goods"}没有找到任何记录{/t}</td></tr>
+							<tr><td class="no-records" colspan="3">{t domain="goods"}没有找到任何记录{/t}</td></tr>
 							<!-- {/foreach} -->
 						</tbody>
 					</table>
