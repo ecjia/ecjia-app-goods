@@ -6,6 +6,7 @@ namespace Ecjia\App\Goods\GoodsImage;
 use Ecjia\App\Goods\GoodsImage\Format\GoodsImageFormatted;
 use RC_File;
 use RC_Storage;
+use RC_Upload;
 use League\Flysystem\FileNotFoundException;
 
 class CopyGoodsImage implements GoodsImageFormattedInterface
@@ -95,5 +96,64 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
     }
 
 
+    /**
+     * 群发消息 内容上传图片（不是封面上传）
+     * @param  string $content
+     * @return
+     */
+    private function copyDescriptionContentImages($content)
+    {
+
+        $content = rc_stripslashes($content);
+        $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png|\.bmp|\.jpeg]))[\'|\"].*?[\/]?>/";
+        preg_match_all($pattern, $content, $match);
+
+        $images = $match[1];
+
+        $disk = RC_Storage::disk();
+
+        if (count($images) > 0) {
+            foreach ($images as $img) {
+                if (strpos($img, RC_Upload::upload_url()) !== false) {
+
+                    $filename = str_replace(RC_Upload::upload_url(), rtrim(RC_Upload::upload_path(), '/'), $img);
+
+                    $newname = $this->generateNewFileName($filename);
+
+                    try {
+                        if ($disk->copy($filename, $newname)) {
+
+                            $replace = RC_Upload::upload_url($newname);
+
+                            $content = str_replace($img, $replace, $content);
+                        }
+                    }
+                    catch (FileNotFoundException $e) {
+                        ecjia_log_warning($e->getMessage());
+                    }
+
+                }
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * 生成新的文件名
+     * @param $path
+     * @return string
+     */
+    private function generateNewFileName($path)
+    {
+        $newpath = dirname(dirname($path));
+        $filename = basename($path);
+        $extname = RC_File::extension($filename);
+
+        $new_filename = RC_Upload::random_filename() . ".{$extname}";
+
+        $newpath = $newpath . date('Ymd') . '/' . $new_filename;
+
+        return $newpath;
+    }
 
 }
