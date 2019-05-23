@@ -6,6 +6,7 @@ use ecjia_error;
 use RC_DB;
 use RC_Api;
 use ecjia_admin;
+use Royalcms\Component\Database\QueryException;
 
 /**
  * 复制店铺中商品扩展分类数据
@@ -57,7 +58,8 @@ class StoreGoodsCatDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
             }
 
             return true;
-        } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
+        } catch (QueryException $e) {
+            ecjia_log_error($e->getMessage());
             return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
     }
