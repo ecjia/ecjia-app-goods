@@ -1711,7 +1711,7 @@ class admin extends ecjia_admin {
         $goods['weight_unit'] = $goods_info['weight_unit'];
         $goods['keywords'] = $goods_info['keywords'];
         $goods['goods_brief'] = $goods_info['goods_brief'];
-        $goods['goods_desc'] = $goods_info['goods_desc'];
+        $goods['goods_desc'] = empty($goods_info['goods_desc']) ? '' : $goods_info['goods_desc'];
         $goods['goods_barcode'] = $goods_info['goods_barcode'];
         $time = RC_Time::gmtime();
         $goods['add_time'] = $time;
@@ -1766,7 +1766,7 @@ class admin extends ecjia_admin {
         $cat_info = RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
         if($cat_info['store_id'] != 0) {
             //非平台规格，先复制
-
+            return ;
         }
         $db_goods_attr = RC_DB::table('goods_attr')->where('goods_id', $goods_id);
         if($cat_type) {
