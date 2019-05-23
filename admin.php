@@ -1684,14 +1684,14 @@ class admin extends ecjia_admin {
         }
         /* 如果没有输入商品货号则自动生成一个商品货号 */
 //        if (empty($goods_sn)) {
-            $max_id = $this->db_goods->goods_find('', 'MAX(goods_id) + 1|max');
+        $max_id = RC_DB::table('goodslib')->select(RC_DB::raw('MAX(goods_id) + 1 as max'))->first();
             if (empty($max_id['max'])) {
                 $goods_sn_bool = true;
                 $goods_sn = '';
             } else {
-                $goods_sn = generate_goods_sn($max_id['max']);
+                $goods_sn = generate_goodslib_goods_sn($max_id['max']);
             }
-            $_POST['goods_sn'] = $goods_sn;
+//            $_POST['goods_sn'] = $goods_sn;
 //        } else {
 //            /* 检查货号是否重复 */
 //            $count = $this->db_goods->is_only(array('goods_sn' => $goods_sn, 'is_delete' => 0));
@@ -1723,7 +1723,7 @@ class admin extends ecjia_admin {
 //                $goods['goods_type'] = $goods_info['goods_type'];
 //            }
 //        }
-//        _dump($goods_info,1);
+//        _dump($goods,1);
 
         $new_id = RC_DB::table('goodslib')->insertGetId($goods);
         if(!empty($goods_info['goods_img'])) {
