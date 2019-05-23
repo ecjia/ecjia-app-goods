@@ -67,7 +67,7 @@
                                     <div class="form-group">
                                         <label class="control-label col-lg-3">{t domain="goods"}商品货号：{/t}</label>
                                         <div class="controls col-lg-9">
-                                            <input class="form-control" name="product_sn" type="text" value="{$info.product_sn|escape}" />
+                                            <input class="form-control" name="product_sn" type="text" value="{$info.product_sn|escape}" disabled="disabled" />
                                             <span class="help-block">{t domain="goods"}非必填，系统默认自动生成{/t}</span>
                                         </div>
                                     </div>
