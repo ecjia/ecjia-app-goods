@@ -2,12 +2,9 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
-
 use ecjia_error;
-use RC_Uri;
 use RC_DB;
-use RC_Api;
-use ecjia_admin;
+use Royalcms\Component\Database\QueryException;
 
 /**
  * 复制店铺中的收银台商品
@@ -54,10 +51,17 @@ class StoreCashierGoodsDuplicate extends StoreSellingGoodsDuplicate
             //存储 goods 相关替换数据
             $this->setReplacementData($this->getCode(), ['goods' => $this->replacement_goods]);
 
-            return true;
-        } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
-            return new ecjia_error('duplicate_data_error', $e->getMessage());
+        } catch (QueryException $e) {
+            $this->enableException();
+            ecjia_log_warning($e->getMessage());
+            $this->err_msg .= $e->getMessage();
         }
+
+        if ($this->exception) {
+            $this->disableException();
+            return new ecjia_error('duplicate_data_error', $this->err_msg);
+        }
+        return true;
     }
 
 }

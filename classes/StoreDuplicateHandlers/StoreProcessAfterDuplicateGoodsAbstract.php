@@ -3,9 +3,7 @@
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
-use ecjia_admin;
 use ecjia_error;
-use RC_Api;
 use RC_DB;
 use Royalcms\Component\Database\QueryException;
 
@@ -45,7 +43,7 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __($name, 'goods');
-        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
+        $this->rank = sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     abstract protected function getTableName();
