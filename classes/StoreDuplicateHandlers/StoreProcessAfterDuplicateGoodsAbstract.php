@@ -43,7 +43,7 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __($name, 'goods');
-        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
+        $this->rank = sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     abstract protected function getTableName();

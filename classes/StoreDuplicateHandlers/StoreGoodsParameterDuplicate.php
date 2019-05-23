@@ -37,7 +37,7 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __('店铺商品参数', 'goods');
-        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
+        $this->rank = sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
