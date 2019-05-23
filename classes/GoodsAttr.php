@@ -355,6 +355,34 @@ class GoodsAttr {
     	$html .= '';
     	return $html;
     }
+
+    /**
+     * 根据参数数组创建属性的文字描述
+     *
+     * @access public
+     * @param int $cat_id
+     *            分类编号
+     * @param int $goods_id
+     *            商品编号
+     * @return string
+     */
+    public static function goodslib_build_attr_text($cat_id, $goods_id = 0) {
+        $attr = self::get_goodslib_cat_attr_list($cat_id, $goods_id);
+        $text = '';
+
+        if (!empty($attr)) {
+            foreach ($attr as $key => $val) {
+                $text .= $val['attr_name'] . ':';
+                if($val['attr_value']) {
+                    foreach ($val['attr_value'] as $attr_value) {
+                        $text .= htmlspecialchars($attr_value);
+                    }
+                }
+                $text .= "\r\n";
+            }
+        }
+        return $text;
+    }
     
     
     
@@ -405,7 +433,7 @@ class GoodsAttr {
     	->orderby(RC_DB::raw('a.attr_id'), 'asc')
     	->get();
     	foreach($row as $key => $val) {
-			$row[$key]['attr_value'] = RC_DB::TABLE('goodslib_attr')->where('attr_id', $val['attr_id'])->where('goods_id', $goods_id)->lists('attr_value');
+			$row[$key]['attr_value'] = RC_DB::table('goodslib_attr')->where('attr_id', $val['attr_id'])->where('goods_id', $goods_id)->lists('attr_value');
 		}
 		
     	return $row;

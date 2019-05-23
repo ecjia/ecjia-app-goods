@@ -3,9 +3,7 @@
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
-use ecjia_admin;
 use ecjia_error;
-use RC_Api;
 use RC_DB;
 use Royalcms\Component\Database\QueryException;
 

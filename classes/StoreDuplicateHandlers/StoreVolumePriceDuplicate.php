@@ -35,30 +35,6 @@ class StoreVolumePriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
     }
 
     /**
-     * 统计数据条数并获取
-     *
-     * @return mixed
-     */
-    public function handleCount()
-    {
-        //如果已经统计过，直接返回统计过的条数
-        if ($this->count) {
-            return $this->count;
-        }
-
-        // 统计数据条数
-        $old_goods_id = $this->getOldGoodsId();
-        if (!empty($old_goods_id)) {
-            try {
-                $this->count = RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->count();
-            } catch (QueryException $e) {
-                ecjia_log_warning($e->getMessage());
-            }
-        }
-        return $this->count;
-    }
-
-    /**
      * 店铺复制操作的具体过程
      * @return bool|ecjia_error
      */
@@ -79,7 +55,8 @@ class StoreVolumePriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
             }
 
             return true;
-        } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
+        } catch (QueryException $e) {
+            ecjia_log_error($e->getMessage());
             return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
     }
@@ -90,20 +67,16 @@ class StoreVolumePriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
      */
     private function duplicateVolumePrice($old_goods_id)
     {
-        try{
-            RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
-                foreach ($items as &$item) {
-                    //通过 goods 替换数据设置新店铺的 goods_id
-                    $item['goods_id'] = array_get($this->replacement_goods, $item['goods_id'], $item['goods_id']);
-                }
+        RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
+            foreach ($items as &$item) {
+                //通过 goods 替换数据设置新店铺的 goods_id
+                $item['goods_id'] = array_get($this->replacement_goods, $item['goods_id'], $item['goods_id']);
+            }
 
-                //将数据插入到新店铺
-                RC_DB::table($this->getTableName())->insert($items);
-                //dd($items);
-            });
-        }catch (QueryException $e){
-            ecjia_log_warning($e->getMessage());
-        }
+            //将数据插入到新店铺
+            RC_DB::table($this->getTableName())->insert($items);
+            //dd($items);
+        });
     }
 
 }

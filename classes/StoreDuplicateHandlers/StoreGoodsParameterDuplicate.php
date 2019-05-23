@@ -10,10 +10,8 @@ namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
 use ecjia_error;
-use RC_Uri;
 use RC_DB;
-use RC_Api;
-use ecjia_admin;
+use Royalcms\Component\Database\QueryException;
 
 /**
  * 复制店铺中的商品参数
@@ -76,10 +74,13 @@ HTML;
         }
 
         // 统计数据条数
-        $this->count = $this->getSourceStoreDataHandler()->count();
+        try {
+            $this->count = $this->getSourceStoreDataHandler()->count();
+        } catch (QueryException $e) {
+            ecjia_log_warning($e->getMessage());
+        }
         return $this->count;
     }
-
 
     /**
      * 执行复制操作
@@ -128,9 +129,7 @@ HTML;
 
             //构造可用于复制的数据
             foreach ($items as $item) {
-
                 $cat_id = $item['cat_id'];
-
                 unset($item['cat_id']);
 
                 //将源店铺ID设为新店铺的ID
@@ -139,7 +138,6 @@ HTML;
                 $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
 
                 $replacement_data[$cat_id] = $new_cat_id;
-
 
                 //通过源店铺的cat_id查询出在attribute中的关联数据
                 RC_DB::table('attribute')->where('cat_id', $cat_id)->chunk(50, function ($attrDataOfCatId) use ($new_cat_id) {
@@ -150,28 +148,23 @@ HTML;
 
                         //将cat_id替换成新店铺的cat_id
                         $v['cat_id'] = $new_cat_id;
-
                     }
 
                     //为新店铺插入这些数据
                     RC_DB::table('attribute')->insert($attrDataOfCatId);
 
-
                 });
-
-
             }
-
         });
-
         $this->setReplacementData($this->getCode(), $replacement_data);
     }
 
     protected function startDuplicateProcedure()
     {
+        $replacement_goods_type = [];
+        $err_msg = '';
         try {
-            $replacement_goods_type = [];
-            $this->getSourceStoreDataHandler()->chunk(50, function ($items) use (& $replacement_goods_type) {
+            $this->getSourceStoreDataHandler()->chunk(50, function ($items) use (& $replacement_goods_type, &$err_msg) {
                 //构造可用于复制的数据
                 foreach ($items as $item) {
 
@@ -182,18 +175,25 @@ HTML;
                     //将源店铺ID设为新店铺的ID
                     $item['store_id'] = $this->store_id;
 
-                    $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
+                    try {
+                        //插入数据到新店铺
+                        $new_cat_id = RC_DB::table('goods_type')->insertGetId($item);
 
-                    $replacement_goods_type[$cat_id] = $new_cat_id;
+                        $replacement_goods_type[$cat_id] = $new_cat_id;
+                    } catch (QueryException $e) {
+                        $this->enableException();
+                        $err_msg .= $e->getMessage();
+                    }
                 }
             });
+            $replacement_data['goods_type'] = $replacement_goods_type;
 
             $cat_id_keys = array_keys($replacement_goods_type);
-
             $replacement_attribute = [];
             if (!empty($cat_id_keys)) {
                 //通过源店铺的cat_id查询出在attribute中的关联数据
-                RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function ($items) use ($replacement_goods_type, & $replacement_attribute) {
+                RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function ($items) use ($replacement_goods_type, & $replacement_attribute, $err_msg) {
+
                     //构造可用于复制的数据
                     foreach ($items as & $item) {
                         $attr_id = $item['attr_id'];
@@ -202,27 +202,36 @@ HTML;
                         //将cat_id替换成新店铺的cat_id
                         $item['cat_id'] = array_get($replacement_goods_type, $item['cat_id'], $item['cat_id']);
 
-                        //为新店铺插入这些数据
-                        $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
+                        try {
+                            //为新店铺插入这些数据
+                            $new_attr_id = RC_DB::table('attribute')->insertGetId($item);
 
-                        $replacement_attribute[$attr_id] = $new_attr_id;
-
+                            $replacement_attribute[$attr_id] = $new_attr_id;
+                        } catch (QueryException $e) {
+                            $this->enableException();
+                            $err_msg .= $e->getMessage();
+                        }
                     }
                 });
-            }
+                $replacement_data['attribute'] = $replacement_attribute;
 
-            $replacement_data = [
-                'goods_type' => $replacement_goods_type,
-                'attribute' => $replacement_attribute,
-            ];
+                $this->setReplacementData($this->getCode(), $replacement_data);
+                return true;
+            }
 
             $this->setReplacementData($this->getCode(), $replacement_data);
 
-            return true;
-        } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
-            return new ecjia_error('duplicate_data_error', $e->getMessage());
+        } catch (QueryException $e) {
+            $this->enableException();
+            $err_msg .= $e->getMessage();
         }
 
+        if ($this->exception) {
+            $this->disableException();
+            ecjia_log_error($err_msg);
+            return new ecjia_error('duplicate_data_error', $err_msg);
+        }
+        return true;
     }
 
 }
