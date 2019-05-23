@@ -437,10 +437,12 @@ HTML;
      *
      * @return string
      */
-    protected function copyImage($path)
+    protected function copyGoodsImage($original_path, $img_path, $thumb_path)
     {
 
-        return $path;
+
+
+        return [$original_path, $img_path, $thumb_path];
     }
 
     /**
