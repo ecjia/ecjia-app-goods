@@ -47,7 +47,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
      *
      * @return []
      */
-    protected function copyGoodsImage($original_path, $img_path, $thumb_path)
+    public function copyGoodsImage($original_path, $img_path, $thumb_path)
     {
         $this->extension_name = RC_File::extension($original_path);
 
@@ -101,7 +101,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
      * @param  string $content
      * @return
      */
-    private function copyDescriptionContentImages($content)
+    public static function copyDescriptionContentImages($content)
     {
 
         $content = rc_stripslashes($content);
@@ -143,7 +143,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
      * @param $path
      * @return string
      */
-    private function generateNewFileName($path)
+    public function generateNewFileName($path)
     {
         $newpath = dirname(dirname($path));
         $filename = basename($path);
