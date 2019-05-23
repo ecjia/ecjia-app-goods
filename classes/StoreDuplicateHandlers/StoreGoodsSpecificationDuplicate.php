@@ -34,7 +34,6 @@ class StoreGoodsSpecificationDuplicate extends StoreGoodsParameterDuplicate
     {
         parent::__construct($store_id, $source_store_id, $sort);
         $this->name = __('店铺商品规格', 'goods');
-        $this->rank = $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**

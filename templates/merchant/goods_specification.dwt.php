@@ -128,13 +128,14 @@
                            
                                               <tbody>
                                                   <!-- {foreach from=$product_list item=product} -->
+                                                  <input type="hidden" name="product_id[]" value="{$product.product_id}" />
                                                   <tr>
                                                     <td>
                                                     <!-- {foreach from=$product.goods_attr item=goods_attr} -->
                                                       {$goods_attr} {if $goods_attr@last}{else}/{/if}
                                                       <!-- {/foreach} -->
                                                       </td>
-                                                      <td><input class="form-control" type="text" name="product_sn[]" value="{$product.product_sn}" /></td>
+                                                      <td><input class="form-control" type="text" name="product_sn[]" value="{$product.product_sn}" disabled="disabled" /></td>
                                                       <td><input class="form-control" type="text" name="product_bar_code[]" value="{$product.product_bar_code}" /></td>
                                                       <td><input class="form-control" type="text" name="product_shop_price[]" value="{$product.product_shop_price}" /></td>
                                                       <td><input class="form-control" type="text" name="product_number[]" value="{$product.product_number}" /></div></td>

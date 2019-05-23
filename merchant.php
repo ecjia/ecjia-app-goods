@@ -3116,15 +3116,14 @@ class merchant extends ecjia_merchant {
 			 'goods_barcode'	 =>	$goods_barcode
 		);
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
-		
-		$product['product_sn']         = $_POST['product_sn'];
+		$product['product_id']         = $_POST['product_id'];
 		$product['product_bar_code']   = $_POST['product_bar_code'];
 		$product['product_shop_price'] = $_POST['product_shop_price'];
 		$product['product_number']     = $_POST['product_number'];
 
-		if (!empty($product['product_sn'])) {
+		if (!empty($product['product_id'])) {
 			$use_storage = ecjia::config('use_storage');
-			foreach($product['product_sn'] as $key => $value) {
+			foreach($product['product_id'] as $key => $value) {
 				$product['product_bar_code'][$key]   = empty($product['product_bar_code'][$key]) ? ''   : trim($product['product_bar_code'][$key]); 
 				$product['product_shop_price'][$key] = empty($product['product_shop_price'][$key]) ?  : trim($product['product_shop_price'][$key]); 
 				$product['product_number'][$key]     = empty($product['product_number'][$key]) ? (empty($use_storage) ? 0 : ecjia::config('default_storage')) : trim($product['product_number'][$key]); 
@@ -3134,7 +3133,7 @@ class merchant extends ecjia_merchant {
 					'product_shop_price'=> $product['product_shop_price'][$key],
 					'product_number' 	=> $product['product_number'][$key]
 				);
-				RC_DB::table('products')->where('product_sn', $value)->update($data);
+				RC_DB::table('products')->where('product_id', $value)->update($data);
 			}
 		}
 
