@@ -153,7 +153,7 @@ class GoodsBasicInFo
      */
     public function getGoodsGroupParameter()
     {
-    	$res = [];
+    	$result = [];
     	if ($this->model->goods_type_parameter_model) {
     		$parameter_id = $this->model->goods_type_parameter_model->cat_id;
     	} else {
@@ -175,8 +175,10 @@ class GoodsBasicInFo
 													'attr_group_id' 	=> $key,
 													'attr_group_name'	=> $val,
 													'values'			=> array(
-																				'attr_name' => $item->attribute_model->attr_name,
-																				'attr_value'=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
+																				'attr_id'	=>  $item->attr_id,
+																				'attr_name' => 	$item->attribute_model->attr_name,
+																				'attr_value'=> 	$item->attr_value,
+																				'attr_type'	=> 	$item->attribute_model->attr_type,
 																			)
 											); 
 											
@@ -192,10 +194,9 @@ class GoodsBasicInFo
     	}
     	
     	if ($res) {
-    		$res = $this->handleGroupParameter($res->toArray());
-    		return $res;
+    		$result = $this->handleGroupParameter($res->toArray());
     	}
-    	return $res;
+    	return $result;
     }
     
     /**
@@ -205,31 +206,28 @@ class GoodsBasicInFo
     public function getGoodsCommonParameter()
     {
     	$result = [];
+    	 
     	if ($this->model->goods_type_parameter_model) {
     		$parameter_id = $this->model->goods_type_parameter_model->cat_id;
-    	} else {
-    		$parameter_id = 0;
     	}
-    	if (!empty($parameter_id)) {
-    		if ($this->model->goods_attr_collection) {
-    			$pra_attr_ids = $this->model->goods_type_parameter_model->attribute_collection->lists('attr_id');
-    			$goods_attr_collection = $this->model->goods_attr_collection->whereIn('attr_id', $pra_attr_ids);
-    			$result = $goods_attr_collection->map(function ($item) use ($parameter_id) {
-    				if ($item->attribute_model) {
-    					if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
-    						if ($item->attribute_model->attr_name) {
-    							return [
-	    							'attr_name'     => $item->attribute_model->attr_name,
-	    							'attr_value'	=> $item->attribute_model->attr_input_type == '1' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
-    							];
-    						}
+    	$arr = [];
+    	
+    	if ($this->model->goods_attr_collection) {
+    		$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
+    			if ($item->attribute_model) {
+    				if ($item->attribute_model->cat_id == $parameter_id || intval($item->attribute_model->attr_type) === 0) {
+    					if ($item->attribute_model->attr_name && $item->attr_value) {
+    						return [
+    							'attr_id'	=> $item->attr_id,
+	    						'name'     	=> $item->attribute_model->attr_name,
+	    						'value'		=> $item->attr_value,
+    						];
+
     					}
     				}
-    			});
-    			if (!empty($result)) {
-    				$result = $result->toArray();
     			}
-    		}
+    		})->filter()->all();
+    		$result = $this->formatAdminCommonPra($res);
     	}
     	return $result;
     }
@@ -381,7 +379,9 @@ class GoodsBasicInFo
      */
     protected function handleGroupParameter ($res = [])
     {
+    	$attr = [];
     	if (!empty($res)) {
+    		$res = array_merge($res);
     		foreach ($res as $key => $val) {
     			if ($val) {
     				foreach ($val as $k => $v) {
@@ -390,13 +390,34 @@ class GoodsBasicInFo
     			}
     		}
     		$res  = collect($arr)->filter()->all();
+    		$arr = [];
+    		if ($res) {
+    			foreach ($res as $row) {
+    				if (!isset($arr[$row['attr_group_id']])) {
+    					$arr[$row['attr_group_id']] = [
+    						'attr_group_id' 	=> $row['attr_group_id'],
+    						'attr_group_name'	=> $row['attr_group_name'],
+    					];
+    				}
+    				$arr[$row['attr_group_id']]['values'][] = $row['values'];
+    			}
+    			if ($arr) {
+    				foreach ($arr as $k => $attr) {
+    					if ($attr['values']) {
+    						$attr['values'] = $this->formatAttrValue($attr['values']);
+    					}
+    					$list[] = $attr;
+    				}
+    			}
+    		}
     	}
-    	return $res;
+    	return $list;
     }
     
     protected function formatPra($parameter)
     {
     	$arr = [];
+    	$result = [];
     	if ($parameter) {
     		foreach ($parameter as $row) {
     			$arr[$row['attr_id']]['name'] = $row['name'];
@@ -408,6 +429,55 @@ class GoodsBasicInFo
     				'name' 		=>  $row['name'],
     				'value'		=> rtrim($row['value'], '/')
     			];
+    		}
+    	}
+    	return $result;
+    }
+    
+    protected function formatAdminCommonPra($parameter)
+    {
+    	$arr = [];
+    	$result = [];
+    	if ($parameter) {
+    		foreach ($parameter as $row) {
+    			$arr[$row['attr_id']]['name'] = $row['name'];
+    			$arr[$row['attr_id']]['value'] .= $row['value'].'/';
+    		}
+    		$arr = array_merge($arr);
+    		foreach ($arr as $row) {
+    			$result[] = [
+    				'attr_name' 		=>  $row['name'],
+    				'attr_value'		=> rtrim($row['value'], '/')
+    			];
+    		}
+    	}
+    	return $result;
+    }
+    
+    protected function formatAttrValue($attr)
+    {
+    	$arr = [];
+    	$result = [];
+    	
+    	if ($attr) {
+    		foreach ($attr as $row) {
+    			if ($row['attr_value']) {
+    				$arr[$row['attr_id']]['attr_name'] = $row['attr_name'];
+    				if ($row['attr_type'] == '2') {
+    					$arr[$row['attr_id']]['attr_value'] .= $row['attr_value'].'/';
+    				} else {
+    					$arr[$row['attr_id']]['attr_value'] = $row['attr_value'];
+    				}
+    			}
+    		}
+    		$arr = array_merge($arr);
+    		if (!empty($arr)) {
+    			foreach ($arr as $rows) {
+    				$result[] = [
+	    				'attr_name' 		=>  $rows['attr_name'],
+	    				'attr_value'		=> rtrim($rows['attr_value'], '/')
+    				];
+    			}
     		}
     	}
     	return $result;

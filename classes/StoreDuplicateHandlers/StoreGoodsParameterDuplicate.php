@@ -225,20 +225,4 @@ HTML;
 
     }
 
-    /**
-     * 返回操作日志编写
-     *
-     * @return mixed
-     */
-    public function handleAdminLog()
-    {
-        \Ecjia\App\Store\Helper::assign_adminlog_content();
-
-        $store_info = RC_Api::api('store', 'store_info', array('store_id' => $this->store_id));
-
-        $merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
-
-        ecjia_admin::admin_log($merchants_name, 'duplicate', 'store_goods');
-    }
-
 }
