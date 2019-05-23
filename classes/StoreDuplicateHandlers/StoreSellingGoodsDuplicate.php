@@ -475,7 +475,7 @@ HTML;
         }
 
         $content = sprintf(__('录入：将【%s】店铺所有%s复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $this->name, $store_merchant_name);
-        ecjia_admin::admin_log($content, 'clear', 'store_goodsww');
+        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
     }
 
     /**
