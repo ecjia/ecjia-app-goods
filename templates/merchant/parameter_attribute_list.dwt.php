@@ -49,6 +49,7 @@
 			
 			<div class="panel-body panel-body-small">
 				<section class="panel">
+					{if $store_id}
 					<table class="table table-striped table-advance table-hover">
 						<thead>
 							<tr>
@@ -94,6 +95,34 @@
 						<!-- {/foreach} -->
 					</tbody>
 				</table>
+				
+				{else}
+				
+				<table class="table table-striped table-advance table-hover">
+						<thead>
+							<tr>
+								<th class="w150">{t domain="goods"}参数名称{/t}</th>
+								<th class="w150">{t domain="goods"}所属参数模板{/t}</th>
+								<th class="w150">{t domain="goods"}录入方式{/t}</th>
+								<th>{t domain="goods"}可选值列表{/t}</th>
+								<th class="w100">{t domain="goods"}排序{/t}</th>
+							</tr>
+						</thead>
+						<tbody>
+						<!-- {foreach from=$attr_list.item item=attr} -->
+						<tr>
+							<td>{$attr.attr_name}</td>
+							<td>{$attr.cat_name}</td>
+							<td>{$attr.attr_input_type_desc}</td>
+							<td>{$attr.attr_values}</td>
+							<td><span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/mh_parameter_attribute/edit_sort_order')}" data-name="edit_sort_order" data-pjax-url='{url path="goods/mh_parameter_attribute/init" args="cat_id={$smarty.get.cat_id}"}' data-pk="{$attr.attr_id}" data-title="{t domain='goods'}请输入排序号{/t}">{$attr.sort_order}</span></td>
+						</tr>
+						<!-- {foreachelse} -->
+						<tr><td class="no-records" colspan="5">{t domain="goods"}没有找到任何记录{/t}</td></tr>
+						<!-- {/foreach} -->
+					</tbody>
+				</table>
+				{/if}
 			</section>
 			<!-- {$attr_list.page} -->
 		</div>
