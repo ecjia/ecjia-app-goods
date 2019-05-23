@@ -88,8 +88,9 @@ class mh_spec_attribute extends ecjia_merchant {
 		$goods_type_info = RC_DB::TABLE('goods_type')->where('cat_id', $cat_id)->select('cat_name', 'store_id')->first();
 		$this->assign('cat_name', $goods_type_info['cat_name']);
 		$this->assign('store_id', $goods_type_info['store_id']);
-		
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_spec_attribute/add', array('cat_id' => $cat_id)), 'text' => __('添加属性', 'goods')));
+		if($goods_type_info['store_id']) {
+			$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_spec_attribute/add', array('cat_id' => $cat_id)), 'text' => __('添加属性', 'goods')));
+		}
 		$this->assign('action_link2', array('text' => __('规格模板列表', 'goods'), 'href' => RC_Uri::url('goods/mh_spec/init')));
 		
 		$attr_list = array();
