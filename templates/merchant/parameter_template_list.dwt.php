@@ -34,13 +34,22 @@
 	<div class="col-lg-12">
 		<div class="panel">
 			<div class="panel-body panel-body-small">
+				<ul class="nav nav-pills pull-left">
+					<li class="{if !$smarty.get.store_type}active{/if}"><a class="data-pjax" href='{url path="goods/mh_parameter/init" args="{if $smarty.get.keyword}&keyword={$smarty.get.keyword}{/if}"}'>{t domain="goods"}店铺参数{/t} <span class="badge badge-info">{if $type_count.merchant}{$type_count.merchant}{else}0{/if}</span> </a></li>
+					<li class="{if $smarty.get.store_type eq 1}active{/if}"><a class="data-pjax" href='{url path="goods/mh_parameter/init" args="store_type=1{if $smarty.get.keyword}&keyword={$smarty.get.keyword}{/if}"}'>{t domain="goods"}平台参数{/t} <span class="badge badge-info">{if $type_count.platform}{$type_count.platform}{else}0{/if}</span> </a></li>
+				</ul>
+				
+				<div class="clearfix"></div>
 				<form class="form-inline pull-right" name="searchForm" method="post" action="{$form_search}{if $filter.type}&type={$filter.type}{/if}">
-					<div class="form-group">
-						<input type="text" class="form-control" name="keywords" value="{$smarty.get.keywords}" placeholder="{t domain='goods'}请输入参数模板名称{/t}"/>
-						<button type="button" class="btn btn-primary search_btn"><i class="fa fa-search"></i> {t domain="goods"}搜索{/t} </button>
+					<div class="screen f_r">
+						<div class="form-group">
+							<input type="text" class="form-control" name="keywords" value="{$smarty.get.keywords}" placeholder="{t domain='goods'}请输入参数模板名称{/t}"/>
+							<button type="button" class="btn btn-primary search_btn"><i class="fa fa-search"></i> {t domain="goods"}搜索{/t} </button>
+						</div>
 					</div>
 				</form>
 			</div>
+
 			
 			<div class="panel-body panel-body-small">
 				<section class="panel">

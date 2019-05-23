@@ -96,39 +96,37 @@ class MerchantGoodsAttr {
 	 * @param   string $type 模板类型
 	 */
 	public static function get_merchant_goods_type_list($type) {
-		$_SESSION['store_id'] = !empty($_SESSION['store_id']) ? $_SESSION['store_id'] : 0;
+		$db_goods_type = RC_DB::table('goods_type as gt');
 		
-		$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
+		$store_id = intval($_SESSION['store_id']);
 		
-		$db_goods_type = RC_DB::table('goods_type as gt')
-		->leftJoin('store_franchisee as s', RC_DB::raw('s.store_id'), '=', RC_DB::raw('gt.store_id'))
-		->where(RC_DB::raw('gt.store_id'), $_SESSION['store_id'])
-		->where(function ($query) use ($type) {
+		$db_goods_type->where(function ($query) use ($type) {
 			$query->where('cat_type', $type)->orWhere(function ($query) {
 				$query->whereNull('cat_type');
 			});
 		});
 		
+		$store_type = !empty($_GET['store_type']) ? trim($_GET['store_type']) : 0;
+		$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
 		if (!empty($filter['keywords'])) {
 			$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
 		}
 	
-		$filter_count = $db_goods_type
-		->select(RC_DB::raw('count(*) as count'), RC_DB::raw('SUM(IF(gt.store_id > 0, 1, 0)) as merchant'))
-		->first();
+		$type_count = $db_goods_type
+		->select(RC_DB::raw('SUM(IF(gt.store_id = 0, 1, 0)) as platform'),
+				RC_DB::raw('SUM(IF(gt.store_id = ' . $store_id . ', 1, 0)) as merchant'))
+				->first();
 	
-		$filter['count'] 	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
-		$filter['merchant'] = $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
-	
-		$filter['type'] = isset($_GET['type']) ? $_GET['type'] : '';
-		if (!empty($filter['type'])) {
-			$db_goods_type->where(RC_DB::raw('gt.store_id'), '>', 0);
+		if ($store_type == 1) {
+			$db_goods_type->where(RC_DB::raw('gt.store_id'), 0);
+		} else {
+			$db_goods_type->where(RC_DB::raw('gt.store_id'), $store_id);
 		}
 	
 		$count = $db_goods_type->count();
 		$page = new ecjia_merchant_page($count, 15, 5);
 	
-		$field = 'gt.*, count(a.cat_id) as attr_count, s.merchants_name';
+		$field = 'gt.*, count(a.cat_id) as attr_count';
 		$goods_type_list = $db_goods_type
 		->leftJoin('attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
 		->select(RC_DB::raw($field))
@@ -137,14 +135,13 @@ class MerchantGoodsAttr {
 		->take(15)
 		->skip($page->start_id-1)
 		->get();
-	
 		if (!empty($goods_type_list)) {
 			foreach ($goods_type_list AS $key=>$val) {
 				$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
 				$goods_type_list[$key]['shop_name'] = $val['store_id'] == 0 ? '' : $val['merchants_name'];
 			}
 		}
-		return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
+		return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc(), 'type_count' => $type_count);
 	}
 	
 	
