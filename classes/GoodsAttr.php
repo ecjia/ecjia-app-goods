@@ -378,7 +378,7 @@ class GoodsAttr {
                         $text .= htmlspecialchars($attr_value);
                     }
                 }
-                $text .= "\r\n";
+                $text .= "\n";
             }
         }
         return $text;
