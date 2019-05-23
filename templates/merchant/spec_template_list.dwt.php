@@ -35,8 +35,8 @@
 		<div class="panel">
 			<div class="panel-body panel-body-small">
 				<ul class="nav nav-pills pull-left">
-					<li class="{if !$smarty.get.store_type}active{/if}"><a class="data-pjax" href='{url path="goods/mh_spec/init" args="{if $smarty.get.keyword}&keyword={$smarty.get.keyword}{/if}"}'>{t domain="goods"}店铺规格{/t} <span class="badge badge-info">{if $type_count.merchant}{$type_count.merchant}{else}0{/if}</span> </a></li>
-					<li class="{if $smarty.get.store_type eq 1}active{/if}"><a class="data-pjax" href='{url path="goods/mh_spec/init" args="store_type=1{if $smarty.get.keyword}&keyword={$smarty.get.keyword}{/if}"}'>{t domain="goods"}平台规格{/t} <span class="badge badge-info">{if $type_count.platform}{$type_count.platform}{else}0{/if}</span> </a></li>
+					<li class="{if !$smarty.get.store_type}active{/if}"><a class="data-pjax" href='{url path="goods/mh_spec/init" args="{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}"}'>{t domain="goods"}店铺规格{/t} <span class="badge badge-info">{if $type_count.merchant}{$type_count.merchant}{else}0{/if}</span> </a></li>
+					<li class="{if $smarty.get.store_type eq 1}active{/if}"><a class="data-pjax" href='{url path="goods/mh_spec/init" args="store_type=1{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}"}'>{t domain="goods"}平台规格{/t} <span class="badge badge-info">{if $type_count.platform}{$type_count.platform}{else}0{/if}</span> </a></li>
 				</ul>
 				<div class="clearfix"></div>
 				
