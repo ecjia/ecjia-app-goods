@@ -22,7 +22,20 @@ class AttributeModel extends Model
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'cat_id',
+        'attr_name',
+        'attr_cat_type',
+        'attr_input_type',
+        'attr_type',
+        'attr_values',
+        'color_values',
+        'attr_index',
+        'sort_order',
+        'is_linked',
+        'attr_group',
+        'attr_input_category',
+    ];
 
     /**
      * 该模型是否被自动维护时间戳
