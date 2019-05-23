@@ -81,16 +81,27 @@ class mh_parameter_attribute extends ecjia_merchant {
 		
 		$cat_id	= isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
 		$this->assign('cat_id', $cat_id);
-		
+
+		$goods_type_info = RC_DB::TABLE('goods_type')->where('cat_id', $cat_id)->select('cat_name', 'store_id')->first();
+		$this->assign('cat_name', $goods_type_info['cat_name']);
+		$this->assign('store_id', $goods_type_info['store_id']);
+	
 		$cat_name = RC_DB::TABLE('goods_type')->where('cat_id', $cat_id)->pluck('cat_name');
-		$this->assign('cat_name', $cat_name);
 		
 		$this->assign('action_link', array('href' => RC_Uri::url('goods/mh_parameter_attribute/add', array('cat_id' => $cat_id)), 'text' => __('添加参数', 'goods')));
 		$this->assign('action_link2', array('text' => __('参数模板列表', 'goods'), 'href' => RC_Uri::url('goods/mh_parameter/init')));
 		
 		$attr_list = array();
 		if (!empty($cat_id)) {
-			$goods_type_list = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id'])->where('cat_type', 'parameter')->lists('cat_id');
+			$goods_type_list =  RC_DB::table('goods_type')
+			->where('cat_type', 'parameter')
+			->where(function ($query) {
+				$query->where(function ($query) {
+					$query->where('store_id', $_SESSION['store_id']);
+				})->orWhere(function ($query) {
+					$query->where('store_id', 0);
+				});
+			})->lists('cat_id');
 			if (in_array($cat_id, $goods_type_list)) {
 				$attr_list = Ecjia\App\Goods\MerchantGoodsAttr::get_merchant_attr_list();
 			}

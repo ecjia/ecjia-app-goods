@@ -24,13 +24,16 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     private $replacement_member_price = [];
 
-    private $table = 'member_price';
-
     protected $rank_order = 8;
 
     public function __construct($store_id, $source_store_id, $sort = 18)
     {
         parent::__construct($store_id, $source_store_id, '商品会员价格', $sort);
+    }
+
+    protected function getTableName()
+    {
+        return 'member_price';
     }
 
     /**
@@ -48,7 +51,7 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
         // 统计数据条数
         $old_goods_id = $this->getOldGoodsId();
         if (!empty($old_goods_id)) {
-            $this->count = RC_DB::table($this->table)->whereIn('goods_id', $old_goods_id)->count();
+            $this->count = RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->count();
         }
         return $this->count;
     }
@@ -88,7 +91,7 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
      */
     private function duplicateMemberPrice($old_goods_id)
     {
-        RC_DB::table($this->table)->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
+        RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
             foreach ($items as $item) {
                 $price_id = $item['price_id'];
                 unset($item['price_id']);
@@ -98,29 +101,13 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
                 //将数据插入到新店铺
                 //$new_price_id = $price_id + 1;
-                $new_price_id = RC_DB::table($this->table)->insertGetId($item);
+                $new_price_id = RC_DB::table($this->getTableName())->insertGetId($item);
 
                 //存储替换记录
                 $this->replacement_member_price[$price_id] = $new_price_id;
             }
             //dd($replacement_member_price, $items);
         });
-    }
-
-    /**
-     * 返回操作日志编写
-     *
-     * @return mixed
-     */
-    public function handleAdminLog()
-    {
-        \Ecjia\App\Store\Helper::assign_adminlog_content();
-
-        $store_info = RC_Api::api('store', 'store_info', array('store_id' => $this->store_id));
-
-        $merchants_name = !empty($store_info) ? sprintf(__('店铺名是%s', 'goods'), $store_info['merchants_name']) : sprintf(__('店铺ID是%s', 'goods'), $this->store_id);
-
-        ecjia_admin::admin_log($merchants_name, 'duplicate', 'store_goods');
     }
 
 }
