@@ -118,7 +118,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
 
                     $filename = str_replace(RC_Upload::upload_url(), rtrim(RC_Upload::upload_path(), '/'), $img);
 
-                    $newname = $this->generateNewFileName($filename);
+                    $newname = self::generateNewFileName($filename);
 
                     try {
                         if ($disk->copy($filename, $newname)) {
@@ -143,7 +143,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
      * @param $path
      * @return string
      */
-    public function generateNewFileName($path)
+    public static function generateNewFileName($path)
     {
         $newpath = dirname(dirname($path));
         $filename = basename($path);
