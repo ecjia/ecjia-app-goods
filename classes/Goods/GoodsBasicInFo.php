@@ -278,16 +278,14 @@ class GoodsBasicInFo
     	if ($this->model->goods_attr_collection) {
     		$res = $this->model->goods_attr_collection->map(function ($item) use ($parameter_id) {
     			if ($item->attribute_model) {
-    				if ($item->attribute_model->cat_id == $parameter_id || $item->attribute_model->attr_type == '0') {
+    				if ($item->attribute_model->cat_id == $parameter_id || intval($item->attribute_model->attr_type) === 0) {
     					if ($item->attribute_model->attr_name && $item->attr_value) {
-    						$arr[$item->attribute_model->attr_id]['name'] = $item->attribute_model->attr_name;
     						return [
     							'attr_id'	=> $item->attr_id,
-	    						'name'     => $item->attribute_model->attr_name,
-	    						'value'	=> $item->attribute_model->attr_type == '2' ? str_replace ( "\n", '/', $item->attribute_model->attr_values) : $item->attr_value,
+	    						'name'     	=> $item->attribute_model->attr_name,
+	    						'value'		=> $item->attr_value,
     						];
 
-    						return $arr;
     					}
     				}
     			}
@@ -402,10 +400,16 @@ class GoodsBasicInFo
     	if ($parameter) {
     		foreach ($parameter as $row) {
     			$arr[$row['attr_id']]['name'] = $row['name'];
-    			$arr[$row['attr_id']]['value'] = $row['value'];
+    			$arr[$row['attr_id']]['value'] .= $row['value'].'/';
     		}
     		$arr = array_merge($arr);
+    		foreach ($arr as $row) {
+    			$result[] = [
+    				'name' 		=>  $row['name'],
+    				'value'		=> rtrim($row['value'], '/')
+    			];
+    		}
     	}
-    	return $arr;
+    	return $result;
     }
 }
