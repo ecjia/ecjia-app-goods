@@ -47,6 +47,8 @@
 defined('IN_ECJIA') or exit('No permission resources.');
 
 use Ecjia\App\Goods\Models\GoodsAttrModel;
+use Ecjia\App\Goods\Category\CategoryLevel;
+use Ecjia\App\Goods\Category\MerchantCategoryLevel;
 /**
  *  ECJIA 商品管理程序
  */
@@ -915,7 +917,7 @@ class merchant extends ecjia_merchant {
 	public function insert() {
 		// 检查权限
 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
-	
+		$store_id = intval($_SESSION['store_id']);
 		$cat_id = empty($_GET['cat_id']) ? '' : intval($_GET['cat_id']);
 		/* 检查货号是否重复 */
 		if ($_POST['goods_sn']) {
@@ -1031,13 +1033,32 @@ class merchant extends ecjia_merchant {
 //			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 //		}
 
+
+		//平台分类父级处理
+		$cats= new CategoryLevel();
+		$cat_ids = $cats->getParentCategoryIds($cat_id);
+		list($level1, $level2, $level3) = $cat_ids;
+		
+		
+		//商家分类父级处理
+		$mer_cat = new MerchantCategoryLevel($store_id);
+		$mer_cat_ids = $mer_cat->getParentCategoryIds($merchant_cat_id);
+		list($mer_level1, $mer_level2, $mer_level3) = $mer_cat_ids;
+		
+
 		/* 入库 */
 		$data = array(
 			'goods_name'            => rc_stripslashes($goods_name),
 			'goods_name_style'      => $goods_name_style,
 			'goods_sn'              => $goods_sn,
+        	'cat_level1_id'         => empty($level1) ? 0 : $level1,
+        	'cat_level2_id'         => empty($level2) ? 0 : $level2,
 			'cat_id'                => $cat_id,				//平台分类id
+			
+			'merchat_cat_level1_id'	=> empty($mer_level1) ? 0 : $mer_level1,
+		    'merchat_cat_level2_id'	=> empty($mer_level2) ? 0 : $mer_level2,
 			'merchant_cat_id'		=> $merchant_cat_id,	//店铺分类id
+			
 			'brand_id'              => $brand_id,
 			'shop_price'            => $shop_price,
 			'market_price'          => $market_price,
@@ -1425,10 +1446,18 @@ class merchant extends ecjia_merchant {
 		if($review_status === 2) {
 			$review_status = 1;
 		} 
+		
+		//商家分类父级处理
+		$mer_cat = new MerchantCategoryLevel($_SESSION['store_id']);
+		$mer_cat_ids = $mer_cat->getParentCategoryIds($merchant_cat_id);
+		list($mer_level1, $mer_level2, $mer_level3) = $mer_cat_ids;
+		
 		$data = array(
 		  	'goods_name'				=> rc_stripslashes($goods_name),
 		  	'goods_name_style'	  		=> $goods_name_style,
 // 		  	'goods_sn'			  		=> $goods_sn,
+			'merchat_cat_level1_id'	=> empty($mer_level1) ? 0 : $mer_level1,
+			'merchat_cat_level2_id'	=> empty($mer_level2) ? 0 : $mer_level2,
 			'merchant_cat_id'			=> $merchant_cat_id,	//店铺分类id
 // 			'cat_id'					=> $cat_id,
 		  	'brand_id'			  		=> $brand_id,
@@ -1632,7 +1661,18 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(__('请选择平台分类', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 		
-		RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->update(array('cat_id' => $cat_id));
+		//平台分类父级处理
+		$cats= new CategoryLevel();
+		$cat_ids = $cats->getParentCategoryIds($cat_id);
+		list($level1, $level2, $level3) = $cat_ids;
+		
+		$data =array(
+			'cat_level1_id'   => empty($level1) ? 0 : $level1,
+			'cat_level2_id'   => empty($level2) ? 0 : $level2,
+			'cat_id'          => $cat_id
+				
+		);
+		RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->update($data);
 		
 		return $this->showmessage(__('编辑商品成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/merchant/select_cat', array('goods_id' => $goods_id))));
 	}

@@ -41,7 +41,6 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
      */
     protected function startDuplicateProcedure()
     {
-        $err_msg = '';
         try {
             $this->setProgressData();
 
@@ -54,7 +53,7 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
             if (!empty($old_goods_id)) {
                 //将数据同步到 member_price
                 //$this->duplicateMemberPrice($old_goods_id);
-                RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) use (&$err_msg) {
+                RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->chunk(50, function ($items) {
                     foreach ($items as $item) {
                         $price_id = $item['price_id'];
                         unset($item['price_id']);
@@ -70,8 +69,7 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
                             //存储替换记录
                             $this->replacement_member_price[$price_id] = $new_price_id;
                         } catch (QueryException $e) {
-                            $this->enableException();
-                            $err_msg .= $e->getMessage();
+                            ecjia_log_warning($e->getMessage());
                         }
                     }
                     //dd($replacement_member_price, $items);
@@ -80,18 +78,10 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
                 //存储 member_price 相关替换数据
                 $this->setReplacementData($this->getCode(), $this->replacement_member_price);
             }
-
+            return true;
         } catch (QueryException $e) {
-            $this->enableException();
-            $err_msg .= $e->getMessage();
+            ecjia_log_warning($e->getMessage());
         }
-
-        if ($this->exception) {
-            $this->disableException();
-            ecjia_log_error($err_msg);
-            return new ecjia_error('duplicate_data_error', $err_msg);
-        }
-        return true;
     }
 
 }

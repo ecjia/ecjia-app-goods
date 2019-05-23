@@ -405,6 +405,7 @@ class GoodsAttr {
     		foreach ($attr as $key => $val) {
     			$html .= "<div class='priv_list'><div class='control-group'><label class='control-label'>";
     			$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
+    			$attr_values = collect($attr_values)->filter()->all();
     			$html .= "$val[attr_name]</label><div class='controls'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
     			foreach ($attr_values as $opt) {
     				$html .= '<div class="check-box">';

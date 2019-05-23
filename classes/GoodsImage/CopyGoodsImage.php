@@ -3,7 +3,10 @@
 
 namespace Ecjia\App\Goods\GoodsImage;
 
+use Ecjia\App\Goods\GoodsImage\Format\GoodsGalleryFormatted;
 use Ecjia\App\Goods\GoodsImage\Format\GoodsImageFormatted;
+use Ecjia\App\Goods\GoodsImage\Format\ProductGalleryFormatted;
+use Ecjia\App\Goods\GoodsImage\Format\ProductImageFormatted;
 use RC_File;
 use RC_Storage;
 use RC_Upload;
@@ -47,12 +50,60 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
      *
      * @return []
      */
-    protected function copyGoodsImage($original_path, $img_path, $thumb_path)
+    public function copyGoodsImage($original_path, $img_path, $thumb_path)
     {
         $this->extension_name = RC_File::extension($original_path);
 
         $image_format = new GoodsImageFormatted($this);
 
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+    }
+
+    public function copyGoodsGallery($original_path, $img_path, $thumb_path)
+    {
+        $this->extension_name = RC_File::extension($original_path);
+
+        $image_format = new GoodsGalleryFormatted($this);
+
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+    }
+
+    /**
+     * 复制商品图片，三张一起操作
+     *
+     * @param string $original_path    原图
+     * @param string $img_path         商品图片
+     * @param string $thumb_path       缩略图片
+     *
+     * @return []
+     */
+    public function copyProductImage($original_path, $img_path, $thumb_path)
+    {
+        $this->extension_name = RC_File::extension($original_path);
+
+        $image_format = new ProductImageFormatted($this);
+
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+    }
+
+    public function copyProductGallery($original_path, $img_path, $thumb_path)
+    {
+        $this->extension_name = RC_File::extension($original_path);
+
+        $image_format = new ProductGalleryFormatted($this);
+
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+    }
+
+    /**
+     * @param GoodsImageFormatted $image_format
+     * @param $original_path
+     * @param $img_path
+     * @param $thumb_path
+     * @return array
+     */
+    protected function copyImage($image_format, $original_path, $img_path, $thumb_path)
+    {
         $new_original_path = $image_format->getSourcePostion();
         $new_img_path = $image_format->getGoodsimgPostion();
         $new_thumb_path = $image_format->getThumbPostion();
@@ -95,13 +146,12 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
         return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
-
     /**
      * 群发消息 内容上传图片（不是封面上传）
      * @param  string $content
      * @return
      */
-    private function copyDescriptionContentImages($content)
+    public static function copyDescriptionContentImages($content)
     {
 
         $content = rc_stripslashes($content);
@@ -118,7 +168,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
 
                     $filename = str_replace(RC_Upload::upload_url(), rtrim(RC_Upload::upload_path(), '/'), $img);
 
-                    $newname = $this->generateNewFileName($filename);
+                    $newname = self::generateNewFileName($filename);
 
                     try {
                         if ($disk->copy($filename, $newname)) {
@@ -143,7 +193,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
      * @param $path
      * @return string
      */
-    private function generateNewFileName($path)
+    public static function generateNewFileName($path)
     {
         $newpath = dirname(dirname($path));
         $filename = basename($path);
