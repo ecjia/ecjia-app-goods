@@ -87,7 +87,7 @@ HTML;
     public function handleCount()
     {
         //如果已经统计过，直接返回统计过的条数
-        if ($this->count) {
+        if (!is_null($this->count)) {
             return $this->count;
         }
 
