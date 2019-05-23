@@ -30,6 +30,15 @@ class AttributeModel extends Model
      * @var bool
      */
     public $timestamps = false;
-    
+
+
+    /**
+     * 一对一
+     * 获取属性分类信息
+     */
+    public function goods_type_model()
+    {
+        return $this->belongsTo('Ecjia\App\Goods\Models\GoodsTypeModel', 'cat_id', 'cat_id');
+    }
     
 }
