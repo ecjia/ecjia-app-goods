@@ -107,13 +107,17 @@
 								          			</dd>
 								        		</dl>
 							        		{/if}
-											<dl class="tb-amount tm-clear">
-											    <dt class="tb-metatit">{t domain="goods"}平台分类{/t}</dt>
-											    <dd id="J_Amount">
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->category_model}{$goods->category_model->cat_name}{/if}</em>
-											        <span id="J_StockTips"></span>
-											    </dd>
-											</dl>
+							        		{if $goods->category_model}
+							        			{if $goods->category_model->cat_name}
+												<dl class="tb-amount tm-clear">
+												    <dt class="tb-metatit">{t domain="goods"}平台分类{/t}</dt>
+												    <dd id="J_Amount">
+												        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->category_model}{$goods->category_model->cat_name}{/if}</em>
+												        <span id="J_StockTips"></span>
+												    </dd>
+												</dl>
+												{/if}
+											{/if}
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">{t domain="goods"}店铺分类{/t}</dt>
 											    <dd id="J_Amount">
@@ -204,6 +208,7 @@
 					{if $group_parameter_list}
 						<!-- #BeginLibraryItem "/library/goods_group_parameter.lbi" --><!-- #EndLibraryItem -->
 					{/if}
+					{if $goods.goods_desc}
 					<div class="goods-pra">
 						<div class="pra">{t domain="goods"}图文详情{/t}
 							<div class="pra-handle">
@@ -213,6 +218,7 @@
 						<hr style="margin-top:0px;">
 					</div>
 					<div class="t_c clear">{$goods.goods_desc}</div>
+					{/if}
 				</div>
 			</div>
 		</div>

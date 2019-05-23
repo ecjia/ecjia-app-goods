@@ -35,8 +35,8 @@
 		<div class="panel">
 			<div class="panel-body panel-body-small">
 				<ul class="nav nav-pills pull-left">
-					<li class="{if !$smarty.get.store_type}active{/if}"><a class="data-pjax" href='{url path="goods/mh_parameter/init" args="{if $smarty.get.keyword}&keyword={$smarty.get.keyword}{/if}"}'>{t domain="goods"}店铺参数{/t} <span class="badge badge-info">{if $type_count.merchant}{$type_count.merchant}{else}0{/if}</span> </a></li>
-					<li class="{if $smarty.get.store_type eq 1}active{/if}"><a class="data-pjax" href='{url path="goods/mh_parameter/init" args="store_type=1{if $smarty.get.keyword}&keyword={$smarty.get.keyword}{/if}"}'>{t domain="goods"}平台参数{/t} <span class="badge badge-info">{if $type_count.platform}{$type_count.platform}{else}0{/if}</span> </a></li>
+					<li class="{if !$smarty.get.store_type}active{/if}"><a class="data-pjax" href='{url path="goods/mh_parameter/init" args="{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}"}'>{t domain="goods"}店铺参数{/t} <span class="badge badge-info">{if $type_count.merchant}{$type_count.merchant}{else}0{/if}</span> </a></li>
+					<li class="{if $smarty.get.store_type eq 1}active{/if}"><a class="data-pjax" href='{url path="goods/mh_parameter/init" args="store_type=1{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}"}'>{t domain="goods"}平台参数{/t} <span class="badge badge-info">{if $type_count.platform}{$type_count.platform}{else}0{/if}</span> </a></li>
 				</ul>
 				
 				<div class="clearfix"></div>
@@ -59,7 +59,6 @@
 								<th class="w150">{t domain="goods"}模板名称{/t}</th>
 								<th>{t domain="goods"}参数分组{/t}</th>
 								<th class="w130">{t domain="goods"}参数统计{/t}</th>
-								<th class="w130">{t domain="goods"}商品数量{/t}</th>
 								
 								{if !$smarty.get.store_type}
 								<th class="w80">{t domain="goods"}状态{/t}</th>
@@ -85,13 +84,12 @@
 								</td>
 								<td>{$list.attr_group}</td>
 								<td>{$list.attr_count}</td>
-								<td>0</td>
 								{if !$smarty.get.store_type}
 								<td><i class="fa cursor_pointer {if $list.enabled}fa-check {else}fa-times{/if}" title="{t domain='goods'}点击修改状态{/t}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/mh_parameter/toggle_enabled')}" data-id="{$list.cat_id}"></i></td>
 								{/if}
 							</tr>
 							<!-- {foreachelse} -->
-							<tr><td class="no-records" colspan="5">{t domain="goods"}没有找到任何记录{/t}</td></tr>
+							<tr><td class="no-records" colspan="4">{t domain="goods"}没有找到任何记录{/t}</td></tr>
 							<!-- {/foreach} -->
 						</tbody>
 					</table>

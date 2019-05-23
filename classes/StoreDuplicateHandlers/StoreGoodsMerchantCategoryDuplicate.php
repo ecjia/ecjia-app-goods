@@ -15,6 +15,7 @@ use RC_DB;
 use RC_Api;
 use ecjia_admin;
 use ecjia_error;
+use Royalcms\Component\Database\QueryException;
 use Royalcms\Component\Support\Collection;
 
 /**
@@ -89,7 +90,11 @@ HTML;
         }
 
         // 统计数据条数
-        $this->count = $this->getSourceStoreDataHandler()->count();
+        try {
+            $this->count = $this->getSourceStoreDataHandler()->count();
+        } catch (QueryException $e) {
+            ecjia_log_warning($e->getMessage());
+        }
         return $this->count;
     }
 
@@ -132,7 +137,7 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
-        $progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+        $progress_data = $this->getProgressData();
 
         $specification_replacement = $progress_data->getReplacementDataByCode('store_goods_specification_duplicate.goods_type');
         $parameter_replacement = $progress_data->getReplacementDataByCode('store_goods_parameter_duplicate.goods_type');
