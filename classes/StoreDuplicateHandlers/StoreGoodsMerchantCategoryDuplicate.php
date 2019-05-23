@@ -274,15 +274,7 @@ HTML;
          * 数据样式：
          * merchant/62/data/category/1497203993901325255.png
          */
-        try {
-            $path = (new StoreCopyImage($this->store_id, $this->source_store_id))->copyMerchantConfigImage($path);
-        }
-        catch (\League\Flysystem\FileNotFoundException $e) {
-
-            $path = '';
-
-            ecjia_log_warning($e->getMessage());
-        }
+        $path = (new StoreCopyImage($this->store_id, $this->source_store_id))->copyMerchantImage($path);
 
         return $path;
     }
