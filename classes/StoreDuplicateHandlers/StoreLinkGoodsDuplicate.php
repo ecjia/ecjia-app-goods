@@ -4,8 +4,7 @@ namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use ecjia_error;
 use RC_DB;
-use RC_Api;
-use ecjia_admin;
+use Royalcms\Component\Database\QueryException;
 
 /**
  * 复制店铺中商品关联商品数据（无图片字段）
@@ -34,26 +33,6 @@ class StoreLinkGoodsDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
     }
 
     /**
-     * 统计数据条数并获取
-     *
-     * @return mixed
-     */
-    public function handleCount()
-    {
-        //如果已经统计过，直接返回统计过的条数
-        if ($this->count) {
-            return $this->count;
-        }
-
-        // 统计数据条数
-        $old_goods_id = $this->getOldGoodsId();
-        if (!empty($old_goods_id)) {
-            $this->count = RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->count();
-        }
-        return $this->count;
-    }
-
-    /**
      * 店铺复制操作的具体过程
      * @return bool|ecjia_error
      */
@@ -73,7 +52,8 @@ class StoreLinkGoodsDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
                 $this->duplicateLinkGoods($old_goods_id);
             }
             return true;
-        } catch (\Royalcms\Component\Repository\Exceptions\RepositoryException $e) {
+        } catch (QueryException $e) {
+            ecjia_log_error($e->getMessage());
             return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
     }
