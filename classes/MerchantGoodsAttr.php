@@ -69,9 +69,6 @@ class MerchantGoodsAttr {
 	 * @return  string
 	 */
 	public static function goods_type_select_list($selected, $type, $enabled = false) {
-		
-		$db_goods_type = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id']);
-		
 		$db_goods_type =  RC_DB::table('goods_type')
 		->where('cat_type', $type)
 		->where(function ($query) {
@@ -116,23 +113,24 @@ class MerchantGoodsAttr {
 			});
 		});
 		
-		$store_type = !empty($_GET['store_type']) ? trim($_GET['store_type']) : 0;
 		$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
 		if (!empty($filter['keywords'])) {
 			$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
 		}
-	
+		
 		$type_count = $db_goods_type
-		->select(RC_DB::raw('SUM(IF(gt.store_id = 0, 1, 0)) as platform'),
+		->select(RC_DB::raw('SUM(IF(gt.enabled = 1 and gt.store_id = 0, 1, 0)) as platform'),
 				RC_DB::raw('SUM(IF(gt.store_id = ' . $store_id . ', 1, 0)) as merchant'))
 				->first();
-	
+		
+		$store_type = !empty($_GET['store_type']) ? trim($_GET['store_type']) : 0;
 		if ($store_type == 1) {
 			$db_goods_type->where(RC_DB::raw('gt.store_id'), 0);
+			$db_goods_type->where(RC_DB::raw('gt.enabled'), 1);
 		} else {
 			$db_goods_type->where(RC_DB::raw('gt.store_id'), $store_id);
 		}
-	
+
 		$count = $db_goods_type->count();
 		$page = new ecjia_merchant_page($count, 15, 5);
 	
