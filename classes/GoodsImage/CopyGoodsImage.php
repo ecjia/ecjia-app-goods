@@ -56,7 +56,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
 
         $image_format = new GoodsImageFormatted($this);
 
-        $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
     }
 
     public function copyGoodsGallery($original_path, $img_path, $thumb_path)
@@ -65,7 +65,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
 
         $image_format = new GoodsGalleryFormatted($this);
 
-        $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
     }
 
     /**
@@ -83,7 +83,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
 
         $image_format = new ProductImageFormatted($this);
 
-        $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
     }
 
     public function copyProductGallery($original_path, $img_path, $thumb_path)
@@ -92,7 +92,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
 
         $image_format = new ProductGalleryFormatted($this);
 
-        $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
+        return $this->copyImage($image_format, $original_path, $img_path, $thumb_path);
     }
 
     /**
