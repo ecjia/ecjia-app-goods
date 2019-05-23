@@ -66,7 +66,7 @@ class mh_parameter_attribute extends ecjia_merchant {
         RC_Script::localize_script('goods_attribute', 'js_lang', config('app-goods::jslang.attribute_page'));
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品管理', 'goods'), RC_Uri::url('goods/merchant/init')));
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品参数模板', 'goods'), RC_Uri::url('goods/mh_spec/init')));
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品参数模板', 'goods'), RC_Uri::url('goods/mh_parameter/init')));
 		ecjia_merchant_screen::get_current_screen()->set_parentage('goods', 'goods/mh_parameter_attribute.php');
 	}
 
