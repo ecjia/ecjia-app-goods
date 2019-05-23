@@ -125,7 +125,8 @@ HTML;
     {
         if (empty($this->progress_data)) {
             //从过程数据中提取需要用到的替换数据
-            $this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            //$this->progress_data = (new \Ecjia\App\Store\StoreDuplicate\ProgressDataStorage($this->store_id))->getDuplicateProgressData();
+            $this->progress_data = $this->getProgressData();
         }
         return $this;
     }
