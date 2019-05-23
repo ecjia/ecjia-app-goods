@@ -128,20 +128,21 @@
                            
                                               <tbody>
                                                   <!-- {foreach from=$product_list item=product} -->
+                                                  <input type="hidden" name="product_id[]" value="{$product.product_id}" />
                                                   <tr>
-                                                    <td>
-                                                    <!-- {foreach from=$product.goods_attr item=goods_attr} -->
+                                                    <td style="vertical-align: inherit;">
+                                                      <!-- {foreach from=$product.goods_attr item=goods_attr} -->
                                                       {$goods_attr} {if $goods_attr@last}{else}/{/if}
                                                       <!-- {/foreach} -->
                                                       </td>
-                                                      <td><input class="form-control" type="text" name="product_sn[]" value="{$product.product_sn}" /></td>
+                                                      <td><input class="form-control" type="text" name="product_sn[]" value="{$product.product_sn}" disabled="disabled" /></td>
                                                       <td><input class="form-control" type="text" name="product_bar_code[]" value="{$product.product_bar_code}" /></td>
                                                       <td><input class="form-control" type="text" name="product_shop_price[]" value="{$product.product_shop_price}" /></td>
                                                       <td><input class="form-control" type="text" name="product_number[]" value="{$product.product_number}" /></div></td>
-                                                      <td style="margin-top: 10px;">
+                                                      <td style="vertical-align: inherit;">
                                                         <a class="data-pjax" href='{url path="goods/merchant/product_edit" args="id={$product.product_id}&goods_id={$goods_id}"}' >{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
                                                         <a class="ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该货品删除吗？{/t}" href='{url path="goods/merchant/product_remove" args="id={$product.product_id}"}' >{t domain='goods'}删除{/t}</a>
-                                                    </td>
+                                                      </td>
                                                   </tr>
                                                   <!-- {/foreach} -->
                                               </tbody>

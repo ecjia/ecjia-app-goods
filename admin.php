@@ -1657,7 +1657,7 @@ class admin extends ecjia_admin {
 
     //导入商品到商品库
     public function insert_goodslib() {
-        $this->admin_priv('goods_insert_goodslib');
+        $this->admin_priv('goods_insert_goodslib', ecjia::MSGTYPE_JSON);
         
         //单个导入
         $id = isset($_POST['goods_id']) 		? intval($_POST['goods_id']) 		: 0;
