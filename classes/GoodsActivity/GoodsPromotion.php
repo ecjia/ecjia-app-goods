@@ -275,11 +275,13 @@ class GoodsPromotion
     				->where('goods_id', $this->goods_id)
     				->where('product_id', $this->product_id)
     				->update($data);
-    			}
-    			//用户购买限购数有效；未超过限购数
-    			if ($new_num <= $this->model->promote_user_limited) {
+    				//用户购买限购数有效；未超过限购数
     				$this->model->decrement('promote_limited', $order_goods['goods_number']);
     			}
+    			//用户购买限购数有效；未超过限购数
+//     			if ($new_num <= $this->model->promote_user_limited) {
+//     				$this->model->decrement('promote_limited', $order_goods['goods_number']);
+//     			}
     		} else {
     			//更新限购总数剩余数量（用户不限购时，直接减）
     			if ($this->model->promote_limited >= $order_goods['goods_number']) {
@@ -315,11 +317,13 @@ class GoodsPromotion
     				->where('goods_id', $this->goods_id)
     				->where('product_id', $this->product_id)
     				->update($data);
-    			}
-    			//用户购买限购数有效；未超过限购数
-    			if ($new_num <= $this->products->promote_user_limited) {
+    				//用户购买限购数有效；未超过限购数
     				$this->products->decrement('promote_limited', $order_goods['goods_number']);
     			}
+    			//用户购买限购数有效；未超过限购数
+//     			if ($new_num <= $this->products->promote_user_limited) {
+//     				$this->products->decrement('promote_limited', $order_goods['goods_number']);
+//     			}
     		} else {
     			//更新限购总数剩余数量（用户不限购时，直接减）
     			if ($this->products->promote_limited >= $order_goods['goods_number']) {
