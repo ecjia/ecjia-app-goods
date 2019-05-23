@@ -125,10 +125,17 @@ class goods_admin_hooks
 
         return $factories;
     }
+
+    public static function add_maintain_command($factories)
+    {
+        $factories['goods_spec_parameter_compatible'] = 'Ecjia\App\Goods\Maintains\GoodsSpecParameterCompatible';
+        return $factories;
+    }
 }
 
 RC_Hook::add_action('admin_dashboard_top', array('goods_admin_hooks', 'widget_admin_dashboard_goodsstat'), 11);
 RC_Hook::add_action( 'append_admin_setting_group', array('goods_admin_hooks', 'append_admin_setting_group') );
 RC_Hook::add_action('ecjia_setting_component_filter', array('goods_admin_hooks', 'add_admin_setting_command'));
+RC_Hook::add_action('ecjia_maintain_command_filter', array('goods_admin_hooks', 'add_maintain_command'));
 
 // end
