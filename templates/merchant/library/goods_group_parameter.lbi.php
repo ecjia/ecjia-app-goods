@@ -9,7 +9,7 @@
 				{if $group_pra.values}
 				<!-- {foreach from=$group_pra.values item=value} -->
 					<tr>
-						<td><div  align="right">{$value.attr_name}:</div></td>
+						<td  width="20%"><div  align="right">{$value.attr_name}:</div></td>
 						<td align="left">{$value.attr_value}</td>
 					</tr>
 				<!-- {/foreach} -->
