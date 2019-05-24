@@ -12,7 +12,7 @@ use Royalcms\Component\Database\QueryException;
 /**
  * 复制店铺中商品相册数据
  *
- * @todo 图片字段的处理 img_url img_desc thumb_url img_original
+ * 图片字段的处理 img_url img_desc thumb_url img_original
  *
  * Class StoreGoodsGalleryDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
@@ -29,9 +29,11 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     protected $rank_order = 7;
 
-    public function __construct($store_id, $source_store_id, $sort = 17)
+    protected $sort = 17;
+
+    public function __construct($store_id, $source_store_id)
     {
-        parent::__construct($store_id, $source_store_id, '商品相册', $sort);
+        parent::__construct($store_id, $source_store_id, '商品相册');
     }
 
     protected function getTableName()
@@ -77,17 +79,26 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
                         $item['img_desc'] = $this->copyImageForContent($item['img_desc']);
 
                         //图片字段的处理 thumb_url img_original img_url
-                        list($item['img_original'], $item['img_url'], $item['thumb_url']) = $this->copyGoodsGallery(
-                            $item['goods_id'],
-                            $item['product_id'],
-                            $item['img_original'],
-                            $item['img_url'],
-                            $item['thumb_url']
-                        );
+                        if ($item['product_id'] === 0){
+                            list($item['img_original'], $item['img_url'], $item['thumb_url']) = $this->copyGoodsGallery(
+                                $item['goods_id'],
+                                $item['product_id'],
+                                $item['img_original'],
+                                $item['img_url'],
+                                $item['thumb_url']
+                            );
+                        }else{
+                            list($item['img_original'], $item['img_url'], $item['thumb_url']) = $this->copyProductGallery(
+                                $item['goods_id'],
+                                $item['product_id'],
+                                $item['img_original'],
+                                $item['img_url'],
+                                $item['thumb_url']
+                            );
+                        }
 
                         try {
                             //将数据插入到新店铺
-                            //$new_img_id = $img_id + 1;
                             $new_img_id = RC_DB::table($this->getTableName())->insertGetId($item);
 
                             //存储替换记录
@@ -96,7 +107,6 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
                             ecjia_log_warning($e->getMessage());
                         }
                     }
-                    //dd($this->replacement_goods_gallery, $replacement_products, $items);
                 });
 
                 //存储 goods_gallery 相关替换数据
@@ -125,6 +135,15 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
         return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
+    private function copyProductGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
+    {
+        $copy = new CopyGoodsImage($goods_id, $product_id);
+
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyProductGallery($original_path, $img_path, $thumb_path);
+
+        return [$new_original_path, $new_img_path, $new_thumb_path];
+    }
+
     /**
      * 复制缩编器内容中的图片
      *
@@ -139,4 +158,27 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
         return $new_content;
     }
 
+    /**
+     * 返回操作日志编写
+     *
+     * @return mixed
+     */
+    public function handleAdminLog()
+    {
+        static $store_merchant_name, $source_store_merchant_name;
+
+        if (empty($store_merchant_name)) {
+            $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->store_id]);
+            $store_merchant_name = array_get(empty($store_info) ? [] : $store_info, 'merchants_name');
+        }
+
+        if (empty($source_store_merchant_name)) {
+            $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
+            $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
+        }
+
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
+        $content = sprintf(__('将【%s】店铺所有商品相册复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
+        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
+    }
 }

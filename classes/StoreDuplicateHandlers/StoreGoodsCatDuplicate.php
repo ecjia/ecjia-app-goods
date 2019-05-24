@@ -2,7 +2,9 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
+use ecjia_admin;
 use ecjia_error;
+use RC_Api;
 use RC_DB;
 use Royalcms\Component\Database\QueryException;
 
@@ -22,9 +24,11 @@ class StoreGoodsCatDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     protected $rank_order = 11;
 
-    public function __construct($store_id, $source_store_id, $sort = 21)
+    protected $sort = 21;
+
+    public function __construct($store_id, $source_store_id)
     {
-        parent::__construct($store_id, $source_store_id, '商品扩展分类', $sort);
+        parent::__construct($store_id, $source_store_id, '商品扩展分类');
     }
 
     protected function getTableName()
@@ -84,4 +88,27 @@ class StoreGoodsCatDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
         });
     }
 
+    /**
+     * 返回操作日志编写
+     *
+     * @return mixed
+     */
+    public function handleAdminLog()
+    {
+        static $store_merchant_name, $source_store_merchant_name;
+
+        if (empty($store_merchant_name)) {
+            $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->store_id]);
+            $store_merchant_name = array_get(empty($store_info) ? [] : $store_info, 'merchants_name');
+        }
+
+        if (empty($source_store_merchant_name)) {
+            $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
+            $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
+        }
+
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
+        $content = sprintf(__('将【%s】店铺所有商品拓展分类复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
+        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
+    }
 }

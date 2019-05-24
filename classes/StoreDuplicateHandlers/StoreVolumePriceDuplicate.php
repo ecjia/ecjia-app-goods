@@ -24,9 +24,11 @@ class StoreVolumePriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     protected $rank_order = 10;
 
-    public function __construct($store_id, $source_store_id, $sort = 20)
+    protected $sort = 20;
+
+    public function __construct($store_id, $source_store_id)
     {
-        parent::__construct($store_id, $source_store_id, '商品阶梯价格', $sort);
+        parent::__construct($store_id, $source_store_id, '商品阶梯价格');
     }
 
     protected function getTableName()
@@ -77,6 +79,25 @@ class StoreVolumePriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
             RC_DB::table($this->getTableName())->insert($items);
             //dd($items);
         });
+    }
+
+    public function handleAdminLog()
+    {
+        static $store_merchant_name, $source_store_merchant_name;
+
+        if (empty($store_merchant_name)) {
+            $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->store_id]);
+            $store_merchant_name = array_get(empty($store_info) ? [] : $store_info, 'merchants_name');
+        }
+
+        if (empty($source_store_merchant_name)) {
+            $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
+            $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
+        }
+
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
+        $content = sprintf(__('录入：将【%s】店铺所有商品阶梯价格复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
+        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
     }
 
 }

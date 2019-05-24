@@ -2,8 +2,9 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
-//use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
+use ecjia_admin;
 use ecjia_error;
+use RC_Api;
 use RC_DB;
 use Royalcms\Component\Database\QueryException;
 
@@ -25,9 +26,11 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
     protected $rank_order = 8;
 
-    public function __construct($store_id, $source_store_id, $sort = 18)
+    protected $sort = 18;
+
+    public function __construct($store_id, $source_store_id)
     {
-        parent::__construct($store_id, $source_store_id, '商品会员价格', $sort);
+        parent::__construct($store_id, $source_store_id, '商品会员价格');
     }
 
     protected function getTableName()
@@ -63,7 +66,6 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
 
                         try {
                             //将数据插入到新店铺
-                            //$new_price_id = $price_id + 1;
                             $new_price_id = RC_DB::table($this->getTableName())->insertGetId($item);
 
                             //存储替换记录
@@ -84,4 +86,22 @@ class StoreMemberPriceDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
         }
     }
 
+    public function handleAdminLog()
+    {
+        static $store_merchant_name, $source_store_merchant_name;
+
+        if (empty($store_merchant_name)) {
+            $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->store_id]);
+            $store_merchant_name = array_get(empty($store_info) ? [] : $store_info, 'merchants_name');
+        }
+
+        if (empty($source_store_merchant_name)) {
+            $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
+            $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
+        }
+
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
+        $content = sprintf(__('录入：将【%s】店铺所有商品会员价格复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
+        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
+    }
 }
