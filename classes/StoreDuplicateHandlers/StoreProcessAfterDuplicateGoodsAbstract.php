@@ -160,12 +160,16 @@ HTML;
     public function handleCount()
     {
         static $count;
+        //如果已经统计过，直接返回统计过的条数
         if (is_null($count)) {
             // 统计数据条数
-            try {
-                $count = $this->getSourceStoreDataHandler()->count();
-            } catch (QueryException $e) {
-                ecjia_log_warning($e->getMessage());
+            $old_goods_id = $this->getOldGoodsId();
+            if (!empty($old_goods_id)) {
+                try {
+                    $count = RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->count();
+                } catch (QueryException $e) {
+                    ecjia_log_warning($e->getMessage());
+                }
             }
         }
         return $count;
