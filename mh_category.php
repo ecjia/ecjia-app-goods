@@ -94,7 +94,6 @@ class mh_category extends ecjia_merchant
         ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品分类', 'goods')));
         $this->assign('ur_here', __('商品分类', 'goods'));
         $this->assign('action_link', array('href' => RC_Uri::url('goods/mh_category/add'), 'text' => __('添加商品分类', 'goods')));
-        $this->assign('action_link1', array('href' => RC_Uri::url('goods/mh_category/move'), 'text' => __('转移商品', 'goods')));
 
         $cat_id = intval($this->request->input('cat_id', 0));
         $this->assign('cat_id', $cat_id);
@@ -103,6 +102,17 @@ class mh_category extends ecjia_merchant
         $cat_list = $cat_list->all();
         $this->assign('cat_list', $cat_list);
         $this->assign('store_id', $_SESSION['store_id']);
+        $mer_cat_info = RC_DB::table('merchants_category')->where('cat_id', $cat_id)->first();
+        
+        if (!empty($mer_cat_info)) {
+        	$arr = array();
+        	if(!empty($mer_cat_info['parent_id'])) {
+        		$arr['cat_id'] = $arr['parent_id'];
+        	}
+        	$this->assign('back_link', array('href' => RC_Uri::url('goods/mh_category/init', $arr), 'text' => '上级分类'));
+        } else {
+        	$this->assign('action_link1', array('href' => RC_Uri::url('goods/mh_category/move'), 'text' => __('转移商品', 'goods')));
+        }
 
         $this->display('category_list.dwt');
     }

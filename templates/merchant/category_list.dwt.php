@@ -23,6 +23,10 @@ ecjia.merchant.goods_category_list.init();
 		<!-- {if $action_link1} -->
 		<a class="btn btn-primary data-pjax" href="{$action_link1.href}" id="sticky_a"><i class="fa fa-exchange"></i> {$action_link1.text} </a>
 		<!-- {/if} -->	
+		
+		<!-- {if $back_link} -->
+		<a class="btn btn-primary data-pjax" href="{$back_link.href}" id="sticky_a"><i class="fa fa-reply"></i> {$back_link.text} </a>
+		<!-- {/if} -->	
 	</div>	
 	<div class="clearfix"></div>
 </div>

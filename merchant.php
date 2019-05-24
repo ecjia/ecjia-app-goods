@@ -284,11 +284,7 @@ class merchant extends ecjia_merchant {
 	    	];
 	    	return $links;
 	    };
-	    //从分类进入，切换在售和活动时，分类参数处理
-	    if ($cat_id) {
-	    	unset($input['store_id_and_merchant_cat_id']);
-	    	$input['cat_id'] = $cat_id;
-	    }
+	    
 	    $goods_count = $count_link_func($input, $where, $goods_count, $goods_activity_count);
 	    
 	    $this->assign('list_type', $list_type);
