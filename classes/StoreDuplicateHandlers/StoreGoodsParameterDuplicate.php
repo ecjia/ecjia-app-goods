@@ -60,9 +60,7 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
      */
     public function handlePrintData()
     {
-        $count = $this->handleCount();
-        $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>个参数模板', 'goods'), $count);
-
+        $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>个参数模板', 'goods'), $this->handleCount());
         return <<<HTML
 <span class="controls-info">{$text}</span>
 HTML;
@@ -75,18 +73,16 @@ HTML;
      */
     public function handleCount()
     {
-        //如果已经统计过，直接返回统计过的条数
-        if (!is_null($this->count)) {
-            return $this->count;
+        static $count;
+        if (is_null($count)) {
+            // 统计数据条数
+            try {
+                $count = $this->getSourceStoreDataHandler()->count();
+            } catch (QueryException $e) {
+                ecjia_log_warning($e->getMessage());
+            }
         }
-
-        // 统计数据条数
-        try {
-            $this->count = $this->getSourceStoreDataHandler()->count();
-        } catch (QueryException $e) {
-            ecjia_log_warning($e->getMessage());
-        }
-        return $this->count;
+        return $count;
     }
 
     /**
