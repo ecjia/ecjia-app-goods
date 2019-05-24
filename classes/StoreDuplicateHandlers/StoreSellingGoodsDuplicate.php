@@ -63,7 +63,9 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
      */
     protected $replacement_member_price = [];
 
-
+    /**
+     * @var \Ecjia\App\Store\StoreDuplicate\StoreDuplicateProgressData
+     */
     protected $progress_data;
 
     /**

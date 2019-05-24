@@ -265,7 +265,6 @@
 							dataType: "json",
 							success: function(data) {
 								ecjia.merchant.showmessage(data);
-								window.location.href = data.url;
 							}
 						});
 					}
