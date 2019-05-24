@@ -150,8 +150,9 @@ class merchant extends ecjia_merchant {
 
 		$goods_id = isset($_REQUEST['goods_id']) ? $_REQUEST['goods_id'] : 0;
 		$extension_code = isset($_GET['extension_code']) ? '&extension_code='.$_GET['extension_code'] : '';
+		$action_type = trim($_GET['action_type']);
 		
-		$this->tags = get_merchant_goods_info_nav($goods_id, $extension_code);
+		$this->tags = get_merchant_goods_info_nav($goods_id, $action_type, $extension_code);
 		$this->tags[ROUTE_A]['active'] = 1;
 
 		ecjia_merchant_screen::get_current_screen()->set_parentage('goods', 'goods/merchant.php');
@@ -605,9 +606,7 @@ class merchant extends ecjia_merchant {
 		if (empty($goods_id)) {
 		    return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
 		}
-		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goods')));
-		$this->assign('ur_here', __('商品预览', 'goods'));
+
 		
 		//返回商品列表
 		if ($preview_type == 'selling') {
@@ -621,6 +620,11 @@ class merchant extends ecjia_merchant {
 		} else {
 			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init'));
 		}
+		
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $action_link['href']));
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goods')));
+		$this->assign('ur_here', __('商品预览', 'goods'));
+		
 		
 		$this->assign('action_link', $action_link);
 
@@ -800,16 +804,6 @@ class merchant extends ecjia_merchant {
         $this->admin_priv('goods_update');
 
 	    ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品回收站', 'goods')));
-	    ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
-		    'id'		=> 'overview',
-		    'title'		=> __('概述', 'goods'),
-		    'content'	=> '<p>' . __('欢迎访问ECJia智能后台商品回收站页面，在商品列表中进行删除的商品会放入此回收站中，在该页面可以对商品进行彻底删除或者还原操作。', 'goods') . '</p>'
-	    ));
-	    
-	    ecjia_merchant_screen::get_current_screen()->set_help_sidebar(
-	    	'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
-	    	'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品回收站" target="_blank">关于商品回收站帮助文档</a>', 'goods') . '</p>'
-	    );
 	    
 	    $cat_id = empty($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
 	    
@@ -832,25 +826,13 @@ class merchant extends ecjia_merchant {
 	 * 添加新商品
 	 */
 	public function add() {
-		// 检查权限
 		$this->admin_priv('goods_update');
 		
 		$href = strpos($_SERVER['HTTP_REFERER'], 'm=goods&c=admin&a=init') ? $_SERVER['HTTP_REFERER'] : RC_Uri::url('goods/merchant/init');
 			
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), RC_Uri::url('goods/merchant/init')));
 		$this->assign('action_link', array('href' => $href, 'text' => __('商品列表', 'goods')));
-		
-		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
-			'id'		=> 'overview',
-			'title'		=> __('概述', 'goods'),
-			'content'	=> '<p>' . __('欢迎访问ECJia智能后台添加商品页面，可以在此页面添加商品信息。', 'goods') . '</p>'
-		));
-	
-		ecjia_merchant_screen::get_current_screen()->set_help_sidebar(
-			'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
-			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:添加商品" target="_blank">关于添加商品帮助文档</a>', 'goods') . '</p>'
-		);
-		
+
 		$cat_id 	= !empty($_GET['cat_id']) 		? intval($_GET['cat_id']) 		: 0;
 		$brand_id  	= !empty($_POST['brand_id']) 	? intval($_POST['brand_id']) 	: 0;
 		
@@ -1204,11 +1186,14 @@ class merchant extends ecjia_merchant {
 	public function edit() {
 		$this->admin_priv('goods_update');
 
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), RC_Uri::url('goods/merchant/init')));
+		$action_type = trim($_GET['action_type']);
+		$href_url = Ecjia\App\Goods\MerchantGoodsAttr::goods_back_goods_url($action_type);
+		
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $href_url));
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑商品', 'goods')));
 		
 		$this->assign('ur_here', __('编辑商品', 'goods'));
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => __('商品列表', 'goods')));
+		$this->assign('action_link', array('href' => $href_url, 'text' => __('商品列表', 'goods')));
 
 		/* 商品信息 */
 		$goods = RC_DB::table('goods')->where('goods_id', $_GET['goods_id'])->where('store_id', $_SESSION['store_id'])->first();
@@ -2862,7 +2847,12 @@ class merchant extends ecjia_merchant {
 	public function edit_goods_desc() {
 	    $this->admin_priv('goods_update');
 	    
-	    ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'),RC_Uri::url('goods/merchant/init')));
+	    $action_type = trim($_GET['action_type']);
+	    $href_url = Ecjia\App\Goods\MerchantGoodsAttr::goods_back_goods_url($action_type);
+	    
+	    ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $href_url));
+	    $this->assign('action_link', array('href' => $href_url, 'text' => __('商品列表', 'goods')));
+	    $this->assign('ur_here',__('编辑商品描述', 'goods'));
 	    
 		$goods_id = intval($_REQUEST['goods_id']);
 		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->first();
@@ -2877,8 +2867,7 @@ class merchant extends ecjia_merchant {
 		//设置选中状态,并分配标签导航
 		$this->tags['edit_goods_desc']['active'] = 1;
 		$this->assign('tags', $this->tags);
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => __('商品列表', 'goods')));
-		$this->assign('ur_here',__('编辑商品描述', 'goods'));
+
 		$this->assign('goods', $goods);
 		$this->assign('goods_id', $goods_id);
 		$this->assign('form_action', RC_Uri::url('goods/merchant/update_goods_desc', 'goods_id='.$goods_id));
@@ -2954,11 +2943,14 @@ class merchant extends ecjia_merchant {
 		
 		$this->assign('tags', $this->tags);
 		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), RC_Uri::url('goods/merchant/init')));
+		$action_type = trim($_GET['action_type']);
+		$href_url = Ecjia\App\Goods\MerchantGoodsAttr::goods_back_goods_url($action_type);
+		
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $href_url));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('设置商品参数', 'goods')));
 		
 		$this->assign('ur_here', __('设置商品参数', 'goods'));
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => __('商品列表', 'goods')));
+		$this->assign('action_link', array('href' => $href_url, 'text' => __('商品列表', 'goods')));
 		
 		$goods_id = intval($_GET['goods_id']);
 		$this->assign('goods_id', $goods_id);
@@ -3098,11 +3090,14 @@ class merchant extends ecjia_merchant {
 		
 		$this->assign('tags', $this->tags);
 		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), RC_Uri::url('goods/merchant/init')));
+		$action_type = trim($_GET['action_type']);
+		$href_url = Ecjia\App\Goods\MerchantGoodsAttr::goods_back_goods_url($action_type);
+		
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $href_url));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('设置商品规格', 'goods')));
 		
 		$this->assign('ur_here', __('设置商品属性', 'goods'));
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => __('商品列表', 'goods')));
+		$this->assign('action_link', array('href' => $href_url, 'text' => __('商品列表', 'goods')));
 		
 		$goods_id = intval($_GET['goods_id']);
 		$this->assign('goods_id', $goods_id);
@@ -3665,17 +3660,14 @@ class merchant extends ecjia_merchant {
 	public function edit_link_goods() {
 		$this->admin_priv('goods_update');
 		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), RC_Uri::url('goods/merchant/init')));
-		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
-			'id'		=> 'overview',
-			'title'		=> __('概述', 'goods'),
-			'content'	=> '<p>' . __('欢迎访问ECJia智能后台关联商品页面，可以在此对相应的商品进行关联操作。', 'goods') . '</p>'
-		));
+		$action_type = trim($_GET['action_type']);
+		$href_url = Ecjia\App\Goods\MerchantGoodsAttr::goods_back_goods_url($action_type);
 		
-		ecjia_merchant_screen::get_current_screen()->set_help_sidebar(
-			'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
-			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.85.B3.E8.81.94.E5.95.86.E5.93.81" target="_blank">关于关联商品帮助文档</a>', 'goods') . '</p>'
-		);
+		$ur_here = __('编辑关联商品', 'goods');
+		$this->assign('ur_here', $ur_here);
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $href_url));
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
+		$this->assign('action_link', array('href' => $href_url, 'text' => __('商品列表', 'goods')));
 		
 		$goods_id = intval($_GET['goods_id']);
 		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->first();
@@ -3690,11 +3682,9 @@ class merchant extends ecjia_merchant {
 		$this->assign('link_goods_list', $linked_goods);
 		$this->assign('cat_list', merchant_cat_list(0, 0, false));
 		$this->assign('brand_list', get_brand_list());
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => __('商品列表', 'goods')));
+	
 		
-		$ur_here = __('编辑关联商品', 'goods');
-		$this->assign('ur_here', $ur_here);
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
+
 
 		$this->display('link_goods.dwt');
 	}
@@ -3747,17 +3737,15 @@ class merchant extends ecjia_merchant {
 	public function edit_link_article() {
 		$this->admin_priv('goods_update');
 		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), RC_Uri::url('goods/merchant/init')));
-		ecjia_merchant_screen::get_current_screen()->add_help_tab(array(
-			'id'		=> 'overview',
-			'title'		=> __('概述', 'goods'),
-			'content'	=> '<p>' . __('欢迎访问ECJia智能后台商品关联文章页面，可以在此对相应的商品进行关联文章操作。', 'goods') . '</p>'
-		));
+		$action_type = trim($_GET['action_type']);
+		$href_url = Ecjia\App\Goods\MerchantGoodsAttr::goods_back_goods_url($action_type);
 		
-		ecjia_merchant_screen::get_current_screen()->set_help_sidebar(
-			'<p><strong>' . __('更多信息：', 'goods') . '</strong></p>' .
-			'<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.85.B3.E8.81.94.E6.96.87.E7.AB.A0" target="_blank">关于商品关联文章帮助文档</a>', 'goods') . '</p>'
-		);
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $href_url));
+		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑关联文章', 'goods')));
+		
+		$this->assign('action_link', array('href' => $href_url, 'text' => __('商品列表', 'goods')));
+		$this->assign('ur_here', __('关联文章', 'goods'));
+
 		$goods_id = intval($_GET['goods_id']);
 		$goods = RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->first();
 		if (empty($goods)) {
@@ -3769,11 +3757,7 @@ class merchant extends ecjia_merchant {
 		//设置选中状态,并分配标签导航
 		$this->assign('tags', $this->tags);
 		$this->assign('goods_article_list',	$goods_article_list);
-		$this->assign('action_link', array('href' => RC_Uri::url('goods/merchant/init'), 'text' => __('商品列表', 'goods')));
-		
-		$ur_here = __('关联文章', 'goods');
-		$this->assign('ur_here', $ur_here);
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
+
 		
 		$this->display('link_article.dwt');
 	}

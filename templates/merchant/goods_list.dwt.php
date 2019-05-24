@@ -21,13 +21,11 @@
 					<div class="form-group ecjiaf-tac">
 						<div>
 							<select class="noselect w200 ecjiaf-ib form-control" size="15" name="target_cat">
-							<!-- {if $cat_list} -->
-								<!-- {foreach from=$cat_list item=cat} -->
-								<option value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
-								<!-- {/foreach} -->
-							<!-- {else} -->
-								<option value="0">{t domain='goods'}暂无任何分类{/t}</option>
-							<!-- {/if} -->
+								<!-- {if $merchant_cat_list_option} -->
+									{$merchant_cat_list_option}
+								<!-- {else} -->
+									<option value="0">{t domain='goods'}暂无任何分类{/t}</option>
+								<!-- {/if} -->
 							</select>
 						</div>
 					</div>
@@ -201,16 +199,16 @@
                                     {if $goods.is_promote && $action eq 'finish'}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
 									<br/>
 									<div class="edit-list">
-										<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
+										<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
 
 										{if $action neq 'check'}
-											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
-	 									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
-											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}规格/货品{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
+	 									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}规格/货品{/t}</a>&nbsp;|&nbsp;
 											
-											<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
-											<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
-											<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
 											<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
 										{/if}
 										
