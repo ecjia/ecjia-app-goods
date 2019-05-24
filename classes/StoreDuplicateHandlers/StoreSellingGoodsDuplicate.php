@@ -215,6 +215,10 @@ HTML;
      */
     protected function startDuplicateProcedure()
     {
+        //忽略内存大小限制
+        ini_set('memory_limit',-1);
+        set_time_limit(0);
+
         //用于存储替换数据的关联关系
         $replacement_data = [];
 
