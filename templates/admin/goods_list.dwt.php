@@ -143,6 +143,10 @@
 					{/if}
 					<th class="w100" data-toggle="sortby" data-sortby="shop_price">{t domain='goods'}价格{/t}</th>
 					
+					{if $action eq 'bulk' or $action eq 'cashier'}
+					<th class="w100">{t domain='goods'}单位{/t}</th>
+					{/if}
+					
 					<!-- {if $use_storage} -->
 					<th class="w100" data-toggle="sortby" data-sortby="goods_number"> {t domain='goods'}库存{/t} </th>
 					<!-- {/if} --> 
@@ -220,6 +224,10 @@
 					{if $action neq 'check'}<td>{$goods.goods_sn}</td>{/if}
 					
 					<td>{$goods.shop_price}</td>
+					
+					{if $action eq 'bulk' or $action eq 'cashier'}
+						<td>{if $goods.weight_unit eq '1'}{t domain="cashier"}克{/t}{else}{t domain="cashier"}千克{/t}{/if}</td>
+					{/if}
 					
 					<!-- {if $use_storage} -->
 					<td>{$goods.goods_number}</td>
