@@ -54,8 +54,14 @@ class mh_gallery extends ecjia_merchant {
 	public function __construct() {
         parent::__construct();
         
-        RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/merchant_goods_list.js', __FILE__), array(), false, 1);
-        RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
+        RC_Loader::load_app_class('goods', 'goods');
+        
+        RC_Loader::load_app_func('admin_category');
+        RC_Loader::load_app_func('global');
+        
+        RC_Loader::load_app_func('admin_user', 'user');
+        
+      
         
         RC_Script::enqueue_script('jquery-dropper', RC_Uri::admin_url() . '/statics/lib/dropper-upload/jquery.fs.dropper.js', array(), false, 1);
         RC_Script::enqueue_script('jquery-imagesloaded');
@@ -71,25 +77,22 @@ class mh_gallery extends ecjia_merchant {
         RC_Script::enqueue_script('smoke');
         RC_Style::enqueue_style('uniform-aristo');
         RC_Script::enqueue_script('jq_quicksearch', RC_Uri::admin_url() . '/statics/lib/multi-select/js/jquery.quicksearch.js', array('jquery'), false, 1);
-        
+       
         RC_Script::enqueue_script('ecjia-region',RC_Uri::admin_url('statics/ecjia.js/ecjia.region.js'), array('jquery'), false, 1);
-
-        RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/merchant_product.js', __FILE__), array(), false, 1);
+        RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
         RC_Style::enqueue_style('mh-product', RC_App::apps_url('statics/styles/mh-product.css', __FILE__), array());
-        RC_Script::localize_script('goods_list', 'js_lang', config('app-goods::jslang.goods_list_page'));
         
-        RC_Loader::load_app_class('goods', 'goods');
-        
-        RC_Loader::load_app_func('admin_category');
-        RC_Loader::load_app_func('global');
-        
-        RC_Loader::load_app_func('admin_user', 'user');
+        RC_Script::enqueue_script('merchant_goods_list', RC_App::apps_url('statics/js/merchant_goods_list.js', __FILE__), array(), false, 1);
+        RC_Script::enqueue_script('merchant_product', RC_App::apps_url('statics/js/merchant_product.js', __FILE__), array(), false, 1);
+
         $goods_list_jslang = array(
         	'user_rank_list'	=> get_rank_list(),
         	'marketPriceRate'	=> ecjia::config('market_price_rate'),
         	'integralPercent'	=> ecjia::config('integral_percent'),
         );
-        RC_Script::localize_script('goods_list', 'admin_goodsList_lang', $goods_list_jslang );
+    	$js_lang_arr = array_merge($goods_list_jslang, config('app-goods::jslang.goods_list_page'), config('app-goods::jslang.spec_product_page'));
+		RC_Script::localize_script('merchant_goods_list', 'js_lang', $js_lang_arr);
+        
         ecjia_merchant_screen::get_current_screen()->set_parentage('goods', 'goods/mh_gallery.php');
         ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品管理', 'goods'), RC_Uri::url('goods/merchant/init')));
 	}
