@@ -8,6 +8,7 @@ use ecjia_admin;
 use ecjia_error;
 use RC_Api;
 use RC_DB;
+use RC_Loader;
 use RC_Time;
 use Royalcms\Component\Database\QueryException;
 
@@ -153,18 +154,16 @@ HTML;
      */
     public function handleCount()
     {
-        //如果已经统计过，直接返回统计过的条数
-        if (!is_null($this->count)) {
-            return $this->count;
+        static $count;
+        if (is_null($count)) {
+            // 统计数据条数
+            try {
+                $count = $this->getSourceStoreDataHandler()->count();
+            } catch (QueryException $e) {
+                ecjia_log_warning($e->getMessage());
+            }
         }
-
-        // 统计数据条数
-        try {
-            $this->count = $this->getSourceStoreDataHandler()->count();
-        } catch (QueryException $e) {
-            ecjia_log_warning($e->getMessage());
-        }
-        return $this->count;
+        return $count;
     }
 
     /**
@@ -217,6 +216,7 @@ HTML;
         //用于存储替换数据的关联关系
         $replacement_data = [];
 
+        RC_Loader::load_app_func('global', 'goods');
         try {
             //初始化过程数据中该复制操作需要用到的依赖数据
             $this->initRelationDataFromProgressData();
@@ -309,11 +309,8 @@ HTML;
                 //sales_volume 销量设置为0
                 $item['sales_volume'] = 0;
 
-                //@todo 图片字段的处理  goods_desc goods_thumb goods_img original_img
-                $item['goods_desc'] = $this->copyImage($item['goods_desc']);
-                $item['goods_thumb'] = $this->copyImage($item['goods_thumb']);
-                $item['goods_img'] = $this->copyImage($item['goods_img']);
-                $item['original_img'] = $this->copyImage($item['original_img']);
+                //设置新的goods_desc
+                $item['goods_desc'] = $this->copyImageForContent($item['goods_desc']);
 
                 try {
                     //插入数据到新店铺
@@ -324,8 +321,15 @@ HTML;
 
                     //商品唯一货号需要重新生成
                     $goods_sn = function_exists('generate_goods_sn') ? generate_goods_sn($new_goods_id) : bin2hex(random_bytes(16));
-                    RC_DB::table('goods')->where('goods_id', $new_goods_id)->update(['goods_sn' => $goods_sn]);
-                    $item['goods_sn'] = $goods_sn;
+
+                    //更新图片字段 goods_thumb goods_img original_img 和商品货号
+                    list($new_original_path , $new_img_path, $new_thumb_path) = $this->copyGoodsImage($new_goods_id, 0, $item['original_img'] , $item['goods_img'], $item['goods_thumb']);
+                    RC_DB::table('goods')->where('goods_id', $new_goods_id)->update([
+                        'goods_sn' => $goods_sn,
+                        'goods_thumb' => $new_thumb_path,
+                        'goods_img' => $new_img_path,
+                        'original_img' => $new_original_path
+                    ]);
                 } catch (QueryException $e) {
                     ecjia_log_warning($e->getMessage());
                 }
@@ -355,9 +359,9 @@ HTML;
                 $item['attr_id'] = array_get($replacement_attribute, $item['attr_id'], $item['attr_id']);
 
                 //@todo 图片字段的处理 attr_img_flie attr_img_site attr_gallery_flie
-                $item['attr_img_flie'] = $this->copyImage($item['attr_img_flie']);
-                $item['attr_img_site'] = $this->copyImage($item['attr_img_site']);
-                $item['attr_gallery_flie'] = $this->copyImage($item['attr_gallery_flie']);
+                //$item['attr_img_flie'] = $this->copyImage($item['attr_img_flie']);
+                //$item['attr_img_site'] = $this->copyImage($item['attr_img_site']);
+                //$item['attr_gallery_flie'] = $this->copyImage($item['attr_gallery_flie']);
 
                 try {
                     //将数据插入到新店铺
@@ -402,12 +406,9 @@ HTML;
                 //设置唯一产品货号 product_sn，通过相关代码和数据库内容，暂未发现有何规律或规则，也无货号唯一约束，该值暂时无法确认，先生成其他唯一码用于测试
                 $item['product_sn'] = $goods_sn = function_exists('generate_goods_sn') ? generate_goods_sn($item['goods_id']) : bin2hex(random_bytes(16));
 
+                //图片字段的处理 product_desc
 
-                //@todo 图片字段的处理 product_thumb product_img product_original_img product_desc
-                $item['product_thumb'] = $this->copyGoodsImage($item['product_thumb']);
-                $item['product_img'] = $this->copyGoodsImage($item['product_img']);
-                $item['product_original_img'] = $this->copyGoodsImage($item['product_original_img']);
-                $item['product_desc'] = $this->copyGoodsImage($item['product_desc']);
+                $item['product_desc'] = $this->copyImageForContent($item['product_desc']);
 
                 try {
                     //将数据插入到新店铺
@@ -416,10 +417,26 @@ HTML;
 
                     //建立替换数据的关联关系
                     $this->replacement_products[$product_id] = $new_product_id;
+
+                    list($product_original_img, $product_img, $product_thumb) = $this->copyProductImage(
+                        $item['goods_id'],
+                        $new_product_id,
+                        $item['product_original_img'],
+                        $item['product_img'],
+                        $item['product_thumb']
+                    );
+
+                    //更新图片字段 product_thumb product_img product_original_img
+                    RC_DB::table('products')->where('product_id', $new_product_id)->update([
+                        'product_thumb' => $product_thumb,
+                        'product_img' => $product_img,
+                        'product_original_img' => $product_original_img
+                    ]);
                 } catch (QueryException $e) {
                     ecjia_log_warning($e->getMessage());
                 }
             }
+
         });
     }
 
@@ -430,7 +447,7 @@ HTML;
      *
      * @return []
      */
-    protected function copyGoodsImage($goods_id, $product_id, $original_path, $img_path, $thumb_path)
+    private function copyGoodsImage($goods_id, $product_id, $original_path, $img_path, $thumb_path)
     {
         $copy = new CopyGoodsImage($goods_id, $product_id);
 
@@ -439,29 +456,20 @@ HTML;
         return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
-    protected function copyGoodsGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
+    private function copyProductImage($goods_id, $product_id, $original_path, $img_path, $thumb_path)
     {
         $copy = new CopyGoodsImage($goods_id, $product_id);
 
-        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyProductImage($original_path, $img_path, $thumb_path);
 
         return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
-    protected function copyProductImage($goods_id, $product_id, $original_path, $img_path, $thumb_path)
+    private function copyProductGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
     {
         $copy = new CopyGoodsImage($goods_id, $product_id);
 
-        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
-
-        return [$new_original_path, $new_img_path, $new_thumb_path];
-    }
-
-    protected function copyProductGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
-    {
-        $copy = new CopyGoodsImage($goods_id, $product_id);
-
-        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsImage($original_path, $img_path, $thumb_path);
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyProductGallery($original_path, $img_path, $thumb_path);
 
         return [$new_original_path, $new_img_path, $new_thumb_path];
     }

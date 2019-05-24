@@ -2,6 +2,7 @@
 
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
+use Ecjia\App\Goods\GoodsImage\CopyGoodsImage;
 use ecjia_error;
 use RC_DB;
 use RC_Api;
@@ -72,11 +73,17 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
                         //通过 products 替换数据设置新店铺的 product_id
                         $item['product_id'] = array_get($replacement_products, $item['product_id'], $item['product_id']);
 
-                        //@todo 图片字段的处理 img_url img_desc thumb_url img_original
-                        $item['img_url'] = $this->copyImage($item['img_url']);
-                        $item['img_desc'] = $this->copyImage($item['img_desc']);
-                        $item['thumb_url'] = $this->copyImage($item['thumb_url']);
-                        $item['img_original'] = $this->copyImage($item['img_original']);
+                        //图片字段的处理 img_desc
+                        $item['img_desc'] = $this->copyImageForContent($item['img_desc']);
+
+                        //图片字段的处理 thumb_url img_original img_url
+                        list($item['img_original'], $item['img_url'], $item['thumb_url']) = $this->copyGoodsGallery(
+                            $item['goods_id'],
+                            $item['product_id'],
+                            $item['img_original'],
+                            $item['img_url'],
+                            $item['thumb_url']
+                        );
 
                         try {
                             //将数据插入到新店铺
@@ -102,16 +109,20 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
     }
 
     /**
-     * 复制单张图片
-     *
-     * @param $path
-     *
-     * @return string
+     * @param $goods_id
+     * @param $product_id
+     * @param $original_path
+     * @param $img_path
+     * @param $thumb_path
+     * @return array
      */
-    protected function copyImage($path)
+    private function copyGoodsGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
     {
+        $copy = new CopyGoodsImage($goods_id, $product_id);
 
-        return $path;
+        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyGoodsGallery($original_path, $img_path, $thumb_path);
+
+        return [$new_original_path, $new_img_path, $new_thumb_path];
     }
 
     /**
@@ -123,8 +134,9 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
      */
     protected function copyImageForContent($content)
     {
+        $new_content = CopyGoodsImage::copyDescriptionContentImages($content);
 
-        return $content;
+        return $new_content;
     }
 
 }

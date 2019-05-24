@@ -151,8 +151,6 @@ HTML;
 
         $this->recursiveCategroy($top_categories, $all_categories, $specification_replacement, $parameter_replacement);
 
-        //@todo cat_image 未复制
-
 //        $merchant_category_replacement = [];
 //        $this->source_store_data_handler->orderBy('parent_id', 'asc')->chunk(50, function ($items) use (& $merchant_category_replacement, $specification_replacement, $parameter_replacement) {
 //
@@ -216,7 +214,6 @@ HTML;
 
         $categories = $categories->map(function ($model) use ($collection, $specification_replacement, $parameter_replacement) {
 
-
             $new_model = $model->replicate();
 
             $new_model->store_id = $this->store_id;
@@ -228,7 +225,7 @@ HTML;
             //取出原parent_id数据
             $new_model->parent_id = array_get($this->merchant_category_replacement, $model->parent_id, $model->parent_id);
 
-            //设置新店铺图片路径
+            //设置新店铺 cat_image
             $new_model->cat_image = $this->copyImage($new_model->cat_image);
 
             $new_model->save();
