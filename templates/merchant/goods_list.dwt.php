@@ -169,7 +169,7 @@
 								<th class="w100 "> {t domain='goods'}是否上架{/t} </th>
 								{/if}
 								
-								<th class="w120 "> {t domain='goods'}加入推荐{/t} </th>
+								<th class="w130 "> {t domain='goods'}加入推荐{/t} </th>
 
 								{if $action eq 'check'}
 								<th class="w100"> {t domain='goods'}审核状态{/t} </th>
