@@ -474,7 +474,7 @@ class merchant extends ecjia_merchant {
 	public function check() {
 		$this->admin_priv('goods_manage');
 	
-		$this->assign('list_url', RC_Uri::url('goods/merchant/obtained'));
+		$this->assign('list_url', RC_Uri::url('goods/merchant/check'));
 	
 		$this->assign('ur_here', __('审核商品列表（SPU）', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('审核商品列表（SPU）', 'goods')));
