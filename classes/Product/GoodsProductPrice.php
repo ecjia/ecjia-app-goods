@@ -105,8 +105,9 @@ class GoodsProductPrice
     		}
     	}
     	//商品规格属性id重组处理
-    	$spec_combine_arr = $this->_combination($arr); 
+    	$spec_combine_arr = $this->_combination($arr);
     	foreach ($spec_combine_arr as $goods_attr) {
+    	    asort($goods_attr);
     		$goods_attr_string = implode('|', $goods_attr);
     		$product_goods_attrs[] = $goods_attr_string;
     	}
