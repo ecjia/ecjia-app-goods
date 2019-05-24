@@ -183,17 +183,17 @@ HTML;
             return true;
         }
 
-        //标记复制正在进行中
-        $this->markStartingDuplicate();
-
         //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
         if (!empty($this->dependents)) { //如果设有依赖对象
             //检测依赖
             $items = $this->dependentCheck();
             if (!empty($items)) {
-                return new ecjia_error('duplicate_dependence_error', __('复制依赖检测失败！', 'store'), $items);
+                return new ecjia_error('handle_duplicate_error', __('复制依赖检测失败！', 'store'), $items);
             }
         }
+
+        //标记复制正在进行中
+        $this->markStartingDuplicate();
 
         //执行具体任务
         $result = $this->startDuplicateProcedure();
