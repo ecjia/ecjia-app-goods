@@ -587,6 +587,7 @@ class admin extends ecjia_admin {
 		$this->assign('form_action_insert', RC_Uri::url('goods/admin/insert_goodslib'));
 	
 		$this->assign('action', 'check');
+		$this->assign('page', $page);
 		
 		$this->display('goods_list.dwt');
 	}
@@ -3437,9 +3438,10 @@ class admin extends ecjia_admin {
 		$goods_id       = intval($_POST['goods_id']);
 		$review_content = trim($_POST['review_content']);
 		$review_status  = intval($_POST['review_status']);
+		$current_page 	= empty($_GET['curr_page']) ? 1 : intval($_GET['curr_page']); 
 		
 		if (empty($review_content)) {
-			return $this->showmessage(__('操作备注不能为空', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR,array('url' => RC_Uri::url('goods/admin/check')));
+			return $this->showmessage(__('操作备注不能为空', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 	
 		$data = array(
@@ -3462,11 +3464,7 @@ class admin extends ecjia_admin {
 		//商品审核消息通知
 		$this->send_notifications($goods_id, $review_status);
 		
-		if($review_status === 3) {//审核通过
-			return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/init')));
-		} else {//审核被拒
-			return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/check', array('type'=>1))));
-		}
+		return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin/check', array('page' => $current_page))));
 	}
 	
 	/**

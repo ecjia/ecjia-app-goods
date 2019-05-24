@@ -360,7 +360,6 @@
 		               };
 		               $.post(url, option, function (data) {
 		                    ecjia.admin.showmessage(data);
-		                    location.href = data.url;
 		               }, 'json');
 		           });
 			 });
