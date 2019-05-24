@@ -143,6 +143,14 @@
 					{/if}
 					<th class="w100" data-toggle="sortby" data-sortby="shop_price">{t domain='goods'}价格{/t}</th>
 					
+					{if $action eq 'bulk'}
+					<th class="w100">{t domain='goods'}单位{/t}</th>
+					{/if}
+					
+					{if $action eq 'cashier'}
+					<th class="w100">{t domain='goods'}销量{/t}</th>
+					{/if}
+					
 					<!-- {if $use_storage} -->
 					<th class="w100" data-toggle="sortby" data-sortby="goods_number"> {t domain='goods'}库存{/t} </th>
 					<!-- {/if} --> 
@@ -183,9 +191,9 @@
 						<strong>{$goods.merchants_name}</strong>
 						</span>{if $goods.manage_mode eq 'self'}<span class="ecjiafc-red">{t domain='goods'}（自营）{/t}</span>{/if}
 						<br>
-                        {if $goods.product_list}<span class="label-orange">{t domain='goods'}多货品{/t}{/if}</span>
+                        {if $goods.has_product}<span class="label-orange">{t domain='goods'}多货品{/t}{/if}</span>
 						{$goods.goods_name|escape:html}
-						{if $goods.is_promote eq 1}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
+						{if $goods.is_promote && $action eq 'finish'}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
 						<br/>
 						<div class="edit-list">
 							{if $preview_type}
@@ -220,6 +228,14 @@
 					{if $action neq 'check'}<td>{$goods.goods_sn}</td>{/if}
 					
 					<td>{$goods.shop_price}</td>
+					
+					{if $action eq 'bulk'}
+						<td>{if $goods.weight_unit eq '1'}{t domain="cashier"}克{/t}{else}{t domain="cashier"}千克{/t}{/if}</td>
+					{/if}
+					
+					{if $action eq 'cashier'}
+						<td>{if $goods.sales_volume}{$goods.sales_volume}{else}0{/if}</td>
+					{/if}
 					
 					<!-- {if $use_storage} -->
 					<td>{$goods.goods_number}</td>

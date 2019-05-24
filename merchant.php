@@ -3084,7 +3084,8 @@ class merchant extends ecjia_merchant {
 		//删除关联的规格属性
 		RC_DB::table('goods_attr')->where(array('goods_id' => $goods_id))->where(array('cat_type' => 'parameter'))->delete();
 		
-		return $this->showmessage(__('清除相关数据成功，您可以重新进行更换参数模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id))));
+		return $this->showmessage(__('清除相关数据成功，您可以重新进行更换参数模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/merchant/edit_goods_parameter', array('goods_id' => $goods_id))));
+		
 	}
 	
    /**
@@ -3396,7 +3397,7 @@ class merchant extends ecjia_merchant {
 		}
 	
 		if($count > 0) {
-			return $this->showmessage(__('该规格模板下的货品以及产品了订单交易，不可以更改规格模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('url' => RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id))));
+			return $this->showmessage(__('该规格模板下的货品以及产品了订单交易，不可以更改规格模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('pjaxurl' => RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id))));
 		} else {
  			//清除商品关联的模板id为0
 			RC_DB::table('goods')->where('goods_id', $goods_id)->update(array('specification_id' => 0));
@@ -3419,7 +3420,8 @@ class merchant extends ecjia_merchant {
 					ecjia_merchant::admin_log('', 'trash', 'products');
 				}
 			}
-		    return $this->showmessage(__('清除相关数据成功，您可以重新进行更换规格模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id))));
+		    return $this->showmessage(__('清除相关数据成功，您可以重新进行更换规格模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id))));
+		    
 		}
 	}
 
