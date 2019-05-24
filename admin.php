@@ -602,7 +602,7 @@ class admin extends ecjia_admin {
 		
 		$this->assign('ur_here', __('散装商品列表', 'goods'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('散装商品列表', 'goods')));
-		
+		$cat_id     = intval($this->request->input('cat_id', 0));
 		$store_id   = intval($this->request->input('store_id', 0));
 		$list_type  = intval($this->request->input('type', 0));
 		$page       = intval($this->request->input('page', 1));
@@ -670,7 +670,6 @@ class admin extends ecjia_admin {
 			$input['is_on_sale'] = 1;
 		}
 		$goods_list = (new \Ecjia\App\Goods\GoodsSearch\GoodsCollection($input))->getData();
-	
 		$count_link_func = function ($input, $where, $goods_count) {
 			$input = collect($input)->except(array_keys($where))->all();
 			unset($input['check_review_status']);

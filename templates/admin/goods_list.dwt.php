@@ -143,8 +143,12 @@
 					{/if}
 					<th class="w100" data-toggle="sortby" data-sortby="shop_price">{t domain='goods'}价格{/t}</th>
 					
-					{if $action eq 'bulk' or $action eq 'cashier'}
+					{if $action eq 'bulk'}
 					<th class="w100">{t domain='goods'}单位{/t}</th>
+					{/if}
+					
+					{if $action eq 'cashier'}
+					<th class="w100">{t domain='goods'}销量{/t}</th>
 					{/if}
 					
 					<!-- {if $use_storage} -->
@@ -225,8 +229,12 @@
 					
 					<td>{$goods.shop_price}</td>
 					
-					{if $action eq 'bulk' or $action eq 'cashier'}
+					{if $action eq 'bulk'}
 						<td>{if $goods.weight_unit eq '1'}{t domain="cashier"}克{/t}{else}{t domain="cashier"}千克{/t}{/if}</td>
+					{/if}
+					
+					{if $action eq 'cashier'}
+						<td>{if $goods.sales_volume}{$goods.sales_volume}{else}0{/if}</td>
 					{/if}
 					
 					<!-- {if $use_storage} -->

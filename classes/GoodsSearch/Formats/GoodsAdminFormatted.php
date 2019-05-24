@@ -61,6 +61,8 @@ class GoodsAdminFormatted
             'store_hot'              	=> $this->model->store_hot,
             'sort_order'                => $this->model->sort_order,
             'goods_number'              => $this->model->goods_number,
+            'sales_volume'              => $this->model->sales_volume,
+            'weight_unit'               => $this->model->weight_unit,
             'integral'                  => $this->model->integral,
             'is_promote'                => $this->model->is_promote,
             'review_status'             => $this->model->review_status,
