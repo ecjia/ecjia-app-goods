@@ -160,7 +160,6 @@ HTML;
     public function handleCount()
     {
         static $count;
-        //如果已经统计过，直接返回统计过的条数
         if (is_null($count)) {
             // 统计数据条数
             $old_goods_id = $this->getOldGoodsId();
