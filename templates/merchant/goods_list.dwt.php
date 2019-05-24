@@ -21,13 +21,11 @@
 					<div class="form-group ecjiaf-tac">
 						<div>
 							<select class="noselect w200 ecjiaf-ib form-control" size="15" name="target_cat">
-							<!-- {if $cat_list} -->
-								<!-- {foreach from=$cat_list item=cat} -->
-								<option value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
-								<!-- {/foreach} -->
-							<!-- {else} -->
-								<option value="0">{t domain='goods'}暂无任何分类{/t}</option>
-							<!-- {/if} -->
+								<!-- {if $merchant_cat_list_option} -->
+									{$merchant_cat_list_option}
+								<!-- {else} -->
+									<option value="0">{t domain='goods'}暂无任何分类{/t}</option>
+								<!-- {/if} -->
 							</select>
 						</div>
 					</div>
