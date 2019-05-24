@@ -133,8 +133,7 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
     public function getSourceStoreDataHandler()
     {
         return RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', 0)->where(function ($query) {
-            $query->whereNull('extension_code')
-                ->orWhere('extension_code', '');
+            $query->whereNull('extension_code')->orWhere('extension_code', '');
         });
     }
 
@@ -175,17 +174,24 @@ HTML;
      */
     public function handleDuplicate()
     {
+        if ($this->isCheckStarting()){
+            return new ecjia_error('duplicate_started_error', sprintf(__('%s复制已开始，请耐心等待！', 'store'), $this->getName()));
+        }
+
         //检测当前对象是否已复制完成
         if ($this->isCheckFinished()) {
             return true;
         }
+
+        //标记复制正在进行中
+        $this->markStartingDuplicate();
 
         //如果当前对象复制前仍存在依赖，则需要先复制依赖对象才能继续复制
         if (!empty($this->dependents)) { //如果设有依赖对象
             //检测依赖
             $items = $this->dependentCheck();
             if (!empty($items)) {
-                return new ecjia_error('handle_duplicate_error', __('复制依赖检测失败！', 'store'), $items);
+                return new ecjia_error('duplicate_dependence_error', __('复制依赖检测失败！', 'store'), $items);
             }
         }
 
