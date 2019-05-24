@@ -12,6 +12,14 @@
 		   <div class="success-msg"></div>
 		   <div class="error-msg"></div>
 		   <form class="form-horizontal" method="post" name="insertForm" id="insertForm" action='{url path="goods/merchant/select_spec_values_insert"}'>
+		   	   {if $has_product}
+			   <div class="form-group">
+					<label class="control-label col-lg-2 "></label>
+					<div class="col-lg-12 l_h35">
+						<span class="badge bg-important">!</span> <span class="ecjiafc-red">您当前设置的规格属性已生成货品，如需更改请先删除货品。</span>
+					</div>
+				</div>
+				{/if}
 	  			<div id="tbody-goodsAttr"> 
 					{if $goods_attr_html}{$goods_attr_html}{/if}
 				</div>
