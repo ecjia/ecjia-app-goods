@@ -33,18 +33,17 @@ class StoreGoodsParameterDuplicate extends StoreDuplicateAbstract
 
     protected $rank_total = 11;
 
-    protected $rank = '';
+    protected $sort = 12;
 
-    public function __construct($store_id, $source_store_id, $sort = 12)
+    public function __construct($store_id, $source_store_id)
     {
-        parent::__construct($store_id, $source_store_id, $sort);
+        parent::__construct($store_id, $source_store_id);
         $this->name = __('店铺商品参数', 'goods');
-        $this->rank = sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     public function getName()
     {
-        return $this->name . $this->rank;
+        return $this->name . sprintf('(%d/%d)', $this->rank_order, $this->rank_total);
     }
 
     /**
@@ -190,8 +189,6 @@ HTML;
      */
     public function handleAdminLog()
     {
-        \Ecjia\App\Store\Helper::assign_adminlog_content();
-
         static $store_merchant_name, $source_store_merchant_name;
 
         if (empty($store_merchant_name)) {
@@ -204,7 +201,8 @@ HTML;
             $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
         }
 
-        $content = sprintf(__('录入：将【%s】店铺所有%s复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $this->name, $store_merchant_name);
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
+        $content = sprintf(__('将【%s】店铺所有商品参数复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
         ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
     }
 }

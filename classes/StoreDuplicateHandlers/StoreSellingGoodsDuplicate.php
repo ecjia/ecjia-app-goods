@@ -16,7 +16,7 @@ use Royalcms\Component\Database\QueryException;
  * 复制店铺中的在售商品
  *
  * @todo goods_attr 表的图片字段的处理 attr_img_flie attr_img_site attr_gallery_flie
- * @todo products 表的图片字段的处理 product_thumb product_img product_original_img product_desc
+ * 表的图片字段的处理 product_thumb product_img product_original_img product_desc
  *
  * Class StoreSellingGoodsDuplicate
  * @package Ecjia\App\Goods\StoreDuplicateHandlers
@@ -318,8 +318,8 @@ HTML;
 
                 try {
                     //插入数据到新店铺
-                    //$new_goods_id = $goods_id + 1;
                     $new_goods_id = RC_DB::table('goods')->insertGetId($item);
+
                     //存储替换记录
                     $this->replacement_goods[$goods_id] = $new_goods_id;
 
@@ -338,9 +338,7 @@ HTML;
                     ecjia_log_warning($e->getMessage());
                 }
             }
-
         });
-        //dd($this->getCode(), $this->replacement_goods);
     }
 
     /**
@@ -370,7 +368,6 @@ HTML;
                 try {
                     //将数据插入到新店铺
                     $new_goods_attr_id = RC_DB::table('goods_attr')->insertGetId($item);
-                    //$new_goods_attr_id = $goods_attr_id + 1;
 
                     //存储替换记录
                     $this->replacement_goods_attr[$goods_attr_id] = $new_goods_attr_id;
@@ -416,7 +413,6 @@ HTML;
 
                 try {
                     //将数据插入到新店铺
-                    //$new_product_id = $product_id + 1;
                     $new_product_id = RC_DB::table('products')->insertGetId($item);
 
                     //建立替换数据的关联关系
@@ -440,7 +436,6 @@ HTML;
                     ecjia_log_warning($e->getMessage());
                 }
             }
-
         });
     }
 
@@ -465,15 +460,6 @@ HTML;
         $copy = new CopyGoodsImage($goods_id, $product_id);
 
         list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyProductImage($original_path, $img_path, $thumb_path);
-
-        return [$new_original_path, $new_img_path, $new_thumb_path];
-    }
-
-    private function copyProductGallery($goods_id, $product_id, $original_path, $img_path, $thumb_path)
-    {
-        $copy = new CopyGoodsImage($goods_id, $product_id);
-
-        list($new_original_path, $new_img_path, $new_thumb_path) = $copy->copyProductGallery($original_path, $img_path, $thumb_path);
 
         return [$new_original_path, $new_img_path, $new_thumb_path];
     }

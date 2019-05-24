@@ -3,9 +3,7 @@
 namespace Ecjia\App\Goods\StoreDuplicateHandlers;
 
 use Ecjia\App\Store\StoreDuplicate\StoreDuplicateAbstract;
-use ecjia_admin;
 use ecjia_error;
-use RC_Api;
 use RC_DB;
 use Royalcms\Component\Database\QueryException;
 
@@ -25,7 +23,7 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
 
     /**
      * 过程数据对象
-     * @var null|object
+     * @var \Ecjia\App\Store\StoreDuplicate\StoreDuplicateProgressData
      */
     protected $progress_data;
 
@@ -39,13 +37,15 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
 
     protected $rank_total = 11;
 
-    public function __construct($store_id, $source_store_id, $name, $sort = 15)
+    public function __construct($store_id, $source_store_id, $name)
     {
-        parent::__construct($store_id, $source_store_id, $sort);
+        parent::__construct($store_id, $source_store_id);
         $this->name = __($name, 'goods');
     }
 
     abstract protected function getTableName();
+
+    abstract protected function startDuplicateProcedure();
 
     public function getName()
     {
@@ -106,8 +106,6 @@ HTML;
 
         return true;
     }
-
-    abstract protected function startDuplicateProcedure();
 
     /**
      * 设置 goods 替换数据
@@ -172,30 +170,5 @@ HTML;
             }
         }
         return $count;
-    }
-
-    /**
-     * 返回操作日志编写
-     *
-     * @return mixed
-     */
-    public function handleAdminLog()
-    {
-        \Ecjia\App\Store\Helper::assign_adminlog_content();
-
-        static $store_merchant_name, $source_store_merchant_name;
-
-        if (empty($store_merchant_name)) {
-            $store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->store_id]);
-            $store_merchant_name = array_get(empty($store_info) ? [] : $store_info, 'merchants_name');
-        }
-
-        if (empty($source_store_merchant_name)) {
-            $source_store_info = RC_Api::api('store', 'store_info', ['store_id' => $this->source_store_id]);
-            $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
-        }
-
-        $content = sprintf(__('录入：将【%s】店铺所有%s复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $this->name, $store_merchant_name);
-        ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
     }
 }
