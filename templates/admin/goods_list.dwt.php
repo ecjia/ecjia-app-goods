@@ -183,9 +183,9 @@
 						<strong>{$goods.merchants_name}</strong>
 						</span>{if $goods.manage_mode eq 'self'}<span class="ecjiafc-red">{t domain='goods'}（自营）{/t}</span>{/if}
 						<br>
-                        {if $goods.product_list}<span class="label-orange">{t domain='goods'}多货品{/t}{/if}</span>
+                        {if $goods.has_product}<span class="label-orange">{t domain='goods'}多货品{/t}{/if}</span>
 						{$goods.goods_name|escape:html}
-						{if $goods.is_promote eq 1}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
+						{if $goods.is_promote && $action eq 'finish'}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
 						<br/>
 						<div class="edit-list">
 							{if $preview_type}
