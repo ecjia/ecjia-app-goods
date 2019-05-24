@@ -164,6 +164,7 @@ class GoodsBasicInFo
     public function getGoodsGroupParameter()
     {
     	$result = [];
+    	$res 	= [];
     	if ($this->model->goods_type_parameter_model) {
     		$parameter_id = $this->model->goods_type_parameter_model->cat_id;
     	} else {

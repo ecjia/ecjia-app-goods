@@ -935,8 +935,10 @@ class admin extends ecjia_admin {
 			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/admin/finish'));
 		} elseif ($preview_type == 'obtained') {
 			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/admin/obtained'));
-		} else {
+		} elseif ($preview_type == 'refused_check' || $preview_type == 'await_check') {
 			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/admin/check'));
+		} else {
+			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/admin/init'));
 		}
 		
 		$this->assign('action_link', $action_link);
