@@ -100,9 +100,11 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
 
     protected $rank_total = 11;
 
-    public function __construct($store_id, $source_store_id, $name = '在售普通商品', $sort = 14)
+    protected $sort = 14;
+
+    public function __construct($store_id, $source_store_id, $name = '在售普通商品')
     {
-        parent::__construct($store_id, $source_store_id, $sort);
+        parent::__construct($store_id, $source_store_id);
         $this->name = __($name, 'goods');
     }
 
@@ -495,8 +497,6 @@ HTML;
      */
     public function handleAdminLog()
     {
-        \Ecjia\App\Store\Helper::assign_adminlog_content();
-
         static $store_merchant_name, $source_store_merchant_name;
 
         if (empty($store_merchant_name)) {
@@ -509,7 +509,8 @@ HTML;
             $source_store_merchant_name = array_get(empty($source_store_info) ? [] : $source_store_info, 'merchants_name');
         }
 
-        $content = sprintf(__('录入：将【%s】店铺所有%s复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $this->name, $store_merchant_name);
+        \Ecjia\App\Store\Helper::assign_adminlog_content();
+        $content = sprintf(__('将【%s】店铺所有在售普通商品复制到【%s】店铺中', 'goods'), $source_store_merchant_name, $store_merchant_name);
         ecjia_admin::admin_log($content, 'duplicate', 'store_goods');
     }
 
