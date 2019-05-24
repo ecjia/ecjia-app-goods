@@ -56,7 +56,8 @@ class goods_admin_hooks
             return false;
         }
 
-        $title = __('商品统计', 'goods');
+        $title1 = __('商品推荐统计', 'goods');
+        $title2 = __('商品统计', 'goods');
 
         $static_url = RC_App::apps_url('goods/statics/images/goodsstats_images/');
         ecjia_admin::$controller->assign('static_url', $static_url);
@@ -100,7 +101,8 @@ class goods_admin_hooks
             RC_Cache::app_cache_set('admin_dashboard_goods', $goods, 'goods', 120);
         }
 
-        ecjia_admin::$controller->assign('title', $title);
+        ecjia_admin::$controller->assign('title1', $title1);
+        ecjia_admin::$controller->assign('title2', $title2);
         ecjia_admin::$controller->assign('goods', $goods);
         ecjia_admin::$controller->display(ecjia_app::get_app_template('library/widget_admin_dashboard_goodsstat.lbi', 'goods'));
     }
