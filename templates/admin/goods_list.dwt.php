@@ -334,11 +334,12 @@
         <h3 class="modal-title">{t domain='goods'}审核{/t}</h3>
     </div>
     <div class="modal-body" >
-        <form class="form-horizontal" action="{RC_Uri::url('goods/admin/check_review')}" method="post" name="checkForm">
+        <form class="form-horizontal" action="{RC_Uri::url('goods/admin/check_review')}&curr_page={$page}" method="post" name="checkForm">
             <div class="control-group control-group-small">
                 <label class="control-label">{t domain='goods'}审核备注：{/t}</label>
                 <div class="controls">
                    <textarea class="w350" id="review_content" name="review_content" rows="6" cols="48" placeholder="请输入审核备注信息"></textarea>
+                	<span class="input-must">*</span>
                 </div>
             </div>
             
