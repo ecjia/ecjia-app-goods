@@ -169,10 +169,8 @@
 								<th class="w100 "> {t domain='goods'}是否上架{/t} </th>
 								{/if}
 								
-								<th class="w70 "> {t domain='goods'}精品{/t} </th>
-								<th class="w70 "> {t domain='goods'}新品{/t} </th>
-								<th class="w70 "> {t domain='goods'}热销{/t} </th>
-								
+								<th class="w120 "> {t domain='goods'}加入推荐{/t} </th>
+
 								{if $action eq 'check'}
 								<th class="w100"> {t domain='goods'}审核状态{/t} </th>
 								<th class="w150"> {t domain='goods'}审核时间{/t} </th>
@@ -259,30 +257,24 @@
 								{/if}
 								
 								<td>
-									<i class="cursor_pointer fa {if $goods.store_best}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_best')}" refresh-url="{$list_url}
+                                    <span class="cursor_pointer label label-info label-mini {if $goods.store_best}toggleOn {else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/merchant/toggle_best')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
-								</td>
-								
-								<td>
-									<i class="cursor_pointer fa {if $goods.store_new}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_new')}" refresh-url="{$list_url}
+        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}">{t domain='goods'}精{/t}</span>
+                                    <span class="cursor_pointer label label-success label-mini {if $goods.store_new}toggleOn {else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/merchant/toggle_new')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
-								</td>
-								
-								<td>
-									<i class="cursor_pointer fa {if $goods.store_hot}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_hot')}" refresh-url="{$list_url}
+        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}">{t domain='goods'}新{/t}</span>
+                                    <span class="cursor_pointer label label-danger label-mini {if $goods.store_hot}toggleOn {else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/merchant/toggle_hot')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
+        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}">{t domain='goods'}热{/t}</span>
 								</td>
 
 								{if $action eq 'check'}
