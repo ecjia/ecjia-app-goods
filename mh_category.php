@@ -90,15 +90,18 @@ class mh_category extends ecjia_merchant
     {
         $this->admin_priv('merchant_category_manage');
 
-        $cat_list = merchant_cat_list(0, 0, false);
-
         ecjia_merchant_screen::get_current_screen()->remove_last_nav_here();
         ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品分类', 'goods')));
-
         $this->assign('ur_here', __('商品分类', 'goods'));
         $this->assign('action_link', array('href' => RC_Uri::url('goods/mh_category/add'), 'text' => __('添加商品分类', 'goods')));
         $this->assign('action_link1', array('href' => RC_Uri::url('goods/mh_category/move'), 'text' => __('转移商品', 'goods')));
-        $this->assign('cat_info', $cat_list);
+
+        $cat_id = intval($this->request->input('cat_id', 0));
+        $this->assign('cat_id', $cat_id);
+
+        $cat_list = (new \Ecjia\App\Goods\Category\MerchantCategoryCollection($_SESSION['store_id'], $cat_id))->getCategories();
+        $cat_list = $cat_list->all();
+        $this->assign('cat_list', $cat_list);
         $this->assign('store_id', $_SESSION['store_id']);
 
         $this->display('category_list.dwt');
