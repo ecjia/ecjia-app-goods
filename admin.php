@@ -1827,6 +1827,7 @@ class admin extends ecjia_admin {
                     $attr_value = $goods_attr_formate[$goods_attr_id]['attr_value'];
                     $new_attr_id[] = $goods_attr_lib_formate[$goods['goods_id'].'_'.$attr_id.'_'.$attr_value]['goods_attr_id'];
                 }
+                asort($new_attr_id);
                 $new_product['goods_attr'] = implode('|', $new_attr_id);
                 $new_product['product_sn'] = '';
                 if($product['product_name']) {

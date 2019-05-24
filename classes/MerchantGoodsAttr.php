@@ -50,6 +50,7 @@ namespace Ecjia\App\Goods;
 
 use RC_DB;
 use ecjia_merchant_page;
+use RC_Uri;
 
 defined('IN_ECJIA') or exit('No permission resources.');
 
@@ -603,4 +604,24 @@ class MerchantGoodsAttr {
 		return $return_arr;
 	}
 	
+	/**
+	 * 获得返回不同商品的链接	 *
+	 * @access public
+	 * @param
+	 *            s integer $goods_id
+	 * @return array
+	 */
+	public static function goods_back_goods_url($action_type){
+		if ($action_type == 'sale') {
+			$href_link = RC_Uri::url('goods/merchant/init');
+		} elseif ($action_type == 'finish') {
+			$href_link = RC_Uri::url('goods/merchant/finish');
+		} elseif ($action_type == 'obtained') {
+			$href_link = RC_Uri::url('goods/merchant/obtained');
+		} else {
+			$href_link = RC_Uri::url('goods/merchant/check');
+		}
+		
+		return $href_link;
+	}
 }
