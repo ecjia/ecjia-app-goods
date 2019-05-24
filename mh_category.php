@@ -437,7 +437,7 @@ class mh_category extends ecjia_merchant
         $cat_name  = RC_DB::table('merchants_category')->where('cat_id', $cat_id)->pluck('cat_name');
         $cat_count = RC_DB::table('merchants_category')->where('parent_id', $cat_id)->count();
 
-        $goods_count = RC_DB::table('goods')->where('merchant_cat_id', $cat_id)->count();
+        $goods_count = RC_DB::table('goods')->where('merchant_cat_id', $cat_id)->where('is_delete', 0)->count();
         if (empty($cat_count) && empty($goods_count)) {
             RC_DB::table('merchants_category')->where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->delete();
 
