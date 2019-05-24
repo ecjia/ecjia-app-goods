@@ -133,8 +133,7 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
     public function getSourceStoreDataHandler()
     {
         return RC_DB::table('goods')->where('store_id', $this->source_store_id)->where('is_on_sale', 1)->where('is_delete', 0)->where(function ($query) {
-            $query
-                ->whereNull('extension_code')
+            $query->whereNull('extension_code')
                 ->orWhere('extension_code', '');
         });
     }
@@ -145,7 +144,6 @@ class StoreSellingGoodsDuplicate extends StoreDuplicateAbstract
     public function handlePrintData()
     {
         $text = sprintf(__('店铺内总共有<span class="ecjiafc-red ecjiaf-fs3">%s</span>件%s', 'goods'), $this->handleCount(), $this->name);
-
         return <<<HTML
 <span class="controls-info">{$text}</span>
 HTML;
