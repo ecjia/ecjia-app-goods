@@ -606,9 +606,7 @@ class merchant extends ecjia_merchant {
 		if (empty($goods_id)) {
 		    return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
 		}
-		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goods')));
-		$this->assign('ur_here', __('商品预览', 'goods'));
+
 		
 		//返回商品列表
 		if ($preview_type == 'selling') {
@@ -622,6 +620,11 @@ class merchant extends ecjia_merchant {
 		} else {
 			$action_link = array('text' => __('商品列表', 'goods'), 'href' => RC_Uri::url('goods/merchant/init'));
 		}
+		
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $action_link['href']));
+		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goods')));
+		$this->assign('ur_here', __('商品预览', 'goods'));
+		
 		
 		$this->assign('action_link', $action_link);
 
