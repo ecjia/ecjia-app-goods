@@ -113,6 +113,13 @@
 												</div>
 											</div>
 											
+											<div class="form-group">
+												<label class="control-label col-lg-2 "></label>
+												<div class="col-lg-6">
+													<span class="help-block">当前规格模板默认使用商品所属分类绑定的模板，如需更换，可在当前商品所属分类下更换，更换后再设置规格属性和货品。</span>
+												</div>
+											</div>
+											
 											{if $product_list}
 											<table class="table table-striped table-hide-edit">
                                               <thead>

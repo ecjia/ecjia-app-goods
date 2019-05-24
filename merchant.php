@@ -609,7 +609,6 @@ class merchant extends ecjia_merchant {
 		if (empty($goods_id)) {
 		    return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goods'), 'href' => 'javascript:history.go(-1)'))));
 		}
-
 		
 		//返回商品列表
 		if ($preview_type == 'selling') {
@@ -2968,6 +2967,9 @@ class merchant extends ecjia_merchant {
 			$template_id = $goods_info['parameter_id'];
 		} else {
 			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('parameter', $goods_info['merchant_cat_id']);
+			if(empty($template_id)) {
+				$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('parameter', $goods_info['cat_id']);
+			}
 		}
 		$this->assign('template_id', $template_id);
 		
@@ -3115,6 +3117,9 @@ class merchant extends ecjia_merchant {
 			$template_id = $goods_info['specification_id'];
 		} else {
 			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('specification', $goods_info['merchant_cat_id']);
+			if(empty($template_id)) {
+				$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('specification', $goods_info['cat_id']);
+			}
 		}
 		$this->assign('template_id', $template_id);
 		
