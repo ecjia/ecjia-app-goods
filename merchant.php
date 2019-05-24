@@ -122,10 +122,7 @@ class merchant extends ecjia_merchant {
 		
 		RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
         RC_Style::enqueue_style('mh-product', RC_App::apps_url('statics/styles/mh-product.css', __FILE__), array());
-		RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/merchant_goods_list.js', __FILE__), array(), false, 1);
-		RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/merchant_product.js', __FILE__), array(), false, 1);
-		RC_Script::localize_script('product', 'js_lang', config('app-goods::jslang.spec_product_page'));
-		
+
 		RC_Script::enqueue_script('clipboard.min', RC_App::apps_url('statics/js/clipboard.min.js', __FILE__), array(), false, 1);
 		
 		RC_Loader::load_app_class('goods', 'goods', false);
@@ -138,14 +135,19 @@ class merchant extends ecjia_merchant {
 		RC_Loader::load_app_func('admin_category');
 		
 		RC_Loader::load_app_func('admin_user', 'user');
-		$goods_list_jslang = array(
-			'user_rank_list'	=> get_rank_list(),
-			'marketPriceRate'	=> ecjia::config('market_price_rate'),
-			'integralPercent'	=> ecjia::config('integral_percent'),
-		);
-        RC_Script::localize_script('goods_list', 'js_lang', config('app-goods::jslang.goods_list_page'));
-		RC_Script::localize_script( 'goods_list', 'admin_goodsList_lang', $goods_list_jslang );
 		
+		
+		RC_Script::enqueue_script('merchant_goods_list', RC_App::apps_url('statics/js/merchant_goods_list.js', __FILE__), array(), false, 1);
+		RC_Script::enqueue_script('merchant_product', RC_App::apps_url('statics/js/merchant_product.js', __FILE__), array(), false, 1);
+		
+		$goods_list_jslang = array(
+				'user_rank_list'	=> get_rank_list(),
+				'marketPriceRate'	=> ecjia::config('market_price_rate'),
+				'integralPercent'	=> ecjia::config('integral_percent'),
+		);
+		$js_lang_arr = array_merge($goods_list_jslang, config('app-goods::jslang.goods_list_page'), config('app-goods::jslang.spec_product_page'));
+		RC_Script::localize_script('merchant_goods_list', 'js_lang', $js_lang_arr);
+
 		$goods_id = isset($_REQUEST['goods_id']) ? $_REQUEST['goods_id'] : 0;
 		$extension_code = isset($_GET['extension_code']) ? '&extension_code='.$_GET['extension_code'] : '';
 		
