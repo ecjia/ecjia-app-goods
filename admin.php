@@ -3464,7 +3464,7 @@ class admin extends ecjia_admin {
 		//商品审核消息通知
 		$this->send_notifications($goods_id, $review_status);
 		
-		return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin/check', array('page' => $current_page))));
+		return $this->showmessage(__('审核操作成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/admin/check', array('page' => $current_page))));
 	}
 	
 	/**
