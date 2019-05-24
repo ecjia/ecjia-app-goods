@@ -257,7 +257,7 @@ class admin extends ecjia_admin {
 		            'label' => __('出售中', 'goods'),
 		            'link' => RC_Uri::url('goods/admin/init', array_merge($input, ['type' => 0])),
 		            'type' => 0,
-		            'count'=> $goods_count['count_on_sale']
+		            'count'=> empty($goods_count['count_on_sale']) ? 0 : $goods_count['count_on_sale'],
 	            ],
 	            'count_activity' => [
 		            'label' => __('参与活动', 'goods'),
