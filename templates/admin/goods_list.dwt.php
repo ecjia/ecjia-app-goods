@@ -137,7 +137,7 @@
 					<th class="w80">{t domain='goods'}缩略图{/t}</th>
 					{/if}
 					
-					<th class="w100">{t domain='goods'}店铺+商品信息{/t}</th>
+					<th class="w200">{t domain='goods'}店铺+商品信息{/t}</th>
 					{if $action neq 'check'}
 					<th class="w100" data-toggle="sortby" data-sortby="goods_sn">{t domain='goods'}货号{/t}</th>
 					{/if}
@@ -160,11 +160,11 @@
 					{/if}
 					
 					{if $action neq 'bulk' and  $action neq 'cashier'}
-					<th class="w100"> {t domain='goods'}加入推荐{/t} </th>
+					<th class="w80"> {t domain='goods'}加入推荐{/t} </th>
 					{/if}
 					
 					{if $action eq 'check'}
-					<th class="w35"> {t domain='goods'}审核状态{/t} </th>
+					<th class="w50"> {t domain='goods'}审核状态{/t} </th>
 					<th class="w80"> {if $list_type}{t domain='goods'}审核时间{/t}{else}{t domain='goods'}添加时间{/t}{/if} </th>
 					{/if}
 				</tr>
