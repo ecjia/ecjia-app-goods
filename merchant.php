@@ -915,7 +915,6 @@ class merchant extends ecjia_merchant {
 	 * 插入商品
 	 */
 	public function insert() {
-		// 检查权限
 		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
 		$store_id = intval($_SESSION['store_id']);
 		$cat_id = empty($_GET['cat_id']) ? '' : intval($_GET['cat_id']);
@@ -990,11 +989,6 @@ class merchant extends ecjia_merchant {
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
 		$cost_price 	= !empty($_POST['cost_price'])      ? $_POST['cost_price']              : 0;
-//		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
-//		$is_promote 	= empty($promote_price) 			? 0 								: 1;
-
-//		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
-//		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
 		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
 
 		$is_best 		= !empty($_POST['is_best']) 		? 1 : 0;
@@ -1007,8 +1001,6 @@ class merchant extends ecjia_merchant {
 		$warn_number 	= !empty($_POST['warn_number'])		? $_POST['warn_number'] 	: 0;
 		$goods_type 	= !empty($_POST['goods_type']) 		? $_POST['goods_type'] 		: 0;
 
-// 		$give_integral 	= !empty($_POST['give_integral']) 	? intval($_POST['give_integral']) 	: '-1';
-// 		$rank_integral 	= !empty($_POST['rank_integral']) 	? intval($_POST['rank_integral']) 	: '-1';
 		$suppliers_id 	= !empty($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
 		$goods_name 		= isset($_POST['goods_name']) 		? htmlspecialchars($_POST['goods_name']) 		: '';
@@ -1029,23 +1021,19 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(__('请输入商品名称', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
-//		if (!empty($is_promote) && $promote_price > $shop_price) {
-//			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-//		}
-
-
 		//平台分类父级处理
 		$cats= new CategoryLevel();
 		$cat_ids = $cats->getParentCategoryIds($cat_id);
 		list($level1, $level2, $level3) = $cat_ids;
-		
 		
 		//商家分类父级处理
 		$mer_cat = new MerchantCategoryLevel($store_id);
 		$mer_cat_ids = $mer_cat->getParentCategoryIds($merchant_cat_id);
 		list($mer_level1, $mer_level2, $mer_level3) = $mer_cat_ids;
 		
-
+		$goods_number     = !empty($_POST['goods_number'])   ? intval($_POST['goods_number'])  : ecjia::config('default_storage');
+		$goods_barcode    = !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
+		
 		/* 入库 */
 		$data = array(
 			'goods_name'            => rc_stripslashes($goods_name),
@@ -1063,18 +1051,14 @@ class merchant extends ecjia_merchant {
 			'shop_price'            => $shop_price,
 			'market_price'          => $market_price,
 			'cost_price'            => $cost_price,
-//			'is_promote'            => $is_promote,
-//			'promote_price'         => $promote_price,
-//			'promote_start_date'    => $promote_start_date,
-//			'promote_end_date'      => $promote_end_date,
 			'keywords'              => $_POST['keywords'],
 			'goods_brief'           => $_POST['goods_brief'],
 			'seller_note'           => $_POST['seller_note'],
 			'goods_weight'          => $goods_weight,
-			'goods_number'          => ecjia::config('default_storage'),
+			'goods_barcode'         => $goods_barcode,
+			'goods_number'          => $goods_number,
 			'warn_number'           => $warn_number,
 			'integral'              => $_POST['integral'],
-			//'give_integral'         => 0,//商家不可设置赠送积分
 			'store_best'            => $is_best,
 			'store_new'             => $is_new,
 			'store_hot'             => $is_hot,
@@ -1084,7 +1068,6 @@ class merchant extends ecjia_merchant {
 			'add_time'              => RC_Time::gmtime(),
 			'last_update'           => RC_Time::gmtime(),
 			'goods_type'            => $goods_type,
-			//'rank_integral'         => 0,//商家不可设置赠送积分
 			'suppliers_id'          => $suppliers_id,
 		    'review_status'         => get_merchant_review_status(),
 			'store_id'				=> $_SESSION['store_id'],
@@ -1160,7 +1143,6 @@ class merchant extends ecjia_merchant {
 		}
 		krsort($link);
 		$link = array_combine($key_array, $link);
-		
 		/* 释放app缓存*/
 		$orm_goods_db = RC_Model::model('goods/orm_goods_model');
 		$goods_cache_array = $orm_goods_db->get_cache_item('goods_list_cache_key_array');
@@ -1341,14 +1323,6 @@ class merchant extends ecjia_merchant {
 		
 		$goods_id = !empty($_POST['goods_id']) ? intval($_POST['goods_id']) : 0;
 
-		/* 检查货号是否重复 */
-// 		if (trim($_POST['goods_sn'])) {
-// 			$count = RC_DB::table('goods')->where('goods_sn', trim($_POST['goods_sn']))->where('is_delete', 0)->where('goods_id', '!=', $goods_id)->where('store_id', $_SESSION['store_id'])->count();
-// 			if ($count > 0) {
-// 				return $this->showmessage(__('您输入的货号已存在，请换一个', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-// 			}
-// 		}
-
 		$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
 		$upload->add_saving_callback(function ($file, $filename) {
 			return true;
@@ -1388,22 +1362,11 @@ class merchant extends ecjia_merchant {
 		$goods_thumb 	= ''; // 初始化商品缩略图
 		$img_original	= ''; // 初始化原始图片
 
-		/* 如果没有输入商品货号则自动生成一个商品货号 */
-// 		if (empty($_POST['goods_sn'])) {
-// 		  	$goods_sn = generate_goods_sn($goods_id);
-// 		} else {
-// 		  	$goods_sn = trim($_POST['goods_sn']);
-// 		}
 
 		/* 处理商品数据 */
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
 		$cost_price 	= !empty($_POST['cost_price'])      ? $_POST['cost_price'] 				: 0;
-//		$promote_price 	= !empty($_POST['promote_price']) 	? floatval($_POST['promote_price']) : 0;
-//		$is_promote 	= empty($_POST['is_promote']) 		? 0 								: 1;
-//
-//		$promote_start_date = ($is_promote && !empty($_POST['promote_start_date'])) ? RC_Time::local_strtotime($_POST['promote_start_date']) 	: 0;
-//		$promote_end_date 	= ($is_promote && !empty($_POST['promote_end_date'])) 	? RC_Time::local_strtotime($_POST['promote_end_date']) 		: 0;
 		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
 
 		$is_best 		= isset($_POST['is_best']) 			? 1 : 0;
@@ -1413,22 +1376,19 @@ class merchant extends ecjia_merchant {
 		$is_alone_sale 	= isset($_POST['is_alone_sale']) 	? 1 : 0;
 		$is_shipping 	= isset($_POST['is_shipping']) 		? 1 : 0;
 		
-// 		$goods_number 	= isset($_POST['goods_number']) 	? $_POST['goods_number'] 	: 0;
+		$goods_number     = !empty($_POST['goods_number'])   ? intval($_POST['goods_number'])  : ecjia::config('default_storage');
+		$goods_barcode    = !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
 		$warn_number 	= isset($_POST['warn_number']) 		? $_POST['warn_number'] 	: 0;
 		
-// 		$goods_type 	= isset($_POST['goods_type']) 		? $_POST['goods_type'] 				: 0;
-// 		$give_integral	= isset($_POST['give_integral']) 	? intval($_POST['give_integral']) 	: '-1';
-// 		$rank_integral 	= isset($_POST['rank_integral']) 	? intval($_POST['rank_integral']) 	: '-1';
 		$suppliers_id 	= isset($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
-// 		$goods_name_style 	= $_POST['goods_name_color'] . '+' . $_POST['goods_name_style'];
 		$goods_name 		= htmlspecialchars($_POST['goods_name']);
 		$goods_name_style 	= htmlspecialchars($_POST['goods_name_color']);
 		
 		$brand_id 			= empty($_POST['brand_id']) 		? 0 	: intval($_POST['brand_id']);
 		$merchant_cat_id 	= empty($_POST['merchant_cat_id']) 	? '' 	: intval($_POST['merchant_cat_id']);
 		$store_category 	= empty($_POST['store_category']) 	? 0 	: intval($_POST['store_category']);
-// 		$cat_id 			= empty($_POST['cat_id']) 	? '' 			: intval($_POST['cat_id']);
+		
 		if ($store_category > 0){
 			$catgory_id = $store_category;
 		}
@@ -1440,10 +1400,6 @@ class merchant extends ecjia_merchant {
 		if (empty($goods_name)) {
 			return $this->showmessage(__('请输入商品名称', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-
-//		if (!empty($is_promote) && $promote_price > $shop_price) {
-//			return $this->showmessage(__('促销价不能大于商品价格：', 'goods').$shop_price, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-//		}
 
 		$review_status = RC_DB::TABLE('goods')->where('goods_id', $goods_id)->pluck('review_status');
 		if($review_status === 2) {
@@ -1458,31 +1414,24 @@ class merchant extends ecjia_merchant {
 		$data = array(
 		  	'goods_name'				=> rc_stripslashes($goods_name),
 		  	'goods_name_style'	  		=> $goods_name_style,
-// 		  	'goods_sn'			  		=> $goods_sn,
 			'merchat_cat_level1_id'	=> empty($mer_level1) ? 0 : $mer_level1,
 			'merchat_cat_level2_id'	=> empty($mer_level2) ? 0 : $mer_level2,
 			'merchant_cat_id'			=> $merchant_cat_id,	//店铺分类id
-// 			'cat_id'					=> $cat_id,
 		  	'brand_id'			  		=> $brand_id,
 		  	'shop_price'				=> $shop_price,
 		  	'market_price'		  		=> $market_price,
 			'cost_price'				=> $cost_price,	
-//		  	'is_promote'				=> $is_promote,
-//		  	'promote_price'		 		=> $promote_price,
-//		  	'promote_start_date'		=> $promote_start_date,
 		  	'suppliers_id'		  		=> $suppliers_id,
-//		  	'promote_end_date'	  		=> $promote_end_date,
 		  	'is_real'			   		=> empty($code) ? '1' : '0',
 		  	'extension_code'			=> $code,
 		  	'keywords'			  		=> $_POST['keywords'],
 		  	'goods_brief'		   		=> $_POST['goods_brief'],
 		  	'seller_note'		   		=> $_POST['seller_note'],
 		  	'goods_weight'		 		=> $goods_weight,
-// 		  	'goods_number'		  		=> $goods_number,
+			'goods_barcode'		  		=> $goods_barcode,
+		  	'goods_number'		  		=> $goods_number,
 		  	'warn_number'		   		=> $warn_number,
 		  	'integral'			  		=> $_POST['integral'],
-		  	//'give_integral'		 		=> 0,//商家不可设置赠送积分
-		  	//'rank_integral'		 		=> 0,//商家不可设置赠送积分
 		  	'store_best'			   	=> $is_best,
 		  	'store_new'					=> $is_new,
 		  	'store_hot'					=> $is_hot,
@@ -3150,13 +3099,9 @@ class merchant extends ecjia_merchant {
 			
 		$goods_type     = !empty($_POST['template_id'])	   ? intval($_POST['template_id'])   : 0;
 		$goods_id 	    = !empty($_POST['goods_id'])       ? intval($_POST['goods_id'])      : 0;
-		$goods_number 	= !empty($_POST['goods_number'])   ? intval($_POST['goods_number'])  : ecjia::config('default_storage');
-		$goods_barcode 	= !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
 		
 		$data = array(
 			 'specification_id'  => $goods_type,
-			 'goods_number'		 => $goods_number,
-			 'goods_barcode'	 =>	$goods_barcode
 		);
 		RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 		$product['product_id']         = $_POST['product_id'];
