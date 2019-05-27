@@ -47,13 +47,15 @@
 		</a>
 	</li>
     {/foreach}
-
+    
+    {if $action neq 'bulk' and  $action neq 'cashier'}
 	<form class="f_r form-inline" action='{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}' method="post" name="searchForm">
 		<!-- 关键字 -->
 		<input class="w180" type="text" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{t domain='goods'}请输入商家关键字{/t}" size="15" />
 		<input class="w180" type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{t domain='goods'}请输入商品关键字{/t}" size="15" />
 		<button class="btn" type="submit">{t domain='goods'}搜索{/t}</button>
 	</form>
+	{/if}
 </ul>
 <!-- </div> -->
 <!-- </div> -->
@@ -122,6 +124,14 @@
 		</div>
 		{/if}
 	</form>
+	{if $action eq 'bulk' or $action eq 'cashier'}
+	<form class="f_r form-inline" action='{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}' method="post" name="searchForm">
+		<!-- 关键字 -->
+		<input class="w180" type="text" name="merchant_keywords" value="{$smarty.get.merchant_keywords}" placeholder="{t domain='goods'}请输入商家关键字{/t}" size="15" />
+		<input class="w180" type="text" name="keywords" value="{$smarty.get.keywords}" placeholder="{t domain='goods'}请输入商品关键字{/t}" size="15" />
+		<button class="btn" type="submit">{t domain='goods'}搜索{/t}</button>
+	</form>
+	{/if}
 </div>
 
 <div class="row-fluid list-page">
