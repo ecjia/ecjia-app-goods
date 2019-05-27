@@ -178,7 +178,7 @@ HTML;
         if (is_null($count)) {
             // 统计数据条数
             $old_goods_id = $this->getOldGoodsId();
-            if (empty($old_goods_id)) {
+            if (!empty($old_goods_id)) {
                 try {
                     $count = RC_DB::table($this->getTableName())->whereIn('goods_id', $old_goods_id)->count();
                 } catch (QueryException $e) {
