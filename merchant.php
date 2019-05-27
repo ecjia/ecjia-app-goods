@@ -343,13 +343,13 @@ class merchant extends ecjia_merchant {
 		$where = [];
 		switch ($intro_type) {
 			case 'is_best' :
-				$where['store_is_best'] = 1;
+				$where['store_best'] = 1;
 				break;
 			case 'is_hot' :
-				$where['store_is_best'] = 1;
+				$where['store_hot'] = 1;
 				break;
 			case 'is_new' :
-				$where['store_is_best'] = 1;
+				$where['store_new'] = 1;
 				break;
 		}
 		
@@ -425,13 +425,13 @@ class merchant extends ecjia_merchant {
 		$where = [];
 		switch ($intro_type) {
 			case 'is_best' :
-				$where['store_is_best'] = 1;
+				$where['store_best'] = 1;
 				break;
 			case 'is_hot' :
-				$where['store_is_best'] = 1;
+				$where['store_hot'] = 1;
 				break;
 			case 'is_new' :
-				$where['store_is_best'] = 1;
+				$where['store_new'] = 1;
 				break;
 		}
 	
@@ -505,13 +505,13 @@ class merchant extends ecjia_merchant {
 		$where = [];
 		switch ($intro_type) {
 			case 'is_best' :
-				$where['store_is_best'] = 1;
+				$where['store_best'] = 1;
 				break;
 			case 'is_hot' :
-				$where['store_is_best'] = 1;
+				$where['store_hot'] = 1;
 				break;
 			case 'is_new' :
-				$where['store_is_best'] = 1;
+				$where['store_new'] = 1;
 				break;
 		}
 	
