@@ -1077,7 +1077,7 @@ class admin extends ecjia_admin {
 		
 		$productBasicInFo = new Ecjia\App\Goods\Goods\ProductBasicInFo($product_id);
 		
-		$product = $productBasicInFo->productInFo();
+		$product = $productBasicInFo->productInfo();
 		
 		if (empty($product)) {
 			return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品预览', 'goods'),'href'=>RC_Uri::url('goods/admin/preview', array('id' => $goods_id, 'preview_type' => $preview_type))))));

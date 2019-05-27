@@ -67,13 +67,13 @@ class ProductBasicInfo
     	
         $this->goods_id = $goods_id;
 
-        $this->model = $this->productInFo();
+        $this->model = $this->productInfo();
     }
     
     /**
      * 获取货品信息
      */
-    public function productInFo()
+    public function productInfo()
     {
     	$data = ProductsModel::where('product_id', $this->product_id)->first();
     	return $data;
