@@ -628,7 +628,7 @@ class merchant extends ecjia_merchant {
 
 		$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
 		
-		$goods = $GoodsBasicInfo->goodsInFo();
+		$goods = $GoodsBasicInfo->goodsInfo();
 		
 		if (empty($goods)) {
 			return $this->showmessage(__('未检测到此商品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品列表', 'goods'),'href'=>RC_Uri::url('goods/merchant/init')))));
@@ -708,7 +708,7 @@ class merchant extends ecjia_merchant {
 		}
 		$goods_id = $product->goods_id;
 		$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
-		$goods = $GoodsBasicInfo->goodsInFo();
+		$goods = $GoodsBasicInfo->goodsInfo();
 		
 		//名称处理
 		$product['product_attr_value'] = '';

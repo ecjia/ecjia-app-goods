@@ -67,13 +67,13 @@ class GoodsBasicInfo
 
         $this->store_id = $store_id;
         
-        $this->model = $this->goodsInFo();
+        $this->model = $this->goodsInfo();
     }
     
     /**
      * 获取商品信息
      */
-    public function goodsInFo()
+    public function goodsInfo()
     {
     	if($this->store_id > 0) {
             $data = GoodsModel::where('goods_id', $this->goods_id)->where('store_id', $this->store_id)->orWhere('goods_sn', $this->goods_id)->first();
