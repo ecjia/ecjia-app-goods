@@ -170,9 +170,7 @@
 					{/if}
 					
 					{if $action neq 'bulk' and  $action neq 'cashier'}
-					<th class="w35"> {t domain='goods'}精品{/t} </th>
-					<th class="w35"> {t domain='goods'}新品{/t} </th>
-					<th class="w35"> {t domain='goods'}热销{/t} </th>
+					<th class="w100"> {t domain='goods'}加入推荐{/t} </th>
 					{/if}
 					
 					{if $action eq 'check'}
@@ -260,7 +258,7 @@
 					
 					{if $action neq 'bulk' and  $action neq 'cashier'}
 					<td>
-						<i class="{if $goods.is_best}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_best')}
+                        <span class="label label-info cursor_pointer {if $goods.is_best}toggleOn{else}toggleOff {/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/admin/toggle_best')}
 							{if $filter.type}&type={$filter.type}{/if}
 							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
 							{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
@@ -269,11 +267,8 @@
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
 							{if $filter.store_id}&store_id={$filter.store_id}{/if}
 							{if $smarty.get.page}&page={$smarty.get.page}{/if}
-							" data-id="{$goods.goods_id}"></i>
-					</td>
-					
-					<td>
-						<i class="{if $goods.is_new}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_new')}
+							" data-id="{$goods.goods_id}"">{t domain='goods'}精{/t}</span>
+                        <span class="label label-success cursor_pointer {if $goods.is_new}toggleOn{else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/admin/toggle_new')}
 							{if $filter.type}&type={$filter.type}{/if}
 							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
 							{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
@@ -282,11 +277,8 @@
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
 							{if $filter.store_id}&store_id={$filter.store_id}{/if}
 							{if $smarty.get.page}&page={$smarty.get.page}{/if}
-							" data-id="{$goods.goods_id}"></i>
-					</td>
-					
-					<td>
-						<i class="{if $goods.is_hot}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/admin/toggle_hot')}
+							" data-id="{$goods.goods_id}"">{t domain='goods'}新{/t}</span>
+                        <span class="label label-important cursor_pointer {if $goods.is_hot}toggleOn{else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/admin/toggle_hot')}
 							{if $filter.type}&type={$filter.type}{/if}
 							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
 							{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
@@ -294,7 +286,8 @@
 							{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
 							{if $filter.store_id}&store_id={$filter.store_id}{/if}
-							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
+							{if $smarty.get.page}&page={$smarty.get.page}{/if}
+                            " data-id="{$goods.goods_id}">{t domain='goods'}热{/t}</span>
 					</td>
 					{/if}
 					
