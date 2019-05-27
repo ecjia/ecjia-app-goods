@@ -1075,9 +1075,9 @@ class admin extends ecjia_admin {
 		$this->assign('ur_here', __('货品预览', 'goods'));
 		$this->assign('action_link', array('text' => __('商品预览', 'goods'), 'href' => RC_Uri::url('goods/admin/preview', array('id' => $goods_id, 'preview_type' => $preview_type))));
 		
-		$productBasicInFo = new Ecjia\App\Goods\Goods\ProductBasicInFo($product_id);
+		$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id);
 		
-		$product = $productBasicInFo->productInfo();
+		$product = $ProductBasicInfo->productInfo();
 		
 		if (empty($product)) {
 			return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品预览', 'goods'),'href'=>RC_Uri::url('goods/admin/preview', array('id' => $goods_id, 'preview_type' => $preview_type))))));
@@ -1129,7 +1129,7 @@ class admin extends ecjia_admin {
 			}
 		}
 		//货品相册
-		$product_photo_list = $productBasicInFo->getProductGallery();
+		$product_photo_list = $ProductBasicInfo->getProductGallery();
 		if (empty($product_photo_list)) {
 			$product_photo_list = $GoodsBasicInfo->getGoodsGallery();
 		}
