@@ -559,13 +559,13 @@ class admin extends ecjia_admin {
 					'label' => __('待审核', 'goods'),
 					'link' => RC_Uri::url('goods/admin/check', array_merge($input, ['type' => 0])),
 					'type' => 0,
-					'count'=> $goods_count['check_pending']
+					'count'=> empty($goods_count['check_pending']) ? 0 : $goods_count['check_pending']
 				],
 				'check_no_pass' => [
 					'label' => __('审核未通过', 'goods'),
 					'link' => RC_Uri::url('goods/admin/check', array_merge($input, ['type' => 1])),
 					'type' => 1,
-					'count'=> $goods_count['check_no_pass']
+					'count'=> empty($goods_count['check_no_pass']) ? 0 : $goods_count['check_no_pass']
 				]
 			];
 	
@@ -685,13 +685,13 @@ class admin extends ecjia_admin {
 					'label' => __('已上架', 'goods'),
 					'link' => RC_Uri::url('goods/admin/bulk', array_merge($input, ['type' => 0])),
 					'type' => 0,
-					'count'=> $goods_count['is_on_sale']
+					'count'=> empty($goods_count['is_on_sale']) ? 0 : $goods_count['is_on_sale']
 				],
 				'check_no_pass' => [
 					'label' => __('未上架', 'goods'),
 					'link' => RC_Uri::url('goods/admin/bulk', array_merge($input, ['type' => 1])),
 					'type' => 1,
-					'count'=> $goods_count['is_not_sale']
+					'count'=> empty($goods_count['is_not_sale']) ? 0 : $goods_count['is_not_sale']
 				]
 			];
 	
@@ -812,13 +812,13 @@ class admin extends ecjia_admin {
 					'label' => __('已上架', 'goods'),
 					'link' => RC_Uri::url('goods/admin/cashier', array_merge($input, ['type' => 0])),
 					'type' => 0,
-					'count'=> $goods_count['is_on_sale']
+					'count'=> empty($goods_count['is_on_sale']) ? 0 : $goods_count['is_on_sale']
 				],
 				'check_no_pass' => [
 					'label' => __('未上架', 'goods'),
 					'link' => RC_Uri::url('goods/admin/cashier', array_merge($input, ['type' => 1])),
 					'type' => 1,
-					'count'=> $goods_count['is_not_sale']
+					'count'=> empty($goods_count['is_not_sale']) ? 0 : $goods_count['is_not_sale']
 				]
 			];
 

@@ -37,6 +37,8 @@ abstract class StoreProcessAfterDuplicateGoodsAbstract extends StoreDuplicateAbs
 
     protected $rank_total = 11;
 
+    protected static $old_goods_ids;
+
     public function __construct($store_id, $source_store_id, $name)
     {
         parent::__construct($store_id, $source_store_id);
@@ -147,13 +149,22 @@ HTML;
      */
     protected function getOldGoodsId()
     {
+
         if (empty($this->replacement_goods)) {
-            try {
-                return $this->getSourceStoreDataHandler()->lists('goods_id');
-            } catch (QueryException $e) {
-                ecjia_log_warning($e->getMessage());
+
+            if (is_null(static::$old_goods_ids)) {
+                try {
+                    static::$old_goods_ids = $this->getSourceStoreDataHandler()->lists('goods_id');
+                    return static::$old_goods_ids;
+                } catch (QueryException $e) {
+                    ecjia_log_warning($e->getMessage());
+                }
+            }
+            else {
+                return static::$old_goods_ids;
             }
         }
+
         return array_keys($this->replacement_goods);
     }
 

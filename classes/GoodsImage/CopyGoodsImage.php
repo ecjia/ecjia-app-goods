@@ -115,6 +115,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
                 $disk->copy($original_path, $new_original_path);
             }
             catch (FileNotFoundException $e) {
+                $new_original_path = '';
                 ecjia_log_warning($e->getMessage());
             }
         } else {
@@ -126,6 +127,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
                 $disk->copy($original_path, $new_img_path);
             }
             catch (FileNotFoundException $e) {
+                $new_img_path = '';
                 ecjia_log_warning($e->getMessage());
             }
         } else {
@@ -137,6 +139,7 @@ class CopyGoodsImage implements GoodsImageFormattedInterface
                 $disk->copy($original_path, $new_thumb_path);
             }
             catch (FileNotFoundException $e) {
+                $new_thumb_path = '';
                 ecjia_log_warning($e->getMessage());
             }
         } else {
