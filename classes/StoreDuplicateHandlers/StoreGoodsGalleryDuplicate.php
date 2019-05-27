@@ -119,6 +119,7 @@ class StoreGoodsGalleryDuplicate extends StoreProcessAfterDuplicateGoodsAbstract
             return true;
         } catch (QueryException $e) {
             ecjia_log_warning($e->getMessage());
+            return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
     }
 

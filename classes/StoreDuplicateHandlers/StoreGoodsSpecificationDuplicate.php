@@ -154,9 +154,11 @@ HTML;
             });
             $replacement_data['goods_type'] = $replacement_goods_type;
 
+            //获取goods_type中源店铺的cat_id
             $cat_id_keys = array_keys($replacement_goods_type);
-            $replacement_attribute = [];
+
             if (!empty($cat_id_keys)) {
+                $replacement_attribute = [];
                 //通过源店铺的cat_id查询出在attribute中的关联数据
                 RC_DB::table('attribute')->whereIn('cat_id', $cat_id_keys)->chunk(50, function ($items) use ($replacement_goods_type, & $replacement_attribute) {
                     //构造可用于复制的数据
@@ -178,9 +180,6 @@ HTML;
                     }
                 });
                 $replacement_data['attribute'] = $replacement_attribute;
-
-                $this->setReplacementData($this->getCode(), $replacement_data);
-                return true;
             }
 
             $this->setReplacementData($this->getCode(), $replacement_data);
@@ -188,6 +187,7 @@ HTML;
             return true;
         } catch (QueryException $e) {
             ecjia_log_warning($e->getMessage());
+            return new ecjia_error('duplicate_data_error', $e->getMessage());
         }
     }
 
