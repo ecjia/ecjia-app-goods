@@ -52,7 +52,7 @@ namespace Ecjia\App\Goods\Goods;
 
 use \Ecjia\App\Goods\Models\ProductsModel;
 
-class ProductBasicInFo
+class ProductBasicInfo
 {
 
     protected $model;
