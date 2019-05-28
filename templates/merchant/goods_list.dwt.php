@@ -21,13 +21,11 @@
 					<div class="form-group ecjiaf-tac">
 						<div>
 							<select class="noselect w200 ecjiaf-ib form-control" size="15" name="target_cat">
-							<!-- {if $cat_list} -->
-								<!-- {foreach from=$cat_list item=cat} -->
-								<option value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
-								<!-- {/foreach} -->
-							<!-- {else} -->
-								<option value="0">{t domain='goods'}暂无任何分类{/t}</option>
-							<!-- {/if} -->
+								<!-- {if $merchant_cat_list_option} -->
+									{$merchant_cat_list_option}
+								<!-- {else} -->
+									<option value="0">{t domain='goods'}暂无任何分类{/t}</option>
+								<!-- {/if} -->
 							</select>
 						</div>
 					</div>
@@ -107,14 +105,14 @@
 						<li><a class="batch-notsale-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_on_sale&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品下架吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要下架的商品{/t}" href="javascript:;"><i class="fa fa-arrow-circle-o-down"></i> {t domain='goods'}下架{/t}</a></li>
 						{/if}
 						
-						<li><a class="batch-best-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择设为精品的商品{/t}" href="javascript:;"><i class="fa fa-star"></i> {t domain='goods'}设为精品{/t} </a></li>
-						<li><a class="batch-notbest-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_best&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择取消精品的商品{/t}" href="javascript:;"><i class="fa fa-star-o"></i> {t domain='goods'}取消精品{/t}</a></li>
-						<li><a class="batch-new-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为新品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要设为新品的商品{/t}" href="javascript:;"><i class="fa fa-flag"></i> {t domain='goods'}设为新品{/t}</a></li>
-						<li><a class="batch-notnew-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_new&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消新品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要取消新品的商品{/t}" href="javascript:;"><i class="fa fa-flag-o"></i> {t domain='goods'}取消新品{/t}</a></li>
-						<li><a class="batch-hot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为热销吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要设为热销的商品{/t}" href="javascript:;"><i class="fa fa-thumbs-up"></i> {t domain='goods'}设为热销{/t}</a></li>
-						<li><a class="batch-nothot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_hot&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消热销吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要取消热销的商品{/t}" href="javascript:;"><i class="fa fa-thumbs-o-up"></i> {t domain='goods'}取消热销{/t}</a></li>
+						<li><a class="batch-best-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=best&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择设为精品的商品{/t}" href="javascript:;"><i class="fa fa-star"></i> {t domain='goods'}设为精品{/t} </a></li>
+						<li><a class="batch-notbest-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_best&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消精品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择取消精品的商品{/t}" href="javascript:;"><i class="fa fa-star-o"></i> {t domain='goods'}取消精品{/t}</a></li>
+						<li><a class="batch-new-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=new&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为新品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要设为新品的商品{/t}" href="javascript:;"><i class="fa fa-flag"></i> {t domain='goods'}设为新品{/t}</a></li>
+						<li><a class="batch-notnew-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_new&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消新品吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要取消新品的商品{/t}" href="javascript:;"><i class="fa fa-flag-o"></i> {t domain='goods'}取消新品{/t}</a></li>
+						<li><a class="batch-hot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=hot&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品设为热销吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要设为热销的商品{/t}" href="javascript:;"><i class="fa fa-thumbs-up"></i> {t domain='goods'}设为热销{/t}</a></li>
+						<li><a class="batch-nothot-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=not_hot&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品取消热销吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要取消热销的商品{/t}" href="javascript:;"><i class="fa fa-thumbs-o-up"></i> {t domain='goods'}取消热销{/t}</a></li>
 						<li><a class="batch-move-btn" data-name="move_cat" data-move="data-operatetype" href="javascript:;"><i class="fa fa-mail-forward"></i> {t domain='goods'}转移到分类{/t}</a></li>
-						<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=trash&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品放入回收站吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要移至回收站的商品{/t}" href="javascript:;"><i class="fa fa-archive"></i> {t domain='goods'}移至回收站{/t}</a></li>
+						<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=trash&action_url={$action}&is_on_sale={$goods_list.filter.is_on_sale}&page={$smarty.get.page}" data-msg="{t domain='goods'}您确定要把选中的商品放入回收站吗？{/t}" data-noSelectMsg="{t domain='goods'}请选择要移至回收站的商品{/t}" href="javascript:;"><i class="fa fa-archive"></i> {t domain='goods'}移至回收站{/t}</a></li>
 		           	</ul>
 				</div>
 				
@@ -171,10 +169,8 @@
 								<th class="w100 "> {t domain='goods'}是否上架{/t} </th>
 								{/if}
 								
-								<th class="w70 "> {t domain='goods'}精品{/t} </th>
-								<th class="w70 "> {t domain='goods'}新品{/t} </th>
-								<th class="w70 "> {t domain='goods'}热销{/t} </th>
-								
+								<th class="w130 "> {t domain='goods'}加入推荐{/t} </th>
+
 								{if $action eq 'check'}
 								<th class="w100"> {t domain='goods'}审核状态{/t} </th>
 								<th class="w150"> {t domain='goods'}审核时间{/t} </th>
@@ -196,30 +192,30 @@
 									</a>
 								</td>
 								<td class="hide-edit-area {if $goods.is_promote}ecjiafc-red{/if}">
-                                    {if $goods.product_list}<span class="label-orange">{t domain='goods'}多货品{/t}</span>{/if}
+                                    {if $goods.has_product}<span class="label-orange">{t domain='goods'}多货品{/t}</span>{/if}
                                     <span class="cursor_pointer ecjiaf-pre ecjiaf-wsn" data-text="textarea" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_name')}" data-name="goods_edit_name" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入商品名称{/t}">{$goods.goods_name|escape:html}</span>
+                                    {if $goods.is_promote && $action eq 'finish'}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
 									<br/>
 									<div class="edit-list">
-										<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
+										<a class="data-pjax" href='{url path="goods/merchant/edit" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
 
 										{if $action neq 'check'}
-										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
- 									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}规格/货品{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}商品描述{/t}</a>&nbsp;|&nbsp;
+	 									    <a class="data-pjax" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}商品参数{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_goods_specification" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}规格/货品{/t}</a>&nbsp;|&nbsp;
+											
+											<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
+											<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
+											<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
+										{/if}
 										
-										<a class="data-pjax" href='{url path="goods/merchant/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品属性{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
-										<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
-										<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
-										<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_seller_list&goods_id={$goods.goods_id}">{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;
-										
-										{if $specifications[$goods.goods_type] neq ''}
-										<a target="_blank" href='{url path="goods/merchant/product_list" args="goods_id={$goods.goods_id}"}'>{t domain='goods'}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
+										{if $action eq 'sale' or $action eq 'finish'}
+											<a href="#actionmodal" data-toggle="modal" id="modal" copy-url="ecjiaopen://app?open_type=goods_detail&goods_id={$goods.goods_id}">{t domain='goods'}内部链接{/t}</a>&nbsp;|&nbsp;										
 										{/if}
 
 										{if $goods.review_status eq 2}
-										<a href="#review_log" data-toggle="modal" data-type="log" id="modal" goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/merchant/review_log')}">查看审核</a>&nbsp;|&nbsp;
+											<a href="#review_log" data-toggle="modal" data-type="log" id="modal" goods-id="{$goods.goods_id}" attr-url="{RC_Uri::url('goods/merchant/review_log')}">查看审核</a>&nbsp;|&nbsp;
 										{/if}
 
 										<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该商品放入回收站吗？{/t}" href='{url path="goods/merchant/remove" args="id={$goods.goods_id}"}'>{t domain='goods'}删除{/t}</a>
@@ -227,64 +223,58 @@
 								</td>
 									
 								{if $action neq 'check'}
-								<td>
-									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_sn')}" data-name="goods_edit_goods_sn" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入商品货号{/t}">
-										{$goods.goods_sn} 
-									</span>
-								</td>
+									<td>
+										<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_sn')}" data-name="goods_edit_goods_sn" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入商品货号{/t}">
+											{$goods.goods_sn} 
+										</span>
+									</td>
 								{/if}
 								
 								<td>
 									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_price')}" data-name="goods_price" data-pk="{$goods.goods_id}" data-title="请输入商品价格"> 
-										¥{$goods.shop_price}
+										{$goods.shop_price}
 									</span> 
 								</td>
 																
 								{if $use_storage}
-								<td>
-									<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入库存数量{/t}">
-										{$goods.goods_number}
-									</span>
-								</td>
+									<td>
+										<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_number')}" data-name="goods_number" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入库存数量{/t}">
+											{$goods.goods_number}
+										</span>
+									</td>
 								{/if}
 								
 								{if $action neq 'check'}
-								<td>
-									<span class="cursor_pointer" data-trigger="editable" data-placement="left" data-url="{RC_Uri::url('goods/merchant/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入排序序号{/t}">
-										{$goods.sort_order}
-									</span>
-								</td>
-								<td>
-									<i class="cursor_pointer fa {if $goods.is_on_sale}fa-check {else}fa-times{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" 
-									refresh-url="{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}{if $filter.type}&type={$filter.type}{/if}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.review_status}&review_status={$filter.review_status}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
-								</td>
+									<td>
+										<span class="cursor_pointer" data-trigger="editable" data-placement="left" data-url="{RC_Uri::url('goods/merchant/edit_sort_order')}" data-name="sort_order" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入排序序号{/t}">
+											{$goods.sort_order}
+										</span>
+									</td>
+									<td>
+										<i class="cursor_pointer fa {if $goods.is_on_sale}fa-check {else}fa-times{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" 
+										refresh-url="{$list_url}{if $smarty.get.type}&type={$smarty.get.type}{/if}{if $filter.type}&type={$filter.type}{/if}{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}{if $filter.review_status}&review_status={$filter.review_status}{/if}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
+									</td>
 								{/if}
 								
 								<td>
-									<i class="cursor_pointer fa {if $goods.store_best}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_best')}" refresh-url="{$list_url}
+                                    <span class="cursor_pointer label label-info label-mini {if $goods.store_best}toggleOn {else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/merchant/toggle_best')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
-								</td>
-								
-								<td>
-									<i class="cursor_pointer fa {if $goods.store_new}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_new')}" refresh-url="{$list_url}
+        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}">{t domain='goods'}精{/t}</span>
+                                    <span class="cursor_pointer label label-success label-mini {if $goods.store_new}toggleOn {else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/merchant/toggle_new')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
-								</td>
-								
-								<td>
-									<i class="cursor_pointer fa {if $goods.store_hot}fa-check {else}fa-times{/if}" data-trigger="toggleState" data-url="{RC_Uri::url('goods/merchant/toggle_hot')}" refresh-url="{$list_url}
+        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}">{t domain='goods'}新{/t}</span>
+                                    <span class="cursor_pointer label label-danger label-mini {if $goods.store_hot}toggleOn {else}toggleOff{/if}" data-trigger="toggleStateNew" data-url="{RC_Uri::url('goods/merchant/toggle_hot')}" refresh-url="{$list_url}
 									{if $filter.type}&type={$filter.type}{/if}
         							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
         							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
         							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}"></i>
+        							{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-id="{$goods.goods_id}">{t domain='goods'}热{/t}</span>
 								</td>
 
 								{if $action eq 'check'}

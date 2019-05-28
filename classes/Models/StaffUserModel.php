@@ -44,66 +44,33 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-/**
- * 货品基本信息类
- */
+namespace Ecjia\App\Goods\Models;
 
-namespace Ecjia\App\Goods\Goods;
+use Royalcms\Component\Database\Eloquent\Model;
 
-use \Ecjia\App\Goods\Models\ProductsModel;
+defined('IN_ECJIA') or exit('No permission resources.');
 
-class ProductBasicInFo
+class StaffUserModel extends Model
 {
+    protected $table = 'staff_user';
 
-    protected $model;
-    
-    protected $product_id;
-
-    protected $goods_id;
-
-    public function __construct($product_id, $goods_id = 0)
-    {
-    	$this->product_id = $product_id;
-    	
-        $this->goods_id = $goods_id;
-
-        $this->model = $this->productInFo();
-    }
-    
-    /**
-     * 获取货品信息
-     */
-    public function productInFo()
-    {
-    	$data = ProductsModel::where('product_id', $this->product_id)->first();
-    	return $data;
-    }
+    protected $primaryKey = 'user_id';
 
     /**
-     * 货品相册
-     * @return array
+     * 可以被批量赋值的属性。
+     *
+     * @var array
      */
-    public function getProductGallery()
-    {
-    	$gallery = [];
-    	if ($this->model->goods_gallery_collection) {
-    		$disk = \RC_Filesystem::disk();
-    		$gallery = $this->model->goods_gallery_collection->map(function ($item) use ($disk) {
-    			if (!$disk->exists(\RC_Upload::upload_path($item['img_url'])) || empty($item['img_url'])) {
-    				$item['img_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
-    			} else {
-    				$item['img_url'] = \RC_Upload::upload_url($item['img_url']);
-    			}
-    			
-    			if (!$disk->exists(\RC_Upload::upload_path($item['thumb_url'])) || empty($item['thumb_url'])) {
-    				$item['thumb_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
-    			} else {
-    				$item['thumb_url'] = \RC_Upload::upload_url($item['thumb_url']);
-    			}
-    			return $item;
-    		});
-    		$gallery = $gallery->toArray();
-    	}
-    	return $gallery;
-    }
+    protected $fillable = [
+
+    ];
+
+    /**
+     * 该模型是否被自动维护时间戳
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }
+
+// end

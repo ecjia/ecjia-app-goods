@@ -50,6 +50,7 @@ namespace Ecjia\App\Goods;
 
 use RC_DB;
 use ecjia_merchant_page;
+use RC_Uri;
 
 defined('IN_ECJIA') or exit('No permission resources.');
 
@@ -61,23 +62,52 @@ class MerchantGoodsAttr {
 	}
 	
 	/**
-	 * 获得商家商品[规格/参数]模板（下拉）
+	 * 获得商家商品[规格/参数]模板（列表下拉）--获取平台启用的
 	 * @access  public
 	 * @param   integer     $selected   选定的模板编号
 	 * @param   string      $type       模板类型
 	 * @param   boolean     $enabled    激活状态 
 	 * @return  string
 	 */
-	public static function goods_type_select_list($selected, $type, $enabled = false) {
+	public static function goods_type_list_select($selected, $type) {
+		$data = RC_DB::table('goods_type')
+		->whereIn('store_id', [0, $_SESSION['store_id']])
+		->where('cat_type', $type)
+		->select('cat_id', 'cat_name', 'store_id', 'enabled')
+		->orderBy('store_id', 'desc')
+		->get();
 		
-		$db_goods_type = RC_DB::table('goods_type')->where('store_id', $_SESSION['store_id']);
-
-		if ($enabled) {
-			$db_goods_type->where('enabled', 1);
+		$opt = '';
+		if (!empty($data)) {
+			foreach ($data as $row){
+				if($row['store_id']===0 && $row['enabled']===0) {
+					unset($row);
+				} else {
+					if($row['store_id']===0) {
+						$title = ' [平台]';
+					} else {
+						$title = ' [商家]';
+					}
+					$opt .= "<option value='$row[cat_id]'";
+					$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+					$opt .= '>' . htmlspecialchars($row['cat_name']). $title .'</option>';
+				}
+			}
 		}
-		
-		$data = $db_goods_type->select('cat_id', 'cat_name')->where('cat_type', $type)->get();
-		
+		return $opt;
+	}
+	
+	
+	/**
+	 * 获得商家商品[规格/参数]模板 添加编辑属性（下拉）只允许读商家
+	 * @access  public
+	 * @param   integer     $selected   选定的模板编号
+	 * @param   string      $type       模板类型
+	 * @return  string
+	 */
+	public static function goods_type_add_select($selected, $type) {
+		$data =  RC_DB::table('goods_type')
+		->where('cat_type', $type)->where('store_id', $_SESSION['store_id'])->select('cat_id', 'cat_name')->get();
 		$opt = '';
 		if (!empty($data)) {
 			foreach ($data as $row){
@@ -96,39 +126,38 @@ class MerchantGoodsAttr {
 	 * @param   string $type 模板类型
 	 */
 	public static function get_merchant_goods_type_list($type) {
-		$_SESSION['store_id'] = !empty($_SESSION['store_id']) ? $_SESSION['store_id'] : 0;
+		$db_goods_type = RC_DB::table('goods_type as gt');
 		
-		$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
+		$store_id = intval($_SESSION['store_id']);
 		
-		$db_goods_type = RC_DB::table('goods_type as gt')
-		->leftJoin('store_franchisee as s', RC_DB::raw('s.store_id'), '=', RC_DB::raw('gt.store_id'))
-		->where(RC_DB::raw('gt.store_id'), $_SESSION['store_id'])
-		->where(function ($query) use ($type) {
+		$db_goods_type->where(function ($query) use ($type) {
 			$query->where('cat_type', $type)->orWhere(function ($query) {
 				$query->whereNull('cat_type');
 			});
 		});
 		
+		$filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
 		if (!empty($filter['keywords'])) {
 			$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
 		}
-	
-		$filter_count = $db_goods_type
-		->select(RC_DB::raw('count(*) as count'), RC_DB::raw('SUM(IF(gt.store_id > 0, 1, 0)) as merchant'))
-		->first();
-	
-		$filter['count'] 	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
-		$filter['merchant'] = $filter_count['merchant'] > 0 ? $filter_count['merchant'] : 0;
-	
-		$filter['type'] = isset($_GET['type']) ? $_GET['type'] : '';
-		if (!empty($filter['type'])) {
-			$db_goods_type->where(RC_DB::raw('gt.store_id'), '>', 0);
+		
+		$type_count = $db_goods_type
+		->select(RC_DB::raw('SUM(IF(gt.enabled = 1 and gt.store_id = 0, 1, 0)) as platform'),
+				RC_DB::raw('SUM(IF(gt.store_id = ' . $store_id . ', 1, 0)) as merchant'))
+				->first();
+		
+		$store_type = !empty($_GET['store_type']) ? trim($_GET['store_type']) : 0;
+		if ($store_type == 1) {
+			$db_goods_type->where(RC_DB::raw('gt.store_id'), 0);
+			$db_goods_type->where(RC_DB::raw('gt.enabled'), 1);
+		} else {
+			$db_goods_type->where(RC_DB::raw('gt.store_id'), $store_id);
 		}
-	
+
 		$count = $db_goods_type->count();
 		$page = new ecjia_merchant_page($count, 15, 5);
 	
-		$field = 'gt.*, count(a.cat_id) as attr_count, s.merchants_name';
+		$field = 'gt.*, count(a.cat_id) as attr_count';
 		$goods_type_list = $db_goods_type
 		->leftJoin('attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
 		->select(RC_DB::raw($field))
@@ -137,14 +166,13 @@ class MerchantGoodsAttr {
 		->take(15)
 		->skip($page->start_id-1)
 		->get();
-	
 		if (!empty($goods_type_list)) {
 			foreach ($goods_type_list AS $key=>$val) {
 				$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
 				$goods_type_list[$key]['shop_name'] = $val['store_id'] == 0 ? '' : $val['merchants_name'];
 			}
 		}
-		return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
+		return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc(), 'type_count' => $type_count);
 	}
 	
 	
@@ -285,7 +313,9 @@ class MerchantGoodsAttr {
 		$data = RC_DB::table('goods_type')
 			->whereIn('store_id', [0, $_SESSION['store_id']])
 			->where('cat_type', $type)
+			->where('enabled', 1)
 			->select('cat_id', 'cat_name', 'store_id')
+			->orderBy('store_id', 'desc')
 			->get();
 		
 		$opt = '';
@@ -329,7 +359,7 @@ class MerchantGoodsAttr {
 	 * 
 	 */
 	public static function get_template_info($template_id) {
-		$template_info = RC_DB::table('goods_type')->where('cat_id', $template_id)->where('store_id', $_SESSION['store_id'])->first();
+		$template_info = RC_DB::table('goods_type')->where('cat_id', $template_id)->first();
 		
 		return $template_info;
 	}
@@ -349,23 +379,23 @@ class MerchantGoodsAttr {
 				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
 				if ($val ['attr_input_type'] == 0) {//手工录入
 					$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
-					$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="'.$val[attr_id].'_attr_value_list[]" type="text" value="' . htmlspecialchars($val['attr_value'][0]) . '" size="40" /></div> ';
+					$html .= '<div class="col-lg-5 p_l0"><input class="form-control" name="'.$val[attr_id].'_attr_value_list" type="text" value="' . htmlspecialchars($val['attr_value'][0]) . '" size="40" /></div> ';
 				} elseif ($val ['attr_input_type'] == 2) {//多行文本框
 					$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
-					$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="'.$val[attr_id].'_attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val['attr_value'][0]) . '</textarea></div>';
+					$html .= '<div class="col-lg-5 p_l0"><textarea class="form-control" name="'.$val[attr_id].'_attr_value_list" rows="3" cols="40">' . htmlspecialchars($val['attr_value'][0]) . '</textarea></div>';
 				} else {//从下面列表中选择
 					if($val['attr_type'] == 2) {//复选属性checkbox
 						$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
 						$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
 						foreach ($attr_values as $opt) {
 							$opt = trim(htmlspecialchars($opt));
-							$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
-							$html .= '<label for="'.$opt.'">'.$opt.'</label>';
+							$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$val[attr_id].$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$val[attr_id].$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
+							$html .= '<label for="'.$val[attr_id].$opt.'">'.$opt.'</label>';
 						}
 					} else {//唯一参数
 						$attr_values = explode("\n", $val['attr_values']);
 						$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
-						$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="'.$val[attr_id].'_attr_value_list[]" autocomplete="off">';
+						$html .= '<div class="col-lg-5 p_l0"><select class="form-control" name="'.$val[attr_id].'_attr_value_list" autocomplete="off">';
 						$html .= '<option value="">' . __('请选择...', 'goods') . '</option>';
 						foreach ($attr_values as $opt) {
 							$opt = trim(htmlspecialchars($opt));
@@ -389,7 +419,6 @@ class MerchantGoodsAttr {
 	public static function build_specification_html($cat_id, $goods_id = 0) {
 	
 		$attr = self::get_cat_attr_list($cat_id, $goods_id);
-	
 		$html = '';
 		$spec = 0;
 		
@@ -397,12 +426,13 @@ class MerchantGoodsAttr {
 			foreach ($attr as $key => $val) {
 				$html .= "<div class='form-group'><label class='control-label col-lg-2'>";
 				$attr_values = explode("\n", $val['attr_values']);//模板中的复选框的值
+				$attr_values = collect($attr_values)->filter()->all();
 				$html .= "$val[attr_name]</label><div class='col-lg-8'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
 				foreach ($attr_values as $opt) {
 					$html .= '<div class="check-box">';
 					$opt = trim(htmlspecialchars($opt));
-					$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
-					$html .= '<label for="'.$opt.'">'.$opt.'</label>';
+					$html .= (in_array($opt, $val['attr_value'])) ? '<input id="'.$val[attr_id].$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" checked="true" value="'. $opt .'" />' : '<input id="'.$val[attr_id].$opt.'" type="checkbox" name="'.$val[attr_id].'_attr_value_list[]" value="'. $opt .'" />';
+					$html .= '<label for="'.$val[attr_id].$opt.'">'.$opt.'</label>';
 					$html .= '</div>';
 				}
 				$html .= '</div></div>';
@@ -488,4 +518,110 @@ class MerchantGoodsAttr {
 		}
 	}
 	
+	
+	/**
+	 * 获得商品的货品列表
+	 *
+	 * @access public
+	 * @param
+	 *            s integer $goods_id
+	 * @param
+	 *            s string $conditions
+	 * @return array
+	 */
+	public static function product_list($goods_id, $conditions = '') {
+	
+		$filter ['goods_id'] 		= $goods_id;
+		$filter ['keyword'] 		= empty ($_REQUEST ['keyword']) ? '' : trim($_REQUEST ['keyword']);
+		$filter ['stock_warning'] 	= empty ($_REQUEST ['stock_warning']) ? 0 : intval($_REQUEST ['stock_warning']);
+		$filter ['sort_by'] 		= empty ($_REQUEST ['sort_by']) ? 'product_id' : trim($_REQUEST ['sort_by']);
+		$filter ['sort_order'] 		= empty ($_REQUEST ['sort_order']) ? 'DESC' : trim($_REQUEST ['sort_order']);
+		$filter ['extension_code'] 	= empty ($_REQUEST ['extension_code']) ? '' : trim($_REQUEST ['extension_code']);
+		$filter ['page_count'] 		= isset ($filter ['page_count']) ? $filter ['page_count'] : 1;
+	
+		$where = '';
+		/* 库存警告 */
+		if ($filter ['stock_warning']) {
+			$where .= ' AND goods_number <= warn_number ';
+		}
+	
+		/* 关键字 */
+		if (!empty ($filter ['keyword'])) {
+			$where .= " AND (product_sn LIKE '%" . $filter ['keyword'] . "%')";
+		}
+	
+		$where .= $conditions;
+	
+		/* 记录总数 */
+		$count = RC_DB::table('products')->whereRaw('goods_id = ' . $goods_id . $where)->count();
+		$filter ['record_count'] = $count;
+	
+		$row = RC_DB::table('products')
+		->select(RC_DB::raw('product_id, goods_id, goods_attr as goods_attr_str, goods_attr, product_sn, product_number, product_shop_price, product_bar_code'))
+		->whereRaw('goods_id = ' . $goods_id . $where)
+		->orderBy($filter ['sort_by'], $filter['sort_order'])
+		->get();
+	
+		/* 处理规格属性 */
+		$goods_attr = self::product_goods_attr_list($goods_id);
+		if (!empty ($row)) {
+			foreach ($row as $key => $value) {
+				$_goods_attr_array = explode('|', $value ['goods_attr']);
+				if (is_array($_goods_attr_array)) {
+					$_temp = [];
+					foreach ($_goods_attr_array as $_goods_attr_value) {
+						$_temp[] = $goods_attr [$_goods_attr_value];
+					}
+					$row [$key] ['goods_attr'] = $_temp;
+				}
+			}
+		}
+		return array(
+			'product'		=> $row,
+			'filter'		=> $filter,
+			'page_count'	=> $filter ['page_count'],
+			'record_count'	=> $filter ['record_count']
+		);
+	}
+	
+	/**
+	 * 获得商品的规格属性值列表
+	 *
+	 * @access public
+	 * @param
+	 *            s integer $goods_id
+	 * @return array
+	 */
+	public static function product_goods_attr_list($goods_id) {
+		$results = RC_DB::table('goods_attr')->select('goods_attr_id', 'attr_value')->where('goods_id', $goods_id)->get();
+	
+		$return_arr = array();
+		if (!empty ($results)) {
+			foreach ($results as $value) {
+				$return_arr [$value ['goods_attr_id']] = $value ['attr_value'];
+			}
+		}
+		return $return_arr;
+	}
+	
+	/**
+	 * 获得返回不同商品的链接	 *
+	 * @access public
+	 * @param
+	 *            s integer $goods_id
+	 * @return array
+	 */
+	public static function goods_back_goods_url($action_type){
+		if ($action_type == 'sale') {
+			$href_link = RC_Uri::url('goods/merchant/init');
+		} elseif ($action_type == 'finish') {
+			$href_link = RC_Uri::url('goods/merchant/finish');
+		} elseif ($action_type == 'obtained') {
+			$href_link = RC_Uri::url('goods/merchant/obtained');
+		} else {
+			$href_link = RC_Uri::url('goods/merchant/check');
+		}
+		
+		return $href_link;
+	}
 }

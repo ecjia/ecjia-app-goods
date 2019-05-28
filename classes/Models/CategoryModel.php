@@ -38,6 +38,13 @@ class CategoryModel extends Model
         'filter_attr',
     ];
 
+    /**
+     * 该模型是否被自动维护时间戳
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
 
     /**
      * 获取商品店铺信息

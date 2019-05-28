@@ -19,9 +19,6 @@
 		<!-- {if $action_link} -->
 		<a class="btn btn-primary data-pjax" href="{$action_link.href}" id="sticky_a"><i class="fa fa-reply"></i> {$action_link.text} </a>
 		<!-- {/if} -->	
-		<!-- {if $action_linkedit} -->
-		<a href="{$action_linkedit.href}" class="btn btn-primary data-pjax"><i class="fa fa-edit"></i> {$action_linkedit.text} </a>
-		<!-- {/if} -->
 	</div>	
 	<div class="clearfix"></div>
 </div>
@@ -76,13 +73,15 @@
 							  	<div class="tb-key">
 							    	<div class="tb-skin">
 							      		<div class="tb-sku">
-							      			<dl class="tb-amount tm-clear">
-							          			<dt class="tb-metatit">{t domain="goods"}成本价{/t}</dt>
-							          			<dd id="J_Amount">
-										            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.cost_price}</em>
-										            <span id="J_StockTips"></span>
-							          			</dd>
-							        		</dl>
+							      			<!-- {if $goods.cost_price gt 0} -->
+								      			<dl class="tb-amount tm-clear">
+								          			<dt class="tb-metatit">{t domain="goods"}成本价{/t}</dt>
+								          			<dd id="J_Amount">
+											            <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.format_cost_price}</em>
+											            <span id="J_StockTips"></span>
+								          			</dd>
+								        		</dl>
+							        		<!-- {/if} -->
 							      			<dl class="tb-amount tm-clear">
 							          			<dt class="tb-metatit">{t domain="goods"}商品货号{/t}</dt>
 							          			<dd id="J_Amount">
@@ -108,13 +107,17 @@
 								          			</dd>
 								        		</dl>
 							        		{/if}
-											<dl class="tb-amount tm-clear">
-											    <dt class="tb-metatit">{t domain="goods"}平台分类{/t}</dt>
-											    <dd id="J_Amount">
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->category_model}{$goods->category_model->cat_name}{/if}</em>
-											        <span id="J_StockTips"></span>
-											    </dd>
-											</dl>
+							        		{if $goods->category_model}
+							        			{if $goods->category_model->cat_name}
+												<dl class="tb-amount tm-clear">
+												    <dt class="tb-metatit">{t domain="goods"}平台分类{/t}</dt>
+												    <dd id="J_Amount">
+												        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->category_model}{$goods->category_model->cat_name}{/if}</em>
+												        <span id="J_StockTips"></span>
+												    </dd>
+												</dl>
+												{/if}
+											{/if}
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">{t domain="goods"}店铺分类{/t}</dt>
 											    <dd id="J_Amount">
@@ -146,8 +149,10 @@
 											<dl class="tb-amount tm-clear">
 												{if $goods.is_on_sale eq '1'}
 													<a class="btn btn-info off-sale" data-trigger="goods_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" data-id="{$goods.goods_id}" refresh-url="{RC_Uri::url('goods/merchant/preview')}&id={$goods.goods_id}">{t domain="goods"}商品下架{/t}</a>
-													<a target="_blank" class="btn btn-info" href='{url path="goods/merchant/pc_preview" args="id={$goods.goods_id}"}'>{t domain='goods'}PC效果{/t}</a>
-													<a target="_blank" class="btn btn-info" href='{url path="goods/merchant/h5_preview" args="id={$goods.goods_id}"}'>{t domain='goods'}手机端效果{/t}</a>
+													{if $preview_type eq 'selling'}
+														<a target="_blank" class="btn btn-info" href='{url path="goods/merchant/pc_preview" args="id={$goods.goods_id}"}'>{t domain='goods'}PC效果{/t}</a>
+														<a target="_blank" class="btn btn-info" href='{url path="goods/merchant/h5_preview" args="id={$goods.goods_id}"}'>{t domain='goods'}手机端效果{/t}</a>
+													{/if}
 												{else}
 													<a class="btn btn-info on-sale" data-trigger="goods_on_sale" data-url="{RC_Uri::url('goods/merchant/toggle_on_sale')}" data-id="{$goods.goods_id}" refresh-url="{RC_Uri::url('goods/merchant/preview')}&id={$goods.goods_id}">{t domain="goods"}商品上架{/t}</a>
 												{/if}
@@ -191,12 +196,12 @@
 					{/if}
 					
 					<div class="goods-pra">
-						<div class="pra">{t domain="goods"}参数{/t}
+						<div class="pra">{t domain="goods"}商品参数{/t}
 							<div class="pra-handle">
 								<a target="_blank" href='{url path="goods/merchant/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>
 						</div>
-						<hr>
+						<hr style="margin-top:0px;">
 					</div>
 					{if $common_parameter_list}
 						<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
@@ -205,15 +210,17 @@
 					{if $group_parameter_list}
 						<!-- #BeginLibraryItem "/library/goods_group_parameter.lbi" --><!-- #EndLibraryItem -->
 					{/if}
+					{if $goods.goods_desc}
 					<div class="goods-pra">
 						<div class="pra">{t domain="goods"}图文详情{/t}
 							<div class="pra-handle">
 								<a target="_blank" href='{url path="goods/merchant/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
 							</div>
 						</div>
-						<hr>
+						<hr style="margin-top:0px;">
 					</div>
 					<div class="t_c clear">{$goods.goods_desc}</div>
+					{/if}
 				</div>
 			</div>
 		</div>

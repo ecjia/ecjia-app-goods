@@ -65,14 +65,29 @@ class goods_store_duplicate_storedata_api extends Component_Event_Api
         }
 
         return [
-
-            //goods
+            //店铺商品分类
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsMerchantCategoryDuplicate($store_id, $source_store_id),
+            //在售收银台商品
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreCashierGoodsDuplicate($store_id, $source_store_id),
+            //店铺商品参数
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsParameterDuplicate($store_id, $source_store_id),
+            //店铺商品规格
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsSpecificationDuplicate($store_id, $source_store_id),
+            //在售散装商品
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreBulkGoodsDuplicate($store_id, $source_store_id),
+            //在售普通商品
             new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreSellingGoodsDuplicate($store_id, $source_store_id),
+
+            //商品拓展分类
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsCatDuplicate($store_id, $source_store_id),
+            //商品会员价
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreMemberPriceDuplicate($store_id, $source_store_id),
+            //商品阶梯价格
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreVolumePriceDuplicate($store_id, $source_store_id),
+            //商品关联商品
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreLinkGoodsDuplicate($store_id, $source_store_id),
+            //商品相册
+            new \Ecjia\App\Goods\StoreDuplicateHandlers\StoreGoodsGalleryDuplicate($store_id, $source_store_id),
 
         ];
     }

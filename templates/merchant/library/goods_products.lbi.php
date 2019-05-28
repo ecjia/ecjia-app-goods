@@ -1,6 +1,6 @@
 <div class="goods-products">
-	商品属性
-	<hr>
+	{t domain="goods"}货品（SKU）{/t}
+	<hr style="margin-top:0px;">
 </div>
 <table class="table table-striped table-hide-edit">
 	<thead>
@@ -22,7 +22,7 @@
 				{/if}
 				 <div class="product-info" style="margin-left:65px;">
 				    <div class="product-goods-name-style">{$list.product_name}</div>
-				           【{$list.product_attr_value}】
+				    {if $list.product_attr_value} 【{$list.product_attr_value}】 {/if}
 				    {if $list.is_promote_now eq 1}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
 				 </div>
     		</td>
@@ -36,7 +36,7 @@
     		<td>{$list.product_number}</td>
     		<td>
     			<a target="_blank" href='{url path="goods/merchant/product_edit" args="id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
-    			<a target="_blank" href='{url path="goods/merchant/product_preview" args="product_id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}预览{/t}</a>	&nbsp;|&nbsp;		
+    			<a target="_blank" href='{url path="goods/merchant/product_preview" args="product_id={$list.product_id}&goods_id={$list.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>	&nbsp;|&nbsp;		
 				<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该货品放入回收站吗？{/t}" href='{url path="goods/merchant/product_remove" args="id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}删除{/t}</a>
 			</td>
     	</tr>

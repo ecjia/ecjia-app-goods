@@ -73,12 +73,24 @@ class StoreFranchiseeModel extends Model
     public $timestamps = false;
 
     /**
-     * 店铺设置集合信息
+     * 一对多
+     * 店铺设置集合
      */
     public function merchants_config_collection()
     {
     	return $this->hasMany('Ecjia\App\Goods\Models\MerchantConfigModel', 'store_id', 'store_id');
     }
+    
+    /**
+     * 一对多
+     * 店铺员工集合
+     */
+    public function staff_user_collection()
+    {
+    	return $this->hasMany('Ecjia\App\Goods\Models\StaffUserModel', 'store_id', 'store_id');
+    }
+    
+    
 }
 
 // end

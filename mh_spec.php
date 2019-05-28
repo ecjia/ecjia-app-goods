@@ -77,7 +77,7 @@ class mh_spec extends ecjia_merchant {
 	 * 商品规格模板列表页面
 	 */
 	public function init() {
-		$this->admin_priv('goods_spec_template_manage');
+		$this->admin_priv('goods_spec_attr_manage');
 
 		ecjia_merchant_screen::get_current_screen()->remove_last_nav_here();
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品规格模板', 'goods')));
@@ -88,7 +88,7 @@ class mh_spec extends ecjia_merchant {
 		
 		$spec_template_list = Ecjia\App\Goods\MerchantGoodsAttr::get_merchant_goods_type_list('specification');
 		$this->assign('spec_template_list',	$spec_template_list);
-		
+		$this->assign('type_count', $spec_template_list['type_count']);
 		$this->assign('filter',	$spec_template_list['filter']);
 
 		$this->display('spec_template_list.dwt');
@@ -98,7 +98,7 @@ class mh_spec extends ecjia_merchant {
 	 * 添加商品规格模板页面
 	 */
 	public function add() {
-		$this->admin_priv('goods_spec_template_update');
+		$this->admin_priv('goods_spec_attr_update');
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('添加规格模板', 'goods')));
 		
@@ -118,7 +118,7 @@ class mh_spec extends ecjia_merchant {
 	 * 添加商品规格模板数据处理
 	 */
 	public function insert() {
-		$this->admin_priv('goods_spec_template_update');
+		$this->admin_priv('goods_spec_attr_update');
 		
 		$spec_template['store_id']		= !empty($_SESSION['store_id']) ? $_SESSION['store_id'] : 0;
 		$spec_template['cat_name']		= trim($_POST['cat_name']);
@@ -142,7 +142,7 @@ class mh_spec extends ecjia_merchant {
 	 * 编辑商品规格模板页面
 	 */
 	public function edit() {
-		$this->admin_priv('goods_spec_template_update');
+		$this->admin_priv('goods_spec_attr_update');
 		
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑规格模板', 'goods')));
 		$this->assign('ur_here', __('编辑规格模板', 'goods'));
@@ -160,7 +160,7 @@ class mh_spec extends ecjia_merchant {
 	 * 编辑商品规格模板页面
 	 */
 	public function update() {
-		$this->admin_priv('goods_spec_template_update');
+		$this->admin_priv('goods_spec_attr_update');
 		
 		$cat_id						= intval($_POST['cat_id']);
 		$spec_template['cat_name']	= trim($_POST['cat_name']);
@@ -180,7 +180,7 @@ class mh_spec extends ecjia_merchant {
 	 * 切换商品规格模板启用状态
 	 */
 	public function toggle_enabled() {
-		$this->admin_priv('goods_spec_template_update');
+		$this->admin_priv('goods_spec_attr_update');
 	
 		$id		= intval($_POST['id']);
 		$val    = intval($_POST['val']);
@@ -195,7 +195,7 @@ class mh_spec extends ecjia_merchant {
 	 * 修改商品规格模板名称
 	 */
 	public function edit_type_name() {
-		$this->admin_priv('goods_spec_template_update');
+		$this->admin_priv('goods_spec_attr_update');
 	
 		$cat_id   = !empty($_POST['pk'])  		? intval($_POST['pk'])	: 0;
 		$cat_name = !empty($_POST['value']) 	? trim($_POST['value'])	: '';
@@ -217,7 +217,7 @@ class mh_spec extends ecjia_merchant {
 	 * 删除商品规格模板
 	 */
 	public function remove() {
-		$this->admin_priv('goods_spec_template_delete');
+		$this->admin_priv('goods_spec_attr_delete');
 		
 		$cat_id = intval($_GET['id']);
 		$cat_name = RC_DB::table('goods_type')->where('cat_id', $cat_id)->pluck('cat_name');

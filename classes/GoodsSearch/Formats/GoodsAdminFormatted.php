@@ -50,17 +50,24 @@ class GoodsAdminFormatted
             'goods_type'                => $this->model->goods_type,
             'shop_price'                => $this->model->shop_price,
             'market_price'              => $this->model->market_price,
-            'goods_thumb'               => RC_Upload::upload_url($this->model->goods_thumb),
+            'cost_price'                => $this->model->cost_price,
+            'goods_thumb'               => empty($this->model->goods_thumb) ? \RC_Uri::admin_url('statics/images/nopic.png') : RC_Upload::upload_url($this->model->goods_thumb),
             'is_on_sale'                => $this->model->is_on_sale,
             'is_best'                   => $this->model->is_best,
             'is_new'                    => $this->model->is_new,
             'is_hot'                    => $this->model->is_hot,
+            'store_best'             	=> $this->model->store_best,
+            'store_new'              	=> $this->model->store_new,
+            'store_hot'              	=> $this->model->store_hot,
             'sort_order'                => $this->model->sort_order,
             'goods_number'              => $this->model->goods_number,
+            'sales_volume'              => $this->model->sales_volume,
+            'weight_unit'               => $this->model->weight_unit,
             'integral'                  => $this->model->integral,
             'is_promote'                => $this->model->is_promote,
             'review_status'             => $this->model->review_status,
-            'add_time'             		=> \RC_Time::local_date(ecjia::config('time_format'), $this->model->add_time)
+            'add_time'             		=> \RC_Time::local_date(ecjia::config('time_format'), $this->model->add_time),
+            'has_product'               => count($this->model->products_collection) > 1 ? 1 : 0,
         ];
     }
 

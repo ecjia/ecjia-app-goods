@@ -115,7 +115,7 @@ class goods_detail_module extends api_front implements api_interface {
         $linked_goods = array();
         
         /*获得商品的规格和属性*/
-        $properties = Ecjia\App\Goods\GoodsFunction::get_goods_properties($goods_id); 
+//         $properties = Ecjia\App\Goods\GoodsFunction::get_goods_properties($goods_id); 
         
         /* 更新点击次数 */
 		$this->update_goods_click_count($goods_id);
@@ -130,8 +130,8 @@ class goods_detail_module extends api_front implements api_interface {
         
         $data['rank_prices']     = !empty($shop_price) ? $user_rank_prices : 0;
         $data['pictures']        = $goods_gallery;
-        $data['properties']      = $properties['pro'];
-        $data['specification']   = $properties['spe'];
+//         $data['properties']      = $properties['pro'];
+//         $data['specification']   = $properties['spe'];
         //用户登录的话，有没收藏此商品
         $data['collected']       = $this->is_collect_goods($goods_id, $_SESSION['user_id']);
         
@@ -139,6 +139,13 @@ class goods_detail_module extends api_front implements api_interface {
         $favourable_list = $this->get_favourable_list($goods, $rec_type);
 
         $data = ecjia_api::transformerData('GOODS', $data);
+        /*获得商品的规格和属性*/
+        $GoodsBasicInfo = new \Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id);
+        list($properties, $specification) = $GoodsBasicInfo->getGoodsSpecPra();
+        
+        $data['properties']      = $properties;
+        $data['specification']   = $specification;
+        
         $data['product_id'] = 0;
         //商品货品信息
         if (!empty($data['specification'])) {
@@ -246,16 +253,27 @@ class goods_detail_module extends api_front implements api_interface {
         }
         
         $data['favourable_list'] = $favourable_list;
-
-       //商品详情页猜你喜欢 
-        $options = array(
-        		'cat_id'	=> $data['cat_id'],
-        		'intro'		=> 'hot',
-        		'page'		=> 1,
-        		'size'		=> 8,
-        		'store_id'	=> $goods['store_id'],
-        );
+		//查找商品关联商品
+		$linked_goods_ids = RC_DB::table('link_goods')->where('goods_id', $goods_id)->lists('link_goods_id');
+		if (count($linked_goods_ids) > 0) {
+			//商品详情页猜你喜欢
+			$options = array(
+					'goods_ids'	=> $linked_goods_ids,
+					'page'		=> 1,
+					'size'		=> 8
+			);
+		} else {
+			//商品详情页猜你喜欢
+			$options = array(
+					'cat_id'	=> $data['cat_id'],
+					'intro'		=> 'hot',
+					'page'		=> 1,
+					'size'		=> 8,
+					'store_id'	=> $goods['store_id'],
+			);
+		}
         $data['related_goods'] = $this->_related_goods($options);
+        
 
         //多店铺的内容
         $data['seller_id'] = $goods['store_id'];
@@ -541,7 +559,13 @@ class goods_detail_module extends api_front implements api_interface {
 		if (!empty($options['cat_id'])) {
 			$filters['cat_id'] = $options['cat_id'];
 		}
-		$filters['is_hot'] = 1;
+		if ($options['intro']) {
+			$filters['is_hot'] = 1;
+		}
+		//商品的关联商品
+		if ($options['goods_ids']) {
+			$filters['goods_ids'] = $options['goods_ids'];
+		}
 		//会员等级价格
 		$filters['user_rank'] = $_SESSION['user_rank'];
 		$filters['user_rank_discount'] = $_SESSION['discount'];
