@@ -652,6 +652,23 @@ class merchant extends ecjia_merchant {
 			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods['add_time']);
 		}
 		
+		//商品重量存在，重量单位是0的情况
+		if ($goods['goods_weight'] > 0) {
+			if (empty($goods['weight_unit'])) {
+				if ($goods['goods_weight'] >= 1 ) {
+					$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
+				} else {
+					$goods['goods_weight_string'] = ($goods['goods_weight']*1000).'克';
+				}
+			} else {
+				if ($goods['weight_unit'] == 2 ) {
+					$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
+				} else {
+					$goods['goods_weight_string'] = $goods['goods_weight'].'克';
+				}
+			}
+		}
+		
 		$images_url = RC_App::apps_url('statics/images', __FILE__);
 		$this->assign('images_url', $images_url);
 		
