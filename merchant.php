@@ -888,7 +888,8 @@ class merchant extends ecjia_merchant {
 		$this->assign('goods_name_color', $goods_name_style);
 	
 		$this->assign('brand_list', get_brand_list());
-		$this->assign('unit_list', goods::unit_list());
+		//$this->assign('unit_list', goods::unit_list());
+		$this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
 		$this->assign('user_rank_list', get_rank_list());
 	
 		$this->assign('cfg', ecjia::config());
@@ -989,8 +990,9 @@ class merchant extends ecjia_merchant {
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
 		$cost_price 	= !empty($_POST['cost_price'])      ? $_POST['cost_price']              : 0;
-		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
-
+		$goods_weight 	= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] : 0.000;
+		$weight_unit	= !empty($_POST['weight_unit']) && is_numeric($_POST['weight_unit']) ? $_POST['weight_unit'] : 1; 
+		
 		$is_best 		= !empty($_POST['is_best']) 		? 1 : 0;
 		$is_new 		= !empty($_POST['is_new']) 			? 1 : 0;
 		$is_hot 		= !empty($_POST['is_hot']) 			? 1 : 0;
@@ -1055,6 +1057,7 @@ class merchant extends ecjia_merchant {
 			'goods_brief'           => $_POST['goods_brief'],
 			'seller_note'           => $_POST['seller_note'],
 			'goods_weight'          => $goods_weight,
+			'weight_unit'			=> $weight_unit,
 			'goods_barcode'         => $goods_barcode,
 			'goods_number'          => $goods_number,
 			'warn_number'           => $warn_number,
@@ -1219,7 +1222,7 @@ class merchant extends ecjia_merchant {
 		
 		/* 根据商品重量的单位重新计算 */
 		if ($goods['goods_weight'] > 0) {
-			$goods['goods_weight_by_unit'] = ($goods['goods_weight'] >= 1) ? $goods['goods_weight'] : ($goods['goods_weight'] / 0.001);
+			$goods['goods_weight_by_unit'] = ($goods['goods_weight'] >= 1) ? $goods['goods_weight'] : ($goods['goods_weight']*1000);
 		}
 
 		if (!empty($goods['goods_brief'])) {
@@ -1275,6 +1278,14 @@ class merchant extends ecjia_merchant {
 			$cat_html = get_cat_html($cat_str);
 			$this->assign('cat_html', $cat_html);
 		}
+		//商品重量存在，重量单位是0的情况
+		if (empty($goods['weight_unit']) && $goods['goods_weight'] > 0) {
+			if ($goods['goods_weight'] >= 1 ) {
+				$goods['weight_unit'] = 2; //千克
+			} else {
+				$goods['weight_unit'] = 1; //克
+			}
+		}
 
 		//设置选中状态,并分配标签导航
 		$this->assign('action', 			ROUTE_A);
@@ -1285,10 +1296,11 @@ class merchant extends ecjia_merchant {
 		$this->assign('merchant_cat',  		$merchant_cat);
 		
 		$this->assign('brand_list', 		get_brand_list());
-		$this->assign('unit_list', 			goods::unit_list());
+// 		$this->assign('unit_list', 			goods::unit_list());
+		$this->assign('weight_unit', 		$goods['weight_unit']);
+		$this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
 		$this->assign('user_rank_list', 	get_rank_list());
 		
-		$this->assign('weight_unit', 		$goods['goods_weight'] >= 1 ? '1' : '0.001');
 		$this->assign('cfg', 				ecjia::config());
 		
 		$this->assign('form_act', 			RC_Uri::url('goods/merchant/edit'));
@@ -1367,7 +1379,8 @@ class merchant extends ecjia_merchant {
 		$shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
 		$market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
 		$cost_price 	= !empty($_POST['cost_price'])      ? $_POST['cost_price'] 				: 0;
-		$goods_weight 		= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
+		$goods_weight 	= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] : 0.000;
+		$weight_unit	= !empty($_POST['weight_unit']) ? $_POST['weight_unit'] : 1;
 
 		$is_best 		= isset($_POST['is_best']) 			? 1 : 0;
 		$is_new 		= isset($_POST['is_new']) 			? 1 : 0;
@@ -1401,7 +1414,7 @@ class merchant extends ecjia_merchant {
 			return $this->showmessage(__('请输入商品名称', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
 
-		$review_status = RC_DB::TABLE('goods')->where('goods_id', $goods_id)->pluck('review_status');
+		$review_status = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('review_status');
 		if($review_status === 2) {
 			$review_status = 1;
 		} 
@@ -1428,6 +1441,7 @@ class merchant extends ecjia_merchant {
 		  	'goods_brief'		   		=> $_POST['goods_brief'],
 		  	'seller_note'		   		=> $_POST['seller_note'],
 		  	'goods_weight'		 		=> $goods_weight,
+			'weight_unit'				=> $weight_unit,
 			'goods_barcode'		  		=> $goods_barcode,
 		  	'goods_number'		  		=> $goods_number,
 		  	'warn_number'		   		=> $warn_number,
