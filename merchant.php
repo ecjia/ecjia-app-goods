@@ -651,7 +651,6 @@ class merchant extends ecjia_merchant {
 		if (!empty($goods['add_time'])) {
 			$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods['add_time']);
 		}
-		
 		//商品重量存在，重量单位是0的情况
 		if ($goods['goods_weight'] > 0) {
 			if (empty($goods['weight_unit'])) {
@@ -664,7 +663,12 @@ class merchant extends ecjia_merchant {
 				if ($goods['weight_unit'] == 2 ) {
 					$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
 				} else {
-					$goods['goods_weight_string'] = $goods['goods_weight'].'克';
+					if ($goods['goods_weight'] < 1){
+						$str = '克';
+					} else {
+						$str = '千克';
+					}
+					$goods['goods_weight_string'] = $goods['goods_weight'].$str;
 				}
 			}
 		}
@@ -1303,7 +1307,24 @@ class merchant extends ecjia_merchant {
 				$goods['weight_unit'] = 1; //克
 			}
 		}
-
+		
+		//商品重量存在，重量单位是0的情况
+		if ($goods['goods_weight'] > 0) {
+			if (empty($goods['weight_unit'])) {
+				if ($goods['goods_weight'] >= 1 ) {
+					$goods['weight_unit'] = 2; //千克
+				} else {
+					$goods['weight_unit'] = 1; //克
+				}
+			} else {
+				if ($goods['weight_unit'] == 1) {
+					if ($goods['goods_weight'] > 1) {
+						$goods['weight_unit'] = 2; //千克
+					}
+				}
+			}
+		}
+		
 		//设置选中状态,并分配标签导航
 		$this->assign('action', 			ROUTE_A);
 		$this->assign('tags', 				$this->tags);
