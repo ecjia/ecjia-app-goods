@@ -135,6 +135,11 @@ class admin_goods_add_module extends api_admin implements api_interface {
     		$proc_goods_img = false;
     	}
     	
+    	RC_Logger::getLogger('error')->info('test111');
+    	RC_Logger::getlogger('info')->info($_FILES);
+    	RC_Logger::getlogger('info')->info($_FILES['goods_image']);
+    	RC_Logger::getLogger('error')->info('test222');
+    	
     	if ($proc_goods_img) {
     		if (isset($_FILES['goods_image'])) {
     			$image_info = $upload->upload($_FILES['goods_image']);
