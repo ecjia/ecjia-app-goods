@@ -974,7 +974,14 @@ class admin extends ecjia_admin {
 				if ($goods['weight_unit'] == 2 ) {
 					$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
 				} else {
-					$goods['goods_weight_string'] = $goods['goods_weight'].'克';
+					if ($goods['goods_weight'] < 1){
+						$str = '克';
+						$goods_weight = $goods['goods_weight']*1000;
+					} else {
+						$str = '千克';
+						$goods_weight = $goods['goods_weight'];
+					}
+					$goods['goods_weight_string'] = $goods_weight.$str;
 				}
 			}
 		}
