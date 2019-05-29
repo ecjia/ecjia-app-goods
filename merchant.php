@@ -665,10 +665,12 @@ class merchant extends ecjia_merchant {
 				} else {
 					if ($goods['goods_weight'] < 1){
 						$str = '克';
+						$goods_weight = $goods['goods_weight']*1000;
 					} else {
 						$str = '千克';
+						$goods_weight = $goods['goods_weight'];
 					}
-					$goods['goods_weight_string'] = $goods['goods_weight'].$str;
+					$goods['goods_weight_string'] =$goods_weight.$str;
 				}
 			}
 		}
@@ -1298,14 +1300,6 @@ class merchant extends ecjia_merchant {
 			$cat_str = get_cat_str($goods['cat_id']);
 			$cat_html = get_cat_html($cat_str);
 			$this->assign('cat_html', $cat_html);
-		}
-		//商品重量存在，重量单位是0的情况
-		if (empty($goods['weight_unit']) && $goods['goods_weight'] > 0) {
-			if ($goods['goods_weight'] >= 1 ) {
-				$goods['weight_unit'] = 2; //千克
-			} else {
-				$goods['weight_unit'] = 1; //克
-			}
 		}
 		
 		//商品重量存在，重量单位是0的情况
