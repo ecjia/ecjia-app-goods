@@ -95,10 +95,12 @@ class GoodsAdminApiFormatted
     			} else {
     				if ($this->model->goods_weight < 1){
     					$str = '克';
+    					$goods_weight = $goods['goods_weight']*1000;
     				} else {
     					$str = '千克';
+    					$goods_weight = $goods['goods_weight'];
     				}
-    				$goods['goods_weight_string'] = $goods['goods_weight'].$str;
+    				$goods['goods_weight_string'] = $goods_weight.$str;
     			}
     		}
     	}
