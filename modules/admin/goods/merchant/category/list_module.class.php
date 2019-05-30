@@ -72,7 +72,8 @@ class admin_goods_merchant_category_list_module extends api_admin implements api
       	    		'cat_id' 	=> $value['cat_id'],
       	    		'cat_name'	=> $value['cat_name'],
       	    		'parent_id'	=> $value['parent_id'],
-      	    		'level'		=> empty($value['level']) ? 0 : $value['level']		
+      	    		'level'		=> empty($value['level']) ? 0 : $value['level'],
+      	    		'is_show'	=> intval($value['is_show']),	
       	    	);
 			}
     	}
