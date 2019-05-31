@@ -178,82 +178,88 @@ class admin_goods_list_module extends api_admin implements api_interface {
 			
 			return array('data' => $collection['goods_list'], 'pager' => $collection['pager']);
 		} else {
-			$where = array();
-			$where = array(
-					'is_delete' => 0,
-			);
-			if ($_SESSION['store_id'] > 0) {
-				$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
-			}
-			if (!empty($on_sale)) {
-				$where['is_on_sale'] = $on_sale == 'true' ? 1 : 0 ;
-			}
-			if ($stock == 'false') {
-				$where['goods_number'] = 0;
-			}
-			if (!empty($category_id)) {
-				$where['merchant_cat_id'] = $category_id;
-			}
-			if ( !empty($keywords)) {
-				$where[] = "( goods_name like '%".$keywords."%' or goods_sn like '%".$keywords."%' )";
-			}
-			$db = RC_Model::model('goods/goods_viewmodel');
-			/* 获取记录条数 */
-			$record_count = $db->join(null)->where($where)->count();
-			//实例化分页
-			$page_row = new ecjia_page($record_count, $size, 6, '', $page);
+			$oldVersionData = $this->getoldVersionData($category_id, $keywords, $page, $size);
+			return $oldVersionData;
+		}
+	}
+	
+	private function getoldVersionData($category_id, $keywords, $on_sale, $stock, $sort_by, $page, $size)
+	{
+		$where = array();
+		$where = array(
+				'is_delete' => 0,
+		);
+		if ($_SESSION['store_id'] > 0) {
+			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
+		}
+		if (!empty($on_sale)) {
+			$where['is_on_sale'] = $on_sale == 'true' ? 1 : 0 ;
+		}
+		if ($stock == 'false') {
+			$where['goods_number'] = 0;
+		}
+		if (!empty($category_id)) {
+			$where['merchant_cat_id'] = $category_id;
+		}
+		if ( !empty($keywords)) {
+			$where[] = "( goods_name like '%".$keywords."%' or goods_sn like '%".$keywords."%' )";
+		}
+		$db = RC_Model::model('goods/goods_viewmodel');
+		/* 获取记录条数 */
+		$record_count = $db->join(null)->where($where)->count();
+		//实例化分页
+		$page_row = new ecjia_page($record_count, $size, 6, '', $page);
 			
-			$today = RC_Time::gmtime();
-			$field = "goods_id, goods_sn, goods_name, goods_number, shop_price, sales_volume, market_price, promote_price, promote_start_date, promote_end_date, click_count, goods_thumb, is_best, is_new, is_hot, is_shipping, goods_img, original_img, last_update,
-			(promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ')|is_promote";
-			$data = $db->join(null)->field($field)->where($where)->order($sort_by)->limit($page_row->limit())->select();
+		$today = RC_Time::gmtime();
+		$field = "goods_id, goods_sn, goods_name, goods_number, shop_price, sales_volume, market_price, promote_price, promote_start_date, promote_end_date, click_count, goods_thumb, is_best, is_new, is_hot, is_shipping, goods_img, original_img, last_update,
+		(promote_price > 0 AND promote_start_date <= ' . $today . ' AND promote_end_date >= ' . $today . ')|is_promote";
+		$data = $db->join(null)->field($field)->where($where)->order($sort_by)->limit($page_row->limit())->select();
 			
-			$goods_list = array();
-			if (!empty($data)) {
+		$goods_list = array();
+		if (!empty($data)) {
 			RC_Loader::load_app_func('admin_goods', 'goods');
 			RC_Loader::load_sys_func('global');
 			foreach ($data as $key => $val) {
-			if ($val['promote_price'] > 0) {
+				if ($val['promote_price'] > 0) {
 					$promote_price = $val['promote_price'];//bargain_price($val['promote_price'], $val['promote_start_date'], $val['promote_end_date']);
-			} else {
-			$promote_price = 0;
-			}
+				} else {
+					$promote_price = 0;
+				}
 				$goods_list[] = array(
-				'goods_id'			=> $val['goods_id'],
-				'name'				=> $val['goods_name'],
-				'goods_sn'			=> $val['goods_sn'],
+						'goods_id'			=> $val['goods_id'],
+						'name'				=> $val['goods_name'],
+						'goods_sn'			=> $val['goods_sn'],
 						'market_price'		=> price_format($val['market_price'] , false),
-								'shop_price'		=> price_format($val['shop_price'] , false),
-										'is_promote'	=> $val['is_promote'],
-										'promote_price'	=> price_format($promote_price , false),
-				    'promote_start_date'	=> intval($val['promote_start_date']),
-				    'promote_end_date'		=> intval($val['promote_end_date']),
-				    'formatted_promote_start_date'	=> !empty($val['promote_start_date']) ? RC_Time::local_date('Y-m-d H:i:s', $val['promote_start_date']) : '',
-							    		'formatted_promote_end_date'	=> !empty($val['promote_end_date']) ? RC_Time::local_date('Y-m-d H:i:s', $val['promote_end_date']) : '',
-							    				'clicks'		=> intval($val['click_count']),
-							    		'stock'				=> (ecjia::config('use_storage') == 1) ? $val['goods_number'] : '',
-							    				'goods_weight'		=> $val['goods_weight']  = (intval($val['goods_weight']) > 0) ? $val['goods_weight'] . __('千克', 'goods') : ($val['goods_weight'] * 1000) . __('克', 'goods'),
-							    						'is_best'			=> $val['is_best'] == 1 ? 1 : 0,
-					'is_new'			=> $val['is_new'] == 1 ? 1 : 0,
-					'is_hot'			=> $val['is_hot'] == 1 ? 1 : 0,
-					'is_shipping'		=> $val['is_shipping'] == 1 ? 1 : 0,
-					'last_updatetime' 	=> RC_Time::local_date(ecjia::config('time_format'), $val['last_update']),
-							    						'sales_volume'	=> $val['sales_volume'],
-							    						'img' => array(
-							    								'thumb'	=> !empty($val['goods_img']) ? RC_Upload::upload_url($val['goods_img']) : '',
-							    										'url'	=> !empty($val['original_img']) ? RC_Upload::upload_url($val['original_img']) : '',
-							    												'small'	=> !empty($val['goods_thumb']) ? RC_Upload::upload_url($val['goods_thumb']) : '',
-				)
+						'shop_price'		=> price_format($val['shop_price'] , false),
+						'is_promote'	=> $val['is_promote'],
+						'promote_price'	=> price_format($promote_price , false),
+						'promote_start_date'	=> intval($val['promote_start_date']),
+						'promote_end_date'		=> intval($val['promote_end_date']),
+						'formatted_promote_start_date'	=> !empty($val['promote_start_date']) ? RC_Time::local_date('Y-m-d H:i:s', $val['promote_start_date']) : '',
+						'formatted_promote_end_date'	=> !empty($val['promote_end_date']) ? RC_Time::local_date('Y-m-d H:i:s', $val['promote_end_date']) : '',
+						'clicks'		=> intval($val['click_count']),
+						'stock'				=> (ecjia::config('use_storage') == 1) ? $val['goods_number'] : '',
+						'goods_weight'		=> $val['goods_weight']  = (intval($val['goods_weight']) > 0) ? $val['goods_weight'] . __('千克', 'goods') : ($val['goods_weight'] * 1000) . __('克', 'goods'),
+						'is_best'			=> $val['is_best'] == 1 ? 1 : 0,
+						'is_new'			=> $val['is_new'] == 1 ? 1 : 0,
+						'is_hot'			=> $val['is_hot'] == 1 ? 1 : 0,
+						'is_shipping'		=> $val['is_shipping'] == 1 ? 1 : 0,
+						'last_updatetime' 	=> RC_Time::local_date(ecjia::config('time_format'), $val['last_update']),
+						'sales_volume'	=> $val['sales_volume'],
+						'img' => array(
+								'thumb'	=> !empty($val['goods_img']) ? RC_Upload::upload_url($val['goods_img']) : '',
+								'url'	=> !empty($val['original_img']) ? RC_Upload::upload_url($val['original_img']) : '',
+								'small'	=> !empty($val['goods_thumb']) ? RC_Upload::upload_url($val['goods_thumb']) : '',
+						)
 				);
 			}
-			}
-			$pager = array(
-			'total' => $page_row->total_records,
-			'count' => $page_row->total_records,
-			'more'	=> $page_row->total_pages <= $page ? 0 : 1,
-			);
-					return array('data' => $goods_list, 'pager' => $pager);
 		}
+		$pager = array(
+				'total' => $page_row->total_records,
+				'count' => $page_row->total_records,
+				'more'	=> $page_row->total_pages <= $page ? 0 : 1,
+		);
+		return array('data' => $goods_list, 'pager' => $pager);
 	}
 }
 
