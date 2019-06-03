@@ -66,34 +66,44 @@ class admin_goods_merchant_category_detail_module extends api_admin implements a
     	if (empty($cat_id)) {
     		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
-    	$where = array('cat_id' => $cat_id);
-    	$where_goods_count = array(
-    	    'merchant_cat_id' => $cat_id,
-    	    'is_delete' => 0,
-    	    'store_id' => $_SESSION['store_id']
-    	);
-    	if (!empty($_SESSION['store_id'])) {
-    		$where['store_id'] = $_SESSION['store_id'];
-    	}
-    	$category_info = RC_Model::model('goods/merchants_category_model')->where($where)->find();
-    	 
+    	
+    	$category_info = Ecjia\App\Goods\Models\MerchantCategoryModel::where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
+    	
     	if (empty($category_info)) {
     		return new ecjia_error('category_empty', __('未找到对应分类！', 'goods'));
     	}
     	
     	RC_Loader::load_app_func('admin_category', 'goods');
+		$goods_count = Ecjia\App\Goods\Models\GoodsModel::where('merchant_cat_id', $cat_id)->where('is_delete', 0)->where('store_id', $_SESSION['store_id'])->count();
+    	//绑定的规格模板信息
+    	$specification_info = [];
+    	if ($category_info->goods_type_specification_model) {
+    		$specification_info = [
+    			'specification_id' 		=> $category_info->goods_type_specification_model->cat_id,
+    			'specification_name'	=> $category_info->goods_type_specification_model->cat_name,
+    		];
+    	}
+    	//绑定的参数模板信息
+    	$parameter_info = [];
+    	if ($category_info->goods_type_parameter_model) {
+    		$parameter_info = [
+    			'parameter_id' 		=> $category_info->goods_type_parameter_model->cat_id,
+    			'parameter_name'	=> $category_info->goods_type_parameter_model->cat_name,
+    		];
+    	}
+
     	$category_detail = array(
-			'category_id'	=> $category_info['cat_id'],
-			'category_name'	=> $category_info['cat_name'],
-			'category_image'	=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
-    	    'category' => get_parent_cats($category_info['cat_id'], 1, $_SESSION['store_id']),
-			'is_show'		=> $category_info['is_show'],
-			'goods_count'	=> RC_Model::model('goods/goods_model')->where($where_goods_count)->count(),
+			'category_id'			=> $category_info['cat_id'],
+			'category_name'			=> $category_info['cat_name'],
+			'category_image'		=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
+    	    'category' 				=> get_parent_cats($category_info['cat_id'], 1, $_SESSION['store_id']),
+			'is_show'				=> $category_info['is_show'],
+			'goods_count'			=> $goods_count,
+    		'specification_info'	=> $specification_info,
+    		'parameter_info'		=> $parameter_info
     	);
     	 
     	return $category_detail;
     	
     }
-    	 
-    
 }
