@@ -106,7 +106,7 @@ class admin_category extends ecjia_admin {
 		$this->assign('cat_id', $cat_id);
 
         $cat_list = (new \Ecjia\App\Goods\Category\CategoryCollection($cat_id))->getCategories();
-		$cat_list = $cat_list->all();
+		$cat_list = collect($cat_list)->all();
 
 		$this->assign('cat_list', $cat_list);
 		
