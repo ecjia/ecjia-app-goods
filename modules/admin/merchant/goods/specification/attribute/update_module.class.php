@@ -58,6 +58,7 @@ class admin_merchant_goods_specification_attribute_update_module extends api_adm
 			return new ecjia_error(100, 'Invalid session');
 		}
 		
+		$specification_id	= intval($this->requestData('specification_id', 0));
 		$attr_id			= intval($this->requestData('attr_id', 0));
 		$attr_name			= trim($this->requestData('attr_name', ''));
 		$attr_values		= $this->requestData('attr_values', []);
@@ -69,10 +70,12 @@ class admin_merchant_goods_specification_attribute_update_module extends api_adm
 		}
 		
 		$attribute_info = Ecjia\App\Goods\Models\AttributeModel::where('attr_id', $attr_id)->first();
-		
+		if (empty($specification_id)) {
+			$specification_id = $attribute_info->cat_id;
+		}
 		$data = [];
 		if (!empty($attr_name)) {
-			$specification_id = $attribute_info->cat_id;
+			
 			//判断当前规格下属性名称是否重复
 			$count = Ecjia\App\Goods\Models\AttributeModel::where('cat_id', $specification_id)->where('attr_name', $attr_name)->where('attr_id', '!=', $attr_id)->count();
 			if ($count > 0) {
