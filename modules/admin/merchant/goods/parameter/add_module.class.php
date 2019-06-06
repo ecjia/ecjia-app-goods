@@ -46,11 +46,11 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 编辑规格属性
+ * 添加商品参数模板
  * @author zrl
  *
  */
-class admin_merchant_goods_specification_attribute_update_module extends api_admin implements api_interface {
+class admin_merchant_goods_parameter_add_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
@@ -58,47 +58,43 @@ class admin_merchant_goods_specification_attribute_update_module extends api_adm
 			return new ecjia_error(100, 'Invalid session');
 		}
 		
-		$attr_id			= intval($this->requestData('attr_id', 0));
-		$attr_name			= trim($this->requestData('attr_name', ''));
-		$attr_values		= $this->requestData('attr_values', []);
+		$parameter_name		= trim($this->requestData('parameter_name', ''));
+		$enabled			= intval($this->requestData('enabled', '1'));
+		$parameter_group	= $this->requestData('parameter_group', []);
 		
 		$store_id 			= $_SESSION['store_id'];
 
-		if (empty($attr_id)) {
-			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+		if (empty($parameter_name)) {
+			return new ecjia_error('parameter_name_error', __('请填写参数模板名称！', 'goods'));
 		}
-		
-		$attribute_info = Ecjia\App\Goods\Models\AttributeModel::where('attr_id', $attr_id)->first();
-		
-		$data = [];
-		if (!empty($attr_name)) {
-			$specification_id = $attribute_info->cat_id;
-			//判断当前规格下属性名称是否重复
-			$count = Ecjia\App\Goods\Models\AttributeModel::where('cat_id', $specification_id)->where('attr_name', $attr_name)->where('attr_id', '!=', $attr_id)->count();
-			if ($count > 0) {
-				return new ecjia_error('attr_name_exist', __('属性名称在当前规格模板下已存在，请您换一个名称', 'goods'));
-			}
-			$data['attr_name'] = $attr_name;
+
+		//参数模板名称是否重复
+		$count = Ecjia\App\Goods\Models\GoodsTypeModel::where('cat_type', 'parameter')->where('cat_name', $parameter_name)->where('store_id', $store_id)->count();
+		if($count > 0) {
+			return new ecjia_error('specification_name_exist', __('参数模板名称已存在！', 'goods'));
 		}
-		if (!empty($attr_values)) {
-			$format_attr_values = implode("\n", $attr_values);
-			$data['attr_values'] = $format_attr_values;
-		}
-		if (!empty($data)) {
-			$update = Ecjia\App\Goods\Models\AttributeModel::where('attr_id', $attr_id)->update($data);
-			if ($update) {
-				$attribute_info = Ecjia\App\Goods\Models\AttributeModel::where('attr_id', $attr_id)->first();
-			}
-		}
-		
-		$detail = [
-			'specification_id' => intval($attribute_info->cat_id),
-			'attr_id'		   => intval($attribute_info->attr_id),
-			'attr_name'		   => trim($attribute_info->attr_name),
-			'attr_cat_type'	   => $attribute_info->attr_cat_type == '0' ? 'common' : 'color',
-			'attr_values'	   => empty($attribute_info->attr_values) ? [] : explode(',', str_replace("\n", ",", $attribute_info->attr_values))
+		$data = [
+			'store_id' => $store_id,
+			'cat_name' => $parameter_name,
+			'cat_type' => 'parameter',
+			'enabled'  => $enabled
 		];
 		
-		return $detail;
+		if (!empty($parameter_group) && is_array($parameter_group)) {
+			$format_parameter_group = implode("\n", $parameter_group);
+			$data['attr_group'] = $format_parameter_group;
+		}
+		$cat_id = Ecjia\App\Goods\Models\GoodsTypeModel::insertGetId($data);
+
+		if ($cat_id) {
+			return [
+				'parameter_id' 		=> $cat_id,
+				'parameter_name'	=> $parameter_name,
+				'enabled'			=> $enabled,
+				'parameter_group'	=> $parameter_group				
+			];
+		} else {
+			return new ecjia_error('add_parameter_falil', __('添加商品参数模板失败！', 'goods'));
+		}
     }
 }
