@@ -125,7 +125,7 @@ class admin_goods_gallery_add_module extends api_admin implements api_interface 
 		$image_info = null;
 		$save_path = 'images';
 		
-		$upload = RC_Upload::uploader('tempimage', array('save_path' => $save_path, 'auto_sub_dirs' => true));
+		$upload = RC_Upload::uploader('image', array('save_path' => $save_path, 'auto_sub_dirs' => true));
 		
 		$images = $_FILES['image'];
 		$image_info	= $upload->batchUpload($images);
