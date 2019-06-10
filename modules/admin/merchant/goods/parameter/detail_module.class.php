@@ -58,7 +58,7 @@ class admin_merchant_goods_parameter_detail_module extends api_admin implements 
 			return new ecjia_error(100, 'Invalid session');
 		}
 		
-		$parameter_id		= intval($this->requestData('parameter_id', ''));
+		$parameter_id		= intval($this->requestData('parameter_id', 0));
 		$store_id			= $_SESSION['store_id'];
 
 		if (empty($parameter_id)) {
