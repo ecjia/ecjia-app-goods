@@ -76,10 +76,6 @@ class admin_goods_gallery_add_module extends api_admin implements api_interface 
 		    return new ecjia_error('upload_empty', __('请选择您要上传的图片', 'goods'));
 		}
 		
-		RC_Logger::getLogger('error')->info('testaaa');
-		RC_Logger::getlogger('info')->info($_FILES);
-		RC_Logger::getLogger('error')->info('testbbb');
-		
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
 		
 // 		$goods_gallery_number = ecjia::config('goods_gallery_number');
@@ -125,17 +121,43 @@ class admin_goods_gallery_add_module extends api_admin implements api_interface 
 		$image_info = null;
 		$save_path = 'images';
 		
-		$upload = RC_Upload::uploader('image', array('save_path' => $save_path, 'auto_sub_dirs' => true));
+		$upload = RC_Upload::uploader('image', array('save_path' => './images', 'auto_sub_dirs' => true));
+		$upload->add_saving_callback(function ($file, $filename) {
+			return true;
+		});
 		
+		if (!$upload->check_upload_file($_FILES['img_url'])) {
+			return new ecjia_error('upload_error'. __LINE__, $upload->error());
+		}		
 		$images = $_FILES['image'];
-		$image_info	= $upload->batchUpload($images);
-		foreach ($image_info as $image_row) {
-			if(empty($image_row)) {
-				return new ecjia_error('upload_error', $upload->error());
-			}
-			$goods_image = new goods_image_data($image_row['name'], $image_row['tmpname'], $image_row['ext'], $goods_id);
-			$goods_image->update_gallery();
+		//$image_info	= $upload->batchUpload($images);
+		
+		$image_info = $upload->upload($images);
+		
+		RC_Logger::getlogger('info')->info([
+			'file' => __FILE__,
+			'line' => __LINE__,
+			'image_info' => $image_info,
+		]);
+		if (empty($image_info)) {
+			return new ecjia_error('upload_error'. __LINE__, $upload->error());
 		}
+		
+		$goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
+		$goods_image->update_gallery();
+		
+// 		foreach ($image_info as $image_row) {
+// 			RC_Logger::getlogger('info')->info([
+// 				'file' => __FILE__,
+// 				'line' => __LINE__,
+// 				'image_row' => $image_row,
+// 			]);
+// 			if(empty($image_row)) {
+// 				return new ecjia_error('upload_error', $upload->error());
+// 			}
+// 			$goods_image = new goods_image_data($image_row['name'], $image_row['tmpname'], $image_row['ext'], $goods_id);
+// 			$goods_image->update_gallery();
+// 		}
 		
 		/* 记录日志 */
 		if ($_SESSION['store_id'] > 0) {
