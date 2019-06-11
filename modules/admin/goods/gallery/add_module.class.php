@@ -67,12 +67,7 @@ class admin_goods_gallery_add_module extends api_admin implements api_interface 
     		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
     	
-    	$where = array('goods_id' => $goods_id);
-		if ($_SESSION['store_id'] > 0) {
-			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
-		}
-		
-		$goods_info = RC_Model::model('goods/goods_model')->where($where)->find();
+		$goods_info = RC_DB::table('goods')->where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->first();
 		
 		if (empty($goods_info)) {
 			return new ecjia_error('goods_empty', __('未找到对应商品', 'goods'));
@@ -87,44 +82,59 @@ class admin_goods_gallery_add_module extends api_admin implements api_interface 
 		
 		RC_Loader::load_app_class('goods_image_data', 'goods', false);
 		
-		$goods_gallery_number = ecjia::config('goods_gallery_number');
-		$count_new = count($_FILES['image']['name']);
-		if (!empty($goods_gallery_number)) {
-		    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
-		    $count = $db_goods_gallery->where(array('goods_id' => $goods_id))->count();
+// 		$goods_gallery_number = ecjia::config('goods_gallery_number');
+// 		$count_new = count($_FILES['image']['name']);
+// 		if (!empty($goods_gallery_number)) {
+// 		    $db_goods_gallery = RC_Loader::load_app_model('goods_gallery_model', 'goods');
+// 		    $count = $db_goods_gallery->where(array('goods_id' => $goods_id))->count();
 		    
-		    if ($count_new > $goods_gallery_number - $count) {
-		        return new ecjia_error('upload_counts_error', sprintf(__('商品相册图片不能超过%d张', 'goods'), $goods_gallery_number));
-		    }
-		}
-		$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
-		$upload->add_saving_callback(function ($file, $filename) {
-		    return true;
-		});
+// 		    if ($count_new > $goods_gallery_number - $count) {
+// 		        return new ecjia_error('upload_counts_error', sprintf(__('商品相册图片不能超过%d张', 'goods'), $goods_gallery_number));
+// 		    }
+// 		}
+// 		$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
+// 		$upload->add_saving_callback(function ($file, $filename) {
+// 		    return true;
+// 		});
 		
-		for ($i = 0; $i < $count_new; $i++) {
-		    $picture = array(
-		        'name' 		=> 	$_FILES['image']['name'][$i],
-		        'type' 		=> 	$_FILES['image']['type'][$i],
-		        'tmp_name' 	=> 	$_FILES['image']['tmp_name'][$i],
-		        'error'		=> 	$_FILES['image']['error'][$i],
-		        'size'		=> 	$_FILES['image']['size'][$i],
-		    );
-		    if (!empty($picture['name'])) {
-		        if (!$upload->check_upload_file($picture)) {
-		            return new ecjia_error('upload_error'. __LINE__, $upload->error());
-		        }
-		    }
-		}
+// 		for ($i = 0; $i < $count_new; $i++) {
+// 		    $picture = array(
+// 		        'name' 		=> 	$_FILES['image']['name'][$i],
+// 		        'type' 		=> 	$_FILES['image']['type'][$i],
+// 		        'tmp_name' 	=> 	$_FILES['image']['tmp_name'][$i],
+// 		        'error'		=> 	$_FILES['image']['error'][$i],
+// 		        'size'		=> 	$_FILES['image']['size'][$i],
+// 		    );
+// 		    if (!empty($picture['name'])) {
+// 		        if (!$upload->check_upload_file($picture)) {
+// 		            return new ecjia_error('upload_error'. __LINE__, $upload->error());
+// 		        }
+// 		    }
+// 		}
 		
-		$image_info = $upload->batch_upload($_FILES);
-		if (empty($image_info)) {
-			return new ecjia_error('upload_error'. __LINE__, $upload->error());
-		}
+// 		$image_info = $upload->batch_upload($_FILES);
+// 		if (empty($image_info)) {
+// 			return new ecjia_error('upload_error'. __LINE__, $upload->error());
+// 		}
 		
-		foreach ($image_info as $image) {
-		    $goods_image = new goods_image_data($image['name'], $image['tmpname'], $image['ext'], $goods_id);
-		    $goods_image->update_gallery();
+// 		foreach ($image_info as $image) {
+// 		    $goods_image = new goods_image_data($image['name'], $image['tmpname'], $image['ext'], $goods_id);
+// 		    $goods_image->update_gallery();
+// 		}
+
+		$image_info = null;
+		$save_path = 'images';
+		
+		$upload = RC_Upload::uploader('image', array('save_path' => $save_path, 'auto_sub_dirs' => true));
+		
+		$images = $_FILES['image'];
+		$image_info	= $upload->batchUpload($images);
+		foreach ($image_info as $image_row) {
+			if(empty($image_row)) {
+				return new ecjia_error('upload_error', $upload->error());
+			}
+			$goods_image = new goods_image_data($image_row['name'], $image_row['tmpname'], $image_row['ext'], $goods_id);
+			$goods_image->update_gallery();
 		}
 		
 		/* 记录日志 */
