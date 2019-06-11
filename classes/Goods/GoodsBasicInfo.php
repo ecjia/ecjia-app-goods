@@ -181,7 +181,7 @@ class GoodsBasicInfo
 					$res = $goods_attr_collection->map(function ($item) use ($attr_group) {
 						if ($item->attribute_model) {
 								$parameter = collect($attr_group)->map(function ($val, $key) use ($item, $attr_group){
-									if ($item->attribute_model->attr_group == $key) {
+									if ($item->attribute_model->attr_group == $val) {
 											$arr = array(
 													'attr_group_id' 	=> $key,
 													'attr_group_name'	=> $val,
@@ -207,6 +207,7 @@ class GoodsBasicInfo
     	if ($res) {
     		$result = $this->handleGroupParameter($res->toArray());
     	}
+    	
     	return $result;
     }
     
