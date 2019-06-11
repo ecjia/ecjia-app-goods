@@ -125,15 +125,14 @@ class admin_goods_gallery_add_module extends api_admin implements api_interface 
 		$upload->add_saving_callback(function ($file, $filename) {
 			return true;
 		});
-		
-		if (!$upload->check_upload_file($_FILES['img_url'])) {
+		$images = $_FILES['image'];
+		if (!$upload->check_upload_file($images)) {
 			return new ecjia_error('upload_error'. __LINE__, $upload->error());
 		}		
-		$images = $_FILES['image'];
 		//$image_info	= $upload->batchUpload($images);
-		
-		$image_info = $upload->upload($images);
-		
+		if (isset($images)) {
+			$image_info = $upload->upload($images);
+		}
 		RC_Logger::getlogger('info')->info([
 			'file' => __FILE__,
 			'line' => __LINE__,
