@@ -73,7 +73,6 @@ class admin_goods_merchant_category_detail_module extends api_admin implements a
     		return new ecjia_error('category_empty', __('未找到对应分类！', 'goods'));
     	}
     	
-    	RC_Loader::load_app_func('admin_category', 'goods');
 		$goods_count = Ecjia\App\Goods\Models\GoodsModel::where('merchant_cat_id', $cat_id)->where('is_delete', 0)->where('store_id', $_SESSION['store_id'])->count();
     	//绑定的规格模板信息
     	$specification_info = [];
@@ -96,7 +95,7 @@ class admin_goods_merchant_category_detail_module extends api_admin implements a
 			'category_id'			=> $category_info['cat_id'],
 			'category_name'			=> $category_info['cat_name'],
 			'category_image'		=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
-    	    'category' 				=> get_parent_cats($category_info['cat_id'], 1, $_SESSION['store_id']),
+    	    'category' 				=> Ecjia\App\Goods\GoodsFunction::get_parent_cats($category_info['cat_id'], 1, $_SESSION['store_id']),
 			'is_show'				=> $category_info['is_show'],
 			'goods_count'			=> $goods_count,
     		'specification_info'	=> $specification_info,
