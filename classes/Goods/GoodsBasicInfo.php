@@ -136,7 +136,8 @@ class GoodsBasicInfo
     				$item['product_thumb'] = \RC_Upload::upload_url($product_thumb);
     			}
     			
-    			$item['product_shop_price'] = $item->product_shop_price <= 0 ? ecjia_price_format($goods->shop_price, false) : ecjia_price_format($item->product_shop_price, false);
+    			$item['product_shop_price'] 			= $item->product_shop_price <= 0 ? $goods->shop_price : $item->product_shop_price;
+    			$item['formatted_product_shop_price'] 	= $item->product_shop_price <= 0 ? ecjia_price_format($goods->shop_price, false) : ecjia_price_format($item->product_shop_price, false);
     			$item['product_attr_value'] = '';
     			$item['is_promote_now'] = 0 ;
     			if (($goods->promote_start_date <= $time && $goods->promote_end_date >= $time) && $item->is_promote == '1' && $item->promote_price > 0) {
