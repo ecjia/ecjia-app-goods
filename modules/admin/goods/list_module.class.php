@@ -72,6 +72,12 @@ class admin_goods_list_module extends api_admin implements api_interface {
 		$size = $this->requestData('pagination.count', 15);
 		$page = $this->requestData('pagination.page', 1);
 		
+		RC_Logger::getlogger('info')->info([
+			'file' => __FILE__,
+			'line' => __LINE__,
+			'content' => $this->requestData,
+		]);
+		
 		$store_id = $_SESSION['store_id'];
 
 		$sort_by = '';
