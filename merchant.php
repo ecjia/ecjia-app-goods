@@ -1326,13 +1326,7 @@ class merchant extends ecjia_merchant {
 				} else {
 					$goods['weight_unit'] = 1; //克
 				}
-			} else {
-				if ($goods['weight_unit'] == 1) {
-					if ($goods['goods_weight'] > 1) {
-						$goods['weight_unit'] = 2; //千克
-					}
-				}
-			}
+			} 
 		}
 		
 		//设置选中状态,并分配标签导航
