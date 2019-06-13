@@ -1149,7 +1149,7 @@ class merchant extends ecjia_merchant {
 //
 //				$result = $goods_image->update_goods();
 
-                $goods_image = new \Ecjia\App\Goodslib\GoodsImage\Goods\GoodsImage($goods_id, 0, $image_info);
+                $goods_image = new \Ecjia\App\Goods\GoodsImage\Goods\GoodsImage($goods_id, 0, $image_info);
                 if ($proc_thumb_img) {
                     $goods_image->setAutoGenerateThumb(false);
                 } else {
@@ -1170,7 +1170,7 @@ class merchant extends ecjia_merchant {
 //				$thumb_image = new goods_image_data($thumb_info['name'], $thumb_info['tmpname'], $thumb_info['ext'], $goods_id);
 //				$result = $thumb_image->update_thumb();
 
-                $thumb_image = new \Ecjia\App\Goodslib\GoodsImage\Goods\GoodsThumb($goods_id, 0, $thumb_info);
+                $thumb_image = new \Ecjia\App\Goods\GoodsImage\Goods\GoodsThumb($goods_id, 0, $thumb_info);
                 $result = $thumb_image->updateToDatabase();
 
 				if (is_ecjia_error($result)) {
@@ -1544,7 +1544,7 @@ class merchant extends ecjia_merchant {
 //
 //				$result = $goods_image->update_goods();
 
-                $goods_image = new \Ecjia\App\Goodslib\GoodsImage\Goods\GoodsImage($goods_id, 0, $image_info);
+                $goods_image = new \Ecjia\App\Goods\GoodsImage\Goods\GoodsImage($goods_id, 0, $image_info);
                 if ($proc_thumb_img) {
                     $goods_image->setAutoGenerateThumb(false);
                 } else {
@@ -1571,7 +1571,7 @@ class merchant extends ecjia_merchant {
 //				$thumb_image = new goods_image_data($thumb_info['name'], $thumb_info['tmpname'], $thumb_info['ext'], $goods_id);
 //				$result = $thumb_image->update_thumb();
 
-                $thumb_image = new \Ecjia\App\Goodslib\GoodsImage\Goods\GoodsThumb($goods_id, 0, $thumb_info);
+                $thumb_image = new \Ecjia\App\Goods\GoodsImage\Goods\GoodsThumb($goods_id, 0, $thumb_info);
                 $result = $thumb_image->updateToDatabase();
 
 				if (is_ecjia_error($result)) {
