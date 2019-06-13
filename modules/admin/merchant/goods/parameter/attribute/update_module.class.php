@@ -50,7 +50,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author zrl
  *
  */
-class admin_merchant_goods_specification_attribute_update_module extends api_admin implements api_interface {
+class admin_merchant_goods_parameter_attribute_update_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
