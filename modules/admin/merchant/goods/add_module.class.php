@@ -197,8 +197,8 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
     		'brand_name'				=> !empty($goods->brand_model) ? $goods->brand_model->brand_name : '',
     		'category_id'				=> intval($goods->cat_id),
     		'category_name'				=> !empty($goods->category_model) ? $goods->category_model->cat_name : '',
-    		'category'					=> Ecjia\App\Goods\GoodsFunction::get_parent_cats($goods->merchant_cat_id, 1, $_SESSION['store_id']),
-    		'merchant_category_id'		=> empty($goods->merchant_cat_id) ? 0 : $goods->merchant_cat_id,
+    		'category'					=> Ecjia\App\Goods\GoodsFunction::get_parent_cats($goods->cat_id, 1, $_SESSION['store_id']),
+    		'merchant_category_id'		=> intval($goods->merchant_cat_id),
     		'merchant_category_name'	=> !empty($goods->merchants_category_model) ? $goods->merchants_category_model->cat_name : '',
     		'merchant_category'			=> Ecjia\App\Goods\GoodsFunction::get_parent_cats($goods->merchant_cat_id, 1, $_SESSION['store_id']),
     		'market_price'				=> ecjia_price_format($goods->market_price, false),
@@ -229,8 +229,11 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
 			'rank_integral'				=> $goods->rank_integral,
 			'integral'					=> $goods->integral,
 			'sales_volume'				=> $goods->sales_volume,
+			'weight_unit'				=> $goods->weight == '1' ? 'gram' : 'kilogram',
+			'weight_stock'				=> $goods->weight_stock,
+			'extension_code'			=> empty($goods->extension_code) ? 'common' : $goods->extension_code,
     	];
-    	
+			
     	$goods_detail['user_rank'] = array();
     		
     	if ($goods->volume_price_collection) {
@@ -402,7 +405,7 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
     
     /**
      * 商品优惠价格
-     * @param unknown $volume_number
+     * @param object $volume_number
      * @return array
      */
     private function get_volume_number($volume_number)
