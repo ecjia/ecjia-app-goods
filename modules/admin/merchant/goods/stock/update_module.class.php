@@ -80,7 +80,7 @@ class admin_merchant_goods_stock_update_module extends api_admin implements api_
 
     	/* 记录日志 */
     	if ($_SESSION['store_id'] > 0) {
-    	    RC_Api::api('merchant', 'admin_log', array('text' => $goods_name.__('【来源掌柜】', 'goods'), 'action' => 'edit', 'object' => 'goods'));
+    	    RC_Api::api('merchant', 'admin_log', array('text' => $goods->goods_name.__('【来源掌柜】', 'goods'), 'action' => 'edit', 'object' => 'goods'));
     	} 
 		
         return array();

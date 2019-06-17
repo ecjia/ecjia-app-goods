@@ -46,43 +46,102 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 快速修改商品价格（单独修改商品shop_price）
+ * 商品绑定的参数模板信息
  * @author zrl
  *
  */
-class admin_merchant_goods_price_update_module extends api_admin implements api_interface {
+class admin_merchant_goods_parameter_binded_template_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
 		if ($_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		$result = $this->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-		    return $result;
-		}
-    	
-    	$goods_id		= $this->requestData('goods_id');
-        $price          = $this->requestData('price');
-
-    	if (empty($goods_id) || !is_numeric($price)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
-    	}
-
-        $GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
-        $goods = $GoodsBasicInfo->goodsInfo();
-
-        if (empty($goods)) {
-           return new ecjia_error('not_exist_info', __('商品信息不存在！', 'goods')); 
-        }
-
-        Ecjia\App\Goods\Models\GoodsModel::where('goods_id', $goods_id)->where('store_id', $_SESSION['store_id'])->update(array('shop_price' => $price));
-
-    	/* 记录日志 */
-    	if ($_SESSION['store_id'] > 0) {
-    	    RC_Api::api('merchant', 'admin_log', array('text' => $goods->goods_name.__('【来源掌柜】', 'goods'), 'action' => 'edit', 'object' => 'goods'));
-    	} 
 		
-        return array();
+		$goods_id	= intval($this->requestData('goods_id', 0));
+		
+		if (empty($goods_id)) {
+			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+		}
+		$store_id = $_SESSION['store_id'];
+		
+		$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $store_id);
+		$goods = $GoodsBasicInfo->goodsInfo();
+		
+		if (empty($goods)) {
+			return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
+		}
+		
+		if(!empty($goods->parameter_id)) {
+			$template_id = $goods->parameter_id;
+		} else {
+			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('parameter', $goods->merchant_cat_id);
+			if(empty($template_id)) {
+				$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('parameter', $goods->cat_id);
+			}
+		}
+		
+		if (empty($template_id)) {
+			return ['goods_isbind_parameter' => 'no', 'parameter_template_info' => [], 'parameter_attributes' => []];
+		} else {
+			$pra_template_info = Ecjia\App\Goods\Models\GoodsTypeModel::where('cat_id', $template_id)->first();
+			$pra_attr_list = [];
+			if ($pra_template_info->attribute_collection) {
+				$attribute_collection = $pra_template_info->attribute_collection;
+				$pra_attr_list = $attribute_collection->map(function ($item) use ($goods_id) {
+					//属性form表单展现形式
+					if ($item->attr_type == '2') {//参数可选值是复选参数时
+						$attr_form_type = 'checkbox';
+						$attr_values = !empty($item->attr_values) ? explode(',', str_replace("\n", ",", $item->attr_values)) : [];
+					} else {//参数可选值是唯一参数时
+						if ($item->attr_input_type == '0') {//该参数值的录入方式是手工录入时
+							$attr_form_type = 'input';
+							$attr_values = [];
+						} elseif ($item->attr_input_type == '1') {//该参数值的录入方式是从列表选择时
+							$attr_form_type = 'select';
+							$attr_values = !empty($item->attr_values) ? explode(',', str_replace("\n", ",", $item->attr_values)) : [];
+						} else {//该参数值的录入方式是多行文本框时
+							$attr_form_type = 'textarea';
+							$attr_values = [];
+						}
+					}
+					$goods_attr_values = [];
+					if ($item->goods_attr_collection) {
+						$goods_attr_value = $item->goods_attr_collection->where('goods_id', $goods_id)->where('attr_value', '!=', '')->all();
+						
+						if ($goods_attr_value) {
+							$goods_attr_values = collect($goods_attr_value)->map(function($g_attr_val) use ($item) {
+								if ($item->attr_input_type == '2') { //参数值录入是多行文本时，商品属性值处理
+									$arr = explode(',', str_replace("\n", ",", $g_attr_val->attr_value));
+								} else {
+									$arr = $g_attr_val->attr_value;
+								}
+								return $arr;
+							});
+							$goods_attr_values = $goods_attr_values->toArray();
+						}
+					}
+					
+					$attr_list = [
+						'attr_id' 			=> intval($item->attr_id),
+						'attr_name'			=> trim($item->attr_name),
+						'attr_form_type'	=> $attr_form_type,
+						'attr_values'		=> $attr_values,
+						'goods_attr_value'	=> $goods_attr_values
+					];
+					return $attr_list;
+				});
+				
+				$pra_attr_list = $pra_attr_list->toArray();
+			}
+			
+			$result = [
+				'goods_isbind_parameter' 	=> 'yes',
+				'parameter_template_info'	=> ['parameter_id' => intval($pra_template_info->cat_id), 'parameter_name' => $pra_template_info->cat_name],
+				'parameter_attributes'		=> $pra_attr_list
+			];
+			
+			return $result;
+		}
     }
 }
