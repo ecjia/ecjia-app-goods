@@ -66,7 +66,7 @@ class admin_merchant_goods_specification_detail_module extends api_admin impleme
 		}
 
 		//规格模板名称是否存在
-		$detail = Ecjia\App\Goods\Models\GoodsTypeModel::where('cat_type', 'specification')->where('cat_id', $specification_id)->where('store_id', $store_id)->first();
+		$detail = Ecjia\App\Goods\Models\GoodsTypeModel::where('cat_type', 'specification')->where('cat_id', $specification_id)->whereIn('store_id', [0,$store_id])->first();
 		if(empty($detail)) {
 			return new ecjia_error('specification_not_exist', __('规格模板信息不存在！', 'goods'));
 		}

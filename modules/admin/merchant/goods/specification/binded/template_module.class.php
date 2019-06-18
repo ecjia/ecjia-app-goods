@@ -75,13 +75,13 @@ class admin_merchant_goods_specification_binded_template_module extends api_admi
 		if(!empty($goods->specification_id)) {
 			$template_id = $goods->specification_id;
 		} else {
-			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('specification', $goods->merchant_cat_id);
+			$template_id = Ecjia\App\Goods\GoodsFunction::get_merchant_cat_template('specification', $goods->merchant_cat_id, $store_id);
 			if(empty($template_id)) {
-				$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('specification', $goods->cat_id);
+				$template_id = Ecjia\App\Goods\GoodsFunction::get_admin_cat_template('specification', $goods->cat_id);
 			}
 		}
 		
-		if (empty($template_id)) {
+		if ($template_id <= 0) {
 			return ['goods_isbind_specification' => 'no', 'has_specification_attr' => 'no', 'specification_template_info' => [], 'specification_attributes' => [], 'product_list' => []];
 		} else {
 			//商品是否有设置规格属性
