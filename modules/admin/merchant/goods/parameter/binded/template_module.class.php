@@ -72,16 +72,16 @@ class admin_merchant_goods_parameter_binded_template_module extends api_admin im
 			return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
 		}
 		
-		if(!empty($goods->parameter_id)) {
+		if($goods->parameter_id <= 0) {
 			$template_id = $goods->parameter_id;
 		} else {
-			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('parameter', $goods->merchant_cat_id);
+			$template_id = Ecjia\App\Goods\GoodsFunction::get_merchant_cat_template('parameter', $goods->merchant_cat_id, $store_id);
 			if(empty($template_id)) {
-				$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('parameter', $goods->cat_id);
+				$template_id = Ecjia\App\Goods\GoodsFunction::get_admin_cat_template('parameter', $goods->cat_id);
 			}
 		}
 		
-		if (empty($template_id)) {
+		if ($template_id <= 0) {
 			return ['goods_isbind_parameter' => 'no', 'parameter_template_info' => [], 'parameter_attributes' => []];
 		} else {
 			$pra_template_info = Ecjia\App\Goods\Models\GoodsTypeModel::where('cat_id', $template_id)->first();
