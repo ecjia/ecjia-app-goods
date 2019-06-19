@@ -80,7 +80,7 @@ class admin_merchant_goods_product_update_module extends api_admin implements ap
     		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
     	}
     	
-    	$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id);
+    	$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id, $goods_id);
     	$product = $ProductBasicInfo->productInfo();
     	 
     	if (empty($product)) {
