@@ -44,40 +44,59 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Goods\Goods\GoodsBasicInfo;
-use Ecjia\App\Goods\Goods\ProductBasicInfo;
-
 defined('IN_ECJIA') or exit('No permission resources.');
-
 /**
- * 获取商品详情信息
- * @author royalwang
+ * 货品相册图片-排序
+ * @author zrl
+ * 
  */
-class goods_basic_goods_info_api extends Component_Event_Api {
-    /**
-     *
-     * @param int $goods_id 商品ID
-     * @param int $product_id 货品ID 可选，默认为0
-     *
-     * @return array | ecjia_error
-     */
-	public function call(&$options)
-    {
-	    if (!is_array($options) && !isset($options['goods_id'])) {
-	        return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效！', 'goods'), __CLASS__));
-	    }
+class admin_merchant_goods_product_gallery_sort_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
-	    $goods_id = array_get($options, 'goods_id');
-	    $product_id = array_get($options, 'product_id');
-
-	    if (empty($product_id)) {
-	        return (new GoodsBasicInfo($goods_id))->goodsInfo();
-        }
-
-        return (new ProductBasicInfo($product_id, $goods_id))->productInfo();
-	}
-	
-
+		$this->authadminSession();
+		if ($_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
+		}
+    	
+    	$goods_id		= $this->requestData('goods_id');
+    	$product_id		= $this->requestData('product_id');
+    	$gallery_sort	= $this->requestData('gallery_sort', array());
+    	
+    	if (empty($goods_id) || empty($product_id) || !is_array($gallery_sort)) {
+    		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	}
+    	if (empty($gallery_sort)) {
+    	    return array();
+    	}
+    	
+    	//商品信息
+    	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
+    	$goods = $GoodsBasicInfo->goodsInfo();
+    	if (empty($goods)) {
+    		return new ecjia_error('goods_not_exist_info', __('商品信息不存在', 'goods'));
+    	}
+    	
+    	$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id, $goods_id);
+    	$product = $ProductBasicInfo->productInfo();
+    	
+    	if (empty($product)) {
+    		return new ecjia_error('product_not_exist_info', __('未检测到此货品', 'goods'));
+    	}
+    	
+		$i = 1;
+		foreach ($gallery_sort as $k => $img_id) {
+		    $img_original = RC_DB::table('goods_gallery')->where('img_id', $img_id)->pluck('img_original');
+		    $img_original = strrpos($img_original, '?') > 0 ? substr($img_original, 0, strrpos($img_original, '?')) . '?' . $i : $img_original. '?' . $i;
+		    $i++;
+		    RC_DB::table('goods_gallery')->where('img_id', $img_id)->update(array('img_original' => $img_original));
+		}
+		
+    	return array();
+    }
+    	 
 }
 
-// end

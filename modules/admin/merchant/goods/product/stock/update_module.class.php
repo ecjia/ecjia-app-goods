@@ -44,40 +44,50 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Goods\Goods\GoodsBasicInfo;
-use Ecjia\App\Goods\Goods\ProductBasicInfo;
-
 defined('IN_ECJIA') or exit('No permission resources.');
-
 /**
- * 获取商品详情信息
- * @author royalwang
+ * 快速修改货品库存（支持批量修改）
+ * @author zrl
+ *
  */
-class goods_basic_goods_info_api extends Component_Event_Api {
-    /**
-     *
-     * @param int $goods_id 商品ID
-     * @param int $product_id 货品ID 可选，默认为0
-     *
-     * @return array | ecjia_error
-     */
-	public function call(&$options)
-    {
-	    if (!is_array($options) && !isset($options['goods_id'])) {
-	        return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效！', 'goods'), __CLASS__));
-	    }
+class admin_merchant_goods_product_stock_update_module extends api_admin implements api_interface {
+    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
-	    $goods_id = array_get($options, 'goods_id');
-	    $product_id = array_get($options, 'product_id');
-
-	    if (empty($product_id)) {
-	        return (new GoodsBasicInfo($goods_id))->goodsInfo();
-        }
-
-        return (new ProductBasicInfo($product_id, $goods_id))->productInfo();
-	}
-	
-
+		$this->authadminSession();
+		if ($_SESSION['staff_id'] <= 0) {
+			return new ecjia_error(100, 'Invalid session');
+		}
+		$result = $this->admin_priv('goods_manage');
+		if (is_ecjia_error($result)) {
+		    return $result;
+		}
+    	
+    	$goods_id			= intval($this->requestData('goods_id'));
+    	$products			= $this->requestData('products', ''); 	//货品id
+    	
+    	$products_array = json_decode($products, true);
+    	
+    	if (empty($goods_id) || empty($products) || !is_array($products_array)) {
+    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	}
+    	
+    	//商品信息
+    	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
+    	$goods = $GoodsBasicInfo->goodsInfo();
+    	if (empty($goods)) {
+    		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
+    	}
+    	
+    	if ($products_array) {
+    		foreach ($products_array as $val) {
+    			if (empty($val['product_id']) || !is_numeric($val['number'])) {
+    				return new ecjia_error('edited_product_info_error', __('要修改的货品参数错误', 'goods'));
+    			}
+    			$number = intval($val['number']);
+    			Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->where('product_id', $val['product_id'])->update(array('product_number' => $number));
+    		}
+    	}
+    	
+    	return [];
+    }
 }
-
-// end
