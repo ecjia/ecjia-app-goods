@@ -95,6 +95,15 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 		if ($goods->promote_price > 0 && $goods->promote_start_date <= $today && $goods->promote_end_date >= $today) {
 			$is_promote = 1;
 		}
+		if (empty($goods->limit_days)) {
+			$limit_days = 0;
+			$limit_days_unit = '';
+		} else {
+			$limit_days_str = explode(' ', $goods->limit_days);
+			$limit_days = intval($limit_days_str['0']);
+			$limit_days_unit = $limit_days_str['1'];
+		}
+		
 		
 		$goods_detail = [
 			'goods_id'					=> intval($goods->goods_id),
@@ -142,6 +151,10 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 			'rank_integral'				=> $goods->rank_integral,
 			'integral'					=> $goods->integral,
 			'extension_code'			=> empty($goods->extension_code) ? 'common' : $goods->extension_code,
+			'generate_date'				=> !empty($goods->generate_date) ? RC_Time::local_date('Y-m-d H:i:s', $goods->generate_date) : '',
+			'expiry_date'				=> !empty($goods->expiry_date) ? RC_Time::local_date('Y-m-d H:i:s', $goods->expiry_date) : '',
+			'limit_days'				=> $limit_days,
+			'limit_days_unit'			=> $limit_days_unit,
 		];
 			
 		//会员等级价
