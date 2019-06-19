@@ -44,6 +44,9 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+use Ecjia\App\Goods\Goods\GoodsBasicInfo;
+use Ecjia\App\Goods\Goods\ProductBasicInfo;
+
 defined('IN_ECJIA') or exit('No permission resources.');
 
 /**
@@ -64,7 +67,14 @@ class goods_basic_goods_info_api extends Component_Event_Api {
 	        return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效！', 'goods'), __CLASS__));
 	    }
 
+	    $goods_id = array_get($options, 'goods_id');
+	    $product_id = array_get($options, 'product_id');
 
+	    if (empty($product_id)) {
+	        return (new GoodsBasicInfo($goods_id))->goodsInfo();
+        }
+
+        return (new ProductBasicInfo($product_id, $goods_id))->productInfo();
 	}
 	
 
