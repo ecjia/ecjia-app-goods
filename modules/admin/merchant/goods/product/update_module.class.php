@@ -150,7 +150,7 @@ class admin_merchant_goods_product_update_module extends api_admin implements ap
     	/* 更新上传后的商品图片 */
     	if ($proc_goods_img) {
     		if (isset($image_info)) {
-    			$goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id, $product_id);
+    			$goods_image = new product_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id, $product_id);
     			$goods_image->set_auto_thumb(true);
     			$result = $goods_image->update_goods();
     			if (is_ecjia_error($result)) {
