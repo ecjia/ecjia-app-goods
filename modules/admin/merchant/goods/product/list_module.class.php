@@ -46,11 +46,11 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 删除商品货品
+ * 商品货品列表
  * @author zrl
  *
  */
-class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
+class admin_merchant_goods_product_list_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
@@ -63,9 +63,7 @@ class admin_merchant_goods_product_delete_module extends api_admin implements ap
 		}
     	
     	$goods_id		= intval($this->requestData('goods_id'));
-    	$product_ids 	= $this->requestData('product_id', array()); //货品id
-    	
-    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
+    	if (empty($goods_id)) {
     	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
     	
@@ -76,10 +74,47 @@ class admin_merchant_goods_product_delete_module extends api_admin implements ap
     		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
     	}
     	
-    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
-    		return [];
-    	} else {
-    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
+    	$product_list = $GoodsBasicInfo->goodsProducts();
+    	
+    	if (!empty($product_list)) {
+    		$product_list = $this->format_product($product_list);
     	}
+    	
+    	return $product_list;
+    }
+    
+    /**
+     * 货品数据格式化处理
+     * @param array $product_list
+     * @return array
+     */
+    private function format_product($product_list)
+    {
+    	$products = [];
+    	if (!empty($product_list)) {
+    		foreach ($product_list as $row) {
+    			$products[] = array(
+    								'goods_id'						=> intval($row['goods_id']),
+    								'product_id'					=> intval($row['product_id']),
+    								'product_name'					=> trim($row['product_name']),
+    								'product_sn'					=> trim($row['product_sn']),
+    								'product_shop_price'			=> $row['product_shop_price'],
+    								'formatted_product_shop_price'	=> ecjia_price_format($row['product_shop_price'], false),
+    								'is_promote'					=> $row['is_promote_now'],
+    								'promote_price'					=> empty($row['promote_price']) ? 0 : $row['promote_price'],
+    								'formatted_promote_price'		=> ecjia_price_format($row['promote_price'], false),
+    								'product_number'				=> intval($row['product_number']),
+    								'product_attr'					=> trim($row['goods_attr']),
+    								'label_product_attr'			=> $row['product_attr_value'],
+    								'img'							=> array(
+    																		'thumb' => $row['format_product_thumb'],
+    																		'url'	=> $row['format_product_original_img'],
+    																		'small' => $row['format_product_img']
+    																	),
+    						  );
+    		}
+    	}
+    	
+    	return $products;
     }
 }

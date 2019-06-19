@@ -45,41 +45,43 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
+
 /**
- * 删除商品货品
+ * 单个货品的详情描述
  * @author zrl
- *
  */
-class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
+class admin_merchant_goods_product_desc_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
 		if ($_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		$result = $this->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-		    return $result;
-		}
-    	
-    	$goods_id		= intval($this->requestData('goods_id'));
-    	$product_ids 	= $this->requestData('product_id', array()); //货品id
-    	
-    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
-    	}
-    	
+		
+		$goods_id		= $this->requestData('goods_id');
+    	$product_id		= intval($this->requestData('product_id', 0)); //商品货品id
+		
     	//商品信息
     	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
     	$goods = $GoodsBasicInfo->goodsInfo();
     	if (empty($goods)) {
-    		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
+    		return new ecjia_error('goods_not_exist_info', __('商品信息不存在', 'goods'));
+    	}
+    	 
+    	$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id, $goods_id);
+    	$product = $ProductBasicInfo->productInfo();
+    	 
+    	if (empty($product)) {
+    		return new ecjia_error('product_not_exist_info', __('未检测到此货品', 'goods'));
     	}
     	
-    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
-    		return [];
-    	} else {
-    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
-    	}
+    	$product_desc = str_replace('\\"', '"', $product['product_desc']);
+    	$base = sprintf('<base href="%s/" />', dirname(SITE_URL));
+    	$style = RC_App::apps_url('goods/statics/styles/goodsapi.css');
+    	$html = $product_desc;
+    	
+    	return array('data' => $html);
     }
 }
+
+// end

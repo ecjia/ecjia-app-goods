@@ -46,11 +46,11 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 删除商品货品
+ * 商品货品详情
  * @author zrl
  *
  */
-class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
+class admin_merchant_goods_product_detail_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
@@ -62,10 +62,10 @@ class admin_merchant_goods_product_delete_module extends api_admin implements ap
 		    return $result;
 		}
     	
-    	$goods_id		= intval($this->requestData('goods_id'));
-    	$product_ids 	= $this->requestData('product_id', array()); //货品id
-    	
-    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
+    	$goods_id		= $this->requestData('goods_id');
+    	$product_id		= intval($this->requestData('product_id', 0)); //商品货品id
+    	 
+    	if (empty($goods_id) || empty($product_id)) {
     	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
     	
@@ -73,13 +73,87 @@ class admin_merchant_goods_product_delete_module extends api_admin implements ap
     	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
     	$goods = $GoodsBasicInfo->goodsInfo();
     	if (empty($goods)) {
-    		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
+    		return new ecjia_error('goods_not_exist_info', __('商品信息不存在', 'goods'));
     	}
     	
-    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
-    		return [];
-    	} else {
-    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
+    	$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id, $goods_id);
+    	$product = $ProductBasicInfo->productInfo();
+    	
+    	if (empty($product)) {
+    		return new ecjia_error('product_not_exist_info', __('未检测到此货品', 'goods'));
     	}
+    	$label_product_attr = '';
+    	if ($product->goods_attr) {
+    		$goods_attr = explode('|', $product->goods_attr);
+    		if ($goods->goods_attr_collection) {
+    			$product_attr_value = $goods->goods_attr_collection->whereIn('goods_attr_id', $goods_attr)->sortBy('goods_attr_id')->lists('attr_value');
+    			$product_attr_value = $product_attr_value->implode('/');
+    			$label_product_attr = $product_attr_value;
+    		}
+    	}
+    	
+    	$p_gallery = $ProductBasicInfo->getProductGallery();
+    	
+    	$product_gallery = $this->format_product_gallery($p_gallery);
+    	
+    	$product_detail = [
+    		'goods_id'				=> intval($product->goods_id),
+    		'product_id'			=> intval($product->product_id),
+    		'product_name'			=> empty($product->product_name) ? '' : trim($product->product_name),
+    		'product_sn'			=> $product->product_sn,
+    		'product_shop_price'	=> $product->product_shop_price,
+    		'product_number'		=> intval($product->product_number),
+    		'product_attr'			=> trim($product->goods_attr),
+    		'product_bar_code'		=> empty($product->product_bar_code) ? '' : $product->product_bar_code,
+    		'label_product_attr'	=> $label_product_attr,
+    		'img'					=> array(
+    										'thumb'	=> $product->product_thumb,
+    										'url'	=> $product->product_original_img,
+    										'small'	=> $product->product_img,
+    									),
+    		'product_gallery'		=> $product_gallery,
+    	];
+    		
+    	return $product_detail;
+    }
+    
+    /**
+     * 货品相册
+     */
+    private function format_product_gallery($p_gallery)
+    {
+    	$pictures_array = [];
+    	/* 格式化相册图片路径 */
+    	if (!empty($p_gallery)) {
+    		foreach ($p_gallery as $key => $gallery_img) {
+    			
+    			$desc_index = intval(strrpos($gallery_img['img_original'], '?')) + 1;
+    			!empty($desc_index) && $p_gallery[$key]['desc'] = substr($gallery_img['img_original'], $desc_index);
+    			
+    			$p_gallery[$key]['small']	= !empty($gallery_img['img_url']) ? RC_Upload::upload_url($gallery_img['img_url']) : '';
+    			$p_gallery[$key]['url']		= !empty($gallery_img['img_original']) ? RC_Upload::upload_url($gallery_img['img_original']) : '';
+    			$p_gallery[$key]['thumb']	= !empty($gallery_img['thumb_url']) ? RC_Upload::upload_url($gallery_img['thumb_url']) : '';
+    	
+    			$img_list_sort[$key] 	= $p_gallery[$key]['desc'];
+    			$img_list_id[$key] 		= $gallery_img['img_id'];
+    		}
+    		//先使用sort排序，再使用id排序。
+    		if ($p_gallery) {
+    			array_multisort($img_list_sort, $img_list_id, $p_gallery);
+    		}
+    	}
+    	
+    	$pictures = $p_gallery;
+    	if (!empty($p_gallery)) {
+    		foreach ($pictures as $val) {
+    			$pictures_array[] = array(
+    					'img_id'	=> $val['img_id'],
+    					'thumb'		=> $val['thumb'],
+    					'url'		=> $val['url'],
+    					'small'		=> $val['small'],
+    			);
+    		}
+    	}
+    	return $pictures_array;
     }
 }

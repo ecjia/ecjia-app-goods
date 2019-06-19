@@ -46,40 +46,58 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 删除商品货品
+ * 编辑货品详情
  * @author zrl
- *
  */
-class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
+class admin_merchant_goods_product_desc_update_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
 		if ($_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		$result = $this->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-		    return $result;
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
 		}
+		
+		//请求参数：
+		$goods_id			= intval($this->requestData('goods_id', 0));
+		$product_id			= intval($this->requestData('product_id', 0));
+		$product_desc		= trim($this->requestData('product_desc', ''));
+		
+		if (empty($goods_id) || empty($product_id)) {
+			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+		}
+		
+		//商品信息
+		$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
+		$goods = $GoodsBasicInfo->goodsInfo();
+		if (empty($goods)) {
+			return new ecjia_error('goods_not_exist_info', __('商品信息不存在', 'goods'));
+		}
+		
+		$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id, $goods_id);
+		$product = $ProductBasicInfo->productInfo();
+		
+		if (empty($product)) {
+			return new ecjia_error('product_not_exist_info', __('未检测到此货品', 'goods'));
+		}
+		
+    	$data = array(
+    			'product_desc'			=> $product_desc,
+    	);
     	
-    	$goods_id		= intval($this->requestData('goods_id'));
-    	$product_ids 	= $this->requestData('product_id', array()); //货品id
+    	/*如果设有审核商家商品，商家账号修改商品信息后，商品下架，状态改为待审核*/
+    	$review_goods = Ecjia\App\Goods\GoodsFunction::get_review_status($_SESSION['store_id']);
     	
-    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	if ($_SESSION['store_id'] > 0 && $review_goods == 1) {
+    		$data['is_on_sale'] = 0;
+    		$data['review_status'] = 1;
     	}
     	
-    	//商品信息
-    	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
-    	$goods = $GoodsBasicInfo->goodsInfo();
-    	if (empty($goods)) {
-    		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
-    	}
+    	Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->where('product_id', $product_id)->update($data);
     	
-    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
-    		return [];
-    	} else {
-    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
-    	}
+    	return [];
     }
 }

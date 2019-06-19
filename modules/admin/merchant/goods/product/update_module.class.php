@@ -46,11 +46,11 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 删除商品货品
+ * 编辑商品货品
  * @author zrl
  *
  */
-class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
+class admin_merchant_goods_product_update_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
@@ -62,10 +62,14 @@ class admin_merchant_goods_product_delete_module extends api_admin implements ap
 		    return $result;
 		}
     	
-    	$goods_id		= intval($this->requestData('goods_id'));
-    	$product_ids 	= $this->requestData('product_id', array()); //货品id
+    	$goods_id			= intval($this->requestData('goods_id'));
+    	$product_id			= intval($this->requestData('product_id', 0)); 	//货品id
+    	$product_name		= trim($this->requestData('product_name', 0)); 	//货品名称
+    	$product_shop_price	= $this->requestData('product_shop_price', 0);	//货品价格
+    	$product_bar_code	= $this->requestData('product_bar_code', 0);	//货品条形码
+    	$stock				= intval($this->requestData('stock', 0));
     	
-    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
+    	if (empty($goods_id) || empty($product_id)) {
     	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
     	
@@ -76,10 +80,87 @@ class admin_merchant_goods_product_delete_module extends api_admin implements ap
     		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
     	}
     	
-    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
-    		return [];
-    	} else {
-    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
+    	$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id, $goods_id);
+    	$product = $ProductBasicInfo->productInfo();
+    	 
+    	if (empty($product)) {
+    		return new ecjia_error('product_not_exist_info', __('未检测到此货品', 'goods'));
     	}
+    	
+    	$use_storage = ecjia::config('use_storage');
+    	$product_number = empty($stock)  ? (empty($use_storage) ? 0 : ecjia::config('default_storage')) : $stock; //库存
+    	   
+    	
+    	$update_data = [
+    		'product_shop_price' 	=>	$product_shop_price,
+    		'product_number'		=>  $product_number,
+    	];
+    	if (!empty($product_name)) {
+    		$update_data['product_name'] = $product_name;
+    	}
+    	if (!empty($product_bar_code)) {
+    		$update_data['product_bar_code'] = $product_bar_code;
+    	}
+    	
+    	//货品图片上传
+    	if (isset($_FILES['product_image'])) {
+    		$this->processProductImage($_FILES['product_image'], $goods_id, $product_id);
+    	}
+    	
+    	if (!empty($update_data)) {
+    		Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->where('product_id', $product_id)->update($update_data);
+    	}
+    	
+    	return [];
+    }
+    
+    
+    /**
+     * 普通商品主图上传
+     * @param file $file_goods_image
+     * @param int $goods_id
+     * @return boolean|ecjia_error
+     */
+    private function processProductImage($file_product_image, $goods_id, $product_id)
+    {
+    	RC_Loader::load_app_class('product_image_data', 'goods', false);
+    
+    	/* 处理商品图片 */
+    	$goods_img		= ''; // 初始化商品图片
+    	$goods_thumb	= ''; // 初始化商品缩略图
+    	$img_original	= ''; // 初始化原始图片
+    
+    	$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
+    	$upload->add_saving_callback(function ($file, $filename) {
+    		return true;
+    	});
+    		 
+    	/* 是否处理商品图 */
+    	$proc_goods_img = true;
+    	if (isset($file_goods_image) && !$upload->check_upload_file($file_product_image)) {
+    		$proc_goods_img = false;
+    	}
+    		 
+    	if ($proc_goods_img) {
+    		if (isset($file_goods_image)) {
+    			$image_info = $upload->upload($file_product_image);
+    		}
+    	}
+    		 
+    	/* 更新上传后的商品图片 */
+    	if ($proc_goods_img) {
+    		if (isset($image_info)) {
+    			$goods_image = new product_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id, $product_id);
+    			$goods_image->set_auto_thumb(true);
+    			$result = $goods_image->update_goods();
+    			if (is_ecjia_error($result)) {
+    				return $result;
+    			}
+    			$thumb_image = new product_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id, $product_id);
+    			$result = $thumb_image->update_thumb();
+    		}
+    	}
+    		 
+    	return true;
     }
 }

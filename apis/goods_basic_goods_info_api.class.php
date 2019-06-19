@@ -45,41 +45,29 @@
 //  ---------------------------------------------------------------------------------
 //
 defined('IN_ECJIA') or exit('No permission resources.');
-/**
- * 删除商品货品
- * @author zrl
- *
- */
-class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
-    public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
-		$this->authadminSession();
-		if ($_SESSION['staff_id'] <= 0) {
-			return new ecjia_error(100, 'Invalid session');
-		}
-		$result = $this->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-		    return $result;
-		}
-    	
-    	$goods_id		= intval($this->requestData('goods_id'));
-    	$product_ids 	= $this->requestData('product_id', array()); //货品id
-    	
-    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
-    	}
-    	
-    	//商品信息
-    	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
-    	$goods = $GoodsBasicInfo->goodsInfo();
-    	if (empty($goods)) {
-    		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
-    	}
-    	
-    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
-    		return [];
-    	} else {
-    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
-    	}
-    }
+/**
+ * 获取商品详情信息
+ * @author royalwang
+ */
+class goods_basic_goods_info_api extends Component_Event_Api {
+    /**
+     *
+     * @param int $goods_id 商品ID
+     * @param int $product_id 货品ID 可选，默认为0
+     *
+     * @return array | ecjia_error
+     */
+	public function call(&$options)
+    {
+	    if (!is_array($options) && !isset($options['goods_id'])) {
+	        return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效！', 'goods'), __CLASS__));
+	    }
+
+
+	}
+	
+
 }
+
+// end

@@ -46,40 +46,69 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 删除商品货品
+ * 添加货品相册图片
  * @author zrl
- *
+ * 
  */
-class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
+class admin_merchant_goods_product_gallery_add_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
 		if ($_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		$result = $this->admin_priv('goods_manage');
-		if (is_ecjia_error($result)) {
-		    return $result;
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
 		}
     	
     	$goods_id		= intval($this->requestData('goods_id'));
-    	$product_ids 	= $this->requestData('product_id', array()); //货品id
+    	$product_id		= intval($this->requestData('product_id'));
     	
-    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	if (empty($goods_id) || empty($product_id)) {
+    		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
-    	
     	//商品信息
     	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
     	$goods = $GoodsBasicInfo->goodsInfo();
     	if (empty($goods)) {
-    		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
+    		return new ecjia_error('goods_not_exist_info', __('商品信息不存在', 'goods'));
     	}
     	
-    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
-    		return [];
-    	} else {
-    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
+    	$ProductBasicInfo = new Ecjia\App\Goods\Goods\ProductBasicInfo($product_id, $goods_id);
+    	$product = $ProductBasicInfo->productInfo();
+    	
+    	if (empty($product)) {
+    		return new ecjia_error('product_not_exist_info', __('未检测到此货品', 'goods'));
     	}
+    	
+		if (empty($_FILES['image'])) {
+		    return new ecjia_error('upload_empty', __('请选择您要上传的图片', 'goods'));
+		}
+		
+		RC_Loader::load_app_class('product_image_data', 'goods', false);
+		$image_info = null;
+		$save_path = 'images';
+			
+		$upload = RC_Upload::uploader('image', array('save_path' => './images', 'auto_sub_dirs' => true));
+		$upload->add_saving_callback(function ($file, $filename) {
+			return true;
+		});
+		$images = $_FILES['image'];
+		if (!$upload->check_upload_file($images)) {
+			return new ecjia_error('upload_error'. __LINE__, $upload->error());
+		}
+		if (isset($images)) {
+			$image_info = $upload->upload($images);
+		}
+		if (empty($image_info)) {
+			return new ecjia_error('upload_error'. __LINE__, $upload->error());
+		}
+			
+		$goods_image = new product_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id, $product_id);
+		$goods_image->update_gallery();
+		
+    	return array();
     }
+    	 
 }
