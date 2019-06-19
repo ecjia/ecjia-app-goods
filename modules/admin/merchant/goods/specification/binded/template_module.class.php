@@ -74,7 +74,9 @@ class admin_merchant_goods_specification_binded_template_module extends api_admi
 		
 		if(!empty($goods->specification_id)) {
 			$template_id = $goods->specification_id;
+			$goods_isbind_specification = 'yes';
 		} else {
+			$goods_isbind_specification = 'no';
 			$template_id = Ecjia\App\Goods\GoodsFunction::get_merchant_cat_template('specification', $goods->merchant_cat_id, $store_id);
 			if(empty($template_id)) {
 				$template_id = Ecjia\App\Goods\GoodsFunction::get_admin_cat_template('specification', $goods->cat_id);
@@ -104,7 +106,7 @@ class admin_merchant_goods_specification_binded_template_module extends api_admi
 			}
 			
 			$result = [
-				'goods_isbind_specification' 	=> 'yes',
+				'goods_isbind_specification' 	=> $goods_isbind_specification,
 				'has_specification_attr'		=> $has_specification_attr,
 				'specification_template_info'	=> ['specification_id' => intval($spe_template_info->cat_id), 'specification_name' => $spe_template_info->cat_name],
 				'specification_attributes'		=> $specification_attributes,

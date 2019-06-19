@@ -46,104 +46,80 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 商品绑定的参数模板信息
+ * 获取商品已设置的规格属性
  * @author zrl
  *
  */
-class admin_merchant_goods_parameter_binded_template_module extends api_admin implements api_interface {
+class admin_merchant_goods_goodsattr_specification_binded_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
 		if ($_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		
-		$goods_id	= intval($this->requestData('goods_id', 0));
-		
-		if (empty($goods_id)) {
-			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
-		}
-		$store_id = $_SESSION['store_id'];
-		
-		$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $store_id);
-		$goods = $GoodsBasicInfo->goodsInfo();
-		
-		if (empty($goods)) {
-			return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
-		}
-		
-		if($goods->parameter_id >= 0) {
-			$template_id = $goods->parameter_id;
-			$goods_isbind_parameter = 'yes';
-		} else {
-			$goods_isbind_parameter = 'no';
-			$template_id = Ecjia\App\Goods\GoodsFunction::get_merchant_cat_template('parameter', $goods->merchant_cat_id, $store_id);
-			if(empty($template_id)) {
-				$template_id = Ecjia\App\Goods\GoodsFunction::get_admin_cat_template('parameter', $goods->cat_id);
-			}
-		}
-		
-		if ($template_id <= 0) {
-			return ['goods_isbind_parameter' => 'no', 'parameter_template_info' => [], 'parameter_attributes' => []];
-		} else {
-			$pra_template_info = Ecjia\App\Goods\Models\GoodsTypeModel::where('cat_id', $template_id)->first();
-			$pra_attr_list = [];
-			if ($pra_template_info->attribute_collection) {
-				$attribute_collection = $pra_template_info->attribute_collection;
-				$pra_attr_list = $attribute_collection->map(function ($item) use ($goods_id) {
-					//属性form表单展现形式
-					if ($item->attr_type == '2') {//参数可选值是复选参数时
-						$attr_form_type = 'checkbox';
-						$attr_values = !empty($item->attr_values) ? explode(',', str_replace("\n", ",", $item->attr_values)) : [];
-					} else {//参数可选值是唯一参数时
-						if ($item->attr_input_type == '0') {//该参数值的录入方式是手工录入时
-							$attr_form_type = 'input';
-							$attr_values = [];
-						} elseif ($item->attr_input_type == '1') {//该参数值的录入方式是从列表选择时
-							$attr_form_type = 'select';
-							$attr_values = !empty($item->attr_values) ? explode(',', str_replace("\n", ",", $item->attr_values)) : [];
-						} else {//该参数值的录入方式是多行文本框时
-							$attr_form_type = 'textarea';
-							$attr_values = [];
-						}
-					}
-					$goods_attr_values = [];
-					if ($item->goods_attr_collection) {
-						$goods_attr_value = $item->goods_attr_collection->where('goods_id', $goods_id)->where('attr_value', '!=', '')->all();
-						
-						if ($goods_attr_value) {
-							$goods_attr_values = collect($goods_attr_value)->map(function($g_attr_val) use ($item) {
-								if ($item->attr_input_type == '2') { //参数值录入是多行文本时，商品属性值处理
-									$arr = explode(',', str_replace("\n", ",", $g_attr_val->attr_value));
-								} else {
-									$arr = $g_attr_val->attr_value;
-								}
-								return $arr;
-							});
-							$goods_attr_values = $goods_attr_values->toArray();
-						}
-					}
-					
-					$attr_list = [
-						'attr_id' 			=> intval($item->attr_id),
-						'attr_name'			=> trim($item->attr_name),
-						'attr_form_type'	=> $attr_form_type,
-						'attr_values'		=> $attr_values,
-						'goods_attr_value'	=> $goods_attr_values
-					];
-					return $attr_list;
-				});
-				
-				$pra_attr_list = $pra_attr_list->toArray();
-			}
-			
-			$result = [
-				'goods_isbind_parameter' 	=> $goods_isbind_parameter,
-				'parameter_template_info'	=> ['parameter_id' => intval($pra_template_info->cat_id), 'parameter_name' => $pra_template_info->cat_name],
-				'parameter_attributes'		=> $pra_attr_list
-			];
-			
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
 			return $result;
 		}
+		
+    	//请求参数：
+    	$goods_id			= $this->requestData('goods_id', 0);
+    	$store_id			= $_SESSION['store_id'];
+    	if (empty($goods_id)) {
+    		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	}
+    	
+    	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $store_id);
+		$goods = $GoodsBasicInfo->goodsInfo();
+    	if (empty($goods)) {
+    		return new ecjia_error('not_exists_info', __('商品信息不存在！', 'goods'));
+    	}
+    	
+    	if(!empty($goods->specification_id)) {
+    		$template_id = $goods->specification_id;
+    	} else {
+    		$template_id = Ecjia\App\Goods\GoodsFunction::get_merchant_cat_template('specification', $goods->merchant_cat_id, $store_id);
+    		if(empty($template_id)) {
+    			$template_id = Ecjia\App\Goods\GoodsFunction::get_admin_cat_template('specification', $goods->cat_id);
+    		}
+    	}
+    	
+    	$goods_spec_list = [];
+    	if (empty($template_id)) {
+    		return [];
+    	} else {
+    		$spec_attribute_list = Ecjia\App\Goods\Models\AttributeModel::where('cat_id', $template_id)->where('attr_values', '!=', '')->whereNotNull('attr_values')->orderBy('attr_id', 'asc')->get();
+    		
+    		if ($spec_attribute_list) {
+    			$goods_spec_list = $spec_attribute_list->map(function($item) use ($goods_id) {
+    				if ($item->goods_attr_collection) {
+    					$goods_attr_collection = $item->goods_attr_collection->where('goods_id', $goods_id)->where('cat_type', 'specification')->where('attr_value', '!=', '');
+    					if ($goods_attr_collection) {
+    						$goods_attr = [];
+    						$goods_attr = $goods_attr_collection->map(function ($val){
+    							return [
+    								'goods_attr_id' 	=> intval($val->goods_attr_id),
+    								'goods_attr_value'	=> trim($val->attr_value),
+    							];
+    						});
+    						$goods_attr = $goods_attr->toArray();
+    					} else {
+    						$goods_attr = [];
+    					}
+    					
+    				} else {
+    					$goods_attr = [];
+    				}
+    				
+    				$arr = [
+    					'attr_id' 		=> intval($item->attr_id),
+    					'attr_name'		=> trim($item->attr_name),
+    					'attr_values'	=> array_merge($goods_attr)
+    				];
+    				return $arr;
+    			});
+    		}
+    	}
+    	return $goods_spec_list;
     }
 }
