@@ -94,15 +94,15 @@ class GoodsBasicInfo
     		$disk = \RC_Filesystem::disk();
     		$gallery = $this->model->goods_gallery_collection->map(function ($item) use ($disk) {
     			if (!$disk->exists(\RC_Upload::upload_path($item['img_url'])) || empty($item['img_url'])) {
-    				$item['img_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    				$item['format_img_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
     			} else {
-    				$item['img_url'] = \RC_Upload::upload_url($item['img_url']);
+    				$item['format_img_url'] = \RC_Upload::upload_url($item['img_url']);
     			}
     	
     			if (!$disk->exists(\RC_Upload::upload_path($item['thumb_url'])) || empty($item['thumb_url'])) {
-    				$item['thumb_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    				$item['format_thumb_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
     			} else {
-    				$item['thumb_url'] = \RC_Upload::upload_url($item['thumb_url']);
+    				$item['format_thumb_url'] = \RC_Upload::upload_url($item['thumb_url']);
     			}
     			return $item;
     		});
