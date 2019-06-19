@@ -60,7 +60,7 @@ class goods_goods_info_api extends Component_Event_Api {
 	public function call(&$options) {	
 	    if (!is_array($options)
 	        && !isset($options['id'])) {
-	        return new ecjia_error('invalid_parameter', '参数无效');
+	        return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效！', 'goods'), __CLASS__));
 	    }
 	   	$row = $this->get_goods_info($options['id']);
 	   	if ($row == false) {
