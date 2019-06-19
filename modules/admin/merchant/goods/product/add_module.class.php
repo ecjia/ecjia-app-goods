@@ -65,8 +65,6 @@ class admin_merchant_goods_product_add_module extends api_admin implements api_i
     	$goods_id		= $this->requestData('goods_id');
     	$goods_attr_ids = $this->requestData('goods_attr_ids', array()); //商品属性组合ids 
     	
-    	$goods_attr_ids = [4438,4440,4441,4442];
-    	
     	if (empty($goods_id) || empty($goods_attr_ids) || !is_array($goods_attr_ids)) {
     	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
