@@ -75,7 +75,12 @@ class ProductBasicInfo
      */
     public function productInfo()
     {
-    	$data = ProductsModel::where('product_id', $this->product_id)->first();
+    	if ($this->goods_id) {
+    		$data = ProductsModel::where('product_id', $this->product_id)->where('goods_id', $this->goods_id)->first();
+    	} else {
+    		$data = ProductsModel::where('product_id', $this->product_id)->first();
+    	}
+    	
     	return $data;
     }
 
