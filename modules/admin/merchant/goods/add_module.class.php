@@ -331,7 +331,7 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
     	}
     		 
     	if ($proc_goods_img) {
-    		if (isset($_FILES['goods_image'])) {
+    		if (isset($file_goods_image)) {
     			$image_info = $upload->upload($file_goods_image);
     		}
     	}
