@@ -55,7 +55,7 @@ class goods_goods_info_api extends Component_Event_Api {
      * @param  $options['keyword'] 关键字
      *         $options['cat_id'] 分类id
      *         $options['brand_id'] 品牌id
-     * @return array
+     * @return array|ecjia_error
      */
 	public function call(&$options) {	
 	    if (!is_array($options)
