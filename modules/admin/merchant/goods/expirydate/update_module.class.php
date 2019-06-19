@@ -70,7 +70,6 @@ class admin_merchant_goods_expirydate_update_module extends api_admin implements
     	
     	$generate_date		= $this->requestData('generate_date');
     	$limit_days			= intval($this->requestData('limit_days'));
-    	$expiry_date		= $this->requestData('expiry_date');
     	$limit_days_unit	= trim($this->requestData('limit_days_unit'));
     	 
     	if (empty($generate_date) || empty($limit_days)) {
