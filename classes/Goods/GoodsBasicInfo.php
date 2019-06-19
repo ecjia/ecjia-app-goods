@@ -132,9 +132,9 @@ class GoodsBasicInfo
     				$product_thumb = $goods->goods_thumb;
     			} 
     			if (!$disk->exists(\RC_Upload::upload_path($item['product_thumb'])) || empty($product_thumb)) {
-    				$item['product_thumb'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    				$item['format_product_thumb'] = \RC_Uri::admin_url('statics/images/nopic.png');
     			} else {
-    				$item['product_thumb'] = \RC_Upload::upload_url($product_thumb);
+    				$item['format_product_thumb'] = \RC_Upload::upload_url($product_thumb);
     			}
     			//小图
     			$product_img = $item->product_img;
@@ -142,9 +142,9 @@ class GoodsBasicInfo
     				$product_img = $goods->goods_img;
     			}
     			if (!$disk->exists(\RC_Upload::upload_path($item['product_img'])) || empty($product_img)) {
-    				$item['product_img'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    				$item['format_product_img'] = \RC_Uri::admin_url('statics/images/nopic.png');
     			} else {
-    				$item['product_img'] = \RC_Upload::upload_url($product_img);
+    				$item['format_product_img'] = \RC_Upload::upload_url($product_img);
     			}
     			//原图
     			$product_original_img = $item->product_original_img;
@@ -152,9 +152,9 @@ class GoodsBasicInfo
     				$product_original_img = $goods->original_img;
     			}
     			if (!$disk->exists(\RC_Upload::upload_path($item['product_original_img'])) || empty($product_original_img)) {
-    				$item['product_original_img'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    				$item['format_product_original_img'] = \RC_Uri::admin_url('statics/images/nopic.png');
     			} else {
-    				$item['product_original_img'] = \RC_Upload::upload_url($product_original_img);
+    				$item['format_product_original_img'] = \RC_Upload::upload_url($product_original_img);
     			}
     			
     			$item['product_shop_price'] 			= $item->product_shop_price <= 0 ? $goods->shop_price : $item->product_shop_price;
