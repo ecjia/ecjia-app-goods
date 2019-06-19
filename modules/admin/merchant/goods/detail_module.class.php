@@ -151,8 +151,8 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 			'rank_integral'				=> $goods->rank_integral,
 			'integral'					=> $goods->integral,
 			'extension_code'			=> empty($goods->extension_code) ? 'common' : $goods->extension_code,
-			'generate_date'				=> !empty($goods->generate_date) ? RC_Time::local_date('Y-m-d H:i:s', $goods->generate_date) : '',
-			'expiry_date'				=> !empty($goods->expiry_date) ? RC_Time::local_date('Y-m-d H:i:s', $goods->expiry_date) : '',
+			'generate_date'				=> !empty($goods->generate_date) ? $goods->generate_date : '',
+			'expiry_date'				=> !empty($goods->expiry_date) ? $goods->expiry_date : '',
 			'limit_days'				=> $limit_days,
 			'limit_days_unit'			=> $limit_days_unit,
 		];
