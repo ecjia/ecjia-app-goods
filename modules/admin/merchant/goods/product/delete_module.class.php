@@ -65,8 +65,6 @@ class admin_merchant_goods_product_delete_module extends api_admin implements ap
     	$goods_id		= intval($this->requestData('goods_id'));
     	$product_ids 	= $this->requestData('product_id', array()); //货品id
     	
-    	$product_ids = [100,101];
-    	
     	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
     	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
