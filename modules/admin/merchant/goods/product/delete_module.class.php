@@ -46,63 +46,42 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 商品相信信息
- * @author chenzhejun@ecmoban.com
+ * 删除商品货品
+ * @author zrl
  *
  */
-class admin_goods_merchant_category_detail_module extends api_admin implements api_interface {
+class admin_merchant_goods_product_delete_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
 		if ($_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-    	$result = $this->admin_priv('cat_manage');
-        if (is_ecjia_error($result)) {
-			return $result;
+		$result = $this->admin_priv('goods_manage');
+		if (is_ecjia_error($result)) {
+		    return $result;
 		}
     	
-    	$cat_id = $this->requestData('category_id');
-    	if (empty($cat_id)) {
-    		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	$goods_id		= intval($this->requestData('goods_id'));
+    	$product_ids 	= $this->requestData('product_id', array()); //货品id
+    	
+    	$product_ids = [100,101];
+    	
+    	if (empty($goods_id) || empty($product_ids) || !is_array($product_ids)) {
+    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
     	}
     	
-    	$category_info = Ecjia\App\Goods\Models\MerchantCategoryModel::where('cat_id', $cat_id)->where('store_id', $_SESSION['store_id'])->first();
-    	
-    	if (empty($category_info)) {
-    		return new ecjia_error('category_empty', __('未找到对应分类！', 'goods'));
+    	//商品信息
+    	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
+    	$goods = $GoodsBasicInfo->goodsInfo();
+    	if (empty($goods)) {
+    		return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
     	}
     	
-		$goods_count = Ecjia\App\Goods\Models\GoodsModel::where('merchant_cat_id', $cat_id)->where('is_delete', 0)->where('store_id', $_SESSION['store_id'])->count();
-    	//绑定的规格模板信息
-    	$specification_id = 0;
-    	$specification_name = '';
-    	if ($category_info->goods_type_specification_model) {
-    		$specification_id 	= intval($category_info->goods_type_specification_model->cat_id);
-    		$specification_name = trim($category_info->goods_type_specification_model->cat_name);
+    	if (Ecjia\App\Goods\Models\ProductsModel::where('goods_id', $goods_id)->whereIn('product_id', $product_ids)->delete()) {
+    		return [];
+    	} else {
+    		return new ecjia_error('delete_product_fail', __('删除商品货品失败', 'goods'));
     	}
-    	//绑定的参数模板信息
-    	$parameter_id = 0;
-    	$parameter_name = '';
-    	if ($category_info->goods_type_parameter_model) {
-    		$parameter_id 	= intval($category_info->goods_type_parameter_model->cat_id);
-    		$parameter_name = trim($category_info->goods_type_parameter_model->cat_name);
-    	}
-
-    	$category_detail = array(
-			'category_id'			=> $category_info['cat_id'],
-			'category_name'			=> $category_info['cat_name'],
-			'category_image'		=> !empty($category_info['style']) ? RC_Upload::upload_url($category_info['style']) : '',
-    	    'category' 				=> Ecjia\App\Goods\GoodsFunction::get_parent_cats($category_info['cat_id'], 1, $_SESSION['store_id']),
-			'is_show'				=> $category_info['is_show'],
-			'goods_count'			=> $goods_count,
-    		'specification_id'		=> $specification_id,
-    		'specification_name'	=> $specification_name,
-    		'parameter_id'			=> $parameter_id,
-    		'parameter_name'		=> $parameter_name
-    	);
-    	 
-    	return $category_detail;
-    	
     }
 }
