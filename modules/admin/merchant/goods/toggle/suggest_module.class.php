@@ -47,10 +47,10 @@
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * 热销推荐切换
- * @author will
+ * @author zrl
  *
  */
-class admin_goods_toggle_suggest_module extends api_admin implements api_interface {
+class admin_merchant_goods_toggle_suggest_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
@@ -66,7 +66,14 @@ class admin_goods_toggle_suggest_module extends api_admin implements api_interfa
 		$type		= $this->requestData('type');//best 精品，new 新品，hot 热销
 		$is_suggest	= $this->requestData('is_suggest', 0);
 		if (empty($goods_id) || empty($type)) {
-			return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
+			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+		}
+		
+		//商品信息
+		$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
+		$goods = $GoodsBasicInfo->goodsInfo();
+		if (empty($goods)) {
+			return new ecjia_error('goods_not_exist_info', __('商品信息不存在', 'goods'));
 		}
 		
 		$data = array(
@@ -84,16 +91,10 @@ class admin_goods_toggle_suggest_module extends api_admin implements api_interfa
 			$log_label = __('热销', 'goods');
 		}
 		
-		$db_goods = RC_Loader::load_app_model('goods_model', 'goods');
-		
-		$where = array('goods_id' => $goods_id);
-		if ($_SESSION['store_id'] > 0) {
-			$where = array_merge($where, array('store_id' => $_SESSION['store_id']));
-		}
-		$db_goods->where($where)->update($data);
+		$goods->update($data);
 		
 		/* 记录日志 */
-		$goods_name = $db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
+		$goods_name = $goods->goods_name;
 		
 		if ($is_suggest == '1') {
 		    $action = __('设为', 'goods') . $log_label . '，'.$goods_name;
