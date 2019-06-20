@@ -244,6 +244,15 @@ class GoodsModel extends Model
     }
     
     /**
+     * 一对一
+     * 获取供货商品信息
+     */
+    public function supplier_goods_model()
+    {
+    	return $this->belongsTo('Ecjia\App\Goods\Models\SupplierGoodsModel', 'goodslib_id', 'goodslib_id')->where('goodslib_id', '>', 0);
+    }
+    
+    /**
      * 将缓存数组添加至创建缓存数组（用于商品列表）
      * @param $cache_key
      * @param int $expiry

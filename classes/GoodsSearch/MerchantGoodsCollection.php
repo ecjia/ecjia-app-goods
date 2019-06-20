@@ -69,6 +69,8 @@ class MerchantGoodsCollection
                  * @var Builder $query
                  */
                 $query->with('store_franchisee_model');
+                $query->with('products_collection');
+                $query->with('supplier_goods_model');
             };
         }
 

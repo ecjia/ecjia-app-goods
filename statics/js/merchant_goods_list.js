@@ -38,6 +38,7 @@
 			app.goods_info.previewImage();
 			app.goods_list.toggle_on_sale();
 			app.goods_list.view_review();
+			app.goods_list.add_cart();
 		},
 
 		view_review: function() {
@@ -51,6 +52,24 @@
 	             }, 'json');
 			 });
         
+		},
+		
+		add_cart: function() {
+           $(".add_cart").on('click', function (e) {
+        	   e.preventDefault();
+        	   var $this = $(this);
+        	   var url = $this.attr('data-href');
+        	   var goods_id = $this.attr('goods-id');
+               var option = {
+	               	'goods_id' : goods_id,
+               };
+               $.post(url, option, function (data) {
+                    ecjia.merchant.showmessage(data);
+                    if (data.url) {
+                    	location.href = data.url;
+                    }
+               }, 'json');
+           });
 		},
 
 		search: function() {

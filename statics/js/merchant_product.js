@@ -13,7 +13,30 @@
 					}
 				});
 			});
+			app.product.add_cart();
 			app.product_info.previewImage();
+	   },
+		
+	   add_cart: function() {
+           $(".add_cart").on('click', function (e) {
+        	   e.preventDefault();
+        	   var $this = $(this);
+        	   var url = $this.attr('data-href');
+        	   var action_type = $this.attr('action-type');
+        	   var goods_id = $this.attr('goods-id');
+        	   var product_id = $this.attr('product-id');
+               var option = {
+            		'action_type' : action_type,
+	               	'goods_id' : goods_id,
+	               	'product_id' : product_id,
+               };
+               $.post(url, option, function (data) {
+                    ecjia.merchant.showmessage(data);
+                    if (data.url) {
+                    	location.href = data.url;
+                    }
+               }, 'json');
+           });
 		},
 
 		/**
