@@ -74,13 +74,13 @@ class admin_goods_toggle_suggest_module extends api_admin implements api_interfa
 		);
 		
 		if ($type == 'best') {
-			$data['is_best'] = $is_suggest;
+			$data['store_best'] = $is_suggest;
 			$log_label = __('精品', 'goods');
 		} elseif ($type == 'new') {
-			$data['is_new'] = $is_suggest;
+			$data['store_new'] = $is_suggest;
 			$log_label = __('新品', 'goods');
 		} elseif ($type == 'hot') {
-			$data['is_hot'] = $is_suggest;
+			$data['store_hot'] = $is_suggest;
 			$log_label = __('热销', 'goods');
 		}
 		
