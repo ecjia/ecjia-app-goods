@@ -3224,7 +3224,7 @@ class merchant extends ecjia_merchant {
 		} else {
 			$template_id = Ecjia\App\Goods\MerchantGoodsAttr::get_cat_template('specification', $goods_info['merchant_cat_id']);
 			if(empty($template_id)) {
-				$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('parameter', $goods_info['cat_id']);
+				$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('specification', $goods_info['cat_id']);
 			}
 		}
 		if ($template_id) {
