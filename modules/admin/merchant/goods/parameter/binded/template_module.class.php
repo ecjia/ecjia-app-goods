@@ -61,7 +61,7 @@ class admin_merchant_goods_parameter_binded_template_module extends api_admin im
 		$goods_id	= intval($this->requestData('goods_id', 0));
 		
 		if (empty($goods_id)) {
-			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+			return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
 		}
 		$store_id = $_SESSION['store_id'];
 		
@@ -72,7 +72,7 @@ class admin_merchant_goods_parameter_binded_template_module extends api_admin im
 			return new ecjia_error('not_exist_info', __('商品信息不存在', 'goods'));
 		}
 		
-		if($goods->parameter_id >= 0) {
+		if(!empty($goods->parameter_id)) {
 			$template_id = $goods->parameter_id;
 			$goods_isbind_parameter = 'yes';
 		} else {
@@ -83,7 +83,7 @@ class admin_merchant_goods_parameter_binded_template_module extends api_admin im
 			}
 		}
 		
-		if ($template_id <= 0) {
+		if (empty($template_id)) {
 			return ['goods_isbind_parameter' => 'no', 'parameter_template_info' => [], 'parameter_attributes' => []];
 		} else {
 			$pra_template_info = Ecjia\App\Goods\Models\GoodsTypeModel::where('cat_id', $template_id)->first();

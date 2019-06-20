@@ -61,8 +61,15 @@ class admin_merchant_goods_updateprice_module extends api_admin implements api_i
 		//请求参数：
        	$goods_id				= $this->requestData('goods_id', 0);
     	if (empty($goods_id)) {
-    		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    		return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
+    	
+    	$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
+    	$goods = $GoodsBasicInfo->goodsInfo();
+    	if (empty($goods)) {
+    		return new ecjia_error('goods_not_exist', __('指定商品不存在！', 'goods'));
+    	}
+    	
     	//市场价格
     	$shop_price				= $this->requestData('shop_price', 0);
     	$market_price			= $this->requestData('market_price', 0);
@@ -75,13 +82,13 @@ class admin_merchant_goods_updateprice_module extends api_admin implements api_i
     	//促销信息
     	$promote_price			= $this->requestData('promote_price');
     	$is_promote 			= empty($promote_price) ? 0 : 1;
-    	$promote_price      	= !empty($promote_price) ?  $promote_price : 0;
+    	$promote_price      	= !empty($promote_price) ?  floatval($promote_price) : 0;
     	$promote_start_date		= $this->requestData('promote_start_date');
     	$promote_end_date  		= $this->requestData('promote_end_date');
     	
 		if ($is_promote && !empty($promote_start_date) && !empty($promote_end_date)) {
-			$start_date = RC_Time::local_strtotime($start_date);
-			$end_date	= RC_Time::local_strtotime($end_date);
+			$start_date = RC_Time::local_strtotime($promote_start_date);
+			$end_date	= RC_Time::local_strtotime($promote_end_date);
 			if ($start_date >= $end_date) {
 				return new ecjia_error('time_error', __('促销开始时间不能大于结束时间', 'goods'));
 			}
@@ -94,7 +101,6 @@ class admin_merchant_goods_updateprice_module extends api_admin implements api_i
     	$volume_number_list 	= $this->requestData('volume_number');
     	$user_rank_list			= $this->requestData('user_rank');
 
-    	$db_goods = RC_Model::model('goods/goods_model');
 
     	RC_Loader::load_app_func('global', 'goods');
 
@@ -132,8 +138,8 @@ class admin_merchant_goods_updateprice_module extends api_admin implements api_i
     		'is_promote'			=> $is_promote,
     		'last_update'			=> RC_Time::gmtime()
     	);
-    	$count = $db_goods->where(array('goods_id' => $goods_id))->update($data);
-    	if ($count>0) {
+
+    	if ($goods->update($data)) {
     		$orm_goods_db = RC_Model::model('goods/orm_goods_model');
     		/* 释放app缓存*/
     		$goods_cache_array = $orm_goods_db->get_cache_item('goods_list_cache_key_array');
@@ -148,7 +154,7 @@ class admin_merchant_goods_updateprice_module extends api_admin implements api_i
     		$cache_basic_info_id = sprintf('%X', crc32($cache_goods_basic_info_key));
     		$orm_goods_db->delete_cache_item($cache_basic_info_id);
     		
-    		$goods_name = $db_goods->where(array('goods_id' => $goods_id))->get_field('goods_name');
+    		$goods_name = $goods->goods_name;
     		if ($_SESSION['store_id'] > 0) {
     		    RC_Api::api('merchant', 'admin_log', array('text'=>$goods_name.__('【来源掌柜】', 'goods'), 'action'=>'edit', 'object'=>'goods'));
     		} 

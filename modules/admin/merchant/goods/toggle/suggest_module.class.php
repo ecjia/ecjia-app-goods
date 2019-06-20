@@ -46,65 +46,71 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 /**
- * 获取参数属性详情
+ * 热销推荐切换
  * @author zrl
  *
  */
-class admin_merchant_goods_parameter_attribute_detail_module extends api_admin implements api_interface {
+class admin_merchant_goods_toggle_suggest_module extends api_admin implements api_interface {
     public function handleRequest(\Royalcms\Component\HttpKernel\Request $request) {
 
 		$this->authadminSession();
 		if ($_SESSION['staff_id'] <= 0) {
 			return new ecjia_error(100, 'Invalid session');
 		}
-		
-		$attr_id	= intval($this->requestData('attr_id', 0));
-
-		if (empty($attr_id)) {
-			return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
+    	$result = $this->admin_priv('goods_manage');
+        if (is_ecjia_error($result)) {
+			return $result;
 		}
 		
-		$attribute_info = Ecjia\App\Goods\Models\AttributeModel::where('attr_id', $attr_id)->first();
-		if (empty($attribute_info)) {
-			return new ecjia_error('attribute_info_error', __('不存在的参数属性！', 'goods'));
+		$goods_id	= $this->requestData('id');
+		$type		= $this->requestData('type');//best 精品，new 新品，hot 热销
+		$is_suggest	= $this->requestData('is_suggest', 0);
+		if (empty($goods_id) || empty($type)) {
+			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
 		}
 		
-		$parameter_id 			= intval($attribute_info->goods_type_model->cat_id);
-		$parameter_name			= trim($attribute_info->goods_type_model->cat_name);
-		$format_attr_values 	= !empty($attribute_info->attr_values) ? explode(',', str_replace("\n", ",", $attribute_info->attr_values)) : [];
-		
-		$parameter_group = [];
-		if (!empty($attribute_info->goods_type_model->attr_group)) {
-			$parameter_group = explode(',', str_replace("\n", ",", $attribute_info->goods_type_model->attr_group));
+		//商品信息
+		$GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);
+		$goods = $GoodsBasicInfo->goodsInfo();
+		if (empty($goods)) {
+			return new ecjia_error('goods_not_exist_info', __('商品信息不存在', 'goods'));
 		}
 		
-		if ($attribute_info->attr_input_type == '0') {
-			$label_attr_input_type = '手工录入';
-		} elseif ($attribute_info->attr_input_type == '1') {
-			$label_attr_input_type = '从列表中选择';
+		$data = array(
+			'last_update' => RC_Time::gmtime()
+		);
+		
+		if ($type == 'best') {
+			$data['store_best'] = $is_suggest;
+			$log_label = __('精品', 'goods');
+		} elseif ($type == 'new') {
+			$data['store_new'] = $is_suggest;
+			$log_label = __('新品', 'goods');
+		} elseif ($type == 'hot') {
+			$data['store_hot'] = $is_suggest;
+			$log_label = __('热销', 'goods');
+		}
+		
+		$goods->update($data);
+		
+		/* 记录日志 */
+		$goods_name = $goods->goods_name;
+		
+		if ($is_suggest == '1') {
+		    $action = __('设为', 'goods') . $log_label . '，'.$goods_name;
 		} else {
-			$label_attr_input_type = '多行文本框';
-		}
-		if ($attribute_info->attr_type == '0') {
-			$label_attr_type = '唯一参数';
-		} elseif ($attribute_info->attr_type == '2') {
-			$label_attr_type = '复选参数';
+		    $action = __('取消', 'goods') . $log_label . '，'.$goods_name;
 		}
 		
-		$data = [
-			'parameter_id' 			=> $parameter_id,
-			'parameter_name'		=> $parameter_name,
-			'parameter_group'		=> $parameter_group,
-			'attr_id'				=> intval($attribute_info->attr_id),
-			'attr_name'				=> trim($attribute_info->attr_name),
-			'group_name'			=> empty($attribute_info->attr_group) ? '' : $attribute_info->attr_group,
-			'attr_type'				=> intval($attribute_info->attr_type),
-			'label_attr_type'		=> $label_attr_type,
-			'attr_input_type'		=> intval($attribute_info->attr_input_type),
-			'label_attr_input_type' => $label_attr_input_type,
-			'attr_values'			=> $format_attr_values
-		];
+		if ($_SESSION['store_id'] > 0) {
+		    RC_Api::api('merchant', 'admin_log', array('text' => $action.__('【来源掌柜】', 'goods'), 'action' => 'setup', 'object' => 'goods'));
+		} 
 		
-		return $data;
-    }
+		return array('data' => array('type' => $type, 'is_suggest' => $is_suggest));
+	}
+	
+	
 }
+
+
+// end

@@ -66,7 +66,7 @@ class admin_merchant_goods_price_update_module extends api_admin implements api_
         $price          = $this->requestData('price');
 
     	if (empty($goods_id) || !is_numeric($price)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	    return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
 
         $GoodsBasicInfo = new Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id, $_SESSION['store_id']);

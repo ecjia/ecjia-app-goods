@@ -77,7 +77,7 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
     	$bulk_goods_sn			= $this->requestData('goods_sn', '');
     	
     	if (empty($add_type) || !in_array($add_type, ['common', 'cashier', 'bulk'])) {
-    		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    		return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
     	
     	if ($add_type == 'commom') {

@@ -70,7 +70,7 @@ class admin_merchant_goods_product_update_module extends api_admin implements ap
     	$stock				= intval($this->requestData('stock', 0));
     	
     	if (empty($goods_id) || empty($product_id)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	    return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
     	
     	//商品信息

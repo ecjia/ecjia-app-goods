@@ -60,7 +60,7 @@ class admin_merchant_goods_specification_binded_template_module extends api_admi
 		
 		$goods_id	= intval($this->requestData('goods_id', 0));
 		if (empty($goods_id)) {
-			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+			return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
 		}
 		
 		$store_id = $_SESSION['store_id'];
@@ -83,7 +83,7 @@ class admin_merchant_goods_specification_binded_template_module extends api_admi
 			}
 		}
 		
-		if ($template_id <= 0) {
+		if (empty($template_id)) {
 			return ['goods_isbind_specification' => 'no', 'has_specification_attr' => 'no', 'specification_template_info' => [], 'specification_attributes' => [], 'product_list' => []];
 		} else {
 			//商品是否有设置规格属性

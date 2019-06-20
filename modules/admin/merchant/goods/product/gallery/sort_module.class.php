@@ -67,7 +67,7 @@ class admin_merchant_goods_product_gallery_sort_module extends api_admin impleme
     	$gallery_sort	= $this->requestData('gallery_sort', array());
     	
     	if (empty($goods_id) || empty($product_id) || !is_array($gallery_sort)) {
-    		return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    		return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
     	if (empty($gallery_sort)) {
     	    return array();
