@@ -72,7 +72,7 @@ class admin_merchant_goods_goodsattr_specification_update_module extends api_adm
     	$goods_attr_list_array = json_decode($goods_attr_list, true);
     	
     	if (empty($goods_id) || empty($specification_id) || empty($goods_attr_list) || !is_array($goods_attr_list_array)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	    return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
     	
     	if (!empty($goods_attr_list_array) && is_array($goods_attr_list_array)) {

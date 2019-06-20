@@ -66,7 +66,7 @@ class admin_goods_toggle_suggest_module extends api_admin implements api_interfa
 		$type		= $this->requestData('type');//best 精品，new 新品，hot 热销
 		$is_suggest	= $this->requestData('is_suggest', 0);
 		if (empty($goods_id) || empty($type)) {
-			return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+			return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
 		}
 		
 		$data = array(

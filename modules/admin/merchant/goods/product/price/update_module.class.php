@@ -68,7 +68,7 @@ class admin_merchant_goods_product_price_update_module extends api_admin impleme
     	$products_array = json_decode($products, true);
     	
     	if (empty($goods_id) || empty($products) || !is_array($products_array)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	    return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
     	
     	//商品信息

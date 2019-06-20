@@ -68,7 +68,7 @@ class admin_merchant_goods_linkgoods_add_module extends api_admin implements api
     	$linked_goods_array	= json_decode($linked_goods, true);
     	
     	if (empty($goods_id) || empty($linked_goods_array) || !is_array($linked_goods_array)) {
-    	    return new ecjia_error('invalid_parameter', __('参数错误', 'goods'));
+    	    return new ecjia_error('invalid_parameter', sprintf(__('请求接口%s参数无效', 'goods'), __CLASS__));
     	}
     	if ($linked_goods_array) {
     		foreach ($linked_goods_array as $val) {
