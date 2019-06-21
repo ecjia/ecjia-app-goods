@@ -95,6 +95,9 @@ class admin_merchant_goods_list_module extends api_admin implements api_interfac
 			case 'click_desc' :
 				$sort_by = array('click_count' => 'desc', 'goods_id' => 'desc');
 				break;
+			default:
+				$sort_by = array('goods_id' => 'desc');
+				break;
 		}
 		
 		if ($list_type == 'soldout') { //售罄列表
