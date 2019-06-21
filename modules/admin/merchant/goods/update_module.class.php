@@ -241,10 +241,7 @@ class admin_merchant_goods_update_module extends api_admin implements api_interf
     private function processGoodsImage($file_goods_image, $goods_id)
     {
     	RC_Loader::load_app_class('goods_image_data', 'goods', false);
-    	$goods_img		= ''; // 初始化商品图片
-    	$goods_thumb	= ''; // 初始化商品缩略图
-    	$img_original	= ''; // 初始化原始图片
-    	 
+    	
     	$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
     	$upload->add_saving_callback(function ($file, $filename) {
     		return true;
