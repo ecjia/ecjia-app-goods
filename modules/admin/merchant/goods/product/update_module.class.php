@@ -104,7 +104,10 @@ class admin_merchant_goods_product_update_module extends api_admin implements ap
     	
     	//货品图片上传
     	if (isset($_FILES['product_image'])) {
-    		$this->processProductImage($_FILES['product_image'], $goods_id, $product_id);
+    		$upload_result = $this->processProductImage($_FILES['product_image'], $goods_id, $product_id);
+    		if (is_ecjia_error($upload_result)) {
+    			return $upload_result;
+    		}
     	}
     	
     	if (!empty($update_data)) {
@@ -125,11 +128,6 @@ class admin_merchant_goods_product_update_module extends api_admin implements ap
     {
     	RC_Loader::load_app_class('product_image_data', 'goods', false);
     
-    	/* 处理商品图片 */
-    	$goods_img		= ''; // 初始化商品图片
-    	$goods_thumb	= ''; // 初始化商品缩略图
-    	$img_original	= ''; // 初始化原始图片
-    
     	$upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
     	$upload->add_saving_callback(function ($file, $filename) {
     		return true;
@@ -137,16 +135,19 @@ class admin_merchant_goods_product_update_module extends api_admin implements ap
     		 
     	/* 是否处理商品图 */
     	$proc_goods_img = true;
-    	if (isset($file_goods_image) && !$upload->check_upload_file($file_product_image)) {
+    	if (isset($file_product_image) && !$upload->check_upload_file($file_product_image)) {
     		$proc_goods_img = false;
     	}
     		 
     	if ($proc_goods_img) {
-    		if (isset($file_goods_image)) {
+    		if (isset($file_product_image)) {
     			$image_info = $upload->upload($file_product_image);
+    			if (empty($image_info)) {
+    				return new ecjia_error('upload_error', $upload->error());
+    			}
     		}
     	}
-    		 
+
     	/* 更新上传后的商品图片 */
     	if ($proc_goods_img) {
     		if (isset($image_info)) {
