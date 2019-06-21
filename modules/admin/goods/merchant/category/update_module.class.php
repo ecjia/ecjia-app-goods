@@ -114,11 +114,7 @@ class admin_goods_merchant_category_update_module extends api_admin implements a
     	    }
     	}
     	
-    	
-    	
     	/* 上传分类图片 */
-//     	$upload = RC_Upload::uploader('image', array('save_path' => 'data/category', 'auto_sub_dirs' => true));
-
     	$old_images =  $category['cat_image'];
     	$upload = RC_Upload::uploader('image', array('save_path' => 'merchant/' . $_SESSION['store_id'] . '/data/' . 'category', 'auto_sub_dirs' => true));
     	$file = $_FILES['category_image'];
@@ -143,23 +139,6 @@ class admin_goods_merchant_category_update_module extends api_admin implements a
     			}
     		}
     	}
-    	
-    	RC_Logger::getlogger('info')->info([
-	    	'file' => __FILE__,
-	    	'line' => __LINE__,
-	    	'category_image' => $_FILES,
-	    	'cat_image' => $img_path,
-    	]);
-    	
-    	
-//     	if (isset($_FILES['category_image']) && $upload->check_upload_file($_FILES['category_image'])) {
-//     		$image_info = $upload->upload($_FILES['category_image']);
-//     		if (!empty($image_info)) {
-//     			$file_name = $category->cat_image;
-//     			$upload->remove($file_name);
-//     			$cat['cat_image'] = $upload->get_position($image_info);
-//     		}
-//     	}
     	
     	Ecjia\App\Goods\Models\MerchantCategoryModel::where('cat_id', $cat_id)->update($cat);
     	 
