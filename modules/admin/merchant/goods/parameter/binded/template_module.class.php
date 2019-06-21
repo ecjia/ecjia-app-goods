@@ -129,7 +129,7 @@ class admin_merchant_goods_parameter_binded_template_module extends api_admin im
 						'attr_name'			=> trim($item->attr_name),
 						'attr_form_type'	=> $attr_form_type,
 						'attr_values'		=> $attr_values,
-						'goods_attr_value'	=> $goods_attr_values
+						'goods_attr_value'	=> array_merge($goods_attr_values)
 					];
 					return $attr_list;
 				});
