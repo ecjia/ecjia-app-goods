@@ -147,6 +147,7 @@ class admin_goods_merchant_category_update_module extends api_admin implements a
     	RC_Logger::getlogger('info')->info([
 	    	'file' => __FILE__,
 	    	'line' => __LINE__,
+	    	'category_image' => $_FILES,
 	    	'cat_image' => $img_path,
     	]);
     	

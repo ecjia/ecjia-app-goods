@@ -156,6 +156,8 @@ class admin_merchant_goods_product_update_module extends api_admin implements ap
     	RC_Logger::getlogger('info')->info([
 		    'file' => __FILE__,
 		    'line' => __LINE__,
+		    'product_image' => $file_product_image,
+		    '$_FILES' => $_FILES,
 		    'proc_goods_img' => $proc_goods_img,
 		    'image_info' => $image_info,
 		]);
