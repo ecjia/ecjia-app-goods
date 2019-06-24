@@ -102,7 +102,11 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
     	}
     	
     	//审核状态
-    	$review_status = Ecjia\App\Goods\GoodsFunction::get_review_status($_SESSION['store_id']);
+        if ($add_type == 'common') {
+            $review_status = Ecjia\App\Goods\GoodsFunction::get_review_status($_SESSION['store_id']);
+        } else {
+            $review_status = 3;
+        }
     	//市场价处理market_price
     	if (ecjia::config('market_price_rate') > 0) {
     		$market_price = $goods_price*ecjia::config('market_price_rate');

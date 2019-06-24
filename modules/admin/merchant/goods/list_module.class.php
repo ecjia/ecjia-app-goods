@@ -63,7 +63,7 @@ class admin_merchant_goods_list_module extends api_admin implements api_interfac
 
 		$on_sale		= $this->requestData('on_sale', 'true');//true已上架, false已下架（字符串，非bool值）
 		$stock			= $this->requestData('stock');//是否售罄 :true有货 , false售罄
-		$sort			= $this->requestData('sort_by', 'sort_order');//默认: sort_order  其他: price_desc, price_asc, stock, click_asc, clcik_desc
+		$sort			= $this->requestData('sort_by', '');//默认: sort_order  其他: price_desc, price_asc, stock, click_asc, clcik_desc
 		$keywords		= $this->requestData('keywords', '');
 		$category_id 	= $this->requestData('category_id', 0);  //商家分类id
 		$check_status	= $this->requestData('check_status', 'await_check'); //审核状态：await_check待审核，check_refused审核被拒
