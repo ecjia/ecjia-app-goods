@@ -28,6 +28,16 @@ class GoodsAdminApiFormatted
     public function toArray()
     {
     	$is_promote = $this->isPromote();
+        /* 分享链接*/
+        $share_link = '';
+        $goods_id = intval($this->model->goods_id);
+        $mobile_touch_url = ecjia::config('mobile_touch_url');
+        if (!empty($mobile_touch_url)) {
+            /*商品分享链接*/
+            $share_link = ecjia::config('mobile_touch_url').'index.php?m=goods&c=index&a=show&goods_id='.$goods_id.'&hidenav=1&hidetab=1';
+        } else {
+            $share_link = null;
+        }
         return [
             //goods info
             'id'							=> $this->model->goods_id,
@@ -59,6 +69,7 @@ class GoodsAdminApiFormatted
 										    		'small'   	=> $this->model->goods_img ? \RC_Upload::upload_url($this->model->goods_img) : '',
 										    	],
 			'has_product'               	=> count($this->model->products_collection) > 1 ? 1 : 0,
+            'share_link'                    => $share_link,
         ];
     }
     
