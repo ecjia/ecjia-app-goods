@@ -106,6 +106,7 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 		
 		/* 分享链接*/
         $share_link = '';
+        $goods_id = $id;
         $mobile_touch_url = ecjia::config('mobile_touch_url');
         if (!empty($mobile_touch_url)) {
             /*商品分享链接*/
