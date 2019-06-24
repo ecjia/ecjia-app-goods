@@ -68,7 +68,7 @@ class GoodsAdminApiFormatted
 										    		'url'     	=> $this->model->original_img ? \RC_Upload::upload_url($this->model->original_img) : '',
 										    		'small'   	=> $this->model->goods_img ? \RC_Upload::upload_url($this->model->goods_img) : '',
 										    	],
-			'has_product'               	=> count($this->model->products_collection) > 1 ? 1 : 0,
+			'has_product'               	=> count($this->model->products_collection) > 0 ? 'yes' : 'no',
             'share_link'                    => $share_link,
         ];
     }
