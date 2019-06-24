@@ -166,7 +166,7 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 			'limit_days'				=> $limit_days,
 			'limit_days_unit'			=> $limit_days_unit,
 			'share_link'				=> $share_link,
-			'has_product'				=> (!empty($goods->products_collection) && count($goods->products_collection) > 0) ? 'yes' : 'no',
+			'has_products'				=> (!empty($goods->products_collection) && count($goods->products_collection) > 0) ? 'yes' : 'no',
 		];
 			
 		//会员等级价
