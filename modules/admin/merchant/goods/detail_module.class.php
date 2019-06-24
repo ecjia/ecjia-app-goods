@@ -104,6 +104,15 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 			$limit_days_unit = $limit_days_str['1'];
 		}
 		
+		/* 分享链接*/
+        $share_link = '';
+        $mobile_touch_url = ecjia::config('mobile_touch_url');
+        if (!empty($mobile_touch_url)) {
+            /*商品分享链接*/
+            $share_link = ecjia::config('mobile_touch_url').'index.php?m=goods&c=index&a=show&goods_id='.$goods_id.'&hidenav=1&hidetab=1';
+        } else {
+            $share_link = null;
+        }
 		
 		$goods_detail = [
 			'goods_id'					=> intval($goods->goods_id),
@@ -155,6 +164,7 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 			'expiry_date'				=> !empty($goods->expiry_date) ? $goods->expiry_date : '',
 			'limit_days'				=> $limit_days,
 			'limit_days_unit'			=> $limit_days_unit,
+			'share_link'				=> $share_link,
 		];
 			
 		//会员等级价
