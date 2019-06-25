@@ -106,6 +106,7 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 		
 		/* 分享链接*/
         $share_link = '';
+        $goods_id = $id;
         $mobile_touch_url = ecjia::config('mobile_touch_url');
         if (!empty($mobile_touch_url)) {
             /*商品分享链接*/
@@ -113,7 +114,9 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
         } else {
             $share_link = null;
         }
-		
+		//是否有关联商品
+		$has_linked_goods = (!empty($goods->link_goods_collection) && count($goods->link_goods_collection) > 0) ? 'yes' : 'no';
+        
 		$goods_detail = [
 			'goods_id'					=> intval($goods->goods_id),
 			'goods_name'				=> trim($goods->goods_name),
@@ -165,6 +168,8 @@ class admin_merchant_goods_detail_module extends api_admin implements api_interf
 			'limit_days'				=> $limit_days,
 			'limit_days_unit'			=> $limit_days_unit,
 			'share_link'				=> $share_link,
+			'has_products'				=> (!empty($goods->products_collection) && count($goods->products_collection) > 0) ? 'yes' : 'no',
+			'has_linked_goods'			=> $has_linked_goods
 		];
 			
 		//会员等级价

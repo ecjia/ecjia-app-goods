@@ -78,25 +78,25 @@ class admin_merchant_goods_list_module extends api_admin implements api_interfac
 		/* 推荐类型 */
 		switch ($sort) {
 			case 'sort_order' :
-				$sort_by = array('sort_order' => 'asc', 'goods_id' => 'desc');
+				$sort_by = array('goods.sort_order' => 'asc', 'goods.goods_id' => 'desc');
 				break;
 			case 'price_desc' :
-				$sort_by = array('shop_price' => 'desc', 'goods_id' => 'desc');
+				$sort_by = array('goods.shop_price' => 'desc', 'goods.goods_id' => 'desc');
 				break;
 			case 'price_asc' :
-				$sort_by = array('shop_price' => 'asc', 'goods_id' => 'desc');
+				$sort_by = array('goods.shop_price' => 'asc', 'goods.goods_id' => 'desc');
 				break;
 			case 'stock' :
-				$sort_by = array('goods_number' => 'asc', 'goods_id' => 'desc');
+				$sort_by = array('goods.goods_number' => 'asc', 'goods.goods_id' => 'desc');
 				break;
 			case 'click_asc' :
-				$sort_by = array('click_count' => 'asc', 'goods_id' => 'desc');
+				$sort_by = array('goods.click_count' => 'asc', 'goods.goods_id' => 'desc');
 				break;
 			case 'click_desc' :
-				$sort_by = array('click_count' => 'desc', 'goods_id' => 'desc');
+				$sort_by = array('goods.click_count' => 'desc', 'goods.goods_id' => 'desc');
 				break;
 			default:
-				$sort_by = array('goods_id' => 'desc');
+				$sort_by = array('goods.add_time' => 'desc');
 				break;
 		}
 		
@@ -167,7 +167,7 @@ class admin_merchant_goods_list_module extends api_admin implements api_interfac
 		
 		//排序
 		if (!empty($sort_by)) {
-			$filters['sort_by'] = $sort_by;
+			$input['sort_by'] = $sort_by;
 		}
 		//分页信息
 		$input['size'] = $size;

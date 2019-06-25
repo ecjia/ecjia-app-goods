@@ -193,6 +193,16 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
     	//商品重量存在，重量单位是0的情况
     	$goods_weight_string = $this->get_goods_weight_string($goods->goods_weight, $goods->weight_unit);
     	
+    	/* 分享链接*/
+    	$share_link = '';
+    	$mobile_touch_url = ecjia::config('mobile_touch_url');
+    	if (!empty($mobile_touch_url)) {
+    		/*商品分享链接*/
+    		$share_link = ecjia::config('mobile_touch_url').'index.php?m=goods&c=index&a=show&goods_id='.$goods_id.'&hidenav=1&hidetab=1';
+    	} else {
+    		$share_link = null;
+    	}
+    	
     	$goods_detail = [
     		'goods_id' 					=> intval($goods->goods_id),
     		'name'						=> trim($goods->goods_name),
@@ -238,6 +248,7 @@ class admin_merchant_goods_add_module extends api_admin implements api_interface
 			'weight_unit'				=> $goods->weight == '1' ? 'gram' : 'kilogram',
 			'weight_stock'				=> $goods->weight_stock,
 			'extension_code'			=> empty($goods->extension_code) ? 'common' : $goods->extension_code,
+			'share_link'				=> $share_link,
     	];
 			
     	$goods_detail['user_rank'] = array();
