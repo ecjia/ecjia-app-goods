@@ -73,7 +73,10 @@ class admin_merchant_goods_linkgoods_add_module extends api_admin implements api
     	if ($linked_goods_array) {
     		foreach ($linked_goods_array as $val) {
     			if (empty($val['goods_id'])) {
-    				return new ecjia_error('link_goods_id', __('要关联商品id参数错误', 'goods'));
+    				return new ecjia_error('linked_goods_id_error', __('要关联商品id参数错误', 'goods'));
+    			}
+    			if ($val['goods_id'] == $goods_id) {
+    				return new ecjia_error('linked_goods_id_error', __('要关联商品不能为商品本身！', 'goods'));
     			}
     		}
     		
