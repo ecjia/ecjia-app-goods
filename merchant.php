@@ -4121,24 +4121,44 @@ class merchant extends ecjia_merchant {
 	public function goods_add_cart() {
 		$mer_goods_id   = !empty($_POST['goods_id'])? intval($_POST['goods_id']): 0;
 		$goodslib_id = RC_DB::TABLE('goods')->where('goods_id', $mer_goods_id)->pluck('goodslib_id');
-		$goods_id = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->pluck('goods_id');
+		$supplier_goods_id = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->pluck('goods_id');
 		
-		$goods_info = RC_DB::TABLE('supplier_goods')->where('goods_id', $goods_id)->first();
+		$goods_info = RC_DB::TABLE('supplier_goods')->where('goods_id', $supplier_goods_id)->first();
+		
 		if(!empty($goods_info)) {
-			$cat_info['store_id']     = intval($_SESSION['store_id']);
-			$cat_info['staff_id']     = intval($_SESSION['staff_id']);
-			$cat_info['goods_id']     = $goods_id;
-			$cat_info['product_id']   = 0;
-			$cat_info['goods_sn']     = $goods_info['goods_sn'];
-			$cat_info['goods_name']   = $goods_info['goods_name'];
-			$cat_info['market_price'] = $goods_info['market_price'];
-			$cat_info['goods_price']  = $goods_info['shop_price'];
-			$cat_info['goods_number'] = $goods_info['goods_number'];
-			$cat_info['goods_buy_weight'] = $goods_info['goods_buy_weight'];
-			$cat_info['goods_attr']   = '';
-			$cat_info['add_time']     = RC_Time::gmtime();
+			$row = RC_DB::table('supplier_cart')
+			->select('rec_id', 'goods_number')
+			->where('store_id', $_SESSION['store_id'])
+			->where('goods_id', $supplier_goods_id)
+			->first();
 			
-			$rec_id = RC_DB::table('supplier_cart')->insertGetId($cat_info);
+			$num = 1;
+			if($row) {
+				$num += $row['goods_number'];
+				$data =  array(
+					'goods_number' => $num,
+					'goods_price'  => '',
+					'is_checked'   => 1,
+				);
+				
+				RC_DB::table('supplier_cart')
+				->where('store_id', $_SESSION['store_id'])
+				->where('rec_id', $row['rec_id'])
+				->update($data);
+			} else {
+				$cat_info['store_id']     = intval($_SESSION['store_id']);
+				$cat_info['staff_id']     = intval($_SESSION['staff_id']);
+				$cat_info['goods_id']     = $supplier_goods_id;
+				$cat_info['product_id']   = 0;
+				$cat_info['goods_sn']     = $goods_info['goods_sn'];
+				$cat_info['goods_name']   = $goods_info['goods_name'];
+				$cat_info['market_price'] = $goods_info['market_price'];
+				$cat_info['goods_price']  = $goods_info['shop_price'];
+				$cat_info['add_time']     = RC_Time::gmtime();
+				
+				RC_DB::table('supplier_cart')->insertGetId($cat_info);
+			}
+
 			$url = RC_Uri::url('goods/merchant/init');
 			return $this->showmessage(__('加入采购车成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url));
 		} else {
@@ -4151,29 +4171,48 @@ class merchant extends ecjia_merchant {
 	 */
 	public function product_add_cart() {
 		$action_type    = trim($_POST['action_type']);
-		$mer_goods_id   = !empty($_POST['goods_id'])? intval($_POST['goods_id'])	    : 0;
-		$product_id     = !empty($_POST['product_id'])? intval($_POST['product_id'])	: 0;
 		
+		$mer_goods_id   = !empty($_POST['goods_id'])? intval($_POST['goods_id'])	    : 0;
 		$goodslib_id = RC_DB::TABLE('goods')->where('goods_id', $mer_goods_id)->pluck('goodslib_id');
-		$goods_id = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->pluck('goods_id');
-	
-		$goods_info = RC_DB::TABLE('supplier_goods')->where('goods_id', $goods_id)->first();
-		if(!empty($goods_info)) {
-			$cat_info['store_id']   = intval($_SESSION['store_id']);
-			$cat_info['staff_id']   = intval($_SESSION['staff_id']);
-			$cat_info['goods_id']   = $goods_id;
-			$cat_info['product_id'] = $product_id;
-			$cat_info['goods_sn']   = $goods_info['goods_sn'];
-			$cat_info['goods_name'] = $goods_info['goods_name'];
-			$cat_info['market_price'] = $goods_info['market_price'];
-			$cat_info['goods_price']  = $goods_info['shop_price'];
-			$cat_info['goods_number'] = $goods_info['goods_number'];
-			$cat_info['goods_buy_weight'] = $goods_info['goods_buy_weight'];
-			$cat_info['goods_attr'] = '';
-			$cat_info['add_time']   = RC_Time::gmtime();
+		$supplier_goods_id = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->pluck('goods_id');
+		$mer_product_id   = !empty($_POST['product_id'])? intval($_POST['product_id']): 0;
+		$supplier_product_id = RC_DB::TABLE('products')->where('product_id', $mer_product_id)->pluck('supplier_product_id');
+		$product_info = RC_DB::TABLE('supplier_goods_products')->where('product_id', $supplier_product_id)->first();
+		
+		if(!empty($product_info)) {
+			
+			$row = RC_DB::table('supplier_cart')
+			->select('rec_id', 'goods_number')
+			->where('store_id', $_SESSION['store_id'])
+			->where('product_id', $supplier_product_id)
+			->first();
+		
+			$num = 1;
+			if($row) {
+				$num += $row['goods_number'];
+				$data =  array(
+					'goods_number' => $num,
+					'goods_price'  => '',
+					'is_checked'   => 1,
+				);
+		
+				RC_DB::table('supplier_cart')
+				->where('store_id', $_SESSION['store_id'])
+				->where('rec_id', $row['rec_id'])
+				->update($data);
 				
-			$rec_id = RC_DB::table('supplier_cart')->insertGetId($cat_info);
+			} else {
+				$cat_info['store_id']     = intval($_SESSION['store_id']);
+				$cat_info['staff_id']     = intval($_SESSION['staff_id']);
+				$cat_info['goods_id']     = $supplier_goods_id;
+				$cat_info['product_id']   = $supplier_product_id;
+				$cat_info['goods_sn']     = $product_info['product_sn'];
+				$cat_info['goods_name']   = $product_info['product_name'];
+				$cat_info['goods_price']  = $product_info['product_shop_price'];
+				$cat_info['add_time']     = RC_Time::gmtime();
 				
+				RC_DB::table('supplier_cart')->insertGetId($cat_info);
+			}
 			$url = RC_Uri::url('goods/merchant/edit_link_product', array('goods_id' => $mer_goods_id, 'action_type' => $action_type));
 			return $this->showmessage(__('加入采购车成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url));
 		} else {
