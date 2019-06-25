@@ -167,7 +167,7 @@ class admin_merchant_goods_list_module extends api_admin implements api_interfac
 		
 		//排序
 		if (!empty($sort_by)) {
-			$filters['sort_by'] = $sort_by;
+			$input['sort_by'] = $sort_by;
 		}
 		//分页信息
 		$input['size'] = $size;
