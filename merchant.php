@@ -4110,6 +4110,9 @@ class merchant extends ecjia_merchant {
 	
 		$product = Ecjia\App\Goods\MerchantGoodsAttr::product_list($goods_id, '');
 		$this->assign('product_list', $product['product']);
+
+        $supplier_product_addcart = RC_Uri::url('supplier/merchant/product_add_cart');
+        $this->assign('supplier_product_addcart', $supplier_product_addcart);
 	
 		return $this->display('goods_product.dwt');
 	}
@@ -4173,51 +4176,55 @@ class merchant extends ecjia_merchant {
 		$action_type    = trim($_POST['action_type']);
 		
 		$mer_goods_id   = !empty($_POST['goods_id'])? intval($_POST['goods_id'])	    : 0;
+        $mer_product_id   = !empty($_POST['product_id'])? intval($_POST['product_id']): 0;
+
 		$goodslib_id = RC_DB::TABLE('goods')->where('goods_id', $mer_goods_id)->pluck('goodslib_id');
-		$supplier_goods_id = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->pluck('goods_id');
-		$mer_product_id   = !empty($_POST['product_id'])? intval($_POST['product_id']): 0;
-		$supplier_product_id = RC_DB::TABLE('products')->where('product_id', $mer_product_id)->pluck('supplier_product_id');
-		$product_info = RC_DB::TABLE('supplier_goods_products')->where('product_id', $supplier_product_id)->first();
+		$supplier_goods_info = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->first();
+        $supplier_goods_id = $supplier_goods_info['goods_id'];
+
+		$goodslib_product_id = RC_DB::TABLE('products')->where('product_id', $mer_product_id)->pluck('goodslib_product_id');
+		$product_info = RC_DB::TABLE('supplier_goods_products')->where('goodslib_product_id', $goodslib_product_id)->first();
 		
-		if(!empty($product_info)) {
+		if(empty($product_info)) {
+            return $this->showmessage(__('要加入采购车的商品不存在', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        }
+
 			
-			$row = RC_DB::table('supplier_cart')
-			->select('rec_id', 'goods_number')
-			->where('store_id', $_SESSION['store_id'])
-			->where('product_id', $supplier_product_id)
-			->first();
-		
-			$num = 1;
-			if($row) {
-				$num += $row['goods_number'];
-				$data =  array(
-					'goods_number' => $num,
-					'goods_price'  => '',
-					'is_checked'   => 1,
-				);
-		
-				RC_DB::table('supplier_cart')
-				->where('store_id', $_SESSION['store_id'])
-				->where('rec_id', $row['rec_id'])
-				->update($data);
-				
-			} else {
-				$cat_info['store_id']     = intval($_SESSION['store_id']);
-				$cat_info['staff_id']     = intval($_SESSION['staff_id']);
-				$cat_info['goods_id']     = $supplier_goods_id;
-				$cat_info['product_id']   = $supplier_product_id;
-				$cat_info['goods_sn']     = $product_info['product_sn'];
-				$cat_info['goods_name']   = $product_info['product_name'];
-				$cat_info['goods_price']  = $product_info['product_shop_price'];
-				$cat_info['add_time']     = RC_Time::gmtime();
-				
-				RC_DB::table('supplier_cart')->insertGetId($cat_info);
-			}
-			$url = RC_Uri::url('goods/merchant/edit_link_product', array('goods_id' => $mer_goods_id, 'action_type' => $action_type));
-			return $this->showmessage(__('加入采购车成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url));
-		} else {
-			return $this->showmessage(__('要加入采购车的商品不存在', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
+        $row = RC_DB::table('supplier_cart')
+        ->select('rec_id', 'goods_number')
+        ->where('store_id', $_SESSION['store_id'])
+        ->where('product_id', $product_info['product_id'])
+        ->first();
+
+        $num = 1;
+        if($row) {
+            $num += $row['goods_number'];
+            $data =  array(
+                'goods_number' => $num,
+                'goods_price'  => '',
+                'is_checked'   => 1,
+            );
+
+            RC_DB::table('supplier_cart')
+            ->where('store_id', $_SESSION['store_id'])
+            ->where('rec_id', $row['rec_id'])
+            ->update($data);
+
+        } else {
+            $cat_info['store_id']     = intval($_SESSION['store_id']);
+            $cat_info['staff_id']     = intval($_SESSION['staff_id']);
+            $cat_info['goods_id']     = $supplier_goods_id;
+            $cat_info['product_id']   = $product_info['product_id'];
+            $cat_info['goods_sn']     = $product_info['product_sn'];
+            $cat_info['goods_name']   = $product_info['product_name'] ? $product_info['product_name'] : $supplier_goods_info['goods_name'];
+            $cat_info['goods_price']  = $product_info['product_shop_price'];
+            $cat_info['add_time']     = RC_Time::gmtime();
+
+            RC_DB::table('supplier_cart')->insertGetId($cat_info);
+        }
+        $url = RC_Uri::url('goods/merchant/edit_link_product', array('goods_id' => $mer_goods_id, 'action_type' => $action_type));
+        return $this->showmessage(__('加入采购车成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url));
+
 	}
 
 	private function generate_url($url_list) {
