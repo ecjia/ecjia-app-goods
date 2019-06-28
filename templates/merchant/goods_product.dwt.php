@@ -66,7 +66,7 @@
                               <td>{$product.product_number}</td>
                               <td style="vertical-align: inherit;">
                                 <a class="data-pjax" href='{url path="goods/merchant/product_edit" args="id={$product.product_id}&goods_id={$goods_id}"}' >{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
-								<a class="add_cart cursor_pointer" data-href='{url path="goods/merchant/product_add_cart"}' action-type="{$action_type}" product-id="{$product.product_id}" goods-id="{$goods_id}">{t domain="goods"}加入采购车{/t}</a> 
+								<a class="add_cart cursor_pointer" data-href='{$supplier_product_addcart}' action-type="{$action_type}" product-id="{$product.product_id}" goods-id="{$goods_id}">{t domain="goods"}加入采购车{/t}</a>
                               </td>
                           </tr>
                          <!-- {foreachelse}-->

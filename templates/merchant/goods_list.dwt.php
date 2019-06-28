@@ -209,11 +209,11 @@
 											<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
 											<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
 											
-											{if $goods.is_supplier}
-											<a class="add_cart cursor_pointer" data-href='{url path="goods/merchant/goods_add_cart"}' goods-id="{$goods.goods_id}">{t domain="goods"}加入采购车{/t}</a>&nbsp;|&nbsp;    
+											{if $goods.is_supplier && !$goods.has_product}
+											<a class="add_cart cursor_pointer" data-href='{url path="supplier/merchant/goods_add_cart"}' goods-id="{$goods.goods_id}">{t domain="goods"}加入采购车{/t}</a>&nbsp;|&nbsp;
 											{/if}
 											
-											{if $goods.is_supplier}
+											{if $goods.is_supplier && $goods.has_product}
 											<a class="data-pjax" href='{url path="goods/merchant/edit_link_product" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}采购货品{/t}</a>&nbsp;|&nbsp;
 											{/if}
 											
