@@ -1469,7 +1469,7 @@
 			$('[data-toggle="sort-cancel"]').on('click', function(e) {
 				e.preventDefault();
 				var $this = $(this),
-					value = $(this).parent().find('.edit-inline').val();
+					value = $(this).parent().find('.img_desc_data').val();
 
 				$this.parent().find('.edit_title').html(value);
 				$this.parent('p').find('.ajaxremove , .move-mod-head, [data-toggle="edit"]').css('display', 'block');
