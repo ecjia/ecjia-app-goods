@@ -105,7 +105,7 @@ class admin_merchant_goods_linkgoods_add_module extends api_admin implements api
     			}
     		}
     		if (!empty($data)) {
-    			RC_Model::model('goods/link_goods_model')->batch_insert($data);
+    			RC_DB::table('link_goods')->insert($data);
     		}
     		
     		/* 释放app缓存*/
