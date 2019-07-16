@@ -369,3 +369,11 @@
 .promote-status.finished {
 	background-color: #04AA04;
 }
+
+
+.goods-grade{
+    color: #737373;
+    font-weight: normal;
+    font-size: 12px;
+    margin-left: 54px;
+}

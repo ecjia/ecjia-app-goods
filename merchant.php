@@ -931,6 +931,9 @@ class merchant extends ecjia_merchant {
 		//$this->assign('unit_list', goods::unit_list());
 		$this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
 		$this->assign('user_rank_list', get_rank_list());
+		
+		$get_grade_list = RC_DB::table('affiliate_grade')->orderBy('grade_id', 'desc')->get();
+		$this->assign('get_grade_list', $get_grade_list);
 	
 		$this->assign('cfg', ecjia::config());
 		$this->assign('goods_attr_html', build_merchant_attr_html($goods['goods_type'], $goods['goods_id']));
