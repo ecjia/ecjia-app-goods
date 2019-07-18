@@ -932,7 +932,7 @@ class merchant extends ecjia_merchant {
 		$this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
 		$this->assign('user_rank_list', get_rank_list());
 		
-		$get_grade_list = RC_DB::table('affiliate_grade')->orderBy('grade_id', 'desc')->get();
+		$get_grade_list = RC_DB::table('affiliate_grade')->orderBy('grade_id', 'asc')->get();
 		$this->assign('get_grade_list', $get_grade_list);
 	
 		$this->assign('cfg', ecjia::config());
@@ -1122,6 +1122,7 @@ class merchant extends ecjia_merchant {
 
 		/* 记录日志 */
 		ecjia_merchant::admin_log($goods_name, 'add', 'goods');
+		
 		/* 处理会员价格 */
 		if (isset($_POST['user_rank']) && isset($_POST['user_price'])) {
 			handle_member_price($goods_id, $_POST['user_rank'], $_POST['user_price']);
@@ -1131,7 +1132,7 @@ class merchant extends ecjia_merchant {
 			$orm_member_price_db = RC_Model::model('goods/orm_member_price_model');
 			$orm_member_price_db->delete_cache_item($cache_user_rank_prices_id);
 		}
-
+		
 		/* 处理优惠价格 */
 		if (isset($_POST['volume_number']) && isset($_POST['volume_price'])) {
 			$temp_num = array_count_values($_POST['volume_number']);
@@ -1183,7 +1184,49 @@ class merchant extends ecjia_merchant {
 			}
 		}
 		
-
+		/* 处理分销权益等级佣金*/
+		$grade_list = $_POST['grade_id'];
+		$price_list = $_POST['grade_price'];
+		if (isset($grade_list) && isset($price_list)) {
+			if (!empty($grade_list)) {
+				foreach ($grade_list as $key => $grade) {
+					$price = $price_list[$key];
+					$count = RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->count();
+					if ($count) {
+						if ($price < 0) {
+							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->delete();
+						} else {
+							$data = array(
+									'grade_price' => $price
+							);
+							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->update($data);
+						}
+					} else {
+						if ($price == -1) {
+							$sql = '';
+						} else {
+							$data = array(
+									'goods_id' 	  => $goods_id,
+									'grade_id' 	  => $grade,
+									'grade_price' => $price
+							);
+							RC_DB::table('affiliate_grade_price')->insert($data);
+						}
+					}
+				}
+			}
+		}
+		
+		/* 处理门店佣金*/
+		if(!empty($_POST['store_brokerage'])) {
+			$data = array(
+				'store_id'	 => intval($_SESSION['store_id']),
+				'goods_id' 	 => $goods_id,
+				'brokerage'  => $_POST['store_brokerage'],
+			);
+			RC_DB::table('affiliate_goods_brokerage')->insert($data);
+		}
+		
 		/* 提示页面 */
 		$link = array();
 		if ($code == 'virtual_card') {
@@ -1341,6 +1384,8 @@ class merchant extends ecjia_merchant {
 			} 
 		}
 		
+		$goods['store_brokerage'] = RC_DB::table('affiliate_goods_brokerage')->where('goods_id', $goods['goods_id'])->where('store_id', intval($_SESSION['store_id']))->pluck('brokerage');
+		
 		//设置选中状态,并分配标签导航
 		$this->assign('action', 			ROUTE_A);
 		$this->assign('tags', 				$this->tags);
@@ -1355,10 +1400,23 @@ class merchant extends ecjia_merchant {
 		$this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
 		$this->assign('user_rank_list', 	get_rank_list());
 		
+		$get_grade_list = RC_DB::table('affiliate_grade')->orderBy('grade_id', 'asc')->get();
+		$this->assign('get_grade_list', $get_grade_list);
+		
 		$this->assign('cfg', 				ecjia::config());
 		
 		$this->assign('form_act', 			RC_Uri::url('goods/merchant/edit'));
 		$this->assign('member_price_list', 	get_member_price_list($_REQUEST['goods_id']));
+		
+		$data = RC_DB::table('affiliate_grade_price')->select('grade_id', 'grade_price')->where('goods_id', $goods['goods_id'])->get();
+		$price_list = array();
+		if (!empty($data)) {
+			foreach ($data as $row) {
+				$price_list[$row['grade_id']] = $row['grade_price'];
+			}
+		}
+		$this->assign('affiliate_grade_price_list', $price_list);
+		
 		$this->assign('form_tab', 			'edit');
 		$this->assign('gd', 				RC_ENV::gd_version());
 		$this->assign('thumb_width', 		ecjia::config('thumb_width'));
@@ -1588,6 +1646,59 @@ class merchant extends ecjia_merchant {
 				if ($disk->exists(RC_Upload::upload_path($goods_qrcode))) {
 					$disk->delete(RC_Upload::upload_path().$goods_qrcode);
 				}
+			}
+		}
+		
+
+		/* 处理分销权益等级佣金*/
+		$grade_list = $_POST['grade_id'];
+		$price_list = $_POST['grade_price'];
+		if (isset($grade_list) && isset($price_list)) {
+			if (!empty($grade_list)) {
+				foreach ($grade_list as $key => $grade) {
+					$price = $price_list[$key];
+					$count = RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->count();
+		
+					if ($count) {
+						if ($price < 0) {
+							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->delete();
+						} else {
+							$data = array(
+									'grade_price' => $price
+							);
+							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->update($data);
+						}
+					} else {
+						if ($price == -1) {
+							$sql = '';
+						} else {
+							$data = array(
+									'goods_id' 		=> $goods_id,
+									'grade_id' 		=> $grade,
+									'grade_price' 	=> $price
+							);
+							RC_DB::table('affiliate_grade_price')->insert($data);
+						}
+					}
+				}
+			}
+		}
+		
+		/* 处理门店佣金*/
+		if(isset($_POST['store_brokerage'])) {
+			$count = RC_DB::table('affiliate_goods_brokerage')->where('goods_id', $goods_id)->where('store_id', intval($_SESSION['store_id']))->count();
+			if($count > 0) {
+				$data = array(
+					'brokerage'  => $_POST['store_brokerage'],
+				);
+				RC_DB::table('affiliate_goods_brokerage')->where('goods_id', $goods_id)->where('store_id', intval($_SESSION['store_id']))->update($data);
+			} else {
+				$data = array(
+					'store_id'	 => intval($_SESSION['store_id']),
+					'goods_id' 	 => $goods_id,
+					'brokerage'  => $_POST['store_brokerage'],
+				);
+				RC_DB::table('affiliate_goods_brokerage')->insert($data);
 			}
 		}
 		

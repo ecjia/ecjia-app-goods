@@ -458,9 +458,9 @@
 											<div class="m_l30">
 												<span class="f_l w80 text-left l_h30">{$list.grade_name}</span>
 												<div class="col-lg-6">
-												<input type="text" id="rank_{$user_rank.rank_id}" class="form-control " name="user_grade_price[]" value="" size="8" />
+												<input type="text" id="rank_{$list.grade_id}" class="form-control " name="grade_price[]" value="{$affiliate_grade_price_list[$list.grade_id]|default:-1}"/>
 												</div>
-												<input type="hidden" name="user_grade[]" value="{$list.grade_id}" />
+												<input type="hidden" name="grade_id[]" value="{$list.grade_id}" />
 												<span class="m_l5 l_h30" ></span>&nbsp;
 											</div>
 											<br>
@@ -471,7 +471,7 @@
 											<div class="m_l30">
 												<span class="f_l w80 text-left l_h30">门店佣金</span>
 												<div class="col-lg-6">
-													<input type="text"  class="form-control" name="store_price[]" value=""  />
+													<input type="text" class="form-control" name="store_brokerage" value="{$goods.store_brokerage}" />
 												</div>
 											</div>
 	                                    </div>
