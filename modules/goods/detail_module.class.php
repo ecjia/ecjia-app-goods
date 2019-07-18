@@ -71,7 +71,6 @@ class goods_detail_module extends api_front implements api_interface {
         $object_id = $this->requestData('goods_activity_id', 0);
         
         //判断商品是否是团购商品
-        
         list($is_groupbuy, $object_id) = $this->_is_groupbuy($object_id, $goods_id);
         
         /* 获得商品的信息 */
@@ -141,11 +140,20 @@ class goods_detail_module extends api_front implements api_interface {
         $data = ecjia_api::transformerData('GOODS', $data);
         /*获得商品的规格和属性*/
         $GoodsBasicInfo = new \Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id);
+        $goods_info = $GoodsBasicInfo->goodsInfo();
         list($properties, $specification) = $GoodsBasicInfo->getGoodsSpecPra();
         
         $data['properties']      = $properties;
         $data['specification']   = $specification;
         
+        //判断当前商品是否在促销
+        $time 	= RC_Time::gmtime();
+        $data['is_promote'] = 0;
+        if ($goods_info->promote_start_date <= $time && $goods_info->promote_end_date >= $time) {
+        	if ($goods_info->promote_price > 0 && $goods_info->is_promote == '1' && $goods_info->promote_limited > 0) {
+        		$data['is_promote'] = 1;
+        	}
+        }
         $data['product_id'] = 0;
         //商品货品信息
         if (!empty($data['specification'])) {
