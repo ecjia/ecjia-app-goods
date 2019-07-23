@@ -140,13 +140,13 @@ class goods_detail_module extends api_front implements api_interface {
         $data = ecjia_api::transformerData('GOODS', $data);
         /*获得商品的规格和属性*/
         $GoodsBasicInfo = new \Ecjia\App\Goods\Goods\GoodsBasicInfo($goods_id);
-        $goods_info = $GoodsBasicInfo->goodsInfo();
         list($properties, $specification) = $GoodsBasicInfo->getGoodsSpecPra();
         
         $data['properties']      = $properties;
         $data['specification']   = $specification;
         
         //判断当前商品是否在促销
+        $goods_info = $GoodsBasicInfo->goodsInfo();
         $time 	= RC_Time::gmtime();
         $data['is_promote'] = 0;
         if ($goods_info->promote_start_date <= $time && $goods_info->promote_end_date >= $time) {
@@ -624,6 +624,7 @@ class goods_detail_module extends api_front implements api_interface {
 	private function _formate_data($product_id, $data)
 	{
 		$product_specification = $data['product_specification'];
+		
 		if (!empty($product_specification)) {
 			foreach ($product_specification as $val) {
 				if ($product_id == $val['product_id']) {
@@ -633,7 +634,6 @@ class goods_detail_module extends api_front implements api_interface {
 				unset($val['product_name']);
 				$arr[] = $val;
 			}
-			
 			if ($product_info['promote_price'] > 0) {
 				$activity_type =  'PROMOTE_GOODS';
 			} else {
@@ -653,7 +653,7 @@ class goods_detail_module extends api_front implements api_interface {
 			$data['market_price']   			= $product_info['formatted_product_market_price']  ?: $data['market_price'];
 			$data['unformatted_market_price']   = $product_info['product_market_price']  ?: $data['unformatted_market_price'];
 			$data['product_goods_attr']			= $product_info['product_goods_attr'] ?: $data['product_goods_attr'];
-			$data['img']   						= $product_info['img'] ?: $data['img'];
+			$data['img']   						= !empty($product_info['img']['thumb']) ? $product_info['img']: $data['img'];
 			$data['product_specification']  	= $arr;
 			$data['rec_type'] 					= $activity_type;
 			$data['activity_type'] 				= $activity_type;
