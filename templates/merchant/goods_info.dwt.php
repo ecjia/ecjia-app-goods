@@ -458,7 +458,7 @@
 											<div class="m_l30">
 												<span class="f_l w80 text-left l_h30">{$list.grade_name}</span>
 												<div class="col-lg-6">
-												<input type="text" id="rank_{$list.grade_id}" class="form-control " name="grade_price[]" value="{$affiliate_grade_price_list[$list.grade_id]|default:-1}"/>
+												<input type="text" id="rank_{$list.grade_id}" class="form-control " name="grade_price[]" value="{$affiliate_grade_price_list[$list.grade_id]}"/>
 												</div>
 												<input type="hidden" name="grade_id[]" value="{$list.grade_id}" />
 												<span class="m_l5 l_h30" ></span>&nbsp;
