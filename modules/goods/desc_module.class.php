@@ -77,7 +77,8 @@ class goods_desc_module extends api_front implements api_interface {
         			$data['goods_name'] = $product_info['product_name'];
         		}
         		if (!empty($product_info['product_desc'])) {
-        			$data['goods_desc'] = $product_info['product_desc'];
+                    $product_desc = str_replace('\\"', '"', $product_info['product_desc']);
+        			$data['goods_desc'] = $product_desc;
         		}
         	}
         	
