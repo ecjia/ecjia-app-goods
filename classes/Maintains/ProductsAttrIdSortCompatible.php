@@ -46,7 +46,7 @@
 //
 namespace Ecjia\App\Goods\Maintains;
 
-use Ecjia\App\Goods\Models\GoodsModel;
+use Ecjia\App\Goods\Models\ProductsModel;
 use Ecjia\App\Goodslib\Models\GoodslibProductsModel;
 use Ecjia\App\Maintain\AbstractCommand;
 
@@ -96,7 +96,7 @@ class ProductsAttrIdSortCompatible extends AbstractCommand
     private function processProductsTable()
     {
 
-        GoodsModel::where('goods_attr', 'like', '%|%')->chunk(50, function ($items) {
+        ProductsModel::where('goods_attr', 'like', '%|%')->chunk(50, function ($items) {
 
             $items->map(function ($model) {
 
