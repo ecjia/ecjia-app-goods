@@ -34,6 +34,7 @@ class GoodsAdminFormatted
 
     public function toArray()
     {
+
         return [
             //store info
             'store_id' 					=> $this->model->store_id,
@@ -67,7 +68,6 @@ class GoodsAdminFormatted
             'review_status'             => $this->model->review_status,
             'add_time'             		=> \RC_Time::local_date(ecjia::config('time_format'), $this->model->add_time),
             'has_product'               => count($this->model->products_collection) > 1 ? 1 : 0,
-            'is_supplier'               => $this->isSupplier(),
         ];
     }
 
@@ -116,19 +116,6 @@ class GoodsAdminFormatted
     protected function filterGoodsName($goods_name)
     {
         return $this->model->product_name ?: $goods_name;
-    }
-    
-
-    /**
-     * 商品是否为供货商品
-     */
-    protected function isSupplier()
-    {
-    	$is_supplier = 0;
-    	if ($this->model->goodslib_id > 0 && $this->model->supplier_goods_model) {
-    		$is_supplier = 1;
-    	}
-    	return $is_supplier;
     }
 
 }

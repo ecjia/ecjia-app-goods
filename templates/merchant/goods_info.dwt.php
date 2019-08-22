@@ -440,44 +440,6 @@
 			              			</div>
 				        		</div>
 			        		</div>
-			        		
-			        		<div class="panel-group">
-					            <div class="panel panel-info">
-					                <div class="panel-heading">
-					                    <a data-toggle="collapse" data-parent="#accordionTwo" href="#collapseTen" class="collapsed accordion-toggle">
-					                        <span class="glyphicon"></span>
-					                        <h4 class="panel-title">{t domain="goods"}推广佣金{/t}</h4>
-					                    </a>
-					                </div>
-					                <div id="collapseTen" class="panel-collapse collapse">
-					                	
-				              			<div class="panel-body mt_15">
-				              				{if $get_grade_list}
-	                                        <label>{t domain="goods"}分销权益：{/t}<small class="goods-grade">设置分销等级会员的分佣金额</small></label>
-	                                        <!-- {foreach from=$get_grade_list item=list} -->
-											<div class="m_l30">
-												<span class="f_l w80 text-left l_h30">{$list.grade_name}</span>
-												<div class="col-lg-6">
-												<input type="text" id="rank_{$list.grade_id}" class="form-control " name="grade_price[]" value="{$affiliate_grade_price_list[$list.grade_id]}"/>
-												</div>
-												<input type="hidden" name="grade_id[]" value="{$list.grade_id}" />
-												<span class="m_l5 l_h30" ></span>&nbsp;
-											</div>
-											<br>
-											<!-- {/foreach} -->
-											{/if}
-											
-											<label>{t domain="goods"}门店佣金：{/t}<small class="goods-grade">设置门店的分佣金额</small></label>
-											<div class="m_l30">
-												<span class="f_l w80 text-left l_h30">门店佣金</span>
-												<div class="col-lg-6">
-													<input type="text" class="form-control" name="store_brokerage" value="{$goods.store_brokerage}" />
-												</div>
-											</div>
-	                                    </div>
-			              			</div>
-				        		</div>
-			        		</div>
 						</div>
 					</form>
 				</div>

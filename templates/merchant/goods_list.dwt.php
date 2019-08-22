@@ -192,7 +192,6 @@
 									</a>
 								</td>
 								<td class="hide-edit-area {if $goods.is_promote}ecjiafc-red{/if}">
-								  	{if $goods.is_supplier}<span class="label label-primary label-mini">{t domain='goods'}供{/t}</span>{/if}
                                     {if $goods.has_product}<span class="label-orange">{t domain='goods'}多货品{/t}</span>{/if}
                                     <span class="cursor_pointer ecjiaf-pre ecjiaf-wsn" data-text="textarea" data-trigger="editable" data-url="{RC_Uri::url('goods/merchant/edit_goods_name')}" data-name="goods_edit_name" data-pk="{$goods.goods_id}" data-title="{t domain='goods'}请输入商品名称{/t}">{$goods.goods_name|escape:html}</span>
                                     {if $goods.is_promote && $action eq 'finish'}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
@@ -208,15 +207,6 @@
 											<a class="data-pjax" href='{url path="goods/mh_gallery/init" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}商品相册{/t}</a>&nbsp;|&nbsp;
 											<a class="data-pjax" href='{url path="goods/merchant/edit_link_goods" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联商品{/t}</a>&nbsp;|&nbsp;
 											<a class="data-pjax" href='{url path="goods/merchant/edit_link_article" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}关联文章{/t}</a>&nbsp;|&nbsp;
-											
-											{if $goods.is_supplier && !$goods.has_product}
-											<a class="add_cart cursor_pointer" data-href='{url path="supplier/merchant/goods_add_cart"}' goods-id="{$goods.goods_id}">{t domain="goods"}加入采购车{/t}</a>&nbsp;|&nbsp;
-											{/if}
-											
-											{if $goods.is_supplier && $goods.has_product}
-											<a class="data-pjax" href='{url path="goods/merchant/edit_link_product" args="goods_id={$goods.goods_id}&action_type={$action}"}'>{t domain='goods'}采购货品{/t}</a>&nbsp;|&nbsp;
-											{/if}
-											
 											<a target="_blank" href='{url path="goods/merchant/preview" args="id={$goods.goods_id}&preview_type={$preview_type}"}'>{t domain='goods'}预览{/t}</a>&nbsp;|&nbsp;
 										{/if}
 										
