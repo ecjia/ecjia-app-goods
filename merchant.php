@@ -154,8 +154,7 @@ class merchant extends ecjia_merchant {
 		
 		$this->tags = get_merchant_goods_info_nav($goods_id, $action_type, $extension_code);
 		$this->tags[ROUTE_A]['active'] = 1;
-// 		_dump($this->tags);
-// 		_dump(ROUTE_A,1);
+
 		ecjia_merchant_screen::get_current_screen()->set_parentage('goods', 'goods/merchant.php');
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品管理', 'goods'), RC_Uri::url('goods/merchant/init')));
 	}
@@ -931,9 +930,6 @@ class merchant extends ecjia_merchant {
 		//$this->assign('unit_list', goods::unit_list());
 		$this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
 		$this->assign('user_rank_list', get_rank_list());
-		
-		$get_grade_list = RC_DB::table('affiliate_grade')->orderBy('grade_id', 'asc')->get();
-		$this->assign('get_grade_list', $get_grade_list);
 	
 		$this->assign('cfg', ecjia::config());
 		$this->assign('goods_attr_html', build_merchant_attr_html($goods['goods_type'], $goods['goods_id']));
@@ -1122,7 +1118,6 @@ class merchant extends ecjia_merchant {
 
 		/* 记录日志 */
 		ecjia_merchant::admin_log($goods_name, 'add', 'goods');
-		
 		/* 处理会员价格 */
 		if (isset($_POST['user_rank']) && isset($_POST['user_price'])) {
 			handle_member_price($goods_id, $_POST['user_rank'], $_POST['user_price']);
@@ -1132,7 +1127,7 @@ class merchant extends ecjia_merchant {
 			$orm_member_price_db = RC_Model::model('goods/orm_member_price_model');
 			$orm_member_price_db->delete_cache_item($cache_user_rank_prices_id);
 		}
-		
+
 		/* 处理优惠价格 */
 		if (isset($_POST['volume_number']) && isset($_POST['volume_price'])) {
 			$temp_num = array_count_values($_POST['volume_number']);
@@ -1184,49 +1179,7 @@ class merchant extends ecjia_merchant {
 			}
 		}
 		
-		/* 处理分销权益等级佣金*/
-		$grade_list = $_POST['grade_id'];
-		$price_list = $_POST['grade_price'];
-		if (isset($grade_list) && isset($price_list)) {
-			if (!empty($grade_list)) {
-				foreach ($grade_list as $key => $grade) {
-					$price = $price_list[$key];
-					$count = RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->count();
-					if ($count) {
-						if ($price < 0) {
-							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->delete();
-						} else {
-							$data = array(
-									'grade_price' => $price
-							);
-							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->update($data);
-						}
-					} else {
-						if ($price == -1) {
-							$sql = '';
-						} else {
-							$data = array(
-									'goods_id' 	  => $goods_id,
-									'grade_id' 	  => $grade,
-									'grade_price' => $price
-							);
-							RC_DB::table('affiliate_grade_price')->insert($data);
-						}
-					}
-				}
-			}
-		}
-		
-		/* 处理门店佣金*/
-		if(!empty($_POST['store_brokerage'])) {
-			$data = array(
-				'store_id'	 => intval($_SESSION['store_id']),
-				'goods_id' 	 => $goods_id,
-				'brokerage'  => $_POST['store_brokerage'],
-			);
-			RC_DB::table('affiliate_goods_brokerage')->insert($data);
-		}
-		
+
 		/* 提示页面 */
 		$link = array();
 		if ($code == 'virtual_card') {
@@ -1384,8 +1337,6 @@ class merchant extends ecjia_merchant {
 			} 
 		}
 		
-		$goods['store_brokerage'] = RC_DB::table('affiliate_goods_brokerage')->where('goods_id', $goods['goods_id'])->where('store_id', intval($_SESSION['store_id']))->pluck('brokerage');
-		
 		//设置选中状态,并分配标签导航
 		$this->assign('action', 			ROUTE_A);
 		$this->assign('tags', 				$this->tags);
@@ -1400,23 +1351,10 @@ class merchant extends ecjia_merchant {
 		$this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
 		$this->assign('user_rank_list', 	get_rank_list());
 		
-		$get_grade_list = RC_DB::table('affiliate_grade')->orderBy('grade_id', 'asc')->get();
-		$this->assign('get_grade_list', $get_grade_list);
-		
 		$this->assign('cfg', 				ecjia::config());
 		
 		$this->assign('form_act', 			RC_Uri::url('goods/merchant/edit'));
 		$this->assign('member_price_list', 	get_member_price_list($_REQUEST['goods_id']));
-		
-		$data = RC_DB::table('affiliate_grade_price')->select('grade_id', 'grade_price')->where('goods_id', $goods['goods_id'])->get();
-		$price_list = array();
-		if (!empty($data)) {
-			foreach ($data as $row) {
-				$price_list[$row['grade_id']] = $row['grade_price'];
-			}
-		}
-		$this->assign('affiliate_grade_price_list', $price_list);
-		
 		$this->assign('form_tab', 			'edit');
 		$this->assign('gd', 				RC_ENV::gd_version());
 		$this->assign('thumb_width', 		ecjia::config('thumb_width'));
@@ -1646,59 +1584,6 @@ class merchant extends ecjia_merchant {
 				if ($disk->exists(RC_Upload::upload_path($goods_qrcode))) {
 					$disk->delete(RC_Upload::upload_path().$goods_qrcode);
 				}
-			}
-		}
-		
-
-		/* 处理分销权益等级佣金*/
-		$grade_list = $_POST['grade_id'];
-		$price_list = $_POST['grade_price'];
-		if (isset($grade_list) && isset($price_list)) {
-			if (!empty($grade_list)) {
-				foreach ($grade_list as $key => $grade) {
-					$price = $price_list[$key];
-					$count = RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->count();
-		
-					if ($count) {
-						if ($price < 0) {
-							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->delete();
-						} else {
-							$data = array(
-									'grade_price' => $price
-							);
-							RC_DB::table('affiliate_grade_price')->where('goods_id', $goods_id)->where('grade_id', $grade)->update($data);
-						}
-					} else {
-						if ($price == -1) {
-							$sql = '';
-						} else {
-							$data = array(
-									'goods_id' 		=> $goods_id,
-									'grade_id' 		=> $grade,
-									'grade_price' 	=> $price
-							);
-							RC_DB::table('affiliate_grade_price')->insert($data);
-						}
-					}
-				}
-			}
-		}
-		
-		/* 处理门店佣金*/
-		if(isset($_POST['store_brokerage'])) {
-			$count = RC_DB::table('affiliate_goods_brokerage')->where('goods_id', $goods_id)->where('store_id', intval($_SESSION['store_id']))->count();
-			if($count > 0) {
-				$data = array(
-					'brokerage'  => $_POST['store_brokerage'],
-				);
-				RC_DB::table('affiliate_goods_brokerage')->where('goods_id', $goods_id)->where('store_id', intval($_SESSION['store_id']))->update($data);
-			} else {
-				$data = array(
-					'store_id'	 => intval($_SESSION['store_id']),
-					'goods_id' 	 => $goods_id,
-					'brokerage'  => $_POST['store_brokerage'],
-				);
-				RC_DB::table('affiliate_goods_brokerage')->insert($data);
 			}
 		}
 		
@@ -3075,7 +2960,7 @@ class merchant extends ecjia_merchant {
 		}
 		return $this->showmessage($message, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'goods_id' => $goods_id));
 	}
-
+	
 	/**
 	 * 商品参数页面
 	 */
@@ -4202,146 +4087,6 @@ class merchant extends ecjia_merchant {
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
 	}
 	
-	/**
-	 * 采购货品
-	 */
-	public function edit_link_product() {
-		$this->admin_priv('goods_update');
-	
-		$this->assign('tags', $this->tags);
-	
-		$action_type = trim($_GET['action_type']);
-		$href_url = Ecjia\App\Goods\MerchantGoodsAttr::goods_back_goods_url($action_type);
-		$this->assign('action_type', $action_type);
-		
-		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品列表', 'goods'), $href_url));
-		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品采购', 'goods')));
-	
-		$this->assign('ur_here', __('货品采购', 'goods'));
-		$this->assign('action_link', array('href' => $href_url, 'text' => __('商品列表', 'goods')));
-	
-		$goods_id = intval($_GET['goods_id']);
-		$this->assign('goods_id', $goods_id);
-	
-		$product = Ecjia\App\Goods\MerchantGoodsAttr::product_list($goods_id, '');
-		$this->assign('product_list', $product['product']);
-
-        $supplier_product_addcart = RC_Uri::url('supplier/merchant/product_add_cart');
-        $this->assign('supplier_product_addcart', $supplier_product_addcart);
-	
-		return $this->display('goods_product.dwt');
-	}
-	
-	
-	/**
-	 * 商品加入采购车
-	 */
-	public function goods_add_cart() {
-		$mer_goods_id   = !empty($_POST['goods_id'])? intval($_POST['goods_id']): 0;
-		$goodslib_id = RC_DB::TABLE('goods')->where('goods_id', $mer_goods_id)->pluck('goodslib_id');
-		$supplier_goods_id = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->pluck('goods_id');
-		
-		$goods_info = RC_DB::TABLE('supplier_goods')->where('goods_id', $supplier_goods_id)->first();
-		
-		if(!empty($goods_info)) {
-			$row = RC_DB::table('supplier_cart')
-			->select('rec_id', 'goods_number')
-			->where('store_id', $_SESSION['store_id'])
-			->where('goods_id', $supplier_goods_id)
-			->first();
-			
-			$num = 1;
-			if($row) {
-				$num += $row['goods_number'];
-				$data =  array(
-					'goods_number' => $num,
-					'goods_price'  => '',
-					'is_checked'   => 1,
-				);
-				
-				RC_DB::table('supplier_cart')
-				->where('store_id', $_SESSION['store_id'])
-				->where('rec_id', $row['rec_id'])
-				->update($data);
-			} else {
-				$cat_info['store_id']     = intval($_SESSION['store_id']);
-				$cat_info['staff_id']     = intval($_SESSION['staff_id']);
-				$cat_info['goods_id']     = $supplier_goods_id;
-				$cat_info['product_id']   = 0;
-				$cat_info['goods_sn']     = $goods_info['goods_sn'];
-				$cat_info['goods_name']   = $goods_info['goods_name'];
-				$cat_info['market_price'] = $goods_info['market_price'];
-				$cat_info['goods_price']  = $goods_info['shop_price'];
-				$cat_info['add_time']     = RC_Time::gmtime();
-				
-				RC_DB::table('supplier_cart')->insertGetId($cat_info);
-			}
-
-			$url = RC_Uri::url('goods/merchant/init');
-			return $this->showmessage(__('加入采购车成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url));
-		} else {
-			return $this->showmessage(__('要加入采购车的商品不存在', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-		}
-	}
-	
-	/**
-	 * 货品加入采购车
-	 */
-	public function product_add_cart() {
-		$action_type    = trim($_POST['action_type']);
-		
-		$mer_goods_id   = !empty($_POST['goods_id'])? intval($_POST['goods_id'])	    : 0;
-        $mer_product_id   = !empty($_POST['product_id'])? intval($_POST['product_id']): 0;
-
-		$goodslib_id = RC_DB::TABLE('goods')->where('goods_id', $mer_goods_id)->pluck('goodslib_id');
-		$supplier_goods_info = RC_DB::TABLE('supplier_goods')->where('goodslib_id', $goodslib_id)->first();
-        $supplier_goods_id = $supplier_goods_info['goods_id'];
-
-		$goodslib_product_id = RC_DB::TABLE('products')->where('product_id', $mer_product_id)->pluck('goodslib_product_id');
-		$product_info = RC_DB::TABLE('supplier_goods_products')->where('goodslib_product_id', $goodslib_product_id)->first();
-		
-		if(empty($product_info)) {
-            return $this->showmessage(__('要加入采购车的商品不存在', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-        }
-
-			
-        $row = RC_DB::table('supplier_cart')
-        ->select('rec_id', 'goods_number')
-        ->where('store_id', $_SESSION['store_id'])
-        ->where('product_id', $product_info['product_id'])
-        ->first();
-
-        $num = 1;
-        if($row) {
-            $num += $row['goods_number'];
-            $data =  array(
-                'goods_number' => $num,
-                'goods_price'  => '',
-                'is_checked'   => 1,
-            );
-
-            RC_DB::table('supplier_cart')
-            ->where('store_id', $_SESSION['store_id'])
-            ->where('rec_id', $row['rec_id'])
-            ->update($data);
-
-        } else {
-            $cat_info['store_id']     = intval($_SESSION['store_id']);
-            $cat_info['staff_id']     = intval($_SESSION['staff_id']);
-            $cat_info['goods_id']     = $supplier_goods_id;
-            $cat_info['product_id']   = $product_info['product_id'];
-            $cat_info['goods_sn']     = $product_info['product_sn'];
-            $cat_info['goods_name']   = $product_info['product_name'] ? $product_info['product_name'] : $supplier_goods_info['goods_name'];
-            $cat_info['goods_price']  = $product_info['product_shop_price'];
-            $cat_info['add_time']     = RC_Time::gmtime();
-
-            RC_DB::table('supplier_cart')->insertGetId($cat_info);
-        }
-        $url = RC_Uri::url('goods/merchant/edit_link_product', array('goods_id' => $mer_goods_id, 'action_type' => $action_type));
-        return $this->showmessage(__('加入采购车成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url));
-
-	}
-
 	private function generate_url($url_list) {
 		if (empty($url_list)) {
 			return false;
