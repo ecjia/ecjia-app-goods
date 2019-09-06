@@ -31,7 +31,9 @@ class GoodsAndProductPromotionType implements FilterInterface
     {
     	if ($value) {
     		if ($value == 'today') {
-    			$time_start = \RC_Time::gmtime();
+    			$time = \RC_Time::gmtime();
+    			$today = \RC_Time::local_date("Y-m-d",$time);
+    			$time_start = \RC_Time::local_strtotime($today);
     		} elseif ($value == 'tomorrow') {
     			$date = \RC_Time::local_date("Y-m-d",\RC_Time::local_strtotime("+1 day"));
     			$time_start = \RC_Time::local_strtotime($date);
@@ -41,8 +43,6 @@ class GoodsAndProductPromotionType implements FilterInterface
     		}
     		
     		$time_end   = $time_start + 86399;
-    		
-    		
     		
     		if ($value == 'today') {
     			$subQuery = $builder
