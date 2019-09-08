@@ -30,10 +30,8 @@ class GoodsAndProductPromotionType implements FilterInterface
     public static function apply(Builder $builder, $value)
     {
     	if ($value) {
-    		if ($value == 'today') {
+    		if ($value == 'today') {//实际为正在进行中的促销
     			$time = \RC_Time::gmtime();
-    			$today = \RC_Time::local_date("Y-m-d",$time);
-    			$time_start = \RC_Time::local_strtotime($today);
     		} elseif ($value == 'tomorrow') {
     			$date = \RC_Time::local_date("Y-m-d",\RC_Time::local_strtotime("+1 day"));
     			$time_start = \RC_Time::local_strtotime($date);
@@ -46,8 +44,8 @@ class GoodsAndProductPromotionType implements FilterInterface
     		
     		if ($value == 'today') {
     			$subQuery = $builder
-    			->where('goods.promote_start_date', '<=', $time_start)
-    			->where('goods.promote_end_date', '>=', $time_end)
+    			->where('goods.promote_start_date', '<=', $time)
+    			->where('goods.promote_end_date', '>=', $time)
     			->where(function ($query) {
     				$query->where(function ($query) {
     						$query->where('products.is_promote', 1)
