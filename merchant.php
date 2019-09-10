@@ -1043,6 +1043,7 @@ class merchant extends ecjia_merchant {
 
 		$brand_id 			= empty($_POST['brand_id']) 		? 0 	: intval($_POST['brand_id']);
 		$merchant_cat_id 	= empty($_POST['merchant_cat_id']) 	? '' 	: intval($_POST['merchant_cat_id']);
+        $integral           = empty($_POST['integral'])         ? 0     : floatval($_POST['integral']);
 
 		if (empty($cat_id)) {
 			return $this->showmessage(__('所属平台商品分类不能为空', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -1094,7 +1095,7 @@ class merchant extends ecjia_merchant {
 			'goods_barcode'         => $goods_barcode,
 			'goods_number'          => $goods_number,
 			'warn_number'           => $warn_number,
-			'integral'              => $_POST['integral'],
+			'integral'              => $integral,
 			'store_best'            => $is_best,
 			'store_new'             => $is_new,
 			'store_hot'             => $is_hot,
@@ -1451,8 +1452,9 @@ class merchant extends ecjia_merchant {
 		$brand_id 			= empty($_POST['brand_id']) 		? 0 	: intval($_POST['brand_id']);
 		$merchant_cat_id 	= empty($_POST['merchant_cat_id']) 	? '' 	: intval($_POST['merchant_cat_id']);
 		$store_category 	= empty($_POST['store_category']) 	? 0 	: intval($_POST['store_category']);
-		
-		if ($store_category > 0){
+        $integral           = empty($_POST['integral'])         ? 0     : floatval($_POST['integral']);
+
+        if ($store_category > 0){
 			$catgory_id = $store_category;
 		}
 		
@@ -1496,7 +1498,7 @@ class merchant extends ecjia_merchant {
 			'goods_barcode'		  		=> $goods_barcode,
 		  	'goods_number'		  		=> $goods_number,
 		  	'warn_number'		   		=> $warn_number,
-		  	'integral'			  		=> $_POST['integral'],
+		  	'integral'			  		=> $integral,
 		  	'store_best'			   	=> $is_best,
 		  	'store_new'					=> $is_new,
 		  	'store_hot'					=> $is_hot,

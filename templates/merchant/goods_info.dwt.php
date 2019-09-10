@@ -432,7 +432,7 @@
 	                                        <div class="form-group">
 					              				<label class="control-label col-lg-5">{t domain="goods"}积分购买金额：{/t}</label>
 					              				<div class="col-lg-6">
-					                          		<input class="form-control" type="text" name="integral" value="{$goods.integral}" size="20" data-toggle="parseint_input" />
+					                          		<input class="form-control" type="text" name="integral" value="{$goods.integral}" size="20" <!--data-toggle="parseint_input"--> />
 					                          	</div>
 					              			</div>
 					              			<p class="help-block">{t domain="goods"}(此处需填写金额)购买该商品时最多可以使用积分的金额{/t}</p>
