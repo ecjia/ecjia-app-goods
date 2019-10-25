@@ -917,12 +917,21 @@ class merchant extends ecjia_merchant {
 			'give_integral'			=> -1,
 			'rank_integral'			=> -1
 		);
-	
+        $cat_list = cat_list(0, $goods['cat_id'], false);
+
+        foreach ($cat_list as $k => $v) {
+            if (!empty($goods['other_cat']) && is_array($goods['other_cat'])){
+                if (in_array($v['cat_id'], $goods['other_cat'])) {
+                    $cat_list[$k]['is_other_cat'] = 1;
+                }
+            }
+        }
+        $this->assign('cat_list', 			$cat_list);
 		/* 商品名称样式 */
 		$goods_name_style = isset($goods['goods_name_style']) ? $goods['goods_name_style'] : '';
 		/* 模板赋值 */
 		$this->assign('tags', array('edit' => array('name' => __('通用信息', 'goods'), 'active' => 1, 'pjax' => 1, 'href' => RC_Uri::url('goods/merchant/add'))));
-	
+
 		$this->assign('goods', $goods);
 		$this->assign('goods_name_color', $goods_name_style);
 	
@@ -1110,7 +1119,13 @@ class merchant extends ecjia_merchant {
 			'store_id'				=> $_SESSION['store_id'],
 		);
 		$goods_id = $this->db_goods->insert($data);
-		
+
+        /* 处理扩展分类 */
+        if (isset($_POST['other_cat'])) {
+            RC_Loader::load_app_func('admin_goods');
+            handle_other_cat($goods_id, array_unique($_POST['other_cat']));
+        }
+
 		if (isset($goods_sn_bool) && $goods_sn_bool) {
 			$goods_sn = generate_goods_sn($goods_id);
 			$data = array('goods_sn' => $goods_sn);
