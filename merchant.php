@@ -942,6 +942,7 @@ class merchant extends ecjia_merchant {
 	
 		$this->assign('cfg', ecjia::config());
 		$this->assign('goods_attr_html', build_merchant_attr_html($goods['goods_type'], $goods['goods_id']));
+		$this->assign('manage_mode', get_merchant_manage_mode());//仅自营可设置赠送积分
 	
 		$volume_price_list = '';
 		if (isset($_GET['goods_id'])) {
@@ -1045,7 +1046,10 @@ class merchant extends ecjia_merchant {
 		$warn_number 	= !empty($_POST['warn_number'])		? $_POST['warn_number'] 	: 0;
 		$goods_type 	= !empty($_POST['goods_type']) 		? $_POST['goods_type'] 		: 0;
 
-		$suppliers_id 	= !empty($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
+		$give_integral     = !empty($_POST['give_integral'])     ? intval($_POST['give_integral'])     : '-1';
+		$rank_integral     = !empty($_POST['rank_integral'])     ? intval($_POST['rank_integral'])     : '-1';
+
+        $suppliers_id 	= !empty($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
 		$goods_name 		= isset($_POST['goods_name']) 		? htmlspecialchars($_POST['goods_name']) 		: '';
 		$goods_name_style 	= isset($_POST['goods_name_color']) ? htmlspecialchars($_POST['goods_name_color']) 	: '';
@@ -1105,7 +1109,7 @@ class merchant extends ecjia_merchant {
 			'goods_number'          => $goods_number,
 			'warn_number'           => $warn_number,
 			'integral'              => $integral,
-			'store_best'            => $is_best,
+            'store_best'            => $is_best,
 			'store_new'             => $is_new,
 			'store_hot'             => $is_hot,
 			'is_on_sale'            => $is_on_sale,
@@ -1118,6 +1122,11 @@ class merchant extends ecjia_merchant {
 		    'review_status'         => get_merchant_review_status(),
 			'store_id'				=> $_SESSION['store_id'],
 		);
+		if(get_merchant_manage_mode() == 'self') {
+            //仅自营商家可送积分 1.36.3
+		    $data['give_integral'] = $give_integral;
+            $data['rank_integral'] = $rank_integral;
+        }
 		$goods_id = $this->db_goods->insert($data);
 
         /* 处理扩展分类 */
@@ -1277,8 +1286,8 @@ class merchant extends ecjia_merchant {
                 'promote_start_date'	=> RC_Time::local_date('Y-m-d'),
                 'promote_end_date'		=> RC_Time::local_date('Y-m-d', RC_Time::gmstr2time('+1 month')),
                 'goods_weight'			=> 0,
-                'give_integral'			=> 0,
-                'rank_integral'			=> 0
+                'give_integral'			=> -1,
+                'rank_integral'			=> -1
             );
         }
 
@@ -1383,6 +1392,7 @@ class merchant extends ecjia_merchant {
 
         $this->assign('form_act', 			RC_Uri::url('goods/merchant/edit'));
         $this->assign('member_price_list', 	get_member_price_list($_REQUEST['goods_id']));
+        $this->assign('manage_mode', get_merchant_manage_mode());//仅自营可设置赠送积分
 
         $price_list = array();
         if (!empty($data)) {
@@ -1481,6 +1491,8 @@ class merchant extends ecjia_merchant {
         $goods_barcode    = !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
         $warn_number 	= isset($_POST['warn_number']) 		? $_POST['warn_number'] 	: 0;
 
+        $give_integral    = isset($_POST['give_integral'])     ? intval($_POST['give_integral'])     : '-1';
+        $rank_integral    = isset($_POST['rank_integral'])     ? intval($_POST['rank_integral'])     : '-1';
         $suppliers_id 	= isset($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
         $goods_name 		= htmlspecialchars($_POST['goods_name']);
@@ -1547,6 +1559,11 @@ class merchant extends ecjia_merchant {
             'last_update'		   		=> RC_Time::gmtime(),
             'review_status'				=> $review_status,
         );
+        if(get_merchant_manage_mode() == 'self') {
+            //仅自营商家可送积分 1.36.3
+            $data['give_integral'] = $give_integral;
+            $data['rank_integral'] = $rank_integral;
+        }
         RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 
         /* 处理扩展分类 */

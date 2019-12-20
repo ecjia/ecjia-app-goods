@@ -459,6 +459,24 @@
                                     </div>
                                     <div id="collapseNine" class="panel-collapse collapse">
                                         <div class="panel-body mt_15">
+                                            <!--仅自营店铺支持赠送积分-->
+	                                        {if $manage_mode eq 'self'}
+                                            <div class="form-group">
+					              				<label class="control-label col-lg-5">{t domain="goods"}赠送消费积分数：{/t}</label>
+					              				<div class="col-lg-6">
+					                            	<input class="form-control" type="text" name="give_integral" value="{$goods.give_integral}" size="20" data-toggle="parseint_input" />
+					                          	</div>
+					              			</div>
+					              			<p class="help-block">{t domain="goods"}购买该商品时赠送消费积分数,-1表示按商品价格赠送{/t}</p>
+					              			
+					              			<div class="form-group">
+					              				<label class="control-label col-lg-5">{t domain="goods"}赠送成长值：{/t}</label>
+					              				<div class="col-lg-6">
+					                          		<input class="form-control" type="text" name="rank_integral" value="{$goods.rank_integral}" size="20" data-toggle="parseint_input" />
+					                          	</div>
+					              			</div>
+					              			<p class="help-block">{t domain="goods"}购买该商品时赠送成长值数,-1表示按商品价格赠送{/t}</p>
+                                            {/if}
                                             <div class="form-group">
                                                 <label class="control-label col-lg-5">{t domain="goods"}积分购买金额：{/t}</label>
                                                 <div class="col-lg-6">
