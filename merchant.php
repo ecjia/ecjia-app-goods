@@ -1044,7 +1044,7 @@ class merchant extends ecjia_merchant {
 		$goods_type 	= !empty($_POST['goods_type']) 		? $_POST['goods_type'] 		: 0;
 
 		$give_integral     = !empty($_POST['give_integral'])     ? intval($_POST['give_integral'])     : '-1';
-		$rank_integral     = !empty($_POST['rank_integral'])     ? intval($_POST['rank_integral'])     : '-1';
+		// $rank_integral     = !empty($_POST['rank_integral'])     ? intval($_POST['rank_integral'])     : '-1';
 
         $suppliers_id 	= !empty($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
@@ -1122,7 +1122,7 @@ class merchant extends ecjia_merchant {
 		if(get_merchant_manage_mode() == 'self') {
             //仅自营商家可送积分 1.36.3
 		    $data['give_integral'] = $give_integral;
-            $data['rank_integral'] = $rank_integral;
+//            $data['rank_integral'] = $rank_integral;
         }
 		$goods_id = $this->db_goods->insert($data);
 
@@ -1489,7 +1489,7 @@ class merchant extends ecjia_merchant {
         $warn_number 	= isset($_POST['warn_number']) 		? $_POST['warn_number'] 	: 0;
 
         $give_integral    = isset($_POST['give_integral'])     ? intval($_POST['give_integral'])     : '-1';
-        $rank_integral    = isset($_POST['rank_integral'])     ? intval($_POST['rank_integral'])     : '-1';
+//        $rank_integral    = isset($_POST['rank_integral'])     ? intval($_POST['rank_integral'])     : '-1';
         $suppliers_id 	= isset($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
 
         $goods_name 		= htmlspecialchars($_POST['goods_name']);
@@ -1559,7 +1559,7 @@ class merchant extends ecjia_merchant {
         if(get_merchant_manage_mode() == 'self') {
             //仅自营商家可送积分 1.36.3
             $data['give_integral'] = $give_integral;
-            $data['rank_integral'] = $rank_integral;
+//            $data['rank_integral'] = $rank_integral;
         }
         RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 

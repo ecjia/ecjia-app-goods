@@ -468,7 +468,8 @@
 					                          	</div>
 					              			</div>
 					              			<p class="help-block">{t domain="goods"}购买该商品时赠送消费积分数,-1表示按商品价格赠送{/t}</p>
-					              			
+
+                                            <!--
 					              			<div class="form-group">
 					              				<label class="control-label col-lg-5">{t domain="goods"}赠送成长值：{/t}</label>
 					              				<div class="col-lg-6">
@@ -476,6 +477,7 @@
 					                          	</div>
 					              			</div>
 					              			<p class="help-block">{t domain="goods"}购买该商品时赠送成长值数,-1表示按商品价格赠送{/t}</p>
+					              			-->
                                             {/if}
                                             <div class="form-group">
                                                 <label class="control-label col-lg-5">{t domain="goods"}积分购买金额：{/t}</label>
