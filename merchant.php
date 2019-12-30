@@ -889,7 +889,8 @@ class merchant extends ecjia_merchant {
 			$ur_here = __('选择平台商品分类', 'goods');
 			$this->assign('step', 1);
 			$this->assign('cat_list', $cat_list);
-		}
+            return $this->display('goods_cat_select.dwt');
+        }
 		
 		$this->assign('ur_here', $ur_here);
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
@@ -953,12 +954,8 @@ class merchant extends ecjia_merchant {
 		}
 		$this->assign('volume_price_list', $volume_price_list);
 		$this->assign('form_action', RC_Uri::url('goods/merchant/insert', array('cat_id' => $cat_id)));
-	
-		if (!empty($cat_id)) {
-			return $this->display('goods_info.dwt');
-		} else {
-			return $this->display('goods_cat_select.dwt');
-		}
+
+        return $this->display('goods_info.dwt');
 	}
 	
 	/**
